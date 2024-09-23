@@ -1,7 +1,9 @@
 package ovh.mythmc.social.bukkit.adventure;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,11 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
             return;
 
         adventure.player(player).sendMessage(message);
+    }
+
+    @Override
+    public Audience getSender(final @NotNull CommandSender sender) {
+        return adventure.sender(sender);
     }
 
 }

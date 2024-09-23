@@ -4,14 +4,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
@@ -55,15 +52,15 @@ public final class ChatManager {
                                 final @NotNull ChatChannel chatChannel,
                                 final @NotNull String message) {
 
-        Component channelHoverText = Social.get().getPlaceholderProcessor().process(player, Social.get().getSettings().get().getChat().getChannelHoverText())
+        Component channelHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
                 .appendNewline()
-                .append(Social.get().getPlaceholderProcessor().process(player, chatChannel.getHoverText()));
+                .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
 
-        Component playerHoverText = Social.get().getPlaceholderProcessor().process(player, Social.get().getSettings().get().getChat().getPlayerHoverText());
+        Component playerHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
 
         // Todo: parse PlaceholderAPI
         Component formattedNickname =
-                Social.get().getPlaceholderProcessor().process(player, Social.get().getSettings().get().getChat().getPlayerNicknameFormat())
+                Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
                 .color(chatChannel.getNicknameColor());
 
         // Todo: event
@@ -72,7 +69,7 @@ public final class ChatManager {
                         .append(text(chatChannel.getIcon() + " ")
                                 .color(chatChannel.getIconColor())
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
-                                .clickEvent(ClickEvent.runCommand("/channel " + chatChannel.getName()))
+                                .clickEvent(ClickEvent.runCommand("/social channel " + chatChannel.getName()))
                         )
                         .append(formattedNickname
                                 .hoverEvent(HoverEvent.showText(playerHoverText))
@@ -91,13 +88,18 @@ public final class ChatManager {
             members.add(socialPlayer);
         });
 
-        sendMessage(members, chatMessage);
+        Social.get().getTextProcessor().send(members, chatMessage);
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
                                    final @NotNull SocialPlayer recipient,
                                    final @NotNull String message) {
         // Todo: event
+        Component hoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
+
+        Component senderHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
+        Component recipientHoverText = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
+
         Collection<SocialPlayer> members = new ArrayList<>();
         members.add(sender);
         members.add(recipient);
@@ -106,31 +108,20 @@ public final class ChatManager {
                 text("")
                         .append(text("✉ ")
                                 .color(NamedTextColor.GREEN)
-                                .hoverEvent(HoverEvent.showText(translatable("pm.hover.description",
-                                        text(sender.getNickname())
-                                                .color(INFO_COLOR),
-                                        text(recipient.getNickname())
-                                                .color(INFO_COLOR)
-                                )))
+                                .hoverEvent(HoverEvent.showText(hoverText))
                         )
                         .append(text(sender.getNickname())
                                 .color(INFO_COLOR)
-                                .hoverEvent(HoverEvent.showText(translatable("pm.hover.sender",
-                                        text(sender.getNickname())
-                                                .color(INFO_COLOR)
-                                )))
-                                .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getPlayer().getName() + " "))
+                                .hoverEvent(HoverEvent.showText(senderHoverText))
+                                .clickEvent(ClickEvent.suggestCommand("/pm " + sender.getPlayer().getName() + " "))
                         )
                         .append(text(" ➡ ")
                                 .color(NamedTextColor.GRAY)
                         )
                         .append(text(recipient.getNickname())
                                 .color(INFO_COLOR)
-                                .hoverEvent(HoverEvent.showText(translatable("pm.hover.recipient",
-                                        text(recipient.getNickname())
-                                                .color(INFO_COLOR)
-                                )))
-                                .clickEvent(ClickEvent.suggestCommand("/msg " + recipient.getPlayer().getName() + " "))
+                                .hoverEvent(HoverEvent.showText(recipientHoverText))
+                                .clickEvent(ClickEvent.suggestCommand("/pm " + recipient.getPlayer().getName() + " "))
                         )
                         .append(text(": ")
                                 .color(NamedTextColor.GRAY)
@@ -139,12 +130,9 @@ public final class ChatManager {
                                 .color(NamedTextColor.WHITE)
                         );
 
-        sendMessage(members, chatMessage);
+        Social.get().getTextProcessor().send(members, chatMessage);
     }
 
-    private void sendMessage(final @NotNull Collection<SocialPlayer> members,
-                             final @NotNull ComponentLike message) {
-        members.forEach(chatPlayer -> SocialAdventureProvider.get().sendMessage(chatPlayer, message));
-    }
+
 
 }

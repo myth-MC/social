@@ -3,16 +3,16 @@ package ovh.mythmc.social.common.placeholders.impl;
 import ovh.mythmc.social.api.text.SocialPlaceholder;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
-public final class ChannelPlaceholderImpl extends SocialPlaceholder {
+public final class UsernamePlaceholderImpl extends SocialPlaceholder {
 
     @Override
     public String identifier() {
-        return "@channel";
+        return "@username";
     }
 
     @Override
     public String process(SocialPlayer player) {
-        return player.getMainChannel().getName();
+        return player.getPlayer().getName();
     }
 
 }

@@ -1,4 +1,4 @@
-package ovh.mythmc.social.api.configuration.sections;
+package ovh.mythmc.social.api.configuration.sections.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;

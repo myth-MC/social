@@ -1,4 +1,4 @@
-package ovh.mythmc.social.api.configuration.sections;
+package ovh.mythmc.social.api.configuration.sections.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
@@ -20,7 +20,7 @@ public class ChatConfig {
     private String channelHoverText = "<gray>Click here to switch to channel <gold>@channel</gold></gray>";
 
     @Comment("Text that appears when hovering over a player's name")
-    private String playerHoverText = "<gray>Click here to message <blue>@nickname</blue></gray>";
+    private String playerHoverText = "<gray>Click here to message <blue>@username</blue></gray>";
 
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "@nickname";

@@ -16,8 +16,6 @@ public final class SocialPlayer {
 
     private final UUID uuid;
 
-    private String nickname;
-
     private ChatChannel mainChannel;
 
     private boolean muted;
@@ -26,6 +24,10 @@ public final class SocialPlayer {
 
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid);
+    }
+
+    public String getNickname() {
+        return getPlayer().getDisplayName();
     }
 
 }

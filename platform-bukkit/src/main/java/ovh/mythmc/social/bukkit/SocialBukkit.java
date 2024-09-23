@@ -1,14 +1,20 @@
 package ovh.mythmc.social.bukkit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
+import ovh.mythmc.social.bukkit.commands.impl.PrivateMessageCommandImpl;
+import ovh.mythmc.social.bukkit.commands.impl.SocialCommandImpl;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.ChatListener;
 import ovh.mythmc.social.common.listeners.SocialPlayerListener;
 import ovh.mythmc.social.common.listeners.SystemAnnouncementsListener;
+import ovh.mythmc.social.common.placeholders.PAPIExpansion;
+
+import java.util.Objects;
 
 public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
@@ -22,6 +28,9 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     @Override
     public void enable() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
+            new PAPIExpansion();
+
         registerCommands();
         registerListeners();
     }
@@ -57,16 +66,20 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
     }
 
     private void registerCommands() {
+        PluginCommand social = getPlugin().getCommand("social");
+        PluginCommand privateMessage = getPlugin().getCommand("pm");
 
+        Objects.requireNonNull(social).setExecutor(new SocialCommandImpl());
+        Objects.requireNonNull(privateMessage).setExecutor(new PrivateMessageCommandImpl());
     }
 
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
 
-        if (Social.get().getSettings().get().getChat().isEnabled())
+        if (Social.get().getConfig().getSettings().getChat().isEnabled())
             Bukkit.getPluginManager().registerEvents(new ChatListener(), getPlugin());
 
-        if (Social.get().getSettings().get().getSystemMessages().isEnabled())
+        if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled())
             Bukkit.getPluginManager().registerEvents(new SystemAnnouncementsListener(), getPlugin());
     }
 

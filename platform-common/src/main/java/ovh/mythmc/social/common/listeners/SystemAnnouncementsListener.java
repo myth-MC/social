@@ -22,8 +22,8 @@ public final class SystemAnnouncementsListener implements Listener {
 
         event.setJoinMessage("");
         for (Player player : Bukkit.getOnlinePlayers()) {
-            String unformattedMessage = Social.get().getSettings().get().getSystemMessages().getJoinMessage();
-            Component message = Social.get().getPlaceholderProcessor().process(socialPlayer, unformattedMessage);
+            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
+            Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
             SocialAdventureProvider.get().sendMessage(player, message);
         }
     }
@@ -36,8 +36,8 @@ public final class SystemAnnouncementsListener implements Listener {
 
        event.setQuitMessage("");
        for (Player player : Bukkit.getOnlinePlayers()) {
-           String unformattedMessage = Social.get().getSettings().get().getSystemMessages().getQuitMessage();
-           Component message = Social.get().getPlaceholderProcessor().process(socialPlayer, unformattedMessage);
+           String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
+           Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
            SocialAdventureProvider.get().sendMessage(player, message);
        }
    }

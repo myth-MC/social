@@ -36,11 +36,10 @@ public final class SocialPlayerManager {
 
     public void registerSocialPlayer(final @NotNull UUID uuid) {
         // Todo: recover data from last session
-        String defaultChatChannelName = Social.get().getSettings().get().getChat().getDefaultChannel();
+        String defaultChatChannelName = Social.get().getConfig().getSettings().getChat().getDefaultChannel();
         ChatChannel defaultChatChannel = Social.get().getChatManager().getChannel(defaultChatChannelName);
 
         SocialPlayer socialPlayer = new SocialPlayer(uuid);
-        socialPlayer.setNickname(socialPlayer.getPlayer().getDisplayName());
         socialPlayer.setMuted(false);
         socialPlayer.setSocialSpy(false);
 
@@ -52,6 +51,8 @@ public final class SocialPlayerManager {
 
             socialPlayer.setMainChannel(defaultChatChannel);
         }
+
+        registerSocialPlayer(socialPlayer);
     }
 
     public void unregisterSocialPlayer(final @NotNull SocialPlayer socialPlayer) {

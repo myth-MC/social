@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
-import ovh.mythmc.social.api.configuration.SocialSettingsProvider;
+import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.common.placeholders.impl.ChannelPlaceholderImpl;
 import ovh.mythmc.social.common.placeholders.impl.NicknamePlaceholderImpl;
+import ovh.mythmc.social.common.placeholders.impl.UsernamePlaceholderImpl;
 
 import java.io.File;
 
@@ -16,18 +17,18 @@ import java.io.File;
 public abstract class SocialBootstrap<T> implements Social {
 
     private T plugin;
-    private SocialSettingsProvider settings;
+    private SocialConfigProvider config;
 
     public SocialBootstrap(final @NotNull T plugin,
                            final File dataDirectory) {
         SocialSupplier.set(this);
 
         this.plugin = plugin;
-        this.settings = new SocialSettingsProvider(dataDirectory);
+        this.config = new SocialConfigProvider(dataDirectory);
     }
 
     public final void initialize() {
-        getSettings().load();
+        getConfig().load();
 
         try {
             enable();
@@ -40,8 +41,11 @@ public abstract class SocialBootstrap<T> implements Social {
         // update checker
 
         // register internal placeholders
-        Social.get().getPlaceholderProcessor().registerPlaceholder(new NicknamePlaceholderImpl());
-        Social.get().getPlaceholderProcessor().registerPlaceholder(new ChannelPlaceholderImpl());
+        Social.get().getTextProcessor().registerParser(
+                new NicknamePlaceholderImpl(),
+                new ChannelPlaceholderImpl(),
+                new UsernamePlaceholderImpl()
+        );
     }
 
     public abstract void enable();
@@ -49,7 +53,7 @@ public abstract class SocialBootstrap<T> implements Social {
     public abstract void shutdown();
 
     public final void reload() {
-        getSettings().load();
+        getConfig().load();
     }
 
     public abstract String version();

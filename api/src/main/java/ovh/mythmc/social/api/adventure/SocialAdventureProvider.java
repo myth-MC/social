@@ -1,6 +1,8 @@
 package ovh.mythmc.social.api.adventure;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
@@ -31,5 +33,7 @@ public abstract class SocialAdventureProvider {
                             final @NotNull ComponentLike message) {
         sendMessage(Objects.requireNonNull(Social.get().getPlayerManager().get(uuid)), message);
     }
+
+    public abstract Audience getSender(final @NotNull CommandSender sender);
 
 }

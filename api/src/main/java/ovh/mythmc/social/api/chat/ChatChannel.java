@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.configuration.sections.ChatConfig;
+import ovh.mythmc.social.api.configuration.sections.settings.ChatConfig;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.ArrayList;
@@ -33,12 +33,18 @@ public final class ChatChannel {
 
     private final TextColor textColor;
 
+    private final String permission;
+
     private final boolean passthrough;
 
     private Collection<UUID> members = new ArrayList<>();
 
     public boolean addMember(UUID uuid) {
-        return members.add(uuid);
+        if (members.contains(uuid))
+            return false;
+
+        members.add(uuid);
+        return true;
     }
 
     public boolean addMember(SocialPlayer socialPlayer) {
@@ -68,6 +74,7 @@ public final class ChatChannel {
                 TextColor.fromHexString(channelField.nicknameColor()),
                 channelField.textSeparator(),
                 TextColor.fromHexString(channelField.textColor()),
+                channelField.permission(),
                 false
         );
     }
