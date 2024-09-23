@@ -3,10 +3,7 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import ovh.mythmc.social.api.configuration.sections.AnnouncementsConfig;
-import ovh.mythmc.social.api.configuration.sections.ChatConfig;
-import ovh.mythmc.social.api.configuration.sections.InteractionMenuConfig;
-import ovh.mythmc.social.api.configuration.sections.ReactionsConfig;
+import ovh.mythmc.social.api.configuration.sections.*;
 
 @Configuration
 @Getter
@@ -17,6 +14,9 @@ public class SocialSettings {
 
     @Comment({"", "Chat module"})
     private ChatConfig chat = new ChatConfig();
+
+    @Comment({"", "SystemMessages module"})
+    private SystemMessagesConfig systemMessages = new SystemMessagesConfig();
 
     @Comment({"", "Announcements module"})
     private AnnouncementsConfig announcements = new AnnouncementsConfig();

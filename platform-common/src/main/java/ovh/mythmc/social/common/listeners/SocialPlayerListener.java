@@ -1,5 +1,8 @@
 package ovh.mythmc.social.common.listeners;
 
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -7,9 +10,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.placeholders.SocialPlaceholder;
+import ovh.mythmc.social.api.placeholders.SocialPlaceholderProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
+import java.awt.*;
 import java.util.UUID;
 
 public final class SocialPlayerListener implements Listener {
@@ -35,6 +42,13 @@ public final class SocialPlayerListener implements Listener {
         socialPlayer.setMuted(false);
         socialPlayer.setSocialSpy(false);
 
+        event.setJoinMessage("");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String unformattedMessage = Social.get().getSettings().get().getSystemMessages().getJoinMessage();
+            Component message = Social.get().getPlaceholderProcessor().process(socialPlayer, unformattedMessage);
+            SocialAdventureProvider.get().sendMessage(player, message);
+        }
+
         // Todo: add player to every channel where they have access
     }
 
@@ -49,6 +63,14 @@ public final class SocialPlayerListener implements Listener {
         for (ChatChannel chatChannel : Social.get().getChatManager().getChannels()) {
             chatChannel.removeMember(uuid);
         }
+
+        event.setQuitMessage("");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String unformattedMessage = Social.get().getSettings().get().getSystemMessages().getQuitMessage();
+            Component message = Social.get().getPlaceholderProcessor().process(socialPlayer, unformattedMessage);
+            SocialAdventureProvider.get().sendMessage(player, message);
+        }
+
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
