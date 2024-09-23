@@ -24,7 +24,7 @@ public class SocialSpySubcommand implements BiConsumer<Audience, String[]> {
 
         SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
         if (player == null) {
-            processor.processAndSend(player, messages.getErrors().getUnexpectedError());
+            // unexpected error catch
             return;
         }
 

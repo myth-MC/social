@@ -25,7 +25,7 @@ public class ChannelSubcommand implements BiConsumer<Audience, String[]> {
 
         SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
         if (player == null) {
-            processor.processAndSend(player, messages.getErrors().getUnexpectedError());
+            // unexpected error catch
             return;
         }
 
@@ -39,6 +39,9 @@ public class ChannelSubcommand implements BiConsumer<Audience, String[]> {
             processor.processAndSend(player, messages.getErrors().getChannelDoesNotExist());
             return;
         }
+
+        if (channel == player.getMainChannel())
+            return;
 
         if (channel.getPermission() != null && !player.getPlayer().hasPermission(channel.getPermission())) {
             processor.processAndSend(player, messages.getErrors().getNotEnoughPermission());
