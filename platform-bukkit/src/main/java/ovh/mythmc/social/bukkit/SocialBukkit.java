@@ -2,10 +2,13 @@ package ovh.mythmc.social.bukkit;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
+import ovh.mythmc.social.common.listeners.ChatListener;
 import ovh.mythmc.social.common.listeners.SocialPlayerListener;
+import ovh.mythmc.social.common.listeners.SystemAnnouncementsListener;
 
 public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
@@ -59,6 +62,12 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
+
+        if (Social.get().getSettings().get().getChat().isEnabled())
+            Bukkit.getPluginManager().registerEvents(new ChatListener(), getPlugin());
+
+        if (Social.get().getSettings().get().getSystemMessages().isEnabled())
+            Bukkit.getPluginManager().registerEvents(new SystemAnnouncementsListener(), getPlugin());
     }
 
 }

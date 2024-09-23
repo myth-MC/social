@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.ChatChannel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,26 @@ public final class SocialPlayerManager {
 
     public void registerSocialPlayer(final @NotNull SocialPlayer socialPlayer) {
         playerList.add(socialPlayer);
+    }
+
+    public void registerSocialPlayer(final @NotNull UUID uuid) {
+        // Todo: recover data from last session
+        String defaultChatChannelName = Social.get().getSettings().get().getChat().getDefaultChannel();
+        ChatChannel defaultChatChannel = Social.get().getChatManager().getChannel(defaultChatChannelName);
+
+        SocialPlayer socialPlayer = new SocialPlayer(uuid);
+        socialPlayer.setNickname(socialPlayer.getPlayer().getDisplayName());
+        socialPlayer.setMuted(false);
+        socialPlayer.setSocialSpy(false);
+
+        if (defaultChatChannel == null) {
+            Social.get().getLogger().warn("Default channel '" + defaultChatChannelName + "' is unavailable!");
+        } else {
+            if (!defaultChatChannel.getMembers().contains(uuid))
+                defaultChatChannel.addMember(uuid);
+
+            socialPlayer.setMainChannel(defaultChatChannel);
+        }
     }
 
     public void unregisterSocialPlayer(final @NotNull SocialPlayer socialPlayer) {
