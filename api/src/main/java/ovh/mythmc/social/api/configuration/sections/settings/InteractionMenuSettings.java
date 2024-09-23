@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class InteractionMenuConfig {
+public class InteractionMenuSettings {
 
     @Comment("Whether the interaction menu should be enabled or disabled")
     private boolean enabled = true;

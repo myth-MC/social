@@ -13,21 +13,21 @@ public class SocialSettings {
     private boolean debug = true;
 
     @Comment({"", "Chat module"})
-    private ChatConfig chat = new ChatConfig();
+    private ChatSettings chat = new ChatSettings();
 
     @Comment({"", "System messages module"})
-    private SystemMessagesConfig systemMessages = new SystemMessagesConfig();
+    private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
 
     @Comment({"", "Commands settings"})
-    private CommandsConfig commands = new CommandsConfig();
+    private CommandsSettings commands = new CommandsSettings();
 
     @Comment({"", "Announcements module"})
-    private AnnouncementsConfig announcements = new AnnouncementsConfig();
+    private AnnouncementsSettings announcements = new AnnouncementsSettings();
 
     @Comment({"", "Reactions module"})
-    private ReactionsConfig reactions = new ReactionsConfig();
+    private ReactionsSettings reactions = new ReactionsSettings();
 
     @Comment({"", "Interaction Menu module"})
-    private InteractionMenuConfig interactionMenu = new InteractionMenuConfig();
+    private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();
 
 }

@@ -12,7 +12,8 @@ public final class ChannelPlaceholderImpl extends SocialPlaceholder {
 
     @Override
     public String process(SocialPlayer player) {
-        return player.getMainChannel().getName();
+        String hexColor = "<color:" + player.getMainChannel().getIconColor().asHexString().toUpperCase() + ">";
+        return hexColor + player.getMainChannel().getName() + "</color>";
     }
 
 }

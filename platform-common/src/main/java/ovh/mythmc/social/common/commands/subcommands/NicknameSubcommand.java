@@ -40,12 +40,24 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
         }
 
         String nickname = args[0];
+        if (nickname.equalsIgnoreCase("reset")) {
+            player.getPlayer().setDisplayName(player.getNickname());
+            processor.processAndSend(player, messages.getCommands().getNicknameResetted());
+            return;
+        }
+
         if (Bukkit.getOfflinePlayer(nickname).hasPlayedBefore()) {
             processor.processAndSend(player, messages.getErrors().getNicknameAlreadyInUse());
             return;
         }
 
+        if (nickname.length() > 16) {
+            processor.processAndSend(player, messages.getErrors().getNicknameTooLong());
+            return;
+        }
+
         player.getPlayer().setDisplayName(nickname);
+        processor.processAndSend(player, messages.getCommands().getNicknameChanged());
     }
 
 }

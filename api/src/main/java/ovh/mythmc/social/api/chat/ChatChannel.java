@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.configuration.sections.settings.ChatConfig;
+import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public final class ChatChannel {
         return removeMember(socialPlayer.getUuid());
     }
 
-    public static ChatChannel fromConfigField(final @NotNull ChatConfig.Channel channelField) {
+    public static ChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {
         Component hoverText = Component.text("");
         for (String line : channelField.hoverText()) {
             Component parsedLine = MiniMessage.miniMessage().deserialize(line);

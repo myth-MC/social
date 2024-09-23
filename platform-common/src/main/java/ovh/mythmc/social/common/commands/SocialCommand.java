@@ -10,6 +10,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.subcommands.ChannelSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.NicknameSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.ReloadSubcommand;
+import ovh.mythmc.social.common.commands.subcommands.SocialSpySubcommand;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -26,6 +27,7 @@ public abstract class SocialCommand {
         subCommands.put("channel", new ChannelSubcommand());
         subCommands.put("nickname", new NicknameSubcommand());
         subCommands.put("reload", new ReloadSubcommand());
+        subCommands.put("socialspy", new SocialSpySubcommand());
     }
 
     public void run(@NotNull Audience sender, @NotNull String[] args) {

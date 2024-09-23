@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class ReactionsConfig {
+public class ReactionsSettings {
 
     @Comment("Whether reactions should be enabled or disabled")
     private boolean enabled = true;

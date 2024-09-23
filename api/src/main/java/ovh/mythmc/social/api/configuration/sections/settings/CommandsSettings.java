@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class CommandsConfig {
+public class CommandsSettings {
 
     @Comment("/pm")
     private PrivateMessageCommand privateMessage = new PrivateMessageCommand(true, "<gray>This message is sent to you through a <green>private channel</green></gray>");

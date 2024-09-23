@@ -25,7 +25,7 @@ public final class PAPIExpansion extends PlaceholderExpansion implements SocialP
     public PAPIExpansion() {
         this.register();
 
-        Social.get().getLogger().info("Registered PlaceholderAPI adapter");
+        Social.get().getLogger().info("Registered internal PlaceholderAPI adapter");
         Social.get().getTextProcessor().registerParser(this);
     }
 

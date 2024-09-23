@@ -57,6 +57,10 @@ public final class ChatManager {
                 .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
 
         Component playerHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
+        if (!player.getNickname().equals(player.getPlayer().getName()))
+            playerHoverText = playerHoverText
+                    .appendNewline()
+                    .append(Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
         // Todo: parse PlaceholderAPI
         Component formattedNickname =
@@ -100,9 +104,24 @@ public final class ChatManager {
         Component senderHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
         Component recipientHoverText = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
 
+        if (!sender.getNickname().equals(sender.getPlayer().getName()))
+            senderHoverText = senderHoverText
+                    .appendNewline()
+                    .append(Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+
+        if (!recipient.getNickname().equals(recipient.getPlayer().getName()))
+            recipientHoverText = recipientHoverText
+                    .appendNewline()
+                    .append(Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+
         Collection<SocialPlayer> members = new ArrayList<>();
         members.add(sender);
         members.add(recipient);
+
+        Social.get().getPlayerManager().get().forEach(player -> {
+            if (player.isSocialSpy() && !members.contains(player))
+                members.add(player);
+        });
 
         Component chatMessage =
                 text("")

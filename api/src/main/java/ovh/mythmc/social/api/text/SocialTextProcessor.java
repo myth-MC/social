@@ -64,12 +64,11 @@ public final class SocialTextProcessor {
     }
 
     public void processAndSend(SocialPlayer player, Component component) {
-        send(List.of(player), component);
+        send(List.of(player), process(player, component));
     }
 
     public void processAndSend(SocialPlayer player, String message) {
-        Component component = MiniMessage.miniMessage().deserialize(message);
-        processAndSend(player, component);
+        processAndSend(player, process(player, message));
     }
 
     public void send(final @NotNull Collection<SocialPlayer> members,

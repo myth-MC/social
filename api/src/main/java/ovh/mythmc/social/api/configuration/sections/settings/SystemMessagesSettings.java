@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class SystemMessagesConfig {
+public class SystemMessagesSettings {
 
     @Comment("Whether customized system messages should be enabled or disabled")
     private boolean enabled = true;

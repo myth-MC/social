@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class ErrorsConfig {
+public class ErrorsMessages {
 
     private String cannotBeRunFromConsole = "This command cannot be run from console.";
 
@@ -18,6 +18,8 @@ public class ErrorsConfig {
     private String notEnoughArguments = "<red>Not enough arguments.</red>";
 
     private String nicknameAlreadyInUse = "<red>This nickname belongs to another player.</red>";
+
+    private String nicknameTooLong = "<red>Nicknames cannot exceed 16 characters.</red>";
 
     private String playerNotFound = "<red>Unknown player.</red>";
 

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class AnnouncementsConfig {
+public class AnnouncementsSettings {
 
     @Comment("Whether announcements should be enabled or disabled")
     private boolean enabled = true;

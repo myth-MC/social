@@ -22,15 +22,20 @@ permissions:
     default: true
   social.admin:
     default: op
+    children:
+      - social.command.*
   social.command.*:
     default: op
     children:
       - social.command.channel
       - social.command.nickname
       - social.command.reload
+      - social.command.socialspy
   social.command.channel:
     default: false
   social.command.nickname:
     default: false
   social.command.reload:
+    default: false
+  social.command.socialspy:
     default: false
