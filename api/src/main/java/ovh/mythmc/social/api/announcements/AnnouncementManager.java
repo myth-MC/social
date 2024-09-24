@@ -68,27 +68,4 @@ public final class AnnouncementManager {
         performTask();
     }
 
-    /*
-    public void restartTask() {
-        if (asyncScheduler == null) {
-            startTask();
-            return;
-        }
-
-        cancelled = true;
-
-        asyncScheduler.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!cancelled) {
-                    startTask();
-                } else {
-                    restartTask();
-                }
-            }
-        }, 1, TimeUnit.SECONDS);
-    }
-
-     */
-
 }

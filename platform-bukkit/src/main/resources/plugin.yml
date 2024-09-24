@@ -10,12 +10,18 @@ commands:
   social:
     permission: social.user
   pm:
-    permission: social.user
+    permission: social.command.pm
     aliases:
       - message
       - msg
       - whisper
       - w
+  reaction:
+    permission: social.command.reaction
+    aliases:
+      - emote
+      - e
+
 
 permissions:
   social.user:
@@ -24,21 +30,29 @@ permissions:
     default: op
     children:
       - social.command.*
+      - social.emojis
       - social.filter.bypass
   social.command.*:
     default: op
     children:
       - social.command.channel
       - social.command.nickname
+      - social.command.reaction
       - social.command.reload
       - social.command.socialspy
   social.command.channel:
     default: false
   social.command.nickname:
     default: false
+  social.command.pm:
+    default: true
+  social.command.reaction:
+    default: true
   social.command.reload:
     default: false
   social.command.socialspy:
+    default: false
+  social.emojis:
     default: false
   social.filter.bypass:
     default: false

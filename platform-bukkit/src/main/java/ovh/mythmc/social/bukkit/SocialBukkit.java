@@ -7,9 +7,12 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
 import ovh.mythmc.social.bukkit.commands.impl.PrivateMessageCommandImpl;
+import ovh.mythmc.social.bukkit.commands.impl.ReactionCommandImpl;
 import ovh.mythmc.social.bukkit.commands.impl.SocialCommandImpl;
+import ovh.mythmc.social.bukkit.reactions.BukkitReactionFactory;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.ChatListener;
+import ovh.mythmc.social.common.listeners.ReactionsListener;
 import ovh.mythmc.social.common.listeners.SocialPlayerListener;
 import ovh.mythmc.social.common.listeners.SystemAnnouncementsListener;
 import ovh.mythmc.social.common.text.placeholders.PAPIExpansion;
@@ -22,7 +25,10 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     public SocialBukkit(final @NotNull SocialBukkitPlugin plugin) {
         super(plugin, plugin.getDataFolder());
+
+        // Platform implementations
         new BukkitAdventureProvider(plugin);
+        new BukkitReactionFactory(plugin);
         instance = this;
     }
 
@@ -68,9 +74,11 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
     private void registerCommands() {
         PluginCommand social = getPlugin().getCommand("social");
         PluginCommand privateMessage = getPlugin().getCommand("pm");
+        PluginCommand reaction = getPlugin().getCommand("reaction");
 
         Objects.requireNonNull(social).setExecutor(new SocialCommandImpl());
         Objects.requireNonNull(privateMessage).setExecutor(new PrivateMessageCommandImpl());
+        Objects.requireNonNull(reaction).setExecutor(new ReactionCommandImpl());
     }
 
     private void registerListeners() {
@@ -81,6 +89,9 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled())
             Bukkit.getPluginManager().registerEvents(new SystemAnnouncementsListener(), getPlugin());
+
+        if (Social.get().getConfig().getSettings().getReactions().isEnabled())
+            Bukkit.getPluginManager().registerEvents(new ReactionsListener(getPlugin()), getPlugin());
     }
 
 }

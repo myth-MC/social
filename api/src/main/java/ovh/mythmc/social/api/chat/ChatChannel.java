@@ -31,7 +31,7 @@ public final class ChatChannel {
 
     private final TextColor nicknameColor;
 
-    private final String textSeparator;
+    private final String textDivider;
 
     private final TextColor textColor;
 
@@ -77,7 +77,7 @@ public final class ChatChannel {
                 TextColor.fromHexString(channelField.iconColor()),
                 hoverText,
                 TextColor.fromHexString(channelField.nicknameColor()),
-                channelField.textSeparator(),
+                channelField.textDivider(),
                 TextColor.fromHexString(channelField.textColor()),
                 channelField.permission(),
                 channelField.joinByDefault(),

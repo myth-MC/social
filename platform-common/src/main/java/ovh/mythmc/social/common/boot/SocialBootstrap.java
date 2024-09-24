@@ -8,9 +8,10 @@ import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 import ovh.mythmc.social.common.text.filters.URLFilter;
-import ovh.mythmc.social.common.text.placeholders.impl.ChannelPlaceholderImpl;
-import ovh.mythmc.social.common.text.placeholders.impl.NicknamePlaceholderImpl;
-import ovh.mythmc.social.common.text.placeholders.impl.UsernamePlaceholderImpl;
+import ovh.mythmc.social.common.text.parsers.EmojiParser;
+import ovh.mythmc.social.common.text.placeholders.impl.ChannelPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.impl.NicknamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.impl.UsernamePlaceholder;
 
 import java.io.File;
 
@@ -50,19 +51,21 @@ public abstract class SocialBootstrap<T> implements Social {
     public final void reload() {
         // Stop running tasks
 
-        // Clear channels, announcements and parsers (we don't want duplicates)
+        // Clear channels, announcements, parsers, reactions and emojis (we don't want any duplicates)
         Social.get().getChatManager().getChannels().clear();
         Social.get().getAnnouncementManager().getAnnouncements().clear();
         Social.get().getTextProcessor().getParsers().clear();
+        Social.get().getReactionManager().getReactions().clear();
+        Social.get().getEmojiManager().getEmojis().clear();
 
         // Reload settings.yml and messages.yml
         getConfig().load();
 
         // Register internal placeholders
         Social.get().getTextProcessor().registerParser(
-                new NicknamePlaceholderImpl(),
-                new ChannelPlaceholderImpl(),
-                new UsernamePlaceholderImpl()
+                new NicknamePlaceholder(),
+                new ChannelPlaceholder(),
+                new UsernamePlaceholder()
         );
 
         // Register internal filters
@@ -73,6 +76,10 @@ public abstract class SocialBootstrap<T> implements Social {
             if (Social.get().getConfig().getSettings().getFilter().isUrlFilter())
                 Social.get().getTextProcessor().registerParser(new URLFilter());
         }
+
+        // Register internal parsers
+        if (Social.get().getConfig().getSettings().getEmojis().isEnabled())
+            Social.get().getTextProcessor().registerParser(new EmojiParser());
 
         // Start all running tasks again
         Social.get().getAnnouncementManager().restartTask();

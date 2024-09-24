@@ -88,7 +88,7 @@ public final class ChatManager {
                                 .hoverEvent(HoverEvent.showText(playerHoverText))
                                 .clickEvent(ClickEvent.suggestCommand("/pm " + player.getPlayer().getName() + " "))
                         )
-                        .append(text(" " + chatChannel.getTextSeparator() + " ")
+                        .append(text(" " + chatChannel.getTextDivider() + " ")
                                 .color(NamedTextColor.GRAY)
                         )
                         .append(text(message)

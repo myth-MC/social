@@ -3,10 +3,13 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
+import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.emojis.Emoji;
+import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.text.filters.SocialFilterLiteral;
 import ovh.mythmc.social.api.text.filters.SocialFilterRegex;
 
@@ -73,6 +76,23 @@ public final class SocialConfigProvider {
         settings.getAnnouncements().getMessages().forEach(announcementField -> {
             SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
             Social.get().getAnnouncementManager().registerAnnouncement(announcement);
+        });
+
+        // Register reactions
+        settings.getReactions().getReactions().forEach(reactionField -> {
+            Reaction reaction;
+            if (reactionField.sound() != null) {
+                reaction = new Reaction(reactionField.name(), reactionField.texture(), Sound.valueOf(reactionField.sound()), reactionField.triggerWords());
+            } else {
+                reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
+            }
+            Social.get().getReactionManager().registerReaction(reaction);
+        });
+
+        // Register emojis
+        settings.getEmojis().getEmojis().forEach(emojiField -> {
+            Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
+            Social.get().getEmojiManager().registerEmoji(emoji);
         });
     }
 

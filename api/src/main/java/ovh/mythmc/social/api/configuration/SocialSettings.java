@@ -30,6 +30,9 @@ public class SocialSettings {
     @Comment({"", "Reactions module"})
     private ReactionsSettings reactions = new ReactionsSettings();
 
+    @Comment({"", "Emojis module"})
+    private EmojiSettings emojis = new EmojiSettings();
+
     @Comment({"", "Interaction Menu module"})
     private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();
 
