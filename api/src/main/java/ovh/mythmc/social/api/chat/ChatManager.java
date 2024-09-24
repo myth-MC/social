@@ -92,7 +92,7 @@ public final class ChatManager {
             members.add(socialPlayer);
         });
 
-        Social.get().getTextProcessor().send(members, chatMessage);
+        Social.get().getTextProcessor().send(members, chatMessage, chatChannel.getType());
         player.setLatestMessageInMilliseconds(System.currentTimeMillis());
     }
 
@@ -150,7 +150,7 @@ public final class ChatManager {
                                 .color(NamedTextColor.WHITE)
                         );
 
-        Social.get().getTextProcessor().send(members, chatMessage);
+        Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
         sender.setLatestMessageInMilliseconds(System.currentTimeMillis());
     }
 

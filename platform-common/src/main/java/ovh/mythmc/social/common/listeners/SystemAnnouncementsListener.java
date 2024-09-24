@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class SystemAnnouncementsListener implements Listener {
@@ -24,7 +25,7 @@ public final class SystemAnnouncementsListener implements Listener {
         for (Player player : Bukkit.getOnlinePlayers()) {
             String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
             Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
-            SocialAdventureProvider.get().sendMessage(player, message);
+            SocialAdventureProvider.get().sendMessage(player, message, ChannelType.CHAT);
         }
     }
 
@@ -38,7 +39,7 @@ public final class SystemAnnouncementsListener implements Listener {
        for (Player player : Bukkit.getOnlinePlayers()) {
            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
            Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
-           SocialAdventureProvider.get().sendMessage(player, message);
+           SocialAdventureProvider.get().sendMessage(player, message, ChannelType.CHAT);
        }
    }
 

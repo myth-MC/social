@@ -16,7 +16,7 @@ public class AnnouncementsSettings {
     @Comment("Announcement frequency in seconds (300 seconds = 5 minutes)")
     private int frequency = 300;
 
-    @Comment("Announcements")
+    @Comment("Announcements will be sent in sequential order")
     private List<Announcement> messages = List.of(
             new Announcement(List.of("global", "staff"), "<gray>This is a test announcement!</gray>"),
             new Announcement(List.of("global"), "<gray>This is an <red>exclusive</red> announcement ;-)</gray>")

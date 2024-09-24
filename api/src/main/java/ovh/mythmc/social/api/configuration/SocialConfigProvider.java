@@ -47,7 +47,6 @@ public final class SocialConfigProvider {
         );
 
         // Register chat channels
-        Social.get().getChatManager().getChannels().clear();
         settings.getChat().getChannels().forEach(channel -> {
             Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
 
@@ -73,7 +72,6 @@ public final class SocialConfigProvider {
         }
 
         // Register announcements
-        Social.get().getAnnouncementManager().getAnnouncements().clear();
         settings.getAnnouncements().getMessages().forEach(announcementField -> {
             SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
             Social.get().getAnnouncementManager().registerAnnouncement(announcement);

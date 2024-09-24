@@ -42,7 +42,7 @@ public final class AnnouncementManager {
                     Collection<SocialPlayer> socialPlayers = new ArrayList<>();
                     channel.getMembers().forEach(uuid -> socialPlayers.add(Social.get().getPlayerManager().get(uuid)));
 
-                    Social.get().getTextProcessor().send(socialPlayers, announcement.message());
+                    Social.get().getTextProcessor().send(socialPlayers, announcement.message(), channel.getType());
                 }
 
                 latest = latest + 1;

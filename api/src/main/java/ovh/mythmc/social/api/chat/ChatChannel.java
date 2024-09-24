@@ -21,6 +21,8 @@ public final class ChatChannel {
 
     private final String name;
 
+    private final ChannelType type;
+
     private final String icon;
 
     private final TextColor iconColor;
@@ -34,6 +36,8 @@ public final class ChatChannel {
     private final TextColor textColor;
 
     private final String permission;
+
+    private final boolean joinByDefault;
 
     private final boolean passthrough;
 
@@ -68,6 +72,7 @@ public final class ChatChannel {
 
         return new ChatChannel(
                 channelField.name(),
+                ChannelType.valueOf(channelField.type()),
                 channelField.icon(),
                 TextColor.fromHexString(channelField.iconColor()),
                 hoverText,
@@ -75,6 +80,7 @@ public final class ChatChannel {
                 channelField.textSeparator(),
                 TextColor.fromHexString(channelField.textColor()),
                 channelField.permission(),
+                channelField.joinByDefault(),
                 false
         );
     }

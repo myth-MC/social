@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.Objects;
@@ -22,16 +23,19 @@ public abstract class SocialAdventureProvider {
     public static @NotNull SocialAdventureProvider get() { return socialAdventureProvider; }
 
     public abstract void sendMessage(final @NotNull Player player,
-                                     final @NotNull ComponentLike message);
+                                     final @NotNull ComponentLike message,
+                                     final @NotNull ChannelType type);
 
     public void sendMessage(final @NotNull SocialPlayer socialPlayer,
-                            final @NotNull ComponentLike message) {
-        sendMessage(socialPlayer.getPlayer(), message);
+                            final @NotNull ComponentLike message,
+                            final @NotNull ChannelType type) {
+        sendMessage(socialPlayer.getPlayer(), message, type);
     }
 
     public void sendMessage(final @NotNull UUID uuid,
-                            final @NotNull ComponentLike message) {
-        sendMessage(Objects.requireNonNull(Social.get().getPlayerManager().get(uuid)), message);
+                            final @NotNull ComponentLike message,
+                            final @NotNull ChannelType type) {
+        sendMessage(Objects.requireNonNull(Social.get().getPlayerManager().get(uuid)), message, type);
     }
 
     public abstract Audience getSender(final @NotNull CommandSender sender);

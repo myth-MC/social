@@ -41,15 +41,32 @@ public abstract class SocialBootstrap<T> implements Social {
         }
 
         // update checker
+    }
 
-        // register internal placeholders
+    public abstract void enable();
+
+    public abstract void shutdown();
+
+    public final void reload() {
+        // Stop all running tasks
+        Social.get().getAnnouncementManager().stopTask();
+
+        // Clear channels, announcements and parsers (we don't want duplicates)
+        Social.get().getChatManager().getChannels().clear();
+        Social.get().getAnnouncementManager().getAnnouncements().clear();
+        Social.get().getTextProcessor().getParsers().clear();
+
+        // Reload settings.yml and messages.yml
+        getConfig().load();
+
+        // Register internal placeholders
         Social.get().getTextProcessor().registerParser(
                 new NicknamePlaceholderImpl(),
                 new ChannelPlaceholderImpl(),
                 new UsernamePlaceholderImpl()
         );
 
-        // register internal filters
+        // Register internal filters
         if (Social.get().getConfig().getSettings().getFilter().isEnabled()) {
             if (Social.get().getConfig().getSettings().getFilter().isIpFilter())
                 Social.get().getTextProcessor().registerParser(new IPFilter());
@@ -58,17 +75,9 @@ public abstract class SocialBootstrap<T> implements Social {
                 Social.get().getTextProcessor().registerParser(new URLFilter());
         }
 
-        // start announcements
-        if (Social.get().getConfig().getSettings().getAnnouncements().isEnabled())
-            Social.get().getAnnouncementManager().startTask();
-    }
+        // Start all running tasks again
+        Social.get().getAnnouncementManager().startTask();
 
-    public abstract void enable();
-
-    public abstract void shutdown();
-
-    public final void reload() {
-        getConfig().load();
     }
 
     public abstract String version();

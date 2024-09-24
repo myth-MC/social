@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
 
@@ -30,6 +31,10 @@ public final class SocialTextProcessor {
         }
 
         return null;
+    }
+
+    public Collection<SocialParser> getParsers() {
+        return parsers;
     }
 
     public boolean isPlaceholder(final @NotNull String identifier) {
@@ -63,16 +68,25 @@ public final class SocialTextProcessor {
         return process(player, component);
     }
 
+    public void processAndSend(SocialPlayer player, Component component, ChannelType type) {
+        send(List.of(player), process(player, component), type);
+    }
+
+    public void processAndSend(SocialPlayer player, String message, ChannelType type) {
+        processAndSend(player, process(player, message), type);
+    }
+
     public void processAndSend(SocialPlayer player, Component component) {
-        send(List.of(player), process(player, component));
+        processAndSend(player, component, ChannelType.CHAT);
     }
 
     public void processAndSend(SocialPlayer player, String message) {
-        processAndSend(player, process(player, message));
+        processAndSend(player, message, ChannelType.CHAT);
     }
 
     public void send(final @NotNull Collection<SocialPlayer> members,
-                     @NotNull Component message) {
+                     @NotNull Component message,
+                     final @NotNull ChannelType type) {
 
         for (SocialPlayer player : members) {
             for (SocialParser parser : parsers) {
@@ -80,7 +94,7 @@ public final class SocialTextProcessor {
                     message = parser.parse(player, message);
             }
 
-            SocialAdventureProvider.get().sendMessage(player, message);
+            SocialAdventureProvider.get().sendMessage(player, message, type);
         }
     }
 
