@@ -13,6 +13,7 @@ public class SocialMessages {
     @Comment("General errors")
     public ErrorsMessages errors = new ErrorsMessages();
 
+    @Comment({"", "Command messages"})
     public CommandsMessages commands = new CommandsMessages();
 
 }

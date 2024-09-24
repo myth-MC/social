@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.chat.ChatChannel;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -21,6 +22,8 @@ public final class SocialPlayer {
     private boolean muted;
 
     private boolean socialSpy;
+
+    private long latestMessageInMilliseconds = 0L;
 
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid);

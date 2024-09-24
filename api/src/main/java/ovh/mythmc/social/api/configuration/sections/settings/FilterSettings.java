@@ -19,6 +19,12 @@ public class FilterSettings {
     @Comment("Whether the built-in URL filter should be enabled or disabled")
     private boolean urlFilter = true;
 
+    @Comment("Whether the built-in flood/spam filter should be enabled or disabled")
+    private boolean floodFilter = true;
+
+    @Comment("Time in milliseconds that a player has to wait before sending another message")
+    private int floodFilterCooldownInMilliseconds = 1000;
+
     @Comment("Words or sentences in this section will also be filtered")
     private List<String> literalFilter = List.of("example sentence that should not be said");
 

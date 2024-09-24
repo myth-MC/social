@@ -2,7 +2,6 @@ package ovh.mythmc.social.api.players;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -58,8 +57,5 @@ public final class SocialPlayerManager {
     public void unregisterSocialPlayer(final @NotNull SocialPlayer socialPlayer) {
         playerList.remove(socialPlayer);
     }
-
-    @ApiStatus.Internal
-    public void clear() { playerList.clear(); }
 
 }

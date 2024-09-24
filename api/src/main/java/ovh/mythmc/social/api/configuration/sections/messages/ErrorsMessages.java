@@ -21,6 +21,8 @@ public class ErrorsMessages {
 
     private String nicknameTooLong = "<red>Nicknames cannot exceed 16 characters.</red>";
 
+    private String typingTooFast = "<red>You are typing too fast!</red>";
+
     private String playerNotFound = "<red>Unknown player.</red>";
 
     private String channelDoesNotExist = "<red>This channel does not exist.</red>";

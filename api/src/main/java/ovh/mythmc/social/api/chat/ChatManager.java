@@ -93,6 +93,7 @@ public final class ChatManager {
         });
 
         Social.get().getTextProcessor().send(members, chatMessage);
+        player.setLatestMessageInMilliseconds(System.currentTimeMillis());
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
@@ -150,6 +151,7 @@ public final class ChatManager {
                         );
 
         Social.get().getTextProcessor().send(members, chatMessage);
+        sender.setLatestMessageInMilliseconds(System.currentTimeMillis());
     }
 
 
