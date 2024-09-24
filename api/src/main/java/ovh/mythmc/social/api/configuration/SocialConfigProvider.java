@@ -6,6 +6,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.text.filters.SocialFilterLiteral;
+import ovh.mythmc.social.api.text.filters.SocialFilterRegex;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +51,23 @@ public final class SocialConfigProvider {
             if (settings.isDebug())
                 Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
         });
+
+        // Register custom placeholders
+        if (settings.getFilter().isEnabled()) {
+            settings.getFilter().getLiteralFilter().forEach(literal -> Social.get().getTextProcessor().registerParser(new SocialFilterLiteral() {
+                @Override
+                public String literal() {
+                    return literal;
+                }
+            }));
+
+            settings.getFilter().getCustomRegexFilter().forEach(regex -> Social.get().getTextProcessor().registerParser(new SocialFilterRegex() {
+                @Override
+                public String regex() {
+                    return regex;
+                }
+            }));
+        }
     }
 
 }

@@ -12,7 +12,7 @@ import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.ChatListener;
 import ovh.mythmc.social.common.listeners.SocialPlayerListener;
 import ovh.mythmc.social.common.listeners.SystemAnnouncementsListener;
-import ovh.mythmc.social.common.placeholders.PAPIExpansion;
+import ovh.mythmc.social.common.text.placeholders.PAPIExpansion;
 
 import java.util.Objects;
 

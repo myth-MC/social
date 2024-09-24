@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.placeholders;
+package ovh.mythmc.social.common.text.placeholders;
 
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;

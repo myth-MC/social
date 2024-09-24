@@ -8,7 +8,7 @@ softdepend: [ PlaceholderAPI ]
 
 commands:
   social:
-    permission: social.admin
+    permission: social.user
   pm:
     permission: social.user
     aliases:
@@ -24,6 +24,7 @@ permissions:
     default: op
     children:
       - social.command.*
+      - social.filter.bypass
   social.command.*:
     default: op
     children:
@@ -38,4 +39,6 @@ permissions:
   social.command.reload:
     default: false
   social.command.socialspy:
+    default: false
+  social.filter.bypass:
     default: false

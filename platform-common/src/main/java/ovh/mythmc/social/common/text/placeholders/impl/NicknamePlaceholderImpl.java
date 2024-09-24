@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.placeholders.impl;
+package ovh.mythmc.social.common.text.placeholders.impl;
 
 import ovh.mythmc.social.api.text.SocialPlaceholder;
 import ovh.mythmc.social.api.players.SocialPlayer;

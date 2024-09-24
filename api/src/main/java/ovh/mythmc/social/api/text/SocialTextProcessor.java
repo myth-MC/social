@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.text.filters.SocialFilterLike;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,9 +72,16 @@ public final class SocialTextProcessor {
     }
 
     public void send(final @NotNull Collection<SocialPlayer> members,
-                     final @NotNull ComponentLike message) {
-        // Todo: filter message (swear words, IPs, URLs...)
-        members.forEach(chatPlayer -> SocialAdventureProvider.get().sendMessage(chatPlayer, message));
+                     @NotNull Component message) {
+
+        for (SocialPlayer player : members) {
+            for (SocialParser parser : parsers) {
+                if (parser instanceof SocialFilterLike)
+                    message = parser.parse(player, message);
+            }
+
+            SocialAdventureProvider.get().sendMessage(player, message);
+        }
     }
 
 }

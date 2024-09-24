@@ -12,11 +12,14 @@ public class SocialSettings {
     @Comment("Enabling this will send more logs to console to help debugging")
     private boolean debug = true;
 
+    @Comment({"", "System messages module"})
+    private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
+
     @Comment({"", "Chat module"})
     private ChatSettings chat = new ChatSettings();
 
-    @Comment({"", "System messages module"})
-    private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
+    @Comment({"", "Filter module"})
+    private FilterSettings filter = new FilterSettings();
 
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();

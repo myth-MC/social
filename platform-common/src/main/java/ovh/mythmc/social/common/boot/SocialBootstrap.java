@@ -6,9 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
-import ovh.mythmc.social.common.placeholders.impl.ChannelPlaceholderImpl;
-import ovh.mythmc.social.common.placeholders.impl.NicknamePlaceholderImpl;
-import ovh.mythmc.social.common.placeholders.impl.UsernamePlaceholderImpl;
+import ovh.mythmc.social.common.text.filters.IPFilter;
+import ovh.mythmc.social.common.text.filters.URLFilter;
+import ovh.mythmc.social.common.text.placeholders.impl.ChannelPlaceholderImpl;
+import ovh.mythmc.social.common.text.placeholders.impl.NicknamePlaceholderImpl;
+import ovh.mythmc.social.common.text.placeholders.impl.UsernamePlaceholderImpl;
 
 import java.io.File;
 
@@ -46,6 +48,15 @@ public abstract class SocialBootstrap<T> implements Social {
                 new ChannelPlaceholderImpl(),
                 new UsernamePlaceholderImpl()
         );
+
+        // register internal filters
+        if (Social.get().getConfig().getSettings().getFilter().isEnabled()) {
+            if (Social.get().getConfig().getSettings().getFilter().isIpFilter())
+                Social.get().getTextProcessor().registerParser(new IPFilter());
+
+            if (Social.get().getConfig().getSettings().getFilter().isUrlFilter())
+                Social.get().getTextProcessor().registerParser(new URLFilter());
+        }
     }
 
     public abstract void enable();
