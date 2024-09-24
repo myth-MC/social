@@ -57,6 +57,10 @@ public abstract class SocialBootstrap<T> implements Social {
             if (Social.get().getConfig().getSettings().getFilter().isUrlFilter())
                 Social.get().getTextProcessor().registerParser(new URLFilter());
         }
+
+        // start announcements
+        if (Social.get().getConfig().getSettings().getAnnouncements().isEnabled())
+            Social.get().getAnnouncementManager().startTask();
     }
 
     public abstract void enable();
