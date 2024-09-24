@@ -23,14 +23,14 @@ public final class ChatListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
-        for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
-            if (channel.isJoinByDefault()) {
-                if (channel.getPermission() == null || event.getPlayer().hasPermission(channel.getPermission()))
-                    channel.addMember(uuid);
-            }
+        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+        if (socialPlayer == null) {
+            // unexpected error;
+            return;
         }
 
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+        Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
+
         ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
         if (defaultChannel == null) {
             Social.get().getLogger().error("Default channel is unavailable!");

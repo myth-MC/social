@@ -3,7 +3,6 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
@@ -14,7 +13,6 @@ import ovh.mythmc.social.api.text.filters.SocialFilterRegex;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.List;
 
 public final class SocialConfigProvider {
 

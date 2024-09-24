@@ -23,6 +23,8 @@ public final class AnnouncementManager {
 
     private int latest = 0;
 
+    private boolean running = false;
+
     private final List<SocialAnnouncement> announcements = new ArrayList<>();
 
     public boolean registerAnnouncement(final @NotNull SocialAnnouncement announcement) {
@@ -33,11 +35,15 @@ public final class AnnouncementManager {
         return announcements.remove(announcement);
     }
 
-    public void startTask() {
-        asyncScheduler.scheduleAtFixedRate(new TimerTask() {
+    private void performTask() {
+        if (!Social.get().getConfig().getSettings().getAnnouncements().isEnabled())
+            return;
+
+        asyncScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
                 SocialAnnouncement announcement = announcements.get(latest);
+
                 for (ChatChannel channel : announcement.channels()) {
                     Collection<SocialPlayer> socialPlayers = new ArrayList<>();
                     channel.getMembers().forEach(uuid -> socialPlayers.add(Social.get().getPlayerManager().get(uuid)));
@@ -48,12 +54,41 @@ public final class AnnouncementManager {
                 latest = latest + 1;
                 if (latest >= announcements.size())
                     latest = 0;
+
+                performTask();
             }
-        }, 0, Social.get().getConfig().getSettings().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
+        }, Social.get().getConfig().getSettings().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
     }
 
-    public void stopTask() {
-        asyncScheduler.close();
+    public void restartTask() {
+        if (running)
+            return;
+
+        running = true;
+        performTask();
     }
+
+    /*
+    public void restartTask() {
+        if (asyncScheduler == null) {
+            startTask();
+            return;
+        }
+
+        cancelled = true;
+
+        asyncScheduler.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!cancelled) {
+                    startTask();
+                } else {
+                    restartTask();
+                }
+            }
+        }, 1, TimeUnit.SECONDS);
+    }
+
+     */
 
 }

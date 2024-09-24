@@ -48,6 +48,15 @@ public final class ChatManager {
         return channels.remove(chatChannel);
     }
 
+    public void assignChannelsToPlayer(final @NotNull SocialPlayer socialPlayer) {
+        for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
+            if (channel.isJoinByDefault()) {
+                if (channel.getPermission() == null || socialPlayer.getPlayer().hasPermission(channel.getPermission()))
+                    channel.addMember(socialPlayer.getUuid());
+            }
+        }
+    }
+
     public void sendChatMessage(final @NotNull SocialPlayer player,
                                 final @NotNull ChatChannel chatChannel,
                                 final @NotNull String message) {

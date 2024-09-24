@@ -30,7 +30,7 @@ public abstract class SocialBootstrap<T> implements Social {
     }
 
     public final void initialize() {
-        getConfig().load();
+        reload();
 
         try {
             enable();
@@ -48,8 +48,7 @@ public abstract class SocialBootstrap<T> implements Social {
     public abstract void shutdown();
 
     public final void reload() {
-        // Stop all running tasks
-        Social.get().getAnnouncementManager().stopTask();
+        // Stop running tasks
 
         // Clear channels, announcements and parsers (we don't want duplicates)
         Social.get().getChatManager().getChannels().clear();
@@ -76,8 +75,10 @@ public abstract class SocialBootstrap<T> implements Social {
         }
 
         // Start all running tasks again
-        Social.get().getAnnouncementManager().startTask();
+        Social.get().getAnnouncementManager().restartTask();
 
+        // Assign channels to every SocialPlayer
+        Social.get().getPlayerManager().get().forEach(socialPlayer -> Social.get().getChatManager().assignChannelsToPlayer(socialPlayer));
     }
 
     public abstract String version();
