@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
@@ -14,6 +15,8 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class SystemAnnouncementsListener implements Listener {
+
+    ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -24,8 +27,11 @@ public final class SystemAnnouncementsListener implements Listener {
         event.setJoinMessage("");
         for (Player player : Bukkit.getOnlinePlayers()) {
             String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
+            if (unformattedMessage == null || unformattedMessage.isEmpty())
+                return;
+
             Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
-            SocialAdventureProvider.get().sendMessage(player, message, ChannelType.CHAT);
+            SocialAdventureProvider.get().sendMessage(player, message, channelType);
         }
     }
 
@@ -38,9 +44,30 @@ public final class SystemAnnouncementsListener implements Listener {
        event.setQuitMessage("");
        for (Player player : Bukkit.getOnlinePlayers()) {
            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
+           if (unformattedMessage == null || unformattedMessage.isEmpty())
+               return;
+
            Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
-           SocialAdventureProvider.get().sendMessage(player, message, ChannelType.CHAT);
+           SocialAdventureProvider.get().sendMessage(player, message, channelType);
        }
+   }
+
+   public void onPlayerDeath(PlayerDeathEvent event) {
+       SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
+       if (socialPlayer == null)
+           return;
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getDeathMessage();
+            if (unformattedMessage == null || unformattedMessage.isEmpty())
+                return;
+
+            String deathMessage = String.format(unformattedMessage, event.getDeathMessage());
+            Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);
+            SocialAdventureProvider.get().sendMessage(player, message, channelType);
+        }
+
+        event.setDeathMessage("");
    }
 
 }
