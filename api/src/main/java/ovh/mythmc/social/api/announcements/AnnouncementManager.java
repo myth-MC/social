@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -44,11 +45,15 @@ public final class AnnouncementManager {
             public void run() {
                 SocialAnnouncement announcement = announcements.get(latest);
 
-                for (ChatChannel channel : announcement.channels()) {
-                    Collection<SocialPlayer> socialPlayers = new ArrayList<>();
-                    channel.getMembers().forEach(uuid -> socialPlayers.add(Social.get().getPlayerManager().get(uuid)));
+                if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
+                    Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), announcement.message(), ChannelType.ACTION_BAR);
+                } else {
+                    for (ChatChannel channel : announcement.channels()) {
+                        Collection<SocialPlayer> socialPlayers = new ArrayList<>();
+                        channel.getMembers().forEach(uuid -> socialPlayers.add(Social.get().getPlayerManager().get(uuid)));
 
-                    Social.get().getTextProcessor().send(socialPlayers, announcement.message(), channel.getType());
+                        Social.get().getTextProcessor().send(socialPlayers, announcement.message(), channel.getType());
+                    }
                 }
 
                 latest = latest + 1;

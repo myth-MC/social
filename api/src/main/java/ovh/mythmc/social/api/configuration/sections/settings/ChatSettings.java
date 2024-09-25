@@ -30,13 +30,12 @@ public class ChatSettings {
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
-            new Channel("system", "ACTION_BAR", null, "S", "#FFFFFF", List.of(), "#FFFFFF", "▶", "#FFFFFF", true),
-            new Channel("global", "CHAT", null, ":pencil:", "#FFA500", List.of("This is the global channel"), "#D3D3D3", "▶", "#FFFFFF", true),
-            new Channel("staff", "CHAT", "social.admin", ":pencil:", "#FF5555", List.of("This channel is restricted to staff members"), "#FFFF55", "▶", "#FFFFFF", true)
+            new Channel("global", null, ":pencil:", "#FFA500", List.of("This is the global channel"), "#D3D3D3", "▶", "#FFFFFF", true),
+            new Channel("staff", "social.admin", ":pencil:", "#FF5555", List.of("This channel is restricted to staff members"), "#FFFF55", "▶", "#FFFFFF", true)
     );
 
     public record Channel(String name,
-                          String type,
+                          //String type,
                           String permission,
                           String icon,
                           String iconColor,

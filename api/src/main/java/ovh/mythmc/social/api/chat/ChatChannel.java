@@ -72,7 +72,7 @@ public final class ChatChannel {
 
         return new ChatChannel(
                 channelField.name(),
-                ChannelType.valueOf(channelField.type()),
+                ChannelType.CHAT,
                 channelField.icon(),
                 TextColor.fromHexString(channelField.iconColor()),
                 hoverText,

@@ -14,7 +14,7 @@ import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.ChatListener;
 import ovh.mythmc.social.common.listeners.ReactionsListener;
 import ovh.mythmc.social.common.listeners.SocialPlayerListener;
-import ovh.mythmc.social.common.listeners.SystemAnnouncementsListener;
+import ovh.mythmc.social.common.listeners.SystemMessagesListener;
 import ovh.mythmc.social.common.text.placeholders.PAPIExpansion;
 
 import java.util.Objects;
@@ -88,7 +88,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
             Bukkit.getPluginManager().registerEvents(new ChatListener(), getPlugin());
 
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled())
-            Bukkit.getPluginManager().registerEvents(new SystemAnnouncementsListener(), getPlugin());
+            Bukkit.getPluginManager().registerEvents(new SystemMessagesListener(), getPlugin());
 
         if (Social.get().getConfig().getSettings().getReactions().isEnabled())
             Bukkit.getPluginManager().registerEvents(new ReactionsListener(getPlugin()), getPlugin());

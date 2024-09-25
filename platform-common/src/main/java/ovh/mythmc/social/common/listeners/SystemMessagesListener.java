@@ -14,7 +14,7 @@ import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
-public final class SystemAnnouncementsListener implements Listener {
+public final class SystemMessagesListener implements Listener {
 
     ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
@@ -52,6 +52,7 @@ public final class SystemAnnouncementsListener implements Listener {
        }
    }
 
+   @EventHandler
    public void onPlayerDeath(PlayerDeathEvent event) {
        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
        if (socialPlayer == null)

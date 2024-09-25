@@ -19,8 +19,11 @@ public class AnnouncementsSettings {
     @Comment("Announcements will be sent in sequential order")
     private List<Announcement> messages = List.of(
             new Announcement("<gray>This is a test announcement! <blue><click:open_url:https://i.ytimg.com/vi/TK4I4RTOjQo/maxresdefault.jpg>Click here ;-)</click></blue>.</gray>", List.of("global")),
-            new Announcement("<gray>This is an <red>exclusive</red> announcement</gray>", List.of("system"))
+            new Announcement("<gray>This is an <red>exclusive</red> announcement</gray>", List.of("staff"))
     );
+
+    @Comment("Enabling this will make announcements show in action bar instead of chat")
+    private boolean useActionBar = false;
 
     public record Announcement(String message,
                                List<String> channels) { }
