@@ -32,7 +32,12 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
     }
 
     @Override
-    public Audience getSender(final @NotNull CommandSender sender) {
+    public Audience console() {
+        return adventure.console();
+    }
+
+    @Override
+    public Audience sender(final @NotNull CommandSender sender) {
         return adventure.sender(sender);
     }
 

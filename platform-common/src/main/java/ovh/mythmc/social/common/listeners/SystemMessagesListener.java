@@ -24,6 +24,9 @@ public final class SystemMessagesListener implements Listener {
         if (socialPlayer == null)
             return;
 
+        // Send message to console
+        Social.get().getLogger().info(event.getJoinMessage());
+
         event.setJoinMessage("");
         for (Player player : Bukkit.getOnlinePlayers()) {
             String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
@@ -41,6 +44,9 @@ public final class SystemMessagesListener implements Listener {
        if (socialPlayer == null)
            return;
 
+       // Send message to console
+       Social.get().getLogger().info(event.getQuitMessage());
+
        event.setQuitMessage("");
        for (Player player : Bukkit.getOnlinePlayers()) {
            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
@@ -52,11 +58,11 @@ public final class SystemMessagesListener implements Listener {
        }
    }
 
-   @EventHandler
-   public void onPlayerDeath(PlayerDeathEvent event) {
-       SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
-       if (socialPlayer == null)
-           return;
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
+        if (socialPlayer == null)
+            return;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getDeathMessage();
@@ -67,6 +73,9 @@ public final class SystemMessagesListener implements Listener {
             Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);
             SocialAdventureProvider.get().sendMessage(player, message, channelType);
         }
+
+        // Send message to console
+        Social.get().getLogger().info(event.getDeathMessage());
 
         event.setDeathMessage("");
    }

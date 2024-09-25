@@ -28,6 +28,8 @@ public abstract class SocialAdventureProvider {
         sendMessage(socialPlayer.getPlayer(), message, type);
     }
 
-    public abstract Audience getSender(final @NotNull CommandSender sender);
+    public abstract Audience console();
+
+    public abstract Audience sender(final @NotNull CommandSender sender);
 
 }

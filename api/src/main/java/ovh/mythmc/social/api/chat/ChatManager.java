@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.ArrayList;
@@ -103,6 +104,9 @@ public final class ChatManager {
 
         Social.get().getTextProcessor().send(members, chatMessage, chatChannel.getType());
         player.setLatestMessageInMilliseconds(System.currentTimeMillis());
+
+        // Send message to console
+        SocialAdventureProvider.get().console().sendMessage(chatMessage);
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
@@ -161,8 +165,9 @@ public final class ChatManager {
 
         Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
         sender.setLatestMessageInMilliseconds(System.currentTimeMillis());
+
+        // Send message to console
+        SocialAdventureProvider.get().console().sendMessage(chatMessage);
     }
-
-
 
 }

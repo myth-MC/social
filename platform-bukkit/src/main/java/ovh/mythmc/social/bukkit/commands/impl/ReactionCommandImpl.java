@@ -14,7 +14,7 @@ public final class ReactionCommandImpl extends ReactionCommand implements Comman
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        run(SocialAdventureProvider.get().getSender(commandSender), args);
+        run(SocialAdventureProvider.get().sender(commandSender), args);
         return true;
     }
 

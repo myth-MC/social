@@ -13,7 +13,7 @@ import java.util.List;
 public final class PrivateMessageCommandImpl extends PrivateMessageCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        run(SocialAdventureProvider.get().getSender(commandSender), args);
+        run(SocialAdventureProvider.get().sender(commandSender), args);
         return true;
     }
 
