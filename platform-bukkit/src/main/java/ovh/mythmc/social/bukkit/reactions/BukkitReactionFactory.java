@@ -158,12 +158,12 @@ public final class BukkitReactionFactory extends ReactionFactory {
         }.runTaskTimer(plugin, 0L, updateIntervalInTicks);
     }
 
-    private static PlayerProfile getProfile(String texture) {
+    private static PlayerProfile getProfile(String textureUrl) {
         PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID()); // Get a new player profile
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {
-            urlObject = new URL("https://textures.minecraft.net/texture/" + texture); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+            urlObject = new URL(textureUrl); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
         } catch (MalformedURLException exception) {
             throw new RuntimeException("Invalid URL", exception);
         }
