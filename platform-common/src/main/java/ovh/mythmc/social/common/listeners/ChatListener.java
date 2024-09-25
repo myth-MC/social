@@ -47,7 +47,7 @@ public final class ChatListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled())
             return;
@@ -81,6 +81,7 @@ public final class ChatListener implements Listener {
             int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getFilter().getFloodFilterCooldownInMilliseconds();
             if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {
+
                 processor.processAndSend(socialPlayer, messages.errors.getTypingTooFast());
                 return;
             }

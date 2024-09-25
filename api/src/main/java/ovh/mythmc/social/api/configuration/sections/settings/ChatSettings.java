@@ -23,7 +23,7 @@ public class ChatSettings {
     private String playerHoverText = "<green>:envelope:</green> <gray>Click here to message <blue>@nickname</blue></gray>";
 
     @Comment("Text that appears when hovering over a player's name when they have a nickname")
-    private String playerAliasWarningHoverText = "<gold><bold>:warning:</bold></gold> <gray>This player is using an alias</gray>";
+    private String playerAliasWarningHoverText = "<gold>:warning:</gold> <gray>This player is using an alias</gray>";
 
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "@nickname";

@@ -47,12 +47,10 @@ public final class SocialConfigProvider {
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
 
-        // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> {
-            Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
-
-            if (settings.isDebug())
-                Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
+        // Register emojis
+        settings.getEmojis().getEmojis().forEach(emojiField -> {
+            Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
+            Social.get().getEmojiManager().registerEmoji(emoji);
         });
 
         // Register custom placeholders
@@ -72,12 +70,6 @@ public final class SocialConfigProvider {
             }));
         }
 
-        // Register announcements
-        settings.getAnnouncements().getMessages().forEach(announcementField -> {
-            SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
-            Social.get().getAnnouncementManager().registerAnnouncement(announcement);
-        });
-
         // Register reactions
         settings.getReactions().getReactions().forEach(reactionField -> {
             Reaction reaction;
@@ -89,10 +81,18 @@ public final class SocialConfigProvider {
             Social.get().getReactionManager().registerReaction(reaction);
         });
 
-        // Register emojis
-        settings.getEmojis().getEmojis().forEach(emojiField -> {
-            Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
-            Social.get().getEmojiManager().registerEmoji(emoji);
+        // Register chat channels
+        settings.getChat().getChannels().forEach(channel -> {
+            Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
+
+            if (settings.isDebug())
+                Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
+        });
+
+        // Register announcements
+        settings.getAnnouncements().getMessages().forEach(announcementField -> {
+            SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
+            Social.get().getAnnouncementManager().registerAnnouncement(announcement);
         });
     }
 

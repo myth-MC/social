@@ -2,10 +2,10 @@ package ovh.mythmc.social.api.players;
 
 import lombok.*;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.chat.ChatChannel;
 
-import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -30,7 +30,7 @@ public final class SocialPlayer {
     }
 
     public String getNickname() {
-        return getPlayer().getDisplayName();
+        return ChatColor.stripColor(getPlayer().getDisplayName());
     }
 
 }

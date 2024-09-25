@@ -46,7 +46,7 @@ public class EmojiSettings {
             new EmojiField("sun", List.of(), "\u2600"),
             new EmojiField("trademark", List.of("tm", "trade_mark"), "\u2122"),
             new EmojiField("umbrella", List.of(), "\u2602"),
-            new EmojiField("warning", List.of(), "\u26A0\uFE0F"),
+            new EmojiField("warning", List.of(), "\u26A0"),
             new EmojiField("watch", List.of("clock"), "\u231A"),
             new EmojiField("ying_yang", List.of(), "\u262F")
     );
