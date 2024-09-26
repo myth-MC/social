@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public final class SocialPlayerListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);

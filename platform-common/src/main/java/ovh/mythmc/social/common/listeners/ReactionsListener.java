@@ -17,7 +17,7 @@ public final class ReactionsListener implements Listener {
 
     private final JavaPlugin plugin;
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         SocialPlayer player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (player == null)

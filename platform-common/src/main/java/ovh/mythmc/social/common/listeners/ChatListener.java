@@ -19,7 +19,7 @@ public final class ChatListener implements Listener {
     private final SocialTextProcessor processor = Social.get().getTextProcessor();
     private final SocialMessages messages = Social.get().getConfig().getMessages();
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
@@ -40,14 +40,14 @@ public final class ChatListener implements Listener {
         socialPlayer.setMainChannel(defaultChannel);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         for (ChatChannel chatChannel : Social.get().getChatManager().getChannels()) {
             chatChannel.removeMember(event.getPlayer().getUniqueId());
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled())
             return;
