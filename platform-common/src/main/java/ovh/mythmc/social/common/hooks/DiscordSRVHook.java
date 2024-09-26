@@ -13,14 +13,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.events.chat.SocialPlayerChatMessageEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessageEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 // Unused for now
 public final class DiscordSRVHook implements ChatHook {
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onMessage(SocialPlayerChatMessageEvent event) {
+    public void onMessage(SocialChatMessageEvent event) {
         if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChatChannel().getName()) == null) {
             DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + event.getChatChannel().getName() + " but none found");
             return;
@@ -48,7 +48,7 @@ public final class DiscordSRVHook implements ChatHook {
             String legacy = MessageUtil.toLegacy(message);
 
             String plainMessage = LangUtil.Message.CHAT_CHANNEL_MESSAGE.toString()
-                    .replace("%channelcolor%", chatChannel.getIconColor().asHexString())
+                    .replace("%channelcolor%", chatChannel.getColor().asHexString())
                     .replace("%channelname%", chatChannel.getName())
                     .replace("%channelnickname%", chatChannel.getIcon())
                     .replace("%message%", legacy);

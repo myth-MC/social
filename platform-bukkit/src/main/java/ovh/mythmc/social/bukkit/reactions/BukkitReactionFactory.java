@@ -43,7 +43,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
 
         ItemDisplay itemDisplay = playerReaction.get(player.getUuid());
         if (itemDisplay != null)
-            itemDisplay.remove();
+            return;
 
         itemDisplay = spawnItemDisplay(player.getPlayer(), emoji);
         playerReaction.put(player.getUuid(), itemDisplay);
@@ -109,6 +109,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
 
                 if (itemDisplayLocation.getY() < playerY) {
                     itemDisplay.remove();
+                    playerReaction.remove(player.getUniqueId());
                     cancel();
                 }
 

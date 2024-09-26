@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.text.placeholders.impl;
+package ovh.mythmc.social.common.text.placeholders;
 
 import ovh.mythmc.social.api.text.SocialPlaceholder;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -7,12 +7,12 @@ public final class ChannelPlaceholder extends SocialPlaceholder {
 
     @Override
     public String identifier() {
-        return "@channel";
+        return "channel";
     }
 
     @Override
     public String process(SocialPlayer player) {
-        String hexColor = "<color:" + player.getMainChannel().getIconColor().asHexString().toUpperCase() + ">";
+        String hexColor = "<color:" + player.getMainChannel().getColor().asHexString().toUpperCase() + ">";
         return hexColor + player.getMainChannel().getName() + "</color>";
     }
 

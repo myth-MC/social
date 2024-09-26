@@ -76,7 +76,6 @@ public final class ChatManager {
                     .appendNewline()
                     .append(Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
-        // Todo: parse PlaceholderAPI
         Component formattedNickname =
                 Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
                 .color(chatChannel.getNicknameColor());
@@ -84,8 +83,7 @@ public final class ChatManager {
         // Todo: event
         Component chatMessage =
                 text("")
-                        .append(text(chatChannel.getIcon() + " ")
-                                .color(chatChannel.getIconColor())
+                        .append(Social.get().getTextProcessor().process(player, chatChannel.getIcon() + " ")
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social channel " + chatChannel.getName()))
                         )

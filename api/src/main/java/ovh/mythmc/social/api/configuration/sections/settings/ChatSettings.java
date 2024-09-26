@@ -17,7 +17,7 @@ public class ChatSettings {
     private String defaultChannel = "global";
 
     @Comment("Text that appears when hovering over a message's channel icon")
-    private String channelHoverText = "<gold>:pencil:</gold> <gray>Click here to switch to channel @channel</gray>";
+    private String channelHoverText = "@channel_icon <gray>Click here to switch to channel @channel</gray>";
 
     @Comment("Text that appears when hovering over a player's name")
     private String playerHoverText = "<green>:envelope:</green> <gray>Click here to message <blue>@nickname</blue></gray>";
@@ -30,15 +30,14 @@ public class ChatSettings {
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
-            new Channel("global", null, ":pencil:", "#FFA500", true, List.of("This is the global channel"), "#D3D3D3", "▶", "#FFFFFF", true),
-            new Channel("staff", "social.admin", ":pencil:", "#FF5555", true, List.of("This channel is restricted to staff members"), "#FFFF55", "▶", "#FFFFFF", true)
+            new Channel("global", "#FFFF55", null, "<dark_gray>[<yellow>:pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "▶", "#FFFFFF", true),
+            new Channel("staff", "#FF5555", "social.admin", "<dark_gray>[<red>:pencil:</red>]</dark_gray>", true, List.of("This channel is restricted to staff members"), "#FFFF55", "▶", "#FFFFFF", true)
     );
 
     public record Channel(String name,
-                          //String type,
+                          String color,
                           String permission,
                           String icon,
-                          String iconColor,
                           boolean showHoverText,
                           List<String> hoverText,
                           String nicknameColor,

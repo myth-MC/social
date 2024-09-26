@@ -13,10 +13,7 @@ import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 import ovh.mythmc.social.common.text.filters.URLFilter;
 import ovh.mythmc.social.common.text.parsers.EmojiParser;
-import ovh.mythmc.social.common.text.placeholders.impl.ChannelPlaceholder;
-import ovh.mythmc.social.common.text.placeholders.impl.NicknamePlaceholder;
-import ovh.mythmc.social.common.text.placeholders.impl.SocialSpyPlaceholder;
-import ovh.mythmc.social.common.text.placeholders.impl.UsernamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.*;
 import ovh.mythmc.social.common.util.SchedulerUtil;
 
 import java.io.File;
@@ -80,6 +77,7 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().registerParser(
                 new NicknamePlaceholder(),
                 new ChannelPlaceholder(),
+                new ChannelIconPlaceholder(),
                 new UsernamePlaceholder(),
                 new SocialSpyPlaceholder()
         );

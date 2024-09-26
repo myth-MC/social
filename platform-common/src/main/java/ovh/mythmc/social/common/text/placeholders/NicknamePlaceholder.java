@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.text.placeholders.impl;
+package ovh.mythmc.social.common.text.placeholders;
 
 import ovh.mythmc.social.api.text.SocialPlaceholder;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -7,7 +7,7 @@ public final class NicknamePlaceholder extends SocialPlaceholder {
 
     @Override
     public String identifier() {
-        return "@nickname";
+        return "nickname";
     }
 
     @Override

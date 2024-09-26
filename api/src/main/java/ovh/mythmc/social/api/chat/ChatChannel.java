@@ -21,11 +21,13 @@ public final class ChatChannel {
 
     private final String name;
 
+    private final TextColor color;
+
     private final ChannelType type;
 
     private final String icon;
 
-    private final TextColor iconColor;
+    //private final TextColor iconColor;
 
     private final boolean showHoverText;
 
@@ -74,9 +76,10 @@ public final class ChatChannel {
 
         return new ChatChannel(
                 channelField.name(),
+                TextColor.fromHexString(channelField.color()),
                 ChannelType.CHAT,
                 channelField.icon(),
-                TextColor.fromHexString(channelField.iconColor()),
+                //TextColor.fromHexString(channelField.iconColor()),
                 channelField.showHoverText(),
                 hoverText,
                 TextColor.fromHexString(channelField.nicknameColor()),

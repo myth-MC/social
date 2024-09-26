@@ -14,21 +14,19 @@ public final class EmojiParser implements SocialParser, SocialFilterLike {
 
     @Override
     public Component parse(SocialPlayer socialPlayer, Component message) {
-        if (socialPlayer.getPlayer().hasPermission("social.emojis")) {
-            for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
-                String aliases = "";
-                for (String alias : emoji.aliases()) {
-                    aliases = aliases + formattedRegex(alias, true);
-                }
-
-                Pattern regex = Pattern.compile("(" + formattedRegex(emoji.name(), false) + aliases + ")");
-
-                message = message.replaceText(TextReplacementConfig
-                        .builder()
-                        .match(regex)
-                        .replacement(String.valueOf(emoji.unicodeCharacter()))
-                        .build());
+        for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
+            String aliases = "";
+            for (String alias : emoji.aliases()) {
+                aliases = aliases + formattedRegex(alias, true);
             }
+
+            Pattern regex = Pattern.compile("(" + formattedRegex(emoji.name(), false) + aliases + ")");
+
+            message = message.replaceText(TextReplacementConfig
+                    .builder()
+                    .match(regex)
+                    .replacement(String.valueOf(emoji.unicodeCharacter()))
+                    .build());
         }
 
         return message;

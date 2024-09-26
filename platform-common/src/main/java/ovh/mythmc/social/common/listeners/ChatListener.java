@@ -10,7 +10,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
-import ovh.mythmc.social.api.events.chat.SocialPlayerChatMessageEvent;
+import ovh.mythmc.social.api.events.chat.SocialChannelSwitchEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessageEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
 
@@ -93,14 +94,23 @@ public final class ChatListener implements Listener {
             }
         }
 
-        SocialPlayerChatMessageEvent socialChatMessageEvent = new SocialPlayerChatMessageEvent(socialPlayer, mainChannel, event.getMessage());
+        SocialChatMessageEvent socialChatMessageEvent = new SocialChatMessageEvent(socialPlayer, mainChannel, event.getMessage());
         Bukkit.getPluginManager().callEvent(socialChatMessageEvent);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onSocialChatMessage(SocialPlayerChatMessageEvent event) {
+    public void onSocialChatMessage(SocialChatMessageEvent event) {
         if (!event.isCancelled())
             Social.get().getChatManager().sendChatMessage(event.getSocialPlayer(), event.getChatChannel(), event.getMessage());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onSocialChannelSwitch(SocialChannelSwitchEvent event) {
+        if (!event.getChatChannel().getMembers().contains(event.getSocialPlayer().getUuid()))
+            event.getChatChannel().addMember(event.getSocialPlayer().getUuid());
+
+        event.getSocialPlayer().setMainChannel(event.getChatChannel());
+        processor.processAndSend(event.getSocialPlayer(), messages.getCommands().getChannelChanged());
     }
 
 }

@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.text.placeholders.impl;
+package ovh.mythmc.social.common.text.placeholders;
 
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialPlaceholder;
@@ -7,7 +7,7 @@ public final class SocialSpyPlaceholder extends SocialPlaceholder {
 
     @Override
     public String identifier() {
-        return "@socialspy";
+        return "socialspy";
     }
 
     @Override
