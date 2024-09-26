@@ -7,7 +7,7 @@ public final class SocialSpyPlaceholder extends SocialPlaceholder {
 
     @Override
     public String identifier() {
-        return "@placeholder";
+        return "@socialspy";
     }
 
     @Override
