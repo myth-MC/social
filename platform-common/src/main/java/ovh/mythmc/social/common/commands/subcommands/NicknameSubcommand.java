@@ -3,6 +3,8 @@ package ovh.mythmc.social.common.commands.subcommands;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
@@ -40,24 +42,47 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
         }
 
         String nickname = args[0];
-        if (nickname.equalsIgnoreCase("reset")) {
-            player.getPlayer().setDisplayName(player.getNickname());
-            processor.processAndSend(player, messages.getCommands().getNicknameResetted());
-            return;
-        }
-
-        if (Bukkit.getOfflinePlayer(nickname).hasPlayedBefore()) {
-            processor.processAndSend(player, messages.getErrors().getNicknameAlreadyInUse());
-            return;
-        }
 
         if (nickname.length() > 16) {
             processor.processAndSend(player, messages.getErrors().getNicknameTooLong());
             return;
         }
 
-        player.getPlayer().setDisplayName(nickname);
-        processor.processAndSend(player, messages.getCommands().getNicknameChanged());
+        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+            if (offlinePlayer.getName() != null &&
+                    offlinePlayer.getName().equalsIgnoreCase(nickname) &&
+                    offlinePlayer.hasPlayedBefore()) {
+                processor.processAndSend(player, messages.getErrors().getNicknameAlreadyInUse());
+                return;
+            }
+        }
+
+        if (args.length == 1) {
+            if (nickname.equalsIgnoreCase("reset")) {
+                player.getPlayer().setDisplayName(player.getNickname());
+                processor.processAndSend(player, messages.getCommands().getNicknameResetted());
+                return;
+            }
+
+            player.getPlayer().setDisplayName(nickname);
+            processor.processAndSend(player, messages.getCommands().getNicknameChanged());
+            return;
+        }
+
+        Player target = Bukkit.getPlayer(args[1]);
+        if (target == null) {
+            processor.processAndSend(player, messages.getErrors().getPlayerNotFound());
+            return;
+        }
+
+        if (nickname.equalsIgnoreCase("reset")) {
+            target.setDisplayName(target.getName());
+            processor.processAndSend(player, String.format(messages.getCommands().getNicknameResettedOthers(), target.getName()));
+            return;
+        }
+
+        target.setDisplayName(nickname);
+        processor.processAndSend(player, String.format(messages.getCommands().getNicknameChangedOthers(), target.getName(), nickname));
     }
 
 }

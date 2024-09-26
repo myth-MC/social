@@ -2,6 +2,7 @@ package ovh.mythmc.social.common.commands;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.SocialMessages;
@@ -60,13 +61,22 @@ public abstract class SocialCommand {
             return List.copyOf(subCommands.keySet());
         }
 
-        if (args.length == 2) {
-            switch (args[0]) {
-                case "channel": {
+        switch (args[0]) {
+            case "channel": {
+                if (args.length == 2) {
                     List<String> channels = new ArrayList<>();
                     Social.get().getChatManager().getChannels().forEach(channel -> channels.add(channel.getName()));
 
                     return channels;
+                }
+            }
+            case "nickname": {
+                if (args.length == 2) {
+                    return List.of("reset");
+                } else if (args.length == 3) {
+                    List<String> onlinePlayers = new ArrayList<>();
+                    Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
+                    return onlinePlayers;
                 }
             }
         }
