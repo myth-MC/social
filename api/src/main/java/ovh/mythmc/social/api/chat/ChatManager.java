@@ -176,8 +176,7 @@ public final class ChatManager {
 
         SocialAdventureProvider.get().console().sendMessage(
                 text("")
-                        .append(text(chatChannel.getIcon(), chatChannel.getIconColor()))
-                        .append(text(" " + chatChannel.getName(), NamedTextColor.GRAY))
+                        .append(text("(" + chatChannel.getName() + ")", chatChannel.getIconColor()))
                         .append(text(" "))
                         .append(text(player.getNickname(), chatChannel.getNicknameColor()))
                         .append(text(" " + chatChannel.getTextDivider() + " "))
