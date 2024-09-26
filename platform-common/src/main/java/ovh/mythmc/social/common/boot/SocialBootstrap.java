@@ -3,6 +3,7 @@ package ovh.mythmc.social.common.boot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
@@ -16,6 +17,7 @@ import ovh.mythmc.social.common.text.placeholders.impl.ChannelPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.impl.NicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.impl.SocialSpyPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.impl.UsernamePlaceholder;
+import ovh.mythmc.social.common.util.SchedulerUtil;
 
 import java.io.File;
 
@@ -36,6 +38,9 @@ public abstract class SocialBootstrap<T> implements Social {
 
     public final void initialize() {
         reload();
+
+        // Initialize scheduler
+        SchedulerUtil.setPlugin((JavaPlugin) getPlugin());
 
         try {
             enable();

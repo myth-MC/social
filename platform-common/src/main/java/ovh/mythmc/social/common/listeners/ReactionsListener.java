@@ -6,19 +6,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
+import ovh.mythmc.social.common.util.SchedulerUtil;
 
 @RequiredArgsConstructor
 public final class ReactionsListener implements Listener {
 
-    private final JavaPlugin plugin;
-
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         SocialPlayer player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (player == null)
@@ -41,7 +39,7 @@ public final class ReactionsListener implements Listener {
 
         if (reaction != null) {
             SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(player, reaction);
-            Bukkit.getPluginManager().callEvent(socialReactionCallEvent);
+            SchedulerUtil.runTask(() -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
         }
     }
 

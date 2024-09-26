@@ -78,7 +78,7 @@ public final class ChatListener implements Listener {
 
         // This will allow the message to be logged in console and sent to plugins such as DiscordSRV
         event.getRecipients().clear();
-        event.setFormat("(" + mainChannel.getName() + ") %s " + mainChannel.getTextDivider() + " %s");
+        event.setFormat("(" + mainChannel.getName() + ") %s: %s");
 
         // Flood filter
         if (Social.get().getConfig().getSettings().getFilter().isFloodFilter()) {
