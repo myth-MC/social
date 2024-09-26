@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.SocialMessages;
+import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -45,7 +46,9 @@ public abstract class PrivateMessageCommand {
         }
 
         String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        Social.get().getChatManager().sendPrivateMessage(messageSender, messageRecipient, message);
+
+        SocialPrivateMessageEvent socialPrivateMessageEvent = new SocialPrivateMessageEvent(messageSender, messageRecipient, message);
+        Bukkit.getPluginManager().callEvent(socialPrivateMessageEvent);
     }
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {

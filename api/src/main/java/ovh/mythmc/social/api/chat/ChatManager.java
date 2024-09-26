@@ -62,9 +62,13 @@ public final class ChatManager {
                                 final @NotNull ChatChannel chatChannel,
                                 final @NotNull String message) {
 
-        Component channelHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
-                .appendNewline()
-                .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
+        Component channelHoverText = text("");
+
+        if (chatChannel.isShowHoverText()) {
+            channelHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
+                    .appendNewline()
+                    .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
+        }
 
         Component playerHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
         if (!player.getNickname().equals(player.getPlayer().getName()))
@@ -104,9 +108,6 @@ public final class ChatManager {
 
         Social.get().getTextProcessor().send(members, chatMessage, chatChannel.getType());
         player.setLatestMessageInMilliseconds(System.currentTimeMillis());
-
-        // Send message to console
-        sendToConsole(player, chatChannel, message);
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
@@ -168,21 +169,6 @@ public final class ChatManager {
 
         // Send message to console
         SocialAdventureProvider.get().console().sendMessage(chatMessage);
-    }
-
-    private void sendToConsole(final @NotNull SocialPlayer player,
-                               final @NotNull ChatChannel chatChannel,
-                               final @NotNull String message) {
-
-        SocialAdventureProvider.get().console().sendMessage(
-                text("")
-                        .append(text("(" + chatChannel.getName() + ")", chatChannel.getIconColor()))
-                        .append(text(" "))
-                        .append(text(player.getNickname(), chatChannel.getNicknameColor()))
-                        .append(text(" " + chatChannel.getTextDivider() + " "))
-                        .append(text(message))
-        );
-
     }
 
 }

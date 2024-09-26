@@ -18,14 +18,14 @@ public final class SystemMessagesListener implements Listener {
 
     ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)
             return;
 
         // Send message to console
-        Social.get().getLogger().info(event.getJoinMessage());
+        Social.get().getLogger().info(event.getJoinMessage() + "");
 
         event.setJoinMessage("");
         for (Player player : Bukkit.getOnlinePlayers()) {

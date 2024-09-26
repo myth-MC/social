@@ -1,5 +1,6 @@
 package ovh.mythmc.social.common.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -9,6 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
+import ovh.mythmc.social.api.events.chat.SocialPlayerChatMessageEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
 
@@ -64,30 +66,41 @@ public final class ChatListener implements Listener {
             return;
         }
 
-        if (!Social.get().getConfig().getSettings().getChat().isEnabled())
-            return;
-
         ChatChannel mainChannel = socialPlayer.getMainChannel();
         if (mainChannel == null) {
             processor.processAndSend(socialPlayer, messages.errors.getUnexpectedError());
+            event.setCancelled(true);
             return;
         }
 
         if (mainChannel.isPassthrough())
             return;
 
-        event.setCancelled(true);
+        // This will allow the message to be logged in console and sent to plugins such as DiscordSRV
+        event.getRecipients().clear();
+        event.setFormat("(" + mainChannel.getName() + ") %s " + mainChannel.getTextDivider() + " %s");
+
+        // Flood filter
         if (Social.get().getConfig().getSettings().getFilter().isFloodFilter()) {
             int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getFilter().getFloodFilterCooldownInMilliseconds();
+
             if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {
 
                 processor.processAndSend(socialPlayer, messages.errors.getTypingTooFast());
+                event.setCancelled(true);
                 return;
             }
         }
 
-        Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage());
+        SocialPlayerChatMessageEvent socialChatMessageEvent = new SocialPlayerChatMessageEvent(socialPlayer, mainChannel, event.getMessage());
+        Bukkit.getPluginManager().callEvent(socialChatMessageEvent);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onSocialChatMessage(SocialPlayerChatMessageEvent event) {
+        if (!event.isCancelled())
+            Social.get().getChatManager().sendChatMessage(event.getSocialPlayer(), event.getChatChannel(), event.getMessage());
     }
 
 }

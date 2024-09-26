@@ -25,6 +25,8 @@ public class ErrorsMessages {
 
     private String playerNotFound = "<red>Unknown player.</red>";
 
-    private String channelDoesNotExist = "<red>This channel does not exist.</red>";
+    private String channelDoesNotExist = "<red>That channel does not exist.</red>";
+
+    private String unknownReaction = "<red>Unknown reaction</red>";
 
 }

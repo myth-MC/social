@@ -27,6 +27,8 @@ public final class ChatChannel {
 
     private final TextColor iconColor;
 
+    private final boolean showHoverText;
+
     private final Component hoverText;
 
     private final TextColor nicknameColor;
@@ -75,6 +77,7 @@ public final class ChatChannel {
                 ChannelType.CHAT,
                 channelField.icon(),
                 TextColor.fromHexString(channelField.iconColor()),
+                channelField.showHoverText(),
                 hoverText,
                 TextColor.fromHexString(channelField.nicknameColor()),
                 channelField.textDivider(),

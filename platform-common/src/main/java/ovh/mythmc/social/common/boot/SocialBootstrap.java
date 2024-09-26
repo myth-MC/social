@@ -2,15 +2,19 @@ package ovh.mythmc.social.common.boot;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
+import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
+import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 import ovh.mythmc.social.common.text.filters.URLFilter;
 import ovh.mythmc.social.common.text.parsers.EmojiParser;
 import ovh.mythmc.social.common.text.placeholders.impl.ChannelPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.impl.NicknamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.impl.SocialSpyPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.impl.UsernamePlaceholder;
 
 import java.io.File;
@@ -42,6 +46,8 @@ public abstract class SocialBootstrap<T> implements Social {
         }
 
         // update checker
+
+        Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
     }
 
     public abstract void enable();
@@ -49,6 +55,10 @@ public abstract class SocialBootstrap<T> implements Social {
     public abstract void shutdown();
 
     public final void reload() {
+        // Fire event
+        if (Bukkit.getPluginManager().isPluginEnabled("social"))
+            Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
+
         // Stop running tasks
 
         // Clear channels, announcements, parsers, reactions and emojis (we don't want any duplicates)
@@ -65,7 +75,8 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().registerParser(
                 new NicknamePlaceholder(),
                 new ChannelPlaceholder(),
-                new UsernamePlaceholder()
+                new UsernamePlaceholder(),
+                new SocialSpyPlaceholder()
         );
 
         // Register internal filters
@@ -85,7 +96,11 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getAnnouncementManager().restartTask();
 
         // Assign channels to every SocialPlayer
-        Social.get().getPlayerManager().get().forEach(socialPlayer -> Social.get().getChatManager().assignChannelsToPlayer(socialPlayer));
+        ChatChannel mainChannel = Social.get().getChatManager().getChannel(getConfig().getSettings().getChat().getDefaultChannel());
+        Social.get().getPlayerManager().get().forEach(socialPlayer -> {
+            Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
+            socialPlayer.setMainChannel(mainChannel);
+        });
     }
 
     public abstract String version();
