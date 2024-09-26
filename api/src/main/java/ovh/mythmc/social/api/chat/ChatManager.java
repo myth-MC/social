@@ -106,7 +106,7 @@ public final class ChatManager {
         player.setLatestMessageInMilliseconds(System.currentTimeMillis());
 
         // Send message to console
-        SocialAdventureProvider.get().console().sendMessage(chatMessage);
+        sendToConsole(player, chatChannel, message);
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
@@ -168,6 +168,22 @@ public final class ChatManager {
 
         // Send message to console
         SocialAdventureProvider.get().console().sendMessage(chatMessage);
+    }
+
+    private void sendToConsole(final @NotNull SocialPlayer player,
+                               final @NotNull ChatChannel chatChannel,
+                               final @NotNull String message) {
+
+        SocialAdventureProvider.get().console().sendMessage(
+                text("")
+                        .append(text(chatChannel.getIcon(), chatChannel.getIconColor()))
+                        .append(text(" " + chatChannel.getName(), NamedTextColor.GRAY))
+                        .append(text(" "))
+                        .append(text(player.getNickname(), chatChannel.getNicknameColor()))
+                        .append(text(" " + chatChannel.getTextDivider() + " "))
+                        .append(text(message))
+        );
+
     }
 
 }
