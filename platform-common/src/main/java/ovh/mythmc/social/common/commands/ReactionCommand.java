@@ -27,6 +27,11 @@ public abstract class ReactionCommand {
 
         SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
 
+        if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
+            processor.processAndSend(player, messages.getErrors().getFeatureNotAvailable());
+            return;
+        }
+
         if (args.length == 0) {
             processor.processAndSend(player, messages.getErrors().getNotEnoughArguments());
             return;

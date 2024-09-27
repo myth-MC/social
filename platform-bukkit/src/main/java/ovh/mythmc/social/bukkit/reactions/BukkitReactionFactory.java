@@ -14,6 +14,7 @@ import org.bukkit.profile.PlayerTextures;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
@@ -52,8 +53,9 @@ public final class BukkitReactionFactory extends ReactionFactory {
     }
 
     private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {
+        double offsetY = Social.get().getConfig().getSettings().getReactions().getOffsetY();
         ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
-                player.getLocation().add(0, 2.8, 0),
+                player.getLocation().add(0,  offsetY, 0),
                 EntityType.ITEM_DISPLAY
         );
 
@@ -130,8 +132,10 @@ public final class BukkitReactionFactory extends ReactionFactory {
     }
 
     private void scheduleItemDisplayUpdate(Player player, ItemDisplay itemDisplay) {
-        int durationInSeconds = 3;
-        int updateIntervalInTicks = 1;
+        int durationInSeconds = Social.get().getConfig().getSettings().getReactions().getDurationInSeconds();
+        int updateIntervalInTicks = Social.get().getConfig().getSettings().getReactions().getUpdateIntervalInTicks();
+
+        double offsetY = Social.get().getConfig().getSettings().getReactions().getOffsetY();
 
         new BukkitRunnable() {
             int remainingTicks = durationInSeconds * 20;
@@ -139,7 +143,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
             public void run() {
                 if (itemDisplay != null && player.isOnline()) {
                     if (!itemDisplay.isDead()) {
-                        Location location = player.getLocation().add(0, 2.8, 0);
+                        Location location = player.getLocation().add(0, offsetY, 0);
                         location.setPitch(0);
                         location.setYaw(location.getYaw() - 180);
 
@@ -159,7 +163,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
         }.runTaskTimer(plugin, 0L, updateIntervalInTicks);
     }
 
-    private static PlayerProfile getProfile(String textureUrl) {
+    private PlayerProfile getProfile(String textureUrl) {
         PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID()); // Get a new player profile
         PlayerTextures textures = profile.getTextures();
         URL urlObject;

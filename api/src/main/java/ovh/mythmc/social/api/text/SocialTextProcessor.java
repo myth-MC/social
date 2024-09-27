@@ -76,10 +76,12 @@ public final class SocialTextProcessor {
         processAndSend(player, process(player, message), type);
     }
 
+    @Deprecated
     public void processAndSend(SocialPlayer player, Component component) {
         processAndSend(player, component, ChannelType.CHAT);
     }
 
+    @Deprecated
     public void processAndSend(SocialPlayer player, String message) {
         processAndSend(player, message, ChannelType.CHAT);
     }

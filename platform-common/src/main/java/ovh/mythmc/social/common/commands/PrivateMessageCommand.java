@@ -27,6 +27,11 @@ public abstract class PrivateMessageCommand {
 
         SocialPlayer messageSender = Social.get().getPlayerManager().get(uuid.get());
 
+        if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled()) {
+            processor.processAndSend(messageSender, messages.getErrors().getFeatureNotAvailable());
+            return;
+        }
+
         if (args.length == 0) {
             processor.processAndSend(messageSender, messages.getErrors().getNotEnoughArguments());
             return;

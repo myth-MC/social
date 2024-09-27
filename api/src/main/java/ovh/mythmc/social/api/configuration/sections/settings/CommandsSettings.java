@@ -11,7 +11,12 @@ public class CommandsSettings {
     @Comment("/pm")
     private PrivateMessageCommand privateMessage = new PrivateMessageCommand(true, "<gray>This message is sent to you through a <green>private channel</green></gray>");
 
+    @Comment("/reaction")
+    private SimpleCommand reaction = new SimpleCommand(true);
+
     public record PrivateMessageCommand(boolean enabled,
                                         String hoverText) { }
+
+    public record SimpleCommand(boolean enabled) { }
 
 }

@@ -9,6 +9,8 @@ public class ErrorsMessages {
 
     private String cannotBeRunFromConsole = "This command cannot be run from console.";
 
+    private String featureNotAvailable = "<red>This feature isn't available in this server.</red>";
+
     private String unexpectedError = "<red>An unexpected error has occurred.</red>";
 
     private String invalidCommand = "<red>Invalid command.</red>";

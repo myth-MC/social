@@ -13,6 +13,15 @@ public class ReactionsSettings {
     @Comment("Whether reactions should be enabled or disabled")
     private boolean enabled = true;
 
+    @Comment("Duration of the reaction in seconds")
+    private int durationInSeconds = 3;
+
+    @Comment("Update interval in ticks (20 ticks = 1 second)")
+    private int updateIntervalInTicks = 1;
+
+    @Comment("Reaction height offset")
+    private double offsetY = 2.8;
+
     @Comment("You can add your own reactions or remove the default ones too!")
     private List<ReactionField> reactions = List.of(
             new ReactionField("SURPRISED", "https://textures.minecraft.net/texture/9d2920406b136385d2ce35d64f0183ea74ff268368cdf3d02031c06de37c434", "BLOCK_NOTE_BLOCK_BASS", List.of(":o", ":0")),

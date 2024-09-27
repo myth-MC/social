@@ -16,8 +16,6 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class SystemMessagesListener implements Listener {
 
-    ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
-
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerJoin(PlayerJoinEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
@@ -34,6 +32,7 @@ public final class SystemMessagesListener implements Listener {
                 return;
 
             Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+            ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
             SocialAdventureProvider.get().sendMessage(player, message, channelType);
         }
     }
@@ -54,6 +53,7 @@ public final class SystemMessagesListener implements Listener {
                return;
 
            Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+           ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
            SocialAdventureProvider.get().sendMessage(player, message, channelType);
        }
    }
@@ -70,7 +70,8 @@ public final class SystemMessagesListener implements Listener {
                 return;
 
             String deathMessage = String.format(unformattedMessage, event.getDeathMessage());
-            Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);
+            Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+
             SocialAdventureProvider.get().sendMessage(player, message, channelType);
         }
 
