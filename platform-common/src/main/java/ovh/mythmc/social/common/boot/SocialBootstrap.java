@@ -57,10 +57,6 @@ public abstract class SocialBootstrap<T> implements Social {
     public abstract void shutdown();
 
     public final void reload() {
-        // Fire event
-        if (Bukkit.getPluginManager().isPluginEnabled("social"))
-            Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
-
         // Stop running tasks
 
         // Clear channels, announcements, parsers, reactions and emojis (we don't want any duplicates)
@@ -104,6 +100,10 @@ public abstract class SocialBootstrap<T> implements Social {
             Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
             socialPlayer.setMainChannel(mainChannel);
         });
+
+        // Fire event
+        if (Bukkit.getPluginManager().isPluginEnabled("social"))
+            Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
     }
 
     public abstract String version();

@@ -12,7 +12,6 @@ import ovh.mythmc.social.bukkit.commands.impl.SocialCommandImpl;
 import ovh.mythmc.social.bukkit.reactions.BukkitReactionFactory;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.*;
-import ovh.mythmc.social.common.text.placeholders.PAPIExpansion;
 
 import java.util.Objects;
 
@@ -31,9 +30,6 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     @Override
     public void enable() {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
-            new PAPIExpansion();
-
         registerCommands();
         registerListeners();
     }
@@ -80,6 +76,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new SocialBootstrapListener(), getPlugin());
 
         if (Social.get().getConfig().getSettings().getChat().isEnabled())
             Bukkit.getPluginManager().registerEvents(new ChatListener(), getPlugin());
