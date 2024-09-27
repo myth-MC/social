@@ -35,6 +35,7 @@ public class ReloadSubcommand implements BiConsumer<Audience, String[]> {
 
         Social.get().reload();
         processor.processAndSend(player, messages.getCommands().getPluginReloaded());
+        processor.processAndSend(player, messages.getCommands().getPluginReloadedModulesWarning());
     }
 
 }

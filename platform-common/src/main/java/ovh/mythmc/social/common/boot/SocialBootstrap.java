@@ -71,19 +71,20 @@ public abstract class SocialBootstrap<T> implements Social {
 
         // Register internal placeholders
         Social.get().getTextProcessor().registerParser(
+                new ClickableNicknamePlaceholder(),
                 new NicknamePlaceholder(),
+                new UsernamePlaceholder(),
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
-                new UsernamePlaceholder(),
                 new SocialSpyPlaceholder()
         );
 
         // Register internal filters
-        if (Social.get().getConfig().getSettings().getFilter().isEnabled()) {
-            if (Social.get().getConfig().getSettings().getFilter().isIpFilter())
+        if (Social.get().getConfig().getSettings().getChat().getFilter().isEnabled()) {
+            if (Social.get().getConfig().getSettings().getChat().getFilter().isIpFilter())
                 Social.get().getTextProcessor().registerParser(new IPFilter());
 
-            if (Social.get().getConfig().getSettings().getFilter().isUrlFilter())
+            if (Social.get().getConfig().getSettings().getChat().getFilter().isUrlFilter())
                 Social.get().getTextProcessor().registerParser(new URLFilter());
         }
 

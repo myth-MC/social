@@ -54,15 +54,15 @@ public final class SocialConfigProvider {
         });
 
         // Register custom placeholders
-        if (settings.getFilter().isEnabled()) {
-            settings.getFilter().getLiteralFilter().forEach(literal -> Social.get().getTextProcessor().registerParser(new SocialFilterLiteral() {
+        if (settings.getChat().getFilter().isEnabled()) {
+            settings.getChat().getFilter().getLiteralFilter().forEach(literal -> Social.get().getTextProcessor().registerParser(new SocialFilterLiteral() {
                 @Override
                 public String literal() {
                     return literal;
                 }
             }));
 
-            settings.getFilter().getCustomRegexFilter().forEach(regex -> Social.get().getTextProcessor().registerParser(new SocialFilterRegex() {
+            settings.getChat().getFilter().getCustomRegexFilter().forEach(regex -> Social.get().getTextProcessor().registerParser(new SocialFilterRegex() {
                 @Override
                 public String regex() {
                     return regex;

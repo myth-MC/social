@@ -15,12 +15,12 @@ public class SystemMessagesSettings {
     private String channelType = "CHAT";
 
     @Comment("Message that will be sent to everyone when a player joins the server")
-    private String joinMessage = "<dark_gray>[<green>+</green>]</dark_gray> <white>@nickname</white>";
+    private String joinMessage = "<dark_gray>[<green>+</green>]</dark_gray> <white>@clickable_nickname</white>";
 
     @Comment("Message that will be sent to everyone when a player quits the server")
-    private String quitMessage = "<dark_gray>[<red>-</red>]</dark_gray> <white>@nickname</white>";
+    private String quitMessage = "<dark_gray>[<red>-</red>]</dark_gray> <white>@clickable_nickname</white>";
 
     @Comment({"Message that will be sent to everyone when a player dies", "%s = Vanilla death message"})
-    private String deathMessage = "<dark_gray>[<white>:skull:</white>]</dark_gray>  %s";
+    private String deathMessage = "<dark_gray>[<white>:skull:</white>]</dark_gray> %s";
 
 }

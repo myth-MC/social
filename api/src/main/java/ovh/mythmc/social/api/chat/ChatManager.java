@@ -63,22 +63,13 @@ public final class ChatManager {
                                 final @NotNull String message) {
 
         Component channelHoverText = text("");
-
         if (chatChannel.isShowHoverText()) {
             channelHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
                     .appendNewline()
                     .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
         }
 
-        Component playerHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
-        if (!player.getNickname().equals(player.getPlayer().getName()))
-            playerHoverText = playerHoverText
-                    .appendNewline()
-                    .append(Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
-
-        Component formattedNickname =
-                Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
-                .color(chatChannel.getNicknameColor());
+        Component nickname = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
 
         // Todo: event
         Component chatMessage =
@@ -87,10 +78,7 @@ public final class ChatManager {
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social channel " + chatChannel.getName()))
                         )
-                        .append(formattedNickname
-                                .hoverEvent(HoverEvent.showText(playerHoverText))
-                                .clickEvent(ClickEvent.suggestCommand("/pm " + player.getPlayer().getName() + " "))
-                        )
+                        .append(nickname)
                         .append(text(" " + chatChannel.getTextDivider() + " ")
                                 .color(NamedTextColor.GRAY)
                         )
@@ -114,8 +102,8 @@ public final class ChatManager {
         // Todo: event
         Component hoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
 
-        Component senderHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
-        Component recipientHoverText = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerHoverText());
+        Component senderHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+        Component recipientHoverText = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
 
         if (!sender.getNickname().equals(sender.getPlayer().getName()))
             senderHoverText = senderHoverText

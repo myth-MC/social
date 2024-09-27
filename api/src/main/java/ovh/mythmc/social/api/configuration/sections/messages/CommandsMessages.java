@@ -19,6 +19,8 @@ public class CommandsMessages {
 
     private String pluginReloaded = "<green>Plugin has been reloaded.</green>";
 
+    private String pluginReloadedModulesWarning = "<red>:warning:</red> <yellow>Modules cannot be enabled/disabled on the fly.</yellow>";
+
     private String socialSpyStatusChanged = "<gray>Social spy status has been set to @socialspy.</gray>";
 
 }

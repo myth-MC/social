@@ -8,7 +8,7 @@ import java.util.List;
 
 @Configuration
 @Getter
-public class FilterSettings {
+public class ChatFilterSettings {
 
     @Comment("Whether the filter module should be enabled or disabled")
     private boolean enabled = true;

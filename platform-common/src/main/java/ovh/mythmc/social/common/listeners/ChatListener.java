@@ -82,8 +82,8 @@ public final class ChatListener implements Listener {
         event.setFormat("(" + mainChannel.getName() + ") %s: %s");
 
         // Flood filter
-        if (Social.get().getConfig().getSettings().getFilter().isFloodFilter()) {
-            int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getFilter().getFloodFilterCooldownInMilliseconds();
+        if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
+            int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
             if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {

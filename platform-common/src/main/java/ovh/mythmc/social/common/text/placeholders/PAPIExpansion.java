@@ -35,4 +35,5 @@ public final class PAPIExpansion extends PlaceholderExpansion implements SocialP
         String parsedMessage = PlaceholderAPI.setPlaceholders(socialPlayer.getPlayer(), serialized);
         return MiniMessage.miniMessage().deserialize(parsedMessage);
     }
+
 }

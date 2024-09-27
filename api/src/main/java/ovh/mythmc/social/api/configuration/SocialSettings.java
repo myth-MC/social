@@ -21,9 +21,6 @@ public class SocialSettings {
     @Comment({"", "Emojis module"})
     private EmojiSettings emojis = new EmojiSettings();
 
-    @Comment({"", "Filter module"})
-    private FilterSettings filter = new FilterSettings();
-
     @Comment({"", "MOTD module"})
     private MOTDSettings motd = new MOTDSettings();
 
@@ -35,8 +32,6 @@ public class SocialSettings {
 
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
-
-
 
     // @Comment({"", "Interaction Menu module"})
     // private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();
