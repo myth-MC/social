@@ -20,10 +20,10 @@ public class ChatSettings {
     private String channelHoverText = "@channel_icon <gray>Click here to switch to channel @channel</gray>";
 
     @Comment("Text that appears when hovering over a player's name")
-    private String clickableNicknameHoverText = "<green>:envelope:</green> <gray>Click here to message <blue>@nickname</blue></gray>";
+    private String clickableNicknameHoverText = "@private_message_prefix <gray>Click here to message <blue>@nickname</blue></gray>";
 
     @Comment("Text that appears when hovering over a player's name when they have a nickname")
-    private String playerAliasWarningHoverText = "<gold>:warning:</gold> <gray>This player is using an alias</gray>";
+    private String playerAliasWarningHoverText = "@warning_prefix <gray>This player is using an alias</gray>";
 
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "@clickable_nickname";

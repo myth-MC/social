@@ -19,10 +19,7 @@ import ovh.mythmc.social.common.text.placeholders.player.ClickableNicknamePlaceh
 import ovh.mythmc.social.common.text.placeholders.player.NicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.SocialSpyPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
-import ovh.mythmc.social.common.text.placeholders.prefix.ErrorPlaceholder;
-import ovh.mythmc.social.common.text.placeholders.prefix.InfoPlaceholder;
-import ovh.mythmc.social.common.text.placeholders.prefix.SuccessPlaceholder;
-import ovh.mythmc.social.common.text.placeholders.prefix.WarningPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.prefix.*;
 import ovh.mythmc.social.common.util.SchedulerUtil;
 
 import java.io.File;
@@ -99,6 +96,7 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().registerParser(
                 new ErrorPlaceholder(),
                 new InfoPlaceholder(),
+                new PrivateMessagePlaceholder(),
                 new SuccessPlaceholder(),
                 new WarningPlaceholder()
         );
