@@ -1,6 +1,9 @@
 package ovh.mythmc.social.common.listeners;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -65,14 +68,26 @@ public final class SystemMessagesListener implements Listener {
         if (unformattedMessage == null || unformattedMessage.isEmpty())
             return;
 
-        String deathMessage = String.format(unformattedMessage, event.getDeathMessage());
-        deathMessage = deathMessage.replace(event.getEntity().getName(),
-                Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        unformattedMessage = String.format(unformattedMessage, event.getDeathMessage());
 
-        Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);
+        Component deathMessage = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (unformattedMessage.contains(player.getName())) {
+                SocialPlayer s = Social.get().getPlayerManager().get(player.getUniqueId());
+                deathMessage = deathMessage.replaceText(TextReplacementConfig
+                        .builder()
+                        .matchLiteral(player.getName())
+                        .replacement(Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
+                        .build());
+
+                deathMessage = Social.get().getTextProcessor().process(s, deathMessage);
+            }
+        }
+
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
+        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), deathMessage, channelType);
 
         // Send message to console
         Social.get().getLogger().info(event.getDeathMessage());
