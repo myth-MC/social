@@ -47,14 +47,21 @@ public abstract class SocialBootstrap<T> implements Social {
             return;
         }
 
-        // update checker
+        // Todo: update checker
 
         Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
+
+        // Register external plugin hooks
+        hooks();
     }
 
     public abstract void enable();
 
     public abstract void shutdown();
+
+    public final void hooks() {
+        // unused for now
+    }
 
     public final void reload() {
         // Stop running tasks
@@ -102,7 +109,7 @@ public abstract class SocialBootstrap<T> implements Social {
             socialPlayer.setMainChannel(mainChannel);
         });
 
-        // Fire event
+        // Fire event if plugin is already enabled
         if (Bukkit.getPluginManager().isPluginEnabled("social"))
             Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
     }
