@@ -1,8 +1,6 @@
 package ovh.mythmc.social.common.listeners;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -10,7 +8,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -25,16 +22,16 @@ public final class SystemMessagesListener implements Listener {
         // Send message to console
         Social.get().getLogger().info(event.getJoinMessage() + "");
 
-        event.setJoinMessage("");
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
-            if (unformattedMessage == null || unformattedMessage.isEmpty())
-                return;
+        String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
+        if (unformattedMessage == null || unformattedMessage.isEmpty())
+            return;
 
-            Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
-            ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
-            SocialAdventureProvider.get().sendMessage(player, message, channelType);
-        }
+        Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+
+        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
+
+        event.setJoinMessage("");
     }
 
    @EventHandler
@@ -46,16 +43,16 @@ public final class SystemMessagesListener implements Listener {
        // Send message to console
        Social.get().getLogger().info(event.getQuitMessage());
 
-       event.setQuitMessage("");
-       for (Player player : Bukkit.getOnlinePlayers()) {
-           String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
-           if (unformattedMessage == null || unformattedMessage.isEmpty())
-               return;
+       String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
+       if (unformattedMessage == null || unformattedMessage.isEmpty())
+           return;
 
-           Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
-           ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
-           SocialAdventureProvider.get().sendMessage(player, message, channelType);
-       }
+       Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+       ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+
+       Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
+
+       event.setQuitMessage("");
    }
 
     @EventHandler
@@ -64,16 +61,18 @@ public final class SystemMessagesListener implements Listener {
         if (socialPlayer == null)
             return;
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getDeathMessage();
-            if (unformattedMessage == null || unformattedMessage.isEmpty())
-                return;
+        String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getDeathMessage();
+        if (unformattedMessage == null || unformattedMessage.isEmpty())
+            return;
 
-            String deathMessage = String.format(unformattedMessage, event.getDeathMessage());
-            Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+        String deathMessage = String.format(unformattedMessage, event.getDeathMessage());
+        deathMessage = deathMessage.replace(event.getEntity().getName(),
+                Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
 
-            SocialAdventureProvider.get().sendMessage(player, message, channelType);
-        }
+        Component message = Social.get().getTextProcessor().process(socialPlayer, deathMessage);
+        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+
+        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
 
         // Send message to console
         Social.get().getLogger().info(event.getDeathMessage());
