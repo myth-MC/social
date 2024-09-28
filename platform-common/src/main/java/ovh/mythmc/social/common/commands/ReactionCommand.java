@@ -28,18 +28,18 @@ public abstract class ReactionCommand {
         SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
 
         if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
-            processor.processAndSend(player, messages.getErrors().getFeatureNotAvailable());
+            processor.processAndSend(player, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
             return;
         }
 
         if (args.length == 0) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments());
+            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
         Reaction reaction = Social.get().getReactionManager().get(args[0]);
         if (reaction == null) {
-            processor.processAndSend(player, messages.getErrors().getUnknownReaction());
+            processor.processAndSend(player, messages.getErrors().getUnknownReaction(), messages.getChannelType());
             // error: unknown reaction
             return;
         }

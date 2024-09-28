@@ -32,19 +32,19 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
         }
 
         if (!player.getPlayer().hasPermission("social.command.nickname")) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission());
+            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
             return;
         }
 
         if (args.length == 0) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments());
+            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
         String nickname = args[0];
 
         if (nickname.length() > 16) {
-            processor.processAndSend(player, messages.getErrors().getNicknameTooLong());
+            processor.processAndSend(player, messages.getErrors().getNicknameTooLong(), messages.getChannelType());
             return;
         }
 
@@ -52,7 +52,7 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
             if (offlinePlayer.getName() != null &&
                     offlinePlayer.getName().equalsIgnoreCase(nickname) &&
                     offlinePlayer.hasPlayedBefore()) {
-                processor.processAndSend(player, messages.getErrors().getNicknameAlreadyInUse());
+                processor.processAndSend(player, messages.getErrors().getNicknameAlreadyInUse(), messages.getChannelType());
                 return;
             }
         }
@@ -60,29 +60,29 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
         if (args.length == 1) {
             if (nickname.equalsIgnoreCase("reset")) {
                 player.getPlayer().setDisplayName(player.getNickname());
-                processor.processAndSend(player, messages.getCommands().getNicknameResetted());
+                processor.processAndSend(player, messages.getCommands().getNicknameResetted(), messages.getChannelType());
                 return;
             }
 
             player.getPlayer().setDisplayName(nickname);
-            processor.processAndSend(player, messages.getCommands().getNicknameChanged());
+            processor.processAndSend(player, messages.getCommands().getNicknameChanged(), messages.getChannelType());
             return;
         }
 
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
-            processor.processAndSend(player, messages.getErrors().getPlayerNotFound());
+            processor.processAndSend(player, messages.getErrors().getPlayerNotFound(), messages.getChannelType());
             return;
         }
 
         if (nickname.equalsIgnoreCase("reset")) {
             target.setDisplayName(target.getName());
-            processor.processAndSend(player, String.format(messages.getCommands().getNicknameResettedOthers(), target.getName()));
+            processor.processAndSend(player, String.format(messages.getCommands().getNicknameResettedOthers(), target.getName()), messages.getChannelType());
             return;
         }
 
         target.setDisplayName(nickname);
-        processor.processAndSend(player, String.format(messages.getCommands().getNicknameChangedOthers(), target.getName(), nickname));
+        processor.processAndSend(player, String.format(messages.getCommands().getNicknameChangedOthers(), target.getName(), nickname), messages.getChannelType());
     }
 
 }

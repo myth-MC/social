@@ -16,6 +16,7 @@ public class EmojiSettings {
     @Comment("You can add your own emojis or remove the default ones too")
     private List<EmojiField> emojis = List.of(
             new EmojiField("airplane", List.of(), "\u2708"),
+            new EmojiField("arrow", List.of(), "\u27A1"),
             new EmojiField("ballot_box", List.of(), "\u2610"),
             new EmojiField("ballot_box_with_x", List.of(), "\u2612"),
             new EmojiField("bow", List.of(), "\uD83C\uDFF9"),

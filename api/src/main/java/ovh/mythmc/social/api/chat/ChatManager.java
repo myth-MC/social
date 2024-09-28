@@ -100,10 +100,16 @@ public final class ChatManager {
                                    final @NotNull SocialPlayer recipient,
                                    final @NotNull String message) {
         // Todo: event
-        Component hoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
+        Component prefix = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
+        Component prefixHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
 
+        Component senderNickname = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
         Component senderHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+
+        Component recipientNickname = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
         Component recipientHoverText = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+
+        Component arrow = Social.get().getTextProcessor().process(recipient, " " + Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow() + " ");
 
         if (!sender.getNickname().equals(sender.getPlayer().getName()))
             senderHoverText = senderHoverText
@@ -115,6 +121,20 @@ public final class ChatManager {
                     .appendNewline()
                     .append(Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
+        Component chatMessage = Component.empty()
+                .append(prefix
+                        .hoverEvent(HoverEvent.showText(prefixHoverText))
+                )
+                .append(senderNickname
+                        .hoverEvent(HoverEvent.showText(senderHoverText))
+                )
+                .append(arrow)
+                .append(recipientNickname
+                        .hoverEvent(HoverEvent.showText(recipientHoverText))
+                )
+                .append(text(": ").color(NamedTextColor.GRAY))
+                .append(text(message).color(NamedTextColor.WHITE));
+
         Collection<SocialPlayer> members = new ArrayList<>();
         members.add(sender);
         members.add(recipient);
@@ -123,32 +143,6 @@ public final class ChatManager {
             if (player.isSocialSpy() && !members.contains(player))
                 members.add(player);
         });
-
-        Component chatMessage =
-                text("")
-                        .append(text("✉ ")
-                                .color(NamedTextColor.GREEN)
-                                .hoverEvent(HoverEvent.showText(hoverText))
-                        )
-                        .append(text(sender.getNickname())
-                                .color(INFO_COLOR)
-                                .hoverEvent(HoverEvent.showText(senderHoverText))
-                                .clickEvent(ClickEvent.suggestCommand("/pm " + sender.getPlayer().getName() + " "))
-                        )
-                        .append(text(" ➡ ")
-                                .color(NamedTextColor.GRAY)
-                        )
-                        .append(text(recipient.getNickname())
-                                .color(INFO_COLOR)
-                                .hoverEvent(HoverEvent.showText(recipientHoverText))
-                                .clickEvent(ClickEvent.suggestCommand("/pm " + recipient.getPlayer().getName() + " "))
-                        )
-                        .append(text(": ")
-                                .color(NamedTextColor.GRAY)
-                        )
-                        .append(text(message)
-                                .color(NamedTextColor.WHITE)
-                        );
 
         Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
         sender.setLatestMessageInMilliseconds(System.currentTimeMillis());

@@ -29,12 +29,12 @@ public class SocialSpySubcommand implements BiConsumer<Audience, String[]> {
         }
 
         if (!player.getPlayer().hasPermission("social.command.socialspy")) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission());
+            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
             return;
         }
 
         player.setSocialSpy(!player.isSocialSpy());
-        processor.processAndSend(player, messages.getCommands().getSocialSpyStatusChanged());
+        processor.processAndSend(player, messages.getCommands().getSocialSpyStatusChanged(), messages.getChannelType());
     }
 
 }

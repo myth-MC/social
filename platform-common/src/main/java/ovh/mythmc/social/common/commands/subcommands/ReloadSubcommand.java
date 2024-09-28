@@ -29,13 +29,13 @@ public class ReloadSubcommand implements BiConsumer<Audience, String[]> {
         }
 
         if (!player.getPlayer().hasPermission("social.command.reload")) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission());
+            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
             return;
         }
 
         Social.get().reload();
-        processor.processAndSend(player, messages.getCommands().getPluginReloaded());
-        processor.processAndSend(player, messages.getCommands().getPluginReloadedModulesWarning());
+        processor.processAndSend(player, messages.getCommands().getPluginReloaded(), messages.getChannelType());
+        processor.processAndSend(player, messages.getCommands().getPluginReloadedModulesWarning(), messages.getChannelType());
     }
 
 }

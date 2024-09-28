@@ -13,7 +13,16 @@ import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 import ovh.mythmc.social.common.text.filters.URLFilter;
 import ovh.mythmc.social.common.text.parsers.EmojiParser;
-import ovh.mythmc.social.common.text.placeholders.*;
+import ovh.mythmc.social.common.text.placeholders.chat.ChannelIconPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.chat.ChannelPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.player.ClickableNicknamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.player.NicknamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.player.SocialSpyPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.prefix.ErrorPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.prefix.InfoPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.prefix.SuccessPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.prefix.WarningPlaceholder;
 import ovh.mythmc.social.common.util.SchedulerUtil;
 
 import java.io.File;
@@ -84,6 +93,14 @@ public abstract class SocialBootstrap<T> implements Social {
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
                 new SocialSpyPlaceholder()
+        );
+
+        // Register internal non-contextual placeholders
+        Social.get().getTextProcessor().registerParser(
+                new ErrorPlaceholder(),
+                new InfoPlaceholder(),
+                new SuccessPlaceholder(),
+                new WarningPlaceholder()
         );
 
         // Register internal filters

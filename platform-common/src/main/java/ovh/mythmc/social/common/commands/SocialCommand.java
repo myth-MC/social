@@ -43,13 +43,13 @@ public abstract class SocialCommand {
         }
 
         if (args.length == 0) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments());
+            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
         var command = subCommands.get(args[0]);
         if (command == null) {
-            processor.processAndSend(player, messages.getErrors().getInvalidCommand());
+            processor.processAndSend(player, messages.getErrors().getInvalidCommand(), messages.getChannelType());
             return;
         }
 
