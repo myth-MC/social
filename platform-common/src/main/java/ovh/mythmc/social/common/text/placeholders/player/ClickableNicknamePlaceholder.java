@@ -13,16 +13,18 @@ public final class ClickableNicknamePlaceholder extends SocialPlaceholder {
 
     @Override
     public String process(SocialPlayer player) {
-        // We'll return @nickname if PMs are disabled
-        if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled())
-            return "@nickname";
-
         String hoverText = Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText();
         if (!player.getNickname().equals(player.getPlayer().getName())) {
             hoverText = hoverText + "\n" + Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText();
         }
 
-        return "<hover:show_text:'" + hoverText + "'><click:suggest_command:/pm " + player.getPlayer().getName() + " >" + player.getNickname() + "</click></hover>";
+        // Temporary workaround for usernames
+        String command = Social.get().getConfig().getSettings().getChat().getClickableNicknameCommand();
+        command = command.replace("@username", player.getPlayer().getName());
+
+        return "<click:suggest_command:/" + command + ">"
+                + "<hover:show_text:'" + hoverText + "'>"
+                + player.getNickname() + "</hover></click>";
     }
 
 }

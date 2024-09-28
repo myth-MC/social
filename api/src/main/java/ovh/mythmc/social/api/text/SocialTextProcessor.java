@@ -21,7 +21,8 @@ import java.util.List;
 public final class SocialTextProcessor {
 
     public static final SocialTextProcessor instance = new SocialTextProcessor();
-    private static final Collection<SocialParser> parsers = new ArrayList<>();
+
+    private final Collection<SocialParser> parsers = new ArrayList<>();
 
     public SocialPlaceholder getPlaceholder(final @NotNull String identifier) {
         for (SocialParser parser : parsers) {
@@ -31,10 +32,6 @@ public final class SocialTextProcessor {
         }
 
         return null;
-    }
-
-    public Collection<SocialParser> getParsers() {
-        return parsers;
     }
 
     public boolean isPlaceholder(final @NotNull String identifier) {
@@ -74,16 +71,6 @@ public final class SocialTextProcessor {
 
     public void processAndSend(SocialPlayer player, String message, ChannelType type) {
         processAndSend(player, process(player, message), type);
-    }
-
-    @Deprecated
-    public void processAndSend(SocialPlayer player, Component component) {
-        processAndSend(player, component, ChannelType.CHAT);
-    }
-
-    @Deprecated
-    public void processAndSend(SocialPlayer player, String message) {
-        processAndSend(player, message, ChannelType.CHAT);
     }
 
     public void send(final @NotNull Collection<SocialPlayer> members,

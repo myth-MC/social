@@ -19,6 +19,9 @@ public class ChatSettings {
     @Comment("Text that appears when hovering over a message's channel icon")
     private String channelHoverText = "@channel_icon <gray>Click here to switch to channel @channel</gray>";
 
+    @Comment("Command that will be suggested when a player clicks on another player's nickname")
+    private String clickableNicknameCommand = "pm @username ";
+
     @Comment("Text that appears when hovering over a player's name")
     private String clickableNicknameHoverText = "@private_message_prefix <gray>Click here to message <blue>@nickname</blue></gray>";
 

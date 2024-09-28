@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -55,7 +56,7 @@ public final class DiscordSRVHook implements ChatHook {
 
             String translatedMessage = MessageUtil.translateLegacy(plainMessage);
 
-            Social.get().getTextProcessor().processAndSend(socialPlayer, translatedMessage);
+            Social.get().getTextProcessor().processAndSend(socialPlayer, translatedMessage, ChannelType.CHAT);
         });
     }
 

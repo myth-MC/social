@@ -86,10 +86,10 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().registerParser(
                 new ClickableNicknamePlaceholder(),
                 new NicknamePlaceholder(),
-                new UsernamePlaceholder(),
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
-                new SocialSpyPlaceholder()
+                new SocialSpyPlaceholder(),
+                new UsernamePlaceholder()
         );
 
         // Register internal non-contextual placeholders
