@@ -22,7 +22,7 @@ public class AnnouncementsSettings {
             new Announcement("<gray>This is an <red>exclusive</red> announcement</gray>", List.of("staff"))
     );
 
-    @Comment("Enabling this will make announcements show in action bar instead of chat")
+    @Comment("Enabling this will make announcements show in action bar instead of using chat channels")
     private boolean useActionBar = false;
 
     public record Announcement(String message,

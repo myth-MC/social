@@ -46,13 +46,13 @@ public final class AnnouncementManager {
                 SocialAnnouncement announcement = announcements.get(latest);
 
                 if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
-                    Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), announcement.message(), ChannelType.ACTION_BAR);
+                    Social.get().getPlayerManager().get().forEach(socialPlayer -> Social.get().getTextProcessor().processAndSend(socialPlayer, announcement.message(), ChannelType.ACTION_BAR));
                 } else {
                     for (ChatChannel channel : announcement.channels()) {
-                        Collection<SocialPlayer> socialPlayers = new ArrayList<>();
-                        channel.getMembers().forEach(uuid -> socialPlayers.add(Social.get().getPlayerManager().get(uuid)));
-
-                        Social.get().getTextProcessor().send(socialPlayers, announcement.message(), channel.getType());
+                        channel.getMembers().forEach(uuid -> {
+                            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+                            Social.get().getTextProcessor().processAndSend(socialPlayer, announcement.message(), channel.getType());
+                        });
                     }
                 }
 
