@@ -31,6 +31,8 @@ public final class BukkitReactionFactory extends ReactionFactory {
     private final HashMap<UUID, ItemDisplay> playerReaction = new HashMap<>();
     private final String itemDisplayMetadataKey = "socialReaction";
 
+    private final float scale = 0.7f;
+
     public BukkitReactionFactory(final @NotNull JavaPlugin plugin) {
         this.plugin = plugin;
         ReactionFactory.set(this);
@@ -53,9 +55,13 @@ public final class BukkitReactionFactory extends ReactionFactory {
     }
 
     private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {
+        Location location = player.getLocation();
+        location.setPitch(0);
+        location.setYaw(location.getYaw() - 180);
+
         double offsetY = Social.get().getConfig().getSettings().getReactions().getOffsetY();
         ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
-                player.getLocation().add(0,  offsetY, 0),
+                location,
                 EntityType.ITEM_DISPLAY
         );
 
@@ -71,32 +77,39 @@ public final class BukkitReactionFactory extends ReactionFactory {
         itemDisplay.setMetadata(itemDisplayMetadataKey, new FixedMetadataValue(plugin, true));
         itemDisplay.setItemStack(itemStack);
 
+        itemDisplay.setPersistent(false);
+
         Transformation transformation = itemDisplay.getTransformation();
         transformation.getScale().set(0);
-
+        transformation.getTranslation().set(0, offsetY, 0);
         itemDisplay.setTransformation(transformation);
-        playAnimation(itemDisplay, 0.65F);
+
+        player.addPassenger(itemDisplay);
+
+        playAnimation(itemDisplay, scale);
 
         return itemDisplay;
     }
 
     private void playAnimation(ItemDisplay itemDisplay, float targetScale) {
         Transformation transformation = itemDisplay.getTransformation();
+        float growth = 0.15f;
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 float currentScale = transformation.getScale().get(1);
 
-                if (currentScale >= targetScale) {
+                if (currentScale + growth >= targetScale) {
+                    transformation.getScale().set(targetScale);
                     cancel();
                     return;
                 }
 
-                transformation.getScale().set(currentScale + 0.15F);
+                transformation.getScale().set(currentScale + growth);
                 itemDisplay.setTransformation(transformation);
             }
-        }.runTaskTimerAsynchronously(plugin, 0, 1);
+        }.runTaskTimerAsynchronously(plugin, 3, 1);
 
     }
 
@@ -118,14 +131,14 @@ public final class BukkitReactionFactory extends ReactionFactory {
                 Transformation itemTransformation = itemDisplay.getTransformation();
                 float currentScale = itemTransformation.getScale().get(1);
                 if (currentScale > 0) {
-                    itemTransformation.getScale().set(currentScale - 0.3F);
+                    itemTransformation.getScale().set(currentScale - 0.15F);
                 } else {
                     itemTransformation.getScale().set(0);
                 }
 
                 itemDisplay.setTransformation(itemTransformation);
 
-                itemDisplayLocation.setY(itemDisplayLocation.getY() - 0.25);
+                itemDisplayLocation.setY(itemDisplayLocation.getY() - 0.15);
                 itemDisplay.teleport(itemDisplayLocation);
             }
         }.runTaskTimer(plugin, 0, 1);
@@ -135,19 +148,15 @@ public final class BukkitReactionFactory extends ReactionFactory {
         int durationInSeconds = Social.get().getConfig().getSettings().getReactions().getDurationInSeconds();
         int updateIntervalInTicks = Social.get().getConfig().getSettings().getReactions().getUpdateIntervalInTicks();
 
-        double offsetY = Social.get().getConfig().getSettings().getReactions().getOffsetY();
-
         new BukkitRunnable() {
             int remainingTicks = durationInSeconds * 20;
 
             public void run() {
                 if (itemDisplay != null && player.isOnline()) {
-                    if (!itemDisplay.isDead()) {
-                        Location location = player.getLocation().add(0, offsetY, 0);
-                        location.setPitch(0);
-                        location.setYaw(location.getYaw() - 180);
+                    if (itemDisplay.isValid() && !itemDisplay.isDead()) {
+                        Location location = player.getLocation();
 
-                        itemDisplay.teleport(location);
+                        itemDisplay.setRotation(location.getYaw() - 180, 0);
                     }
 
                     remainingTicks -= updateIntervalInTicks;

@@ -20,7 +20,7 @@ public class ReactionsSettings {
     private int updateIntervalInTicks = 1;
 
     @Comment("Reaction height offset")
-    private double offsetY = 2.8;
+    private double offsetY = 0.6;
 
     @Comment("You can add your own reactions or remove the default ones too!")
     private List<ReactionField> reactions = List.of(
