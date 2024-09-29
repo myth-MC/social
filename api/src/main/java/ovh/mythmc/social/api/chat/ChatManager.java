@@ -80,9 +80,8 @@ public final class ChatManager {
                         )
                         .append(nickname)
                         .append(textDivider)
-                        .append(filteredMessage
-                                .color(chatChannel.getTextColor())
-                        );
+                        .append(filteredMessage)
+                        .color(chatChannel.getTextColor());
 
         // Call SocialChatMessageReceiveEvent for each channel member
         Map<SocialPlayer, Component> playerMap = new HashMap<>();
@@ -136,7 +135,7 @@ public final class ChatManager {
                         .hoverEvent(HoverEvent.showText(recipientHoverText))
                 )
                 .append(text(": ").color(NamedTextColor.GRAY))
-                .append(filteredMessage.color(NamedTextColor.WHITE));
+                .append(filteredMessage);
 
         Collection<SocialPlayer> members = new ArrayList<>();
         members.add(sender);
