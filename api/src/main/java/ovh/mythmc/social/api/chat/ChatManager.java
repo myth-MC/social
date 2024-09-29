@@ -7,15 +7,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -24,7 +22,6 @@ import static net.kyori.adventure.text.Component.text;
 public final class ChatManager {
 
     public static final ChatManager instance = new ChatManager();
-    private final TextColor INFO_COLOR = TextColor.color(106, 178, 197);
 
     private final List<ChatChannel> channels = new ArrayList<>();
 
@@ -58,27 +55,26 @@ public final class ChatManager {
         }
     }
 
-    public void sendChatMessage(final @NotNull SocialPlayer player,
+    public void sendChatMessage(final @NotNull SocialPlayer sender,
                                 final @NotNull ChatChannel chatChannel,
                                 final @NotNull String message) {
 
         Component channelHoverText = text("");
         if (chatChannel.isShowHoverText()) {
-            channelHoverText = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
+            channelHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
+                    .append(Social.get().getTextProcessor().process(sender, chatChannel.getHoverText()));
         }
 
-        Component textDivider = Social.get().getTextProcessor().process(player, " " + chatChannel.getTextDivider() + " ");
+        Component textDivider = Social.get().getTextProcessor().process(sender, " " + chatChannel.getTextDivider() + " ");
 
-        Component nickname = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component nickname = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
 
-        // Todo: event
         Component chatMessage =
                 text("")
-                        .append(Social.get().getTextProcessor().process(player, chatChannel.getIcon() + " ")
+                        .append(Social.get().getTextProcessor().process(sender, chatChannel.getIcon() + " ")
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
-                                .clickEvent(ClickEvent.runCommand("/social channel " + chatChannel.getName()))
+                                .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
                         )
                         .append(nickname)
                         .append(textDivider)
@@ -86,20 +82,23 @@ public final class ChatManager {
                                 .color(chatChannel.getTextColor())
                         );
 
-        Collection<SocialPlayer> members = new ArrayList<>();
+        // Call SocialChatMessageReceiveEvent for each channel member
+        Map<SocialPlayer, Component> playerMap = new HashMap<>();
         chatChannel.getMembers().forEach(uuid -> {
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
-            members.add(socialPlayer);
+            SocialPlayer member = Social.get().getPlayerManager().get(uuid);
+            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, member, chatChannel, chatMessage);
+            if (!socialChatMessageReceiveEvent.isCancelled())
+                playerMap.put(member, socialChatMessageReceiveEvent.getMessage());
         });
 
-        Social.get().getTextProcessor().send(members, chatMessage, chatChannel.getType());
-        player.setLatestMessageInMilliseconds(System.currentTimeMillis());
+        playerMap.forEach((s, m) -> Social.get().getTextProcessor().send(s, m, chatChannel.getType()));
+        sender.setLatestMessageInMilliseconds(System.currentTimeMillis());
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
                                    final @NotNull SocialPlayer recipient,
                                    final @NotNull String message) {
-        // Todo: event
+
         Component prefix = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
         Component prefixHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
 

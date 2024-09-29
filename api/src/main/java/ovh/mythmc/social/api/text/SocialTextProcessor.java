@@ -73,6 +73,12 @@ public final class SocialTextProcessor {
         processAndSend(player, process(player, message), type);
     }
 
+    public void send(final @NotNull SocialPlayer recipient,
+                     @NotNull Component message,
+                     final @NotNull ChannelType type) {
+        send(List.of(recipient), message, type);
+    }
+
     public void send(final @NotNull Collection<SocialPlayer> members,
                      @NotNull Component message,
                      final @NotNull ChannelType type) {

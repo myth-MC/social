@@ -11,21 +11,21 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
 @Setter
-public class SocialChatMessageEvent extends Event implements Cancellable {
+public class SocialChatMessageSendEvent extends Event implements Cancellable {
 
-    private final SocialPlayer socialPlayer;
+    private final SocialPlayer sender;
 
     private final ChatChannel chatChannel;
 
-    private final String message;
+    private String message;
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
     private boolean cancelled = false;
 
-    public SocialChatMessageEvent(SocialPlayer socialPlayer, ChatChannel chatChannel, String message) {
+    public SocialChatMessageSendEvent(SocialPlayer sender, ChatChannel chatChannel, String message) {
         super(true);
-        this.socialPlayer = socialPlayer;
+        this.sender = sender;
         this.chatChannel = chatChannel;
         this.message = message;
     }

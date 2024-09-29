@@ -11,7 +11,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.events.chat.SocialChannelSwitchEvent;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
 
@@ -94,14 +94,14 @@ public final class ChatListener implements Listener {
             }
         }
 
-        SocialChatMessageEvent socialChatMessageEvent = new SocialChatMessageEvent(socialPlayer, mainChannel, event.getMessage());
+        SocialChatMessageSendEvent socialChatMessageEvent = new SocialChatMessageSendEvent(socialPlayer, mainChannel, event.getMessage());
         Bukkit.getPluginManager().callEvent(socialChatMessageEvent);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onSocialChatMessage(SocialChatMessageEvent event) {
+    public void onSocialChatMessage(SocialChatMessageSendEvent event) {
         if (!event.isCancelled())
-            Social.get().getChatManager().sendChatMessage(event.getSocialPlayer(), event.getChatChannel(), event.getMessage());
+            Social.get().getChatManager().sendChatMessage(event.getSender(), event.getChatChannel(), event.getMessage());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
