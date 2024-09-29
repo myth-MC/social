@@ -26,7 +26,7 @@ public final class ReactionsListener implements Listener {
             return;
 
         Reaction reaction = null;
-        for (Reaction r : Social.get().getReactionManager().getReactions()) {
+        for (Reaction r : Social.get().getReactionManager().getReactionsMap().keySet()) {
             if (r.triggerWords() == null)
                 continue;
 

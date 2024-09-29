@@ -78,7 +78,7 @@ public final class SocialConfigProvider {
             } else {
                 reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
             }
-            Social.get().getReactionManager().registerReaction(reaction);
+            Social.get().getReactionManager().registerReaction("SOCIAL", reaction);
         });
 
         // Register chat channels

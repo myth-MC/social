@@ -76,7 +76,7 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getChatManager().getChannels().clear();
         Social.get().getAnnouncementManager().getAnnouncements().clear();
         Social.get().getTextProcessor().getParsers().clear();
-        Social.get().getReactionManager().getReactions().clear();
+        Social.get().getReactionManager().getReactionsMap().clear();
         Social.get().getEmojiManager().getEmojis().clear();
 
         // Reload settings.yml and messages.yml

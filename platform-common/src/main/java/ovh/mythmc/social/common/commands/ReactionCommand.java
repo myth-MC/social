@@ -32,15 +32,17 @@ public abstract class ReactionCommand {
             return;
         }
 
-        if (args.length == 0) {
+        if (args.length < 2) {
             processor.processAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
-        Reaction reaction = Social.get().getReactionManager().get(args[0]);
+        String categoryName = args[0];
+        String reactionName = args[1];
+
+        Reaction reaction = Social.get().getReactionManager().get(categoryName, reactionName);
         if (reaction == null) {
             processor.processAndSend(player, messages.getErrors().getUnknownReaction(), messages.getChannelType());
-            // error: unknown reaction
             return;
         }
 
@@ -50,8 +52,12 @@ public abstract class ReactionCommand {
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
         if (args.length == 1) {
+            // categorías
+            return Social.get().getReactionManager().getCategories();
+        } else if (args.length == 2) {
+            // reacciones por categoría
             List<String> reactions = new ArrayList<>();
-            Social.get().getReactionManager().getReactions().forEach(reaction -> reactions.add(reaction.name().toLowerCase()));
+            Social.get().getReactionManager().getByCategory(args[0]).forEach(reaction -> reactions.add(reaction.name().toUpperCase()));
             return reactions;
         }
 
