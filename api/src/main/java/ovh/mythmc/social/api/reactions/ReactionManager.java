@@ -40,7 +40,9 @@ public final class ReactionManager {
     }
 
     public Collection<String> getCategories() {
-        return reactionsMap.values();
+        return reactionsMap.values().stream()
+                .filter(s -> !s.equalsIgnoreCase("hidden"))
+                .toList();
     }
 
     public List<Reaction> getByCategory(final @NotNull String category) {
