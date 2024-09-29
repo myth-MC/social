@@ -17,19 +17,19 @@ public class ChatSettings {
     private String defaultChannel = "global";
 
     @Comment("Text that appears when hovering over a message's channel icon")
-    private String channelHoverText = "@channel_icon <gray>Click here to switch to channel @channel</gray>";
+    private String channelHoverText = "$channel_icon <gray>Click here to switch to channel $channel</gray>";
 
     @Comment("Command that will be suggested when a player clicks on another player's nickname")
-    private String clickableNicknameCommand = "pm @username ";
+    private String clickableNicknameCommand = "pm $username ";
 
     @Comment("Text that appears when hovering over a player's name")
-    private String clickableNicknameHoverText = "@private_message_prefix <gray>Click here to message <blue>@nickname</blue></gray>";
+    private String clickableNicknameHoverText = "$private_message_prefix <gray>Click here to message <blue>$nickname</blue></gray>";
 
     @Comment("Text that appears when hovering over a player's name when they have a nickname")
-    private String playerAliasWarningHoverText = "@warning_prefix <gray>This player is using an alias</gray>";
+    private String playerAliasWarningHoverText = "$warning_prefix <gray>This player is using an alias</gray>";
 
     @Comment("You can add placeholders such as the player's rank")
-    private String playerNicknameFormat = "@clickable_nickname";
+    private String playerNicknameFormat = "$clickable_nickname";
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(

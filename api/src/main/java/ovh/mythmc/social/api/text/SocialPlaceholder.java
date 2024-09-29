@@ -18,7 +18,7 @@ public abstract class SocialPlaceholder implements SocialParser {
         Component processedText = MiniMessage.miniMessage().deserialize(process(player));
         return component.replaceText(TextReplacementConfig
                 .builder()
-                .match(Pattern.compile("@(?i:" + identifier() + "\\b)"))
+                .match(Pattern.compile("\\$(?i:" + identifier() + "\\b)"))
                 .replacement(processedText)
                 .build());
     }
