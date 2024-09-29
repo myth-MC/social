@@ -28,12 +28,12 @@ public abstract class ReactionCommand {
         SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
 
         if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
-            processor.processAndSend(player, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
+            processor.parseAndSend(player, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
             return;
         }
 
         if (args.length < 2) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            processor.parseAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
@@ -42,7 +42,7 @@ public abstract class ReactionCommand {
 
         Reaction reaction = Social.get().getReactionManager().get(categoryName, reactionName);
         if (reaction == null) {
-            processor.processAndSend(player, messages.getErrors().getUnknownReaction(), messages.getChannelType());
+            processor.parseAndSend(player, messages.getErrors().getUnknownReaction(), messages.getChannelType());
             return;
         }
 
@@ -52,10 +52,8 @@ public abstract class ReactionCommand {
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
         if (args.length == 1) {
-            // categorías
             return Social.get().getReactionManager().getCategories();
         } else if (args.length == 2) {
-            // reacciones por categoría
             List<String> reactions = new ArrayList<>();
             Social.get().getReactionManager().getByCategory(args[0]).forEach(reaction -> reactions.add(reaction.name().toUpperCase()));
             return reactions;

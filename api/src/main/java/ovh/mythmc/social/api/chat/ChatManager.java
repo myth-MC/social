@@ -61,24 +61,26 @@ public final class ChatManager {
 
         Component channelHoverText = text("");
         if (chatChannel.isShowHoverText()) {
-            channelHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
+            channelHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().process(sender, chatChannel.getHoverText()));
+                    .append(Social.get().getTextProcessor().parse(sender, chatChannel.getHoverText()));
         }
 
-        Component textDivider = Social.get().getTextProcessor().process(sender, " " + chatChannel.getTextDivider() + " ");
+        Component textDivider = Social.get().getTextProcessor().parse(sender, " " + chatChannel.getTextDivider() + " ");
 
-        Component nickname = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component nickname = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+
+        Component filteredMessage = Social.get().getTextProcessor().parsePlayerInput(sender, message);
 
         Component chatMessage =
                 text("")
-                        .append(Social.get().getTextProcessor().process(sender, chatChannel.getIcon() + " ")
+                        .append(Social.get().getTextProcessor().parse(sender, chatChannel.getIcon() + " ")
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
                         )
                         .append(nickname)
                         .append(textDivider)
-                        .append(text(message)
+                        .append(filteredMessage
                                 .color(chatChannel.getTextColor())
                         );
 
@@ -99,26 +101,28 @@ public final class ChatManager {
                                    final @NotNull SocialPlayer recipient,
                                    final @NotNull String message) {
 
-        Component prefix = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
-        Component prefixHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
+        Component prefix = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
+        Component prefixHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
 
-        Component senderNickname = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
-        Component senderHoverText = Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+        Component senderNickname = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component senderHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
 
-        Component recipientNickname = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
-        Component recipientHoverText = Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+        Component recipientNickname = Social.get().getTextProcessor().parse(recipient, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component recipientHoverText = Social.get().getTextProcessor().parse(recipient, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
 
-        Component arrow = Social.get().getTextProcessor().process(recipient, " " + Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow() + " ");
+        Component arrow = Social.get().getTextProcessor().parse(recipient, " " + Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow() + " ");
+
+        Component filteredMessage = Social.get().getTextProcessor().parsePlayerInput(sender, message);
 
         if (!sender.getNickname().equals(sender.getPlayer().getName()))
             senderHoverText = senderHoverText
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().process(sender, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+                    .append(Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
         if (!recipient.getNickname().equals(recipient.getPlayer().getName()))
             recipientHoverText = recipientHoverText
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().process(recipient, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+                    .append(Social.get().getTextProcessor().parse(recipient, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
         Component chatMessage = Component.empty()
                 .append(prefix
@@ -132,7 +136,7 @@ public final class ChatManager {
                         .hoverEvent(HoverEvent.showText(recipientHoverText))
                 )
                 .append(text(": ").color(NamedTextColor.GRAY))
-                .append(text(message).color(NamedTextColor.WHITE));
+                .append(filteredMessage.color(NamedTextColor.WHITE));
 
         Collection<SocialPlayer> members = new ArrayList<>();
         members.add(sender);

@@ -1,4 +1,6 @@
 package ovh.mythmc.social.api.text.filters;
 
-public interface SocialFilterLike {
+import ovh.mythmc.social.api.text.SocialPlayerInputParser;
+
+public interface SocialFilterLike extends SocialPlayerInputParser {
 }

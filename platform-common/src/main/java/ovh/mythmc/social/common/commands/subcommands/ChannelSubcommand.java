@@ -32,13 +32,13 @@ public class ChannelSubcommand implements BiConsumer<Audience, String[]> {
         }
 
         if (args.length == 0) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            processor.parseAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
         ChatChannel channel = Social.get().getChatManager().getChannel(args[0]);
         if (channel == null) {
-            processor.processAndSend(player, messages.getErrors().getChannelDoesNotExist(), messages.getChannelType());
+            processor.parseAndSend(player, messages.getErrors().getChannelDoesNotExist(), messages.getChannelType());
             return;
         }
 
@@ -46,7 +46,7 @@ public class ChannelSubcommand implements BiConsumer<Audience, String[]> {
             return;
 
         if (channel.getPermission() != null && !player.getPlayer().hasPermission(channel.getPermission())) {
-            processor.processAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
+            processor.parseAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
             return;
         }
 

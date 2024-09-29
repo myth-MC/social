@@ -52,25 +52,41 @@ public final class SocialTextProcessor {
             unregisterParser(placeholder);
     }
 
-    public Component process(SocialPlayer player, Component component) {
+    public Component parsePlayerInput(SocialPlayer sender, Component message) {
         for (SocialParser parser : parsers) {
+            if (parser instanceof SocialPlayerInputParser)
+                message = parser.parse(sender, message);
+        }
+
+        return message;
+    }
+
+    public Component parsePlayerInput(SocialPlayer sender, String message) {
+        return parsePlayerInput(sender, Component.text(message));
+    }
+
+    public Component parse(SocialPlayer player, Component component) {
+        for (SocialParser parser : parsers) {
+            if (parser instanceof SocialFilterLike)
+                continue;
+
             component = parser.parse(player, component);
         }
 
         return component;
     }
 
-    public Component process(SocialPlayer player, String message) {
+    public Component parse(SocialPlayer player, String message) {
         Component component = MiniMessage.miniMessage().deserialize(message);
-        return process(player, component);
+        return parse(player, component);
     }
 
-    public void processAndSend(SocialPlayer player, Component component, ChannelType type) {
-        send(List.of(player), process(player, component), type);
+    public void parseAndSend(SocialPlayer player, Component component, ChannelType type) {
+        send(List.of(player), parse(player, component), type);
     }
 
-    public void processAndSend(SocialPlayer player, String message, ChannelType type) {
-        processAndSend(player, process(player, message), type);
+    public void parseAndSend(SocialPlayer player, String message, ChannelType type) {
+        parseAndSend(player, parse(player, message), type);
     }
 
     public void send(final @NotNull SocialPlayer recipient,
@@ -83,14 +99,7 @@ public final class SocialTextProcessor {
                      @NotNull Component message,
                      final @NotNull ChannelType type) {
 
-        for (SocialPlayer player : members) {
-            for (SocialParser parser : parsers) {
-                if (parser instanceof SocialFilterLike)
-                    message = parser.parse(player, message);
-            }
-
-            SocialAdventureProvider.get().sendMessage(player, message, type);
-        }
+        members.forEach(socialPlayer -> SocialAdventureProvider.get().sendMessage(socialPlayer, message, type));
     }
 
 }

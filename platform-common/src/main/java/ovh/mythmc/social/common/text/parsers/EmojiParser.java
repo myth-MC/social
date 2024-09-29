@@ -5,12 +5,11 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.emojis.Emoji;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.SocialParser;
-import ovh.mythmc.social.api.text.filters.SocialFilterLike;
+import ovh.mythmc.social.api.text.SocialPlayerInputParser;
 
 import java.util.regex.Pattern;
 
-public final class EmojiParser implements SocialParser, SocialFilterLike {
+public final class EmojiParser implements SocialPlayerInputParser {
 
     @Override
     public Component parse(SocialPlayer socialPlayer, Component message) {

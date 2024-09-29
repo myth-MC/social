@@ -56,7 +56,7 @@ public final class DiscordSRVHook implements ChatHook {
 
             String translatedMessage = MessageUtil.translateLegacy(plainMessage);
 
-            Social.get().getTextProcessor().processAndSend(socialPlayer, translatedMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, translatedMessage, ChannelType.CHAT);
         });
     }
 

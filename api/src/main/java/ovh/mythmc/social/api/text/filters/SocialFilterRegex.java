@@ -3,11 +3,10 @@ package ovh.mythmc.social.api.text.filters;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.SocialParser;
 
 import java.util.regex.Pattern;
 
-public abstract class SocialFilterRegex implements SocialParser, SocialFilterLike {
+public abstract class SocialFilterRegex implements SocialFilterLike {
 
     public abstract String regex();
 

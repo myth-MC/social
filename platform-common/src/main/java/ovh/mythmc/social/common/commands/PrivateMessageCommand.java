@@ -28,18 +28,18 @@ public abstract class PrivateMessageCommand {
         SocialPlayer messageSender = Social.get().getPlayerManager().get(uuid.get());
 
         if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled()) {
-            processor.processAndSend(messageSender, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
+            processor.parseAndSend(messageSender, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
             return;
         }
 
         if (args.length == 0) {
-            processor.processAndSend(messageSender, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            processor.parseAndSend(messageSender, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
-            processor.processAndSend(messageSender, messages.getErrors().getPlayerNotFound(), messages.getChannelType());
+            processor.parseAndSend(messageSender, messages.getErrors().getPlayerNotFound(), messages.getChannelType());
             return;
         }
 

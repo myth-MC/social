@@ -29,7 +29,7 @@ public final class SystemMessagesListener implements Listener {
         if (unformattedMessage == null || unformattedMessage.isEmpty())
             return;
 
-        Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+        Component message = Social.get().getTextProcessor().parse(socialPlayer, unformattedMessage);
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
         Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
@@ -50,7 +50,7 @@ public final class SystemMessagesListener implements Listener {
        if (unformattedMessage == null || unformattedMessage.isEmpty())
            return;
 
-       Component message = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+       Component message = Social.get().getTextProcessor().parse(socialPlayer, unformattedMessage);
        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
@@ -70,7 +70,7 @@ public final class SystemMessagesListener implements Listener {
 
         unformattedMessage = String.format(unformattedMessage, event.getDeathMessage());
 
-        Component deathMessage = Social.get().getTextProcessor().process(socialPlayer, unformattedMessage);
+        Component deathMessage = Social.get().getTextProcessor().parse(socialPlayer, unformattedMessage);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (unformattedMessage.contains(player.getName())) {
@@ -81,7 +81,7 @@ public final class SystemMessagesListener implements Listener {
                         .replacement(Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
                         .build());
 
-                deathMessage = Social.get().getTextProcessor().process(s, deathMessage);
+                deathMessage = Social.get().getTextProcessor().parse(s, deathMessage);
             }
         }
 
