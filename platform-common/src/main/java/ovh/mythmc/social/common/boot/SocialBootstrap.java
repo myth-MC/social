@@ -2,6 +2,7 @@ package ovh.mythmc.social.common.boot;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;

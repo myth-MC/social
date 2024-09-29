@@ -1,5 +1,6 @@
 package ovh.mythmc.social.bukkit;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,8 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     @Override
     public void enable() {
+        new Metrics(getPlugin(), 23497);
+
         registerCommands();
         registerListeners();
     }

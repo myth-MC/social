@@ -44,6 +44,10 @@
                             <pattern>org.snakeyaml</pattern>
                             <shadedPattern>ovh.mythmc.social.libs.org.snakeyaml</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>ovh.mythmc.social.libs.org.bstats</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 
@@ -106,6 +110,13 @@
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.17.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
