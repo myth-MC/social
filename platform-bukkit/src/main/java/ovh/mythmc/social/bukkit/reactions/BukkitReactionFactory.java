@@ -119,27 +119,23 @@ public final class BukkitReactionFactory extends ReactionFactory {
         new BukkitRunnable() {
             @Override
             public void run() {
-                double playerY = player.getLocation().getY();
-                Location itemDisplayLocation = itemDisplay.getLocation();
+                Transformation itemTransformation = itemDisplay.getTransformation();
 
-                if (itemDisplayLocation.getY() < playerY) {
+                if (itemTransformation.getTranslation().y() < 0) {
                     itemDisplay.remove();
                     playerReaction.remove(player.getUniqueId());
                     cancel();
                 }
 
-                Transformation itemTransformation = itemDisplay.getTransformation();
                 float currentScale = itemTransformation.getScale().get(1);
                 if (currentScale > 0) {
-                    itemTransformation.getScale().set(currentScale - 0.15F);
+                    itemTransformation.getScale().set(currentScale - 0.2F);
                 } else {
                     itemTransformation.getScale().set(0);
                 }
 
+                itemTransformation.getTranslation().set(0, itemTransformation.getScale().y() - 0.1, 0);
                 itemDisplay.setTransformation(itemTransformation);
-
-                itemDisplayLocation.setY(itemDisplayLocation.getY() - 0.15);
-                itemDisplay.teleport(itemDisplayLocation);
             }
         }.runTaskTimer(plugin, 0, 1);
     }
@@ -154,9 +150,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
             public void run() {
                 if (itemDisplay != null && player.isOnline()) {
                     if (itemDisplay.isValid() && !itemDisplay.isDead()) {
-                        Location location = player.getLocation();
-
-                        itemDisplay.setRotation(location.getYaw() - 180, 0);
+                        itemDisplay.setRotation(player.getLocation().getYaw() - 180, 0);
                     }
 
                     remainingTicks -= updateIntervalInTicks;

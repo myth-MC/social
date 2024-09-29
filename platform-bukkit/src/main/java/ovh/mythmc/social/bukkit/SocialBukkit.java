@@ -84,8 +84,10 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled())
             Bukkit.getPluginManager().registerEvents(new SystemMessagesListener(), getPlugin());
 
-        if (Social.get().getConfig().getSettings().getReactions().isEnabled())
-            Bukkit.getPluginManager().registerEvents(new ReactionsListener(), getPlugin());
+        if (Social.get().getConfig().getSettings().getReactions().isEnabled()) {
+            if (Social.get().getConfig().getSettings().getReactions().isUseTriggerWords())
+                Bukkit.getPluginManager().registerEvents(new ReactionsListener(), getPlugin());
+        }
 
         if (Social.get().getConfig().getSettings().getMotd().isEnabled())
             Bukkit.getPluginManager().registerEvents(new MOTDListener(), getPlugin());

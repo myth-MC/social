@@ -13,6 +13,9 @@ public class ReactionsSettings {
     @Comment("Whether reactions should be enabled or disabled")
     private boolean enabled = true;
 
+    @Comment("Disable this if you don't want reactions to be triggered by trigger words")
+    private boolean useTriggerWords = true;
+
     @Comment("Duration of the reaction in seconds")
     private int durationInSeconds = 3;
 

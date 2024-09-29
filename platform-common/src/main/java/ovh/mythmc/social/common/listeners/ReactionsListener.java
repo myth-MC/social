@@ -13,6 +13,8 @@ import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.common.util.SchedulerUtil;
 
+import java.util.regex.Pattern;
+
 @RequiredArgsConstructor
 public final class ReactionsListener implements Listener {
 
@@ -27,11 +29,11 @@ public final class ReactionsListener implements Listener {
 
         Reaction reaction = null;
         for (Reaction r : Social.get().getReactionManager().getReactionsMap().keySet()) {
-            if (r.triggerWords() == null)
+            if (r.triggerWords() == null || r.triggerWords().isEmpty())
                 continue;
 
             for (String triggerWord : r.triggerWords()) {
-                if (event.getMessage().contains(triggerWord)) {
+                if (event.getMessage().matches("(?i:" + Pattern.quote(triggerWord) + "\\b)")) {
                     reaction = r;
                 }
             }
