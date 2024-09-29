@@ -69,6 +69,8 @@ public final class ChatManager {
                     .append(Social.get().getTextProcessor().process(player, chatChannel.getHoverText()));
         }
 
+        Component textDivider = Social.get().getTextProcessor().process(player, " " + chatChannel.getTextDivider() + " ");
+
         Component nickname = Social.get().getTextProcessor().process(player, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
 
         // Todo: event
@@ -79,9 +81,7 @@ public final class ChatManager {
                                 .clickEvent(ClickEvent.runCommand("/social channel " + chatChannel.getName()))
                         )
                         .append(nickname)
-                        .append(text(" " + chatChannel.getTextDivider() + " ")
-                                .color(NamedTextColor.GRAY)
-                        )
+                        .append(textDivider)
                         .append(text(message)
                                 .color(chatChannel.getTextColor())
                         );
