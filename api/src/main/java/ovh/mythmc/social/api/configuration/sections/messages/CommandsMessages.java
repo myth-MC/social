@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class CommandsMessages {
 
-    private String channelChanged = "$info_prefix <gray>You are now chatting in channel @channel.</gray>";
+    private String channelChanged = "$info_prefix <gray>You are now chatting in channel $channel.</gray>";
 
-    private String nicknameChanged = "$info_prefix <gray>Your nickname is now <blue>@nickname</blue>.</gray>";
+    private String nicknameChanged = "$info_prefix <gray>Your nickname is now <blue>$nickname</blue>.</gray>";
 
     private String nicknameChangedOthers = "$success_prefix <gray><blue>%s</blue>'s nickname has been set to <green>%s</green></gray>";
 
@@ -21,6 +21,6 @@ public class CommandsMessages {
 
     private String pluginReloadedModulesWarning = "$warning_prefix <yellow>Modules cannot be enabled/disabled on the fly.</yellow>";
 
-    private String socialSpyStatusChanged = "$info_prefix <gray>Social spy status has been set to @socialspy.</gray>";
+    private String socialSpyStatusChanged = "$info_prefix <gray>Social spy status has been set to $socialspy.</gray>";
 
 }

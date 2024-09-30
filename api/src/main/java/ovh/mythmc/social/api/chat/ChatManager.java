@@ -78,7 +78,7 @@ public final class ChatManager {
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
                         )
-                        .append(nickname)
+                        .append(nickname.color(chatChannel.getNicknameColor()))
                         .append(textDivider)
                         .append(filteredMessage)
                         .color(chatChannel.getTextColor());
