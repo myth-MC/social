@@ -29,7 +29,7 @@ public class ReactionsSettings {
     private List<ReactionField> reactions = List.of(
             new ReactionField("SURPRISED", "https://textures.minecraft.net/texture/9d2920406b136385d2ce35d64f0183ea74ff268368cdf3d02031c06de37c434", "BLOCK_NOTE_BLOCK_BASS", List.of(":o", ":0")),
             new ReactionField("SMILE", "https://textures.minecraft.net/texture/4d8257956e3876da0af97a1117ed814b720b4d045fd52bed85f74113523eacb7", "BLOCK_NOTE_BLOCK_BELL", List.of(":)", "(:")),
-            new ReactionField("GRIN", "https://textures.minecraft.net/texture/5059d59eb4e59c31eecf9ece2f9cf3934e45c0ec476fc86bfaef8ea913ea710", "BLOCK_AMETHYST_BLOCK_RESONATE", List.of(":D")),
+            new ReactionField("GRIN", "https://textures.minecraft.net/texture/5059d59eb4e59c31eecf9ece2f9cf3934e45c0ec476fc86bfaef8ea913ea710", "BLOCK_CHAIN_BREAK", List.of(":D")),
             new ReactionField("WINK", "https://textures.minecraft.net/texture/f4ea2d6f939fefeff5d122e63dd26fa8a427df90b2928bc1fa89a8252a7e", "BLOCK_NOTE_BLOCK_FLUTE", List.of(";)")),
             new ReactionField("SAD", "https://textures.minecraft.net/texture/21dff48846d1524273859d717729556f626fa5f2185a1c322e723325263f09c", "BLOCK_AMETHYST_BLOCK_BREAK", List.of(":(")),
             new ReactionField("ANGRY", "https://textures.minecraft.net/texture/b1d4bea366aca58dd5b22e940bcdd4ba45bf88421f6d831158b879f2c8abce18", "ENTITY_GENERIC_BURN", List.of(">:(")),
