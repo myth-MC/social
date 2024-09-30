@@ -9,7 +9,7 @@
         <version>0.1.0</version>
     </parent>
 
-    <artifactId>social-platform-bukkit</artifactId>
+    <artifactId>social-bukkit</artifactId>
 
     <build>
         <finalName>${project.name}-${project.parent.version}</finalName>
@@ -62,7 +62,7 @@
     <dependencies>
         <dependency>
             <groupId>ovh.mythmc</groupId>
-            <artifactId>social-platform-common</artifactId>
+            <artifactId>social-common</artifactId>
             <version>0.1.0</version>
             <scope>compile</scope>
         </dependency>

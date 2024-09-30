@@ -9,7 +9,7 @@
         <version>0.1.0</version>
     </parent>
 
-    <artifactId>social-platform-common</artifactId>
+    <artifactId>social-common</artifactId>
     <version>0.1.0</version>
 
     <repositories>

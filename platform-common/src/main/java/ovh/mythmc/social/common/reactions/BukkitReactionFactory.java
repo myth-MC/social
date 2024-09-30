@@ -1,4 +1,4 @@
-package ovh.mythmc.social.bukkit.reactions;
+package ovh.mythmc.social.common.reactions;
 
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;

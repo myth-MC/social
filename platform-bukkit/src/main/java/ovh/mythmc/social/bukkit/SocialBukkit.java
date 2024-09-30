@@ -10,9 +10,9 @@ import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
 import ovh.mythmc.social.bukkit.commands.impl.PrivateMessageCommandImpl;
 import ovh.mythmc.social.bukkit.commands.impl.ReactionCommandImpl;
 import ovh.mythmc.social.bukkit.commands.impl.SocialCommandImpl;
-import ovh.mythmc.social.bukkit.reactions.BukkitReactionFactory;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.*;
+import ovh.mythmc.social.common.reactions.BukkitReactionFactory;
 
 import java.util.Objects;
 
