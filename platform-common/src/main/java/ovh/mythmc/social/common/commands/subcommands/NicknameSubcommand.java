@@ -50,6 +50,7 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
 
         for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
             if (offlinePlayer.getName() != null &&
+                    !offlinePlayer.getName().equalsIgnoreCase(player.getPlayer().getName()) && // Nickname belongs to sender
                     offlinePlayer.getName().equalsIgnoreCase(nickname) &&
                     offlinePlayer.hasPlayedBefore()) {
                 processor.parseAndSend(player, messages.getErrors().getNicknameAlreadyInUse(), messages.getChannelType());
@@ -59,7 +60,7 @@ public class NicknameSubcommand implements BiConsumer<Audience, String[]> {
 
         if (args.length == 1) {
             if (nickname.equalsIgnoreCase("reset")) {
-                player.getPlayer().setDisplayName(player.getNickname());
+                player.getPlayer().setDisplayName(player.getPlayer().getName());
                 processor.parseAndSend(player, messages.getCommands().getNicknameResetted(), messages.getChannelType());
                 return;
             }
