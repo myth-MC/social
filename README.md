@@ -1,8 +1,6 @@
 <div align="center">
   <p>
-    <!--
-    <img src="https://media.discordapp.net/attachments/1261075855183188085/1290677523977342976/social_v-30_h45-4.png?ex=66fd549d&is=66fc031d&hm=89d9768a823dd3d57cd65bda0f967854c7552043e748f115322d3fbad9f78623&=&format=webp&quality=lossless&width=238&height=300">
-    -->
+    <img src="https://media.discordapp.net/attachments/1261075855183188085/1290694645860274246/New_Piskel.png?ex=66fd648f&is=66fc130f&hm=c080ce1ee5f8b38acbe367d7c13a2faae64ed55cf9f7496f1c184c20fbd9e57e&=&format=webp&quality=lossless&width=300&height=300">
     <h1>social</h1>
     <a href="https://github.com/myth-MC/social/releases/latest"><img src="https://img.shields.io/github/v/release/myth-MC/social" alt="Latest release" /></a>
     <a href="https://github.com/myth-MC/social/pulls"><img src="https://img.shields.io/github/issues-pr/myth-MC/social" alt="Pull requests" /></a>
@@ -94,7 +92,8 @@ When you run social for the very first time it will automatically generate two f
 You can disable any feature by modifying `settings.yml`
 
 ## ✏️ Key concepts
-**social** provides a set of powerful built-in tools in the form of **parsers**. Parsers contain rules that modify text accordingly. Here's a list of parser types:
+### 💬 Parsers
+**social** provides a set of powerful built-in tools in the form of **parsers**. Parsers are rules that modify text accordingly. Here's a list of parser types:
 
 |              | Description                                  | Format         | Triggerable by players? | Example                 |
 |--------------|----------------------------------------------|----------------|-------------------------|-------------------------|
@@ -102,3 +101,17 @@ You can disable any feature by modifying `settings.yml`
 | Emoji        | Replaces a word with a unicode input (emoji) | :emoji:        | ✅                      | `:smile:     ➡️ 😄`     |
 | Keyword      | Replaces a word with a specific component    | [keyword]      | ✅                      | `[balance]   ➡️ 10.4$`  |
 | Placeholder  | Replaces a word with a specific component    | $placeholder   | ❌                      | `$channel    ➡️ global` |
+
+# ⭐️ Credits
+
+## 🫶 Special thanks _(in alphabetical order)_
+
+| Username                                           | Contribution                              |
+|----------------------------------------------------|-------------------------------------------|
+| [@deltartz_](https://www.instagram.com/deltartz_/) | For her great work on the logo            |
+| Jekyll                                             | For his bug reports and financial support |
+
+## ☕️ The myth-MC Team _(in alphabetical order)_
+| Username                           | Real name       | Role                 |
+|------------------------------------|-----------------|----------------------|
+| [@U8092](https://github.com/U8092) | N/A             | Lead developer       |
