@@ -47,7 +47,7 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 * 🤫 **Private messages** with social spy for staff members
 * 🤬 **Chat filters** that block IPs, URLs or words. Even in private messages
 * 🌊 **Flood/spam prevention**.
-* ☕️ **Developer-friendly API** with countless possibilities. Developers can add custom channels, reactions, emojis, filters...
+* ☕️ **Developer-friendly API** with countless possibilities. Developers can add custom channels, reactions, emojis, filters, keywords...
 * 👀 **No dependencies**.
 
 ## ⚠️ Compatibility chart
@@ -85,8 +85,20 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 
 # 🖊️ Usage
 
+## 🔧 First run
+
 When you run social for the very first time it will automatically generate two files:
 * 'settings.yml' contains general settings
 * 'messages.yml' contains configurable messages
 
 You can disable any feature by modifying `settings.yml`
+
+## ✏️ Key concepts
+**social** provides a set of powerful built-in tools in the form of **parsers**. Parsers contain rules that modify text accordingly. Here's a list of parser types:
+
+|              | Description                                  | Format         | Triggerable by players? | Example                 |
+|--------------|----------------------------------------------|----------------|-------------------------|-------------------------|
+| Filter       | Replace expressions or words with '***'      | _configurable_ | ✅                      | `192.168.1.1 ➡️ ***`    |
+| Emoji        | Replaces a word with a unicode input (emoji) | :emoji:        | ✅                      | `:smile:     ➡️ 😄`     |
+| Keyword      | Replaces a word with a specific component    | [keyword]      | ✅                      | `[balance]   ➡️ 10.4$`  |
+| Placeholder  | Replaces a word with a specific component    | $placeholder   | ❌                      | `$channel    ➡️ global` |
