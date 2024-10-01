@@ -68,7 +68,7 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 - Compatible with every placeholder added by PlaceholderAPI.
 
 ### 💬 [DiscordSRV](https://github.com/DiscordSRV/DiscordSRV)
-- Compatible with chat channels
+- Compatible with chat channels.
 
 ### 🐷 [banco](https://github.com/myth-MC/banco)
 - Adds keyword `[balance]` to show balance amount in chat.
