@@ -48,9 +48,9 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 * 📢 **Built-in announcements** with a configurable interval. Can broadcast messages through the action bar
 * 🤫 **Private messages** with social spy for staff members
 * 🤬 **Chat filters** that block IPs, URLs or words. Even in private messages
-* 🌊 **Flood/spam prevention**.
+* 🌊 **Flood/spam prevention**
 * ☕️ **Developer-friendly API** with countless possibilities. Developers can add custom channels, reactions, emojis, filters, keywords...
-* 👀 **No dependencies**.
+* 👀 **No dependencies**
 
 ## ⚠️ Compatibility chart
 
