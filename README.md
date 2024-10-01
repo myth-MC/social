@@ -64,8 +64,11 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 
 ## 🔌 Integrations
 
-### 💭 [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
-- Automatically compatible with every placeholder added by PlaceholderAPI.
+### 🏷️ [PlaceholderAPI](https://github.com/PlaceholderAPI/PlaceholderAPI)
+- Compatible with every placeholder added by PlaceholderAPI.
+
+### 💬 [DiscordSRV](https://github.com/DiscordSRV/DiscordSRV)
+- Compatible with chat channels
 
 ### 🐷 [banco](https://github.com/myth-MC/banco)
 - Adds keyword `[balance]` to show balance amount in chat.
