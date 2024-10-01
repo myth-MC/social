@@ -16,6 +16,7 @@ commands:
       - msg
       - whisper
       - w
+      - tell
   reaction:
     permission: social.command.reaction
     aliases:

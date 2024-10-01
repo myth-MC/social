@@ -26,7 +26,7 @@ public class ChatSettings {
     private String clickableNicknameHoverText = "$private_message_prefix <gray>Click here to message <blue>$nickname</blue></gray>";
 
     @Comment("Text that appears when hovering over a player's name when they have a nickname")
-    private String playerAliasWarningHoverText = "$warning_prefix <gray>This player is using an alias</gray>";
+    private String playerAliasWarningHoverText = "$warning_prefix <gray>This player is using an alias. Their real username is <blue>$username</blue></gray>";
 
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "$clickable_nickname";

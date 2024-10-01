@@ -1,10 +1,14 @@
 package ovh.mythmc.social.common.listeners;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -12,6 +16,9 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 import java.util.UUID;
 
 public final class SocialPlayerListener implements Listener {
+
+    // Temporary workaround for nicknames
+    NamespacedKey key = new NamespacedKey("social", "nickname");
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerLogin(PlayerLoginEvent event) {
@@ -23,6 +30,21 @@ public final class SocialPlayerListener implements Listener {
         }
     }
 
+    // Temporary workaround for nicknames
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+        if (socialPlayer == null)
+            return;
+
+        PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();
+        if (container.has(key, PersistentDataType.STRING)) {
+            String nickname = container.get(key, PersistentDataType.STRING);
+            socialPlayer.getPlayer().setDisplayName(nickname);
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
@@ -30,6 +52,10 @@ public final class SocialPlayerListener implements Listener {
 
         if (socialPlayer != null)
             Social.get().getPlayerManager().unregisterSocialPlayer(socialPlayer);
+
+        PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();
+
+        container.set(key, PersistentDataType.STRING, socialPlayer.getPlayer().getDisplayName());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
