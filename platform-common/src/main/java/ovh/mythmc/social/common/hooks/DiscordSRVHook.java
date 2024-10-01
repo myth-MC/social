@@ -5,20 +5,26 @@ import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.dependencies.commons.lang3.StringUtils;
 import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
-import github.scarsz.discordsrv.util.LangUtil;
 import github.scarsz.discordsrv.util.MessageUtil;
 import github.scarsz.discordsrv.util.PluginUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
+import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
-// Unused for now
-public final class DiscordSRVHook implements ChatHook {
+public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook, Listener {
+
+    // SocialPluginHook
+    public DiscordSRVHook(DiscordSRV storedClass) {
+        super(storedClass);
+        DiscordSRV.getPlugin().getPluginHooks().add(this);
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMessage(SocialChatMessageSendEvent event) {
@@ -46,17 +52,8 @@ public final class DiscordSRVHook implements ChatHook {
             if (socialPlayer == null)
                 return;
 
-            String legacy = MessageUtil.toLegacy(message);
-
-            String plainMessage = LangUtil.Message.CHAT_CHANNEL_MESSAGE.toString()
-                    .replace("%channelcolor%", chatChannel.getColor().asHexString())
-                    .replace("%channelname%", chatChannel.getName())
-                    .replace("%channelnickname%", chatChannel.getIcon())
-                    .replace("%message%", legacy);
-
-            String translatedMessage = MessageUtil.translateLegacy(plainMessage);
-
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, translatedMessage, ChannelType.CHAT);
+            String miniMessage = MessageUtil.toMiniMessage(message);
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, miniMessage, ChannelType.CHAT);
         });
     }
 
@@ -74,4 +71,9 @@ public final class DiscordSRVHook implements ChatHook {
         return PluginUtil.getPlugin("social");
     }
 
+    // SocialPluginHook
+    @Override
+    public String identifier() {
+        return "DiscordSRV";
+    }
 }

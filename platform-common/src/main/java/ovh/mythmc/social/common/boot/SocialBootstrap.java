@@ -1,8 +1,8 @@
 package ovh.mythmc.social.common.boot;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +11,7 @@ import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.events.SocialBootstrapEvent;
+import ovh.mythmc.social.common.hooks.DiscordSRVHook;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 import ovh.mythmc.social.common.text.filters.URLFilter;
 import ovh.mythmc.social.common.text.parsers.EmojiParser;
@@ -47,6 +48,8 @@ public abstract class SocialBootstrap<T> implements Social {
         SchedulerUtil.setPlugin((JavaPlugin) getPlugin());
 
         try {
+            // Register external plugin hooks
+            hooks();
             enable();
         } catch (Throwable throwable) {
             getLogger().error("An error has occurred while initializing social: {}", throwable);
@@ -57,9 +60,6 @@ public abstract class SocialBootstrap<T> implements Social {
         // Todo: update checker
 
         Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
-
-        // Register external plugin hooks
-        hooks();
     }
 
     public abstract void enable();
@@ -67,7 +67,10 @@ public abstract class SocialBootstrap<T> implements Social {
     public abstract void shutdown();
 
     public final void hooks() {
-        // unused for now
+        if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
+            DiscordSRVHook discordSRVHook = new DiscordSRVHook(DiscordSRV.getPlugin());
+            Social.get().getInternalHookManager().registerHooks(discordSRVHook);
+        }
     }
 
     public final void reload() {

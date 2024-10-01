@@ -3,8 +3,10 @@ package ovh.mythmc.social.bukkit;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
 import ovh.mythmc.social.bukkit.commands.impl.PrivateMessageCommandImpl;
@@ -94,6 +96,13 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
         if (Social.get().getConfig().getSettings().getMotd().isEnabled())
             Bukkit.getPluginManager().registerEvents(new MOTDListener(), getPlugin());
+
+        // External hooks
+        for (SocialPluginHook<?> pluginHook : Social.get().getInternalHookManager().getHooks()) {
+            if (pluginHook instanceof Listener listener) {
+                Bukkit.getPluginManager().registerEvents(listener, getPlugin());
+            }
+        }
     }
 
 }
