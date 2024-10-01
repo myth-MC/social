@@ -7,22 +7,26 @@
     <a href="https://github.com/myth-MC/social/issues"><img src="https://img.shields.io/github/issues/myth-MC/social" alt="Issues" /></a>
     <a href="https://github.com/myth-MC/social/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License" /></a>
     <br>
-    Enhance your server's communication.<br>
+    Enhance your server's communication.
+    <br>
     Modular, customizable and feature-packed.
   </p>
 </div>
 
 <details open="open">
-  <summary>Quick navigation</summary>
+  <summary>🧲 Quick navigation</summary>
   <ol>
     <li>
-      <a href="#information">Information</a>
+      <a href="#information">📚 Information</a>
     </li>
     <li>
-      <a href="#installation">Installation</a>
+      <a href="#installation">📥 Installation</a>
     </li>
     <li>
-      <a href="#usage">Usage</a>
+      <a href="#usage">🖊️ Usage</a>
+    </li>
+    <li>
+      <a href="#credits">⭐️ Credits</a>
     </li>
   </ol>
 </details>
@@ -101,6 +105,8 @@ You can disable any feature by modifying `settings.yml`
 | Emoji        | Replaces a word with a unicode input (emoji) | :emoji:        | ✅                      | `:smile:     ➡️ 😄`     |
 | Keyword      | Replaces a word with a specific component    | [keyword]      | ✅                      | `[balance]   ➡️ 10.4$`  |
 | Placeholder  | Replaces a word with a specific component    | $placeholder   | ❌                      | `$channel    ➡️ global` |
+
+<div id="credits"></div>
 
 # ⭐️ Credits
 
