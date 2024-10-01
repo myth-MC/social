@@ -25,6 +25,7 @@ public class EmojiSettings {
             new EmojiField("cloud", List.of(), "\u2601"),
             new EmojiField("comet", List.of(), "\u2604"),
             new EmojiField("copyright", List.of(), "\u00A9"),
+            new EmojiField("dagger", List.of("sword"), "\uD83D\uDDE1"),
             new EmojiField("envelope", List.of("mail"), "\u2709"),
             new EmojiField("frowning_face", List.of("frowning", "sad"), "\u2639"),
             new EmojiField("heart", List.of("<3"), "\u2764"),
