@@ -11,6 +11,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.events.chat.SocialChannelSwitchEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
@@ -96,12 +97,41 @@ public final class ChatListener implements Listener {
 
         SocialChatMessageSendEvent socialChatMessageEvent = new SocialChatMessageSendEvent(socialPlayer, mainChannel, event.getMessage());
         Bukkit.getPluginManager().callEvent(socialChatMessageEvent);
+        if (!socialChatMessageEvent.isCancelled())
+            Social.get().getChatManager().sendChatMessage(socialChatMessageEvent.getSender(), socialChatMessageEvent.getChatChannel(), socialChatMessageEvent.getMessage());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onSocialChatMessage(SocialChatMessageSendEvent event) {
-        if (!event.isCancelled())
-            Social.get().getChatManager().sendChatMessage(event.getSender(), event.getChatChannel(), event.getMessage());
+    @EventHandler
+    public void onSocialChatMessageSend(SocialChatMessageSendEvent event) {
+        if (event.getChatChannel().getPermission() == null)
+            return;
+
+        // Check if player still has permission to chat in their selected channel
+        if (!event.getSender().getPlayer().hasPermission(event.getChatChannel().getPermission())) {
+            ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+
+            event.getChatChannel().removeMember(event.getSender());
+            event.getSender().setMainChannel(defaultChannel);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onSocialChatMessageReceive(SocialChatMessageReceiveEvent event) {
+        if (event.getChatChannel().getPermission() == null)
+            return;
+
+        ChatChannel chatChannel = event.getChatChannel();
+
+        // We'll remove the player from this channel if they no longer have the required permission
+        if (!event.getRecipient().getPlayer().hasPermission(chatChannel.getPermission())) {
+            ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+            event.getRecipient().setMainChannel(defaultChannel);
+
+            chatChannel.removeMember(event.getRecipient().getUuid());
+
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
@@ -85,12 +86,14 @@ public final class ChatManager {
 
         // Call SocialChatMessageReceiveEvent for each channel member
         Map<SocialPlayer, Component> playerMap = new HashMap<>();
-        chatChannel.getMembers().forEach(uuid -> {
+        for (int i = 0; i < chatChannel.getMembers().size(); i++) {
+            UUID uuid = chatChannel.getMembers().get(i);
             SocialPlayer member = Social.get().getPlayerManager().get(uuid);
             SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, member, chatChannel, chatMessage);
+            Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
             if (!socialChatMessageReceiveEvent.isCancelled())
                 playerMap.put(member, socialChatMessageReceiveEvent.getMessage());
-        });
+        }
 
         playerMap.forEach((s, m) -> Social.get().getTextProcessor().send(s, m, chatChannel.getType()));
         sender.setLatestMessageInMilliseconds(System.currentTimeMillis());

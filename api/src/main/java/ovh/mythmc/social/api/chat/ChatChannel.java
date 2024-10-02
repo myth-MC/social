@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -45,7 +45,7 @@ public final class ChatChannel {
 
     private final boolean passthrough;
 
-    private Collection<UUID> members = new ArrayList<>();
+    private List<UUID> members = new ArrayList<>();
 
     public boolean addMember(UUID uuid) {
         if (members.contains(uuid))
@@ -79,7 +79,6 @@ public final class ChatChannel {
                 TextColor.fromHexString(channelField.color()),
                 ChannelType.CHAT,
                 channelField.icon(),
-                //TextColor.fromHexString(channelField.iconColor()),
                 channelField.showHoverText(),
                 hoverText,
                 TextColor.fromHexString(channelField.nicknameColor()),
