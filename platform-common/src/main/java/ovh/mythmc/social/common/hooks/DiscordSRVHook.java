@@ -18,6 +18,8 @@ import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
+import java.util.UUID;
+
 public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook, Listener {
 
     // SocialPluginHook
@@ -47,6 +49,13 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
         if (chatChannel == null)
             return;
 
+        // Workaround for placeholders
+        SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L);
+
+        String miniMessage = MessageUtil.toMiniMessage(message);
+        miniMessage = miniMessage.replace("%channel%", Social.get().getTextProcessor().getPlaceholder("channel_icon").process(fakePlayer));
+
+        String finalMiniMessage = miniMessage;
         chatChannel.getMembers().forEach(uuid -> {
             SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null)
@@ -55,8 +64,8 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
             if (!Social.get().getChatManager().hasPermission(socialPlayer, chatChannel))
                 return;
 
-            String miniMessage = MessageUtil.toMiniMessage(message);
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, miniMessage, ChannelType.CHAT);
+            // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, finalMiniMessage, ChannelType.CHAT);
         });
     }
 

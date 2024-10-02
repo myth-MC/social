@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
+@AllArgsConstructor
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
