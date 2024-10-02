@@ -1,40 +1,31 @@
 package ovh.mythmc.social.common.commands.subcommands;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.identity.Identity;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
+import ovh.mythmc.social.common.commands.SubCommand;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.BiConsumer;
+import java.util.List;
 
-public class SocialSpySubcommand implements BiConsumer<Audience, String[]> {
+public class SocialSpySubcommand implements SubCommand {
 
     private final SocialTextProcessor processor = Social.get().getTextProcessor();
     private final SocialMessages messages = Social.get().getConfig().getMessages();
 
     @Override
-    public void accept(Audience sender, String[] args) {
-        Optional<UUID> uuid = sender.get(Identity.UUID);
-        if (uuid.isEmpty())
-            return;
-
-        SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
-        if (player == null) {
-            // unexpected error catch
+    public void accept(SocialPlayer socialPlayer, String[] args) {
+        if (!socialPlayer.getPlayer().hasPermission("social.command.socialspy")) {
+            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
             return;
         }
 
-        if (!player.getPlayer().hasPermission("social.command.socialspy")) {
-            processor.parseAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
-            return;
-        }
-
-        Social.get().getPlayerManager().setSocialSpy(player, !player.isSocialSpy());
-        processor.parseAndSend(player, messages.getCommands().getSocialSpyStatusChanged(), messages.getChannelType());
+        Social.get().getPlayerManager().setSocialSpy(socialPlayer, !socialPlayer.isSocialSpy());
+        processor.parseAndSend(socialPlayer, messages.getCommands().getSocialSpyStatusChanged(), messages.getChannelType());
     }
 
+    @Override
+    public List<String> tabComplete(SocialPlayer socialPlayer, String[] args) {
+        return List.of();
+    }
 }

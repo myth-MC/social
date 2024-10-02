@@ -1,7 +1,5 @@
 package ovh.mythmc.social.common.commands;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.identity.Identity;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +16,7 @@ public abstract class PrivateMessageCommand {
     private final SocialTextProcessor processor = Social.get().getTextProcessor();
     private final SocialMessages messages = Social.get().getConfig().getMessages();
 
-    public void run(@NotNull Audience sender, @NotNull String[] args) {
-        Optional<UUID> uuid = sender.get(Identity.UUID);
-        if (uuid.isEmpty()) {
-            // error: command cannot be run from console
-            return;
-        }
-
-        SocialPlayer messageSender = Social.get().getPlayerManager().get(uuid.get());
-
+    public void run(@NotNull SocialPlayer messageSender, @NotNull String[] args) {
         if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled()) {
             processor.parseAndSend(messageSender, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
             return;
@@ -45,7 +35,7 @@ public abstract class PrivateMessageCommand {
 
         SocialPlayer messageRecipient = Social.get().getPlayerManager().get(player.getUniqueId());
 
-        if (messageSender == null || messageRecipient == null) {
+        if (messageRecipient == null) {
             // error: unexpected error (socialplayer not registered)
             return;
         }
@@ -56,7 +46,7 @@ public abstract class PrivateMessageCommand {
         Bukkit.getPluginManager().callEvent(socialPrivateMessageEvent);
     }
 
-    public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> onlinePlayers = new ArrayList<>();
             Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));

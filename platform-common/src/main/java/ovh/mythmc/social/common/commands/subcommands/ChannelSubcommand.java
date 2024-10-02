@@ -1,54 +1,56 @@
 package ovh.mythmc.social.common.commands.subcommands;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.identity.Identity;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.common.commands.SubCommand;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.BiConsumer;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ChannelSubcommand implements BiConsumer<Audience, String[]> {
+public class ChannelSubcommand implements SubCommand {
 
     private final SocialTextProcessor processor = Social.get().getTextProcessor();
     private final SocialMessages messages = Social.get().getConfig().getMessages();
 
     @Override
-    public void accept(Audience sender, String[] args) {
-        Optional<UUID> uuid = sender.get(Identity.UUID);
-        if (uuid.isEmpty())
-            return;
-
-        SocialPlayer player = Social.get().getPlayerManager().get(uuid.get());
-        if (player == null) {
-            // unexpected error catch
-            return;
-        }
-
+    public void accept(SocialPlayer socialPlayer, String[] args) {
         if (args.length == 0) {
-            processor.parseAndSend(player, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
             return;
         }
 
         ChatChannel channel = Social.get().getChatManager().getChannel(args[0]);
         if (channel == null) {
-            processor.parseAndSend(player, messages.getErrors().getChannelDoesNotExist(), messages.getChannelType());
+            processor.parseAndSend(socialPlayer, messages.getErrors().getChannelDoesNotExist(), messages.getChannelType());
             return;
         }
 
-        if (channel == player.getMainChannel())
+        if (channel == socialPlayer.getMainChannel())
             return;
 
-        if (channel.getPermission() != null && !player.getPlayer().hasPermission(channel.getPermission())) {
-            processor.parseAndSend(player, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
+        if (channel.getPermission() != null && !socialPlayer.getPlayer().hasPermission(channel.getPermission())) {
+            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
             return;
         }
 
-        Social.get().getPlayerManager().setMainChannel(player, channel);
+        Social.get().getPlayerManager().setMainChannel(socialPlayer, channel);
     }
 
+    @Override
+    public List<String> tabComplete(SocialPlayer socialPlayer, String[] args) {
+        if (args.length == 1) {
+            List<String> channels = new ArrayList<>();
+            Social.get().getChatManager().getChannels().forEach(channel -> {
+                if (Social.get().getChatManager().hasPermission(socialPlayer, channel))
+                    channels.add(channel.getName());
+            });
+
+            return channels;
+        }
+
+        return List.of();
+    }
 }
