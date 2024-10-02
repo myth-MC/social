@@ -2,11 +2,9 @@ package ovh.mythmc.social.common.commands.subcommands;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
-import org.bukkit.Bukkit;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
-import ovh.mythmc.social.api.events.chat.SocialChannelSwitchEvent;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -50,7 +48,7 @@ public class ChannelSubcommand implements BiConsumer<Audience, String[]> {
             return;
         }
 
-        Bukkit.getPluginManager().callEvent(new SocialChannelSwitchEvent(player, player.getMainChannel(), channel));
+        Social.get().getPlayerManager().setMainChannel(player, channel);
     }
 
 }

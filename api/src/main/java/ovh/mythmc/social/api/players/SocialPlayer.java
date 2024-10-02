@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import java.util.UUID;
 
 @Getter
-@Setter
+@Setter(AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode

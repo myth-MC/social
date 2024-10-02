@@ -41,7 +41,7 @@ public final class ChatListener implements Listener {
             return;
         }
 
-        socialPlayer.setMainChannel(defaultChannel);
+        Social.get().getPlayerManager().setMainChannel(socialPlayer, defaultChannel);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -108,7 +108,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getSender());
-            event.getSender().setMainChannel(defaultChannel);
+            Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel);
             event.setCancelled(true);
         }
     }
@@ -123,7 +123,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getRecipient());
-            event.getRecipient().setMainChannel(defaultChannel);
+            Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel);
             event.setCancelled(true);
         }
     }
@@ -133,7 +133,6 @@ public final class ChatListener implements Listener {
         if (!event.getChatChannel().getMembers().contains(event.getSocialPlayer().getUuid()))
             event.getChatChannel().addMember(event.getSocialPlayer().getUuid());
 
-        event.getSocialPlayer().setMainChannel(event.getChatChannel());
         processor.parseAndSend(event.getSocialPlayer(), messages.getCommands().getChannelChanged(), messages.getChannelType());
     }
 

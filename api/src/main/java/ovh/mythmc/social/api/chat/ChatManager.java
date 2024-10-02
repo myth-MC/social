@@ -108,7 +108,7 @@ public final class ChatManager {
         }
 
         playerMap.forEach((s, m) -> Social.get().getTextProcessor().send(s, m, chatChannel.getType()));
-        sender.setLatestMessageInMilliseconds(System.currentTimeMillis());
+        Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
@@ -162,7 +162,7 @@ public final class ChatManager {
         });
 
         Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
-        sender.setLatestMessageInMilliseconds(System.currentTimeMillis());
+        Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console
         SocialAdventureProvider.get().console().sendMessage(chatMessage);

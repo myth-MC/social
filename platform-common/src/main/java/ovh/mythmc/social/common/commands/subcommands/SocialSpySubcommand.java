@@ -33,7 +33,7 @@ public class SocialSpySubcommand implements BiConsumer<Audience, String[]> {
             return;
         }
 
-        player.setSocialSpy(!player.isSocialSpy());
+        Social.get().getPlayerManager().setSocialSpy(player, !player.isSocialSpy());
         processor.parseAndSend(player, messages.getCommands().getSocialSpyStatusChanged(), messages.getChannelType());
     }
 

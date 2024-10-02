@@ -122,10 +122,10 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getAnnouncementManager().restartTask();
 
         // Assign channels to every SocialPlayer
-        ChatChannel mainChannel = Social.get().getChatManager().getChannel(getConfig().getSettings().getChat().getDefaultChannel());
+        ChatChannel defaultChannel = Social.get().getChatManager().getChannel(getConfig().getSettings().getChat().getDefaultChannel());
         Social.get().getPlayerManager().get().forEach(socialPlayer -> {
             Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
-            socialPlayer.setMainChannel(mainChannel);
+            Social.get().getPlayerManager().setMainChannel(socialPlayer, defaultChannel);
         });
 
         // Fire event if plugin is already enabled
