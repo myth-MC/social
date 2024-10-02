@@ -56,6 +56,18 @@ public final class ChatManager {
         }
     }
 
+    public boolean hasPermission(final @NotNull SocialPlayer socialPlayer,
+                              final @NotNull ChatChannel chatChannel) {
+
+        if (chatChannel.getPermission() == null)
+            return true;
+
+        if (socialPlayer.getPlayer().hasPermission(chatChannel.getPermission()))
+            return true;
+
+        return false;
+    }
+
     public void sendChatMessage(final @NotNull SocialPlayer sender,
                                 final @NotNull ChatChannel chatChannel,
                                 final @NotNull String message) {

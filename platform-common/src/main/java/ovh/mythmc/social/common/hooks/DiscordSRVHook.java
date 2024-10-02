@@ -52,6 +52,9 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
             if (socialPlayer == null)
                 return;
 
+            if (!Social.get().getChatManager().hasPermission(socialPlayer, chatChannel))
+                return;
+
             String miniMessage = MessageUtil.toMiniMessage(message);
             Social.get().getTextProcessor().parseAndSend(socialPlayer, miniMessage, ChannelType.CHAT);
         });

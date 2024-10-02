@@ -103,11 +103,8 @@ public final class ChatListener implements Listener {
 
     @EventHandler
     public void onSocialChatMessageSend(SocialChatMessageSendEvent event) {
-        if (event.getChatChannel().getPermission() == null)
-            return;
-
         // Check if player still has permission to chat in their selected channel
-        if (!event.getSender().getPlayer().hasPermission(event.getChatChannel().getPermission())) {
+        if (!Social.get().getChatManager().hasPermission(event.getSender(), event.getChatChannel())) {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getSender());
@@ -121,15 +118,12 @@ public final class ChatListener implements Listener {
         if (event.getChatChannel().getPermission() == null)
             return;
 
-        ChatChannel chatChannel = event.getChatChannel();
-
         // We'll remove the player from this channel if they no longer have the required permission
-        if (!event.getRecipient().getPlayer().hasPermission(chatChannel.getPermission())) {
+        if (!Social.get().getChatManager().hasPermission(event.getRecipient(), event.getChatChannel())) {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+
+            event.getChatChannel().removeMember(event.getRecipient());
             event.getRecipient().setMainChannel(defaultChannel);
-
-            chatChannel.removeMember(event.getRecipient().getUuid());
-
             event.setCancelled(true);
         }
     }
