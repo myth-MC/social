@@ -48,7 +48,6 @@ public final class SocialGestalt {
         for (int i = 0; i < featureList.size(); i++) {
             SocialFeature feature = featureList.get(i);
             feature.disable();
-            featureList.remove(feature);
             if (Social.get().getConfig().getSettings().isDebug())
                 Social.get().getLogger().info("Disabled feature " + feature.featureType());
         }

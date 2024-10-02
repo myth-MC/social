@@ -42,8 +42,17 @@ public abstract class SocialBootstrap<T> implements Social {
     }
 
     public final void initialize() {
-        // Initialize gestalt
+        // Initialize gestalt and register features
         SocialGestalt.set(new SocialGestalt());
+        SocialGestalt.get().registerFeature(
+                new IPFilterFeature(),
+                new URLFilterFeature(),
+                new EmojiFeature(),
+                new ChatFeature(),
+                new MOTDFeature(),
+                new ReactionsFeature(),
+                new SystemMessagesFeature()
+        );
 
         // Initialize scheduler
         PluginUtil.setPlugin((JavaPlugin) getPlugin());
@@ -82,8 +91,9 @@ public abstract class SocialBootstrap<T> implements Social {
     }
 
     public final void reload() {
-        // Stop running tasks
-        SocialGestalt.get().disableAllFeatures();
+        // Disable Gestalt features
+        if (Bukkit.getPluginManager().isPluginEnabled("social"))
+            SocialGestalt.get().disableAllFeatures();
 
         // Clear channels, announcements, parsers, reactions and emojis (we don't want any duplicates)
         Social.get().getChatManager().getChannels().clear();
@@ -112,17 +122,6 @@ public abstract class SocialBootstrap<T> implements Social {
                 new PrivateMessagePlaceholder(),
                 new SuccessPlaceholder(),
                 new WarningPlaceholder()
-        );
-
-        // Register features
-        SocialGestalt.get().registerFeature(
-                new IPFilterFeature(),
-                new URLFilterFeature(),
-                new EmojiFeature(),
-                new ChatFeature(),
-                new MOTDFeature(),
-                new ReactionsFeature(),
-                new SystemMessagesFeature()
         );
 
         // Start all running tasks again
