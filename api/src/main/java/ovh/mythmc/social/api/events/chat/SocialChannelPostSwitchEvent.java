@@ -1,6 +1,7 @@
 package ovh.mythmc.social.api.events.chat;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -11,24 +12,16 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
 @Setter
-public class SocialChatMessageSendEvent extends Event implements Cancellable {
+@RequiredArgsConstructor
+public class SocialChannelPostSwitchEvent extends Event {
 
-    private final SocialPlayer sender;
+    private final SocialPlayer socialPlayer;
 
-    private ChatChannel chatChannel;
+    private final ChatChannel previousChannel;
 
-    private String message;
+    private final ChatChannel chatChannel;
 
     private static final @NotNull HandlerList handlers = new HandlerList();
-
-    private boolean cancelled = false;
-
-    public SocialChatMessageSendEvent(SocialPlayer sender, ChatChannel chatChannel, String message) {
-        super(true);
-        this.sender = sender;
-        this.chatChannel = chatChannel;
-        this.message = message;
-    }
 
     @NotNull
     @Override
@@ -39,5 +32,4 @@ public class SocialChatMessageSendEvent extends Event implements Cancellable {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-
 }

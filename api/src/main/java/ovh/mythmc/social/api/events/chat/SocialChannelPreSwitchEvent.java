@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class SocialChannelSwitchEvent extends Event implements Cancellable {
+public class SocialChannelPreSwitchEvent extends Event implements Cancellable {
 
     private final SocialPlayer socialPlayer;
 

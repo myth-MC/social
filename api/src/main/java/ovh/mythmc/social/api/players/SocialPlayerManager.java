@@ -6,7 +6,8 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.events.chat.SocialChannelSwitchEvent;
+import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
+import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +64,17 @@ public final class SocialPlayerManager {
     public void setMainChannel(final @NotNull SocialPlayer socialPlayer,
                                final @NotNull ChatChannel chatChannel) {
 
-        SocialChannelSwitchEvent socialChannelSwitchEvent = new SocialChannelSwitchEvent(socialPlayer, socialPlayer.getMainChannel(), chatChannel);
-        Bukkit.getPluginManager().callEvent(socialChannelSwitchEvent);
+        ChatChannel previousChannel = socialPlayer.getMainChannel();
 
-        if (!socialChannelSwitchEvent.isCancelled())
-            socialPlayer.setMainChannel(chatChannel);
+        SocialChannelPreSwitchEvent socialChannelPreSwitchEvent = new SocialChannelPreSwitchEvent(socialPlayer, previousChannel, chatChannel);
+        Bukkit.getPluginManager().callEvent(socialChannelPreSwitchEvent);
+
+        if (socialChannelPreSwitchEvent.isCancelled())
+            return;
+
+        socialPlayer.setMainChannel(chatChannel);
+        SocialChannelPostSwitchEvent socialChannelPostSwitchEvent = new SocialChannelPostSwitchEvent(socialPlayer, previousChannel, chatChannel);
+        Bukkit.getPluginManager().callEvent(socialChannelPostSwitchEvent);
     }
 
     public void setLatestMessage(final @NotNull SocialPlayer socialPlayer,

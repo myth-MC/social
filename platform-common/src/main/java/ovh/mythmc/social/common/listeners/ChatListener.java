@@ -10,11 +10,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialMessages;
-import ovh.mythmc.social.api.events.chat.SocialChannelSwitchEvent;
+import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
+import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
+import ovh.mythmc.social.common.util.SchedulerUtil;
 
 import java.util.UUID;
 
@@ -108,7 +110,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getSender());
-            Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel);
+            SchedulerUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -123,16 +125,19 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getRecipient());
-            Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel);
+            SchedulerUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onSocialChannelSwitch(SocialChannelSwitchEvent event) {
+    public void onSocialChannelPreSwitch(SocialChannelPreSwitchEvent event) {
         if (!event.getChatChannel().getMembers().contains(event.getSocialPlayer().getUuid()))
             event.getChatChannel().addMember(event.getSocialPlayer().getUuid());
+    }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
         processor.parseAndSend(event.getSocialPlayer(), messages.getCommands().getChannelChanged(), messages.getChannelType());
     }
 
