@@ -83,6 +83,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new SocialBootstrapListener(), getPlugin());
 
+        /*
         if (Social.get().getConfig().getSettings().getChat().isEnabled())
             Bukkit.getPluginManager().registerEvents(new ChatListener(), getPlugin());
 
@@ -96,6 +97,8 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
         if (Social.get().getConfig().getSettings().getMotd().isEnabled())
             Bukkit.getPluginManager().registerEvents(new MOTDListener(), getPlugin());
+
+         */
 
         // External hooks
         for (SocialPluginHook<?> pluginHook : Social.get().getInternalHookManager().getHooks()) {

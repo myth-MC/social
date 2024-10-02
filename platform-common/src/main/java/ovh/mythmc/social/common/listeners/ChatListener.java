@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.SocialTextProcessor;
-import ovh.mythmc.social.common.util.SchedulerUtil;
+import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.UUID;
 
@@ -110,7 +110,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getSender());
-            SchedulerUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
+            PluginUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -125,7 +125,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getRecipient());
-            SchedulerUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
+            PluginUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -140,5 +140,4 @@ public final class ChatListener implements Listener {
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
         processor.parseAndSend(event.getSocialPlayer(), messages.getCommands().getChannelChanged(), messages.getChannelType());
     }
-
 }
