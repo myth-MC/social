@@ -33,7 +33,7 @@ public final class ReactionsListener implements Listener {
                 continue;
 
             for (String triggerWord : r.triggerWords()) {
-                if (event.getMessage().matches("(?i:" + Pattern.quote(triggerWord) + "\\b)")) {
+                if (event.getMessage().matches("(?i:" + Pattern.quote(triggerWord) + ")")) {
                     reaction = r;
                 }
             }
