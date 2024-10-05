@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img src="https://media.discordapp.net/attachments/1261075855183188085/1290694645860274246/New_Piskel.png?ex=66fd648f&is=66fc130f&hm=c080ce1ee5f8b38acbe367d7c13a2faae64ed55cf9f7496f1c184c20fbd9e57e&=&format=webp&quality=lossless&width=300&height=300">
+    <img src="https://assets.mythmc.ovh/social/logo-small.png">
     <h1>social</h1>
     <a href="https://github.com/myth-MC/social/releases/latest"><img src="https://img.shields.io/github/v/release/myth-MC/social" alt="Latest release" /></a>
     <a href="https://github.com/myth-MC/social/pulls"><img src="https://img.shields.io/github/issues-pr/myth-MC/social" alt="Pull requests" /></a>
