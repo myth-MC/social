@@ -72,7 +72,10 @@ public final class SocialGestalt {
         String version = Bukkit.getBukkitVersion().split("-")[0];
 
         return switch (feature) {
-            case EMOJIS -> version.startsWith("1.18") ||
+            case EMOJIS ->
+                    version.startsWith("1.16") ||
+                    version.startsWith("1.17") ||
+                    version.startsWith("1.18") ||
                     version.startsWith("1.19") ||
                     version.startsWith("1.20") ||
                     version.startsWith("1.21");
