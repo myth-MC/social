@@ -9,6 +9,8 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.emojis.Emoji;
+import ovh.mythmc.social.api.features.SocialFeatureType;
+import ovh.mythmc.social.api.features.SocialGestalt;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.text.filters.SocialFilterLiteral;
 import ovh.mythmc.social.api.text.filters.SocialFilterRegex;
@@ -48,10 +50,12 @@ public final class SocialConfigProvider {
         );
 
         // Register emojis
-        settings.getEmojis().getEmojis().forEach(emojiField -> {
-            Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
-            Social.get().getEmojiManager().registerEmoji(emoji);
-        });
+        if (SocialGestalt.get().isEnabled(SocialFeatureType.EMOJIS)) {
+            settings.getEmojis().getEmojis().forEach(emojiField -> {
+                Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
+                Social.get().getEmojiManager().registerEmoji(emoji);
+            });
+        }
 
         // Register custom placeholders
         if (settings.getChat().getFilter().isEnabled()) {
@@ -71,23 +75,27 @@ public final class SocialConfigProvider {
         }
 
         // Register reactions
-        settings.getReactions().getReactions().forEach(reactionField -> {
-            Reaction reaction;
-            if (reactionField.sound() != null) {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), findByName(reactionField.sound()), reactionField.triggerWords());
-            } else {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
-            }
-            Social.get().getReactionManager().registerReaction("SERVER", reaction);
-        });
+        if (SocialGestalt.get().isEnabled(SocialFeatureType.REACTIONS)) {
+            settings.getReactions().getReactions().forEach(reactionField -> {
+                Reaction reaction;
+                if (reactionField.sound() != null) {
+                    reaction = new Reaction(reactionField.name(), reactionField.texture(), findByName(reactionField.sound()), reactionField.triggerWords());
+                } else {
+                    reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
+                }
+                Social.get().getReactionManager().registerReaction("SERVER", reaction);
+            });
+        }
 
         // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> {
-            Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
+        if (SocialGestalt.get().isEnabled(SocialFeatureType.CHAT)) {
+            settings.getChat().getChannels().forEach(channel -> {
+                Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
 
-            if (settings.isDebug())
-                Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
-        });
+                if (settings.isDebug())
+                    Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
+            });
+        }
 
         // Register announcements
         settings.getAnnouncements().getMessages().forEach(announcementField -> {

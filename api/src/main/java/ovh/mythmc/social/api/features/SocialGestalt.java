@@ -38,13 +38,18 @@ public final class SocialGestalt {
         });
     }
 
+    public void enableFeature(final @NotNull SocialFeature socialFeature) {
+        if (socialFeature.canBeEnabled() && isSupported(socialFeature.featureType())) {
+            featureMap.put(socialFeature, true);
+            socialFeature.enable();
+            if (Social.get().getConfig().getSettings().isDebug())
+                Social.get().getLogger().info("Enabled feature " + socialFeature.featureType());
+        }
+    }
+
     public void enableAllFeatures() {
         for (SocialFeature feature : featureMap.keySet()) {
-            if (feature.canBeEnabled() && isSupported(feature.featureType())) {
-                feature.enable();
-                if (Social.get().getConfig().getSettings().isDebug())
-                    Social.get().getLogger().info("Enabled feature " + feature.featureType());
-            }
+            enableFeature(feature);
         }
     }
 
@@ -65,7 +70,16 @@ public final class SocialGestalt {
     }
 
     public boolean isEnabled(final @NotNull SocialFeatureType featureType) {
-        return getByType(featureType) != null && !getByType(featureType).isEmpty();
+        boolean enabled = false;
+
+        for (SocialFeature feature : getByType(featureType)) {
+            if (featureMap.get(feature)) {
+                enabled = true;
+                break;
+            }
+        }
+
+        return enabled;
     }
 
     public boolean isSupported(final @NotNull SocialFeatureType feature) {

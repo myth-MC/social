@@ -92,9 +92,7 @@ public abstract class SocialBootstrap<T> implements Social {
     }
 
     public final void reload() {
-        // Disable Gestalt features
-        if (Bukkit.getPluginManager().isPluginEnabled("social"))
-            SocialGestalt.get().disableAllFeatures();
+        SocialGestalt.get().disableAllFeatures();
 
         // Clear channels, announcements, parsers, reactions and emojis (we don't want any duplicates)
         Social.get().getChatManager().getChannels().clear();
@@ -102,6 +100,9 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().getParsers().clear();
         Social.get().getReactionManager().getReactionsMap().clear();
         Social.get().getEmojiManager().getEmojis().clear();
+
+        // Enable Gestalt features
+        SocialGestalt.get().enableAllFeatures();
 
         // Reload settings.yml and messages.yml
         getConfig().load();
@@ -138,8 +139,6 @@ public abstract class SocialBootstrap<T> implements Social {
         // Fire event if plugin is already enabled
         if (Bukkit.getPluginManager().isPluginEnabled("social"))
             Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
-
-        SocialGestalt.get().enableAllFeatures();
     }
 
     public abstract String version();
