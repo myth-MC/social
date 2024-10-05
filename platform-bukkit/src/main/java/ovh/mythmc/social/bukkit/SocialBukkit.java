@@ -83,20 +83,6 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new SocialBootstrapListener(), getPlugin());
 
-        if (Social.get().getConfig().getSettings().getChat().isEnabled())
-            Bukkit.getPluginManager().registerEvents(new ChatListener(), getPlugin());
-
-        if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled())
-            Bukkit.getPluginManager().registerEvents(new SystemMessagesListener(), getPlugin());
-
-        if (Social.get().getConfig().getSettings().getReactions().isEnabled()) {
-            if (Social.get().getConfig().getSettings().getReactions().isUseTriggerWords())
-                Bukkit.getPluginManager().registerEvents(new ReactionsListener(), getPlugin());
-        }
-
-        if (Social.get().getConfig().getSettings().getMotd().isEnabled())
-            Bukkit.getPluginManager().registerEvents(new MOTDListener(), getPlugin());
-
         // External hooks
         for (SocialPluginHook<?> pluginHook : Social.get().getInternalHookManager().getHooks()) {
             if (pluginHook instanceof Listener listener) {

@@ -11,7 +11,7 @@ import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
-import ovh.mythmc.social.common.util.SchedulerUtil;
+import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.regex.Pattern;
 
@@ -41,7 +41,7 @@ public final class ReactionsListener implements Listener {
 
         if (reaction != null) {
             SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(player, reaction);
-            SchedulerUtil.runTask(() -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
+            PluginUtil.runTask(() -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
         }
     }
 

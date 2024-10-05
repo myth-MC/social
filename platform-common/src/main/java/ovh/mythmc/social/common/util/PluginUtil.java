@@ -2,10 +2,11 @@ package ovh.mythmc.social.common.util;
 
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import ovh.mythmc.social.api.Social;
 
-public final class SchedulerUtil {
+public final class PluginUtil {
 
     @Setter
     private static JavaPlugin plugin;
@@ -17,6 +18,15 @@ public final class SchedulerUtil {
         }
 
         Bukkit.getScheduler().runTask(plugin, runnable);
+    }
+
+    public static void registerEvents(Listener listener) {
+        if (plugin == null) {
+            Social.get().getLogger().error("An event was registered without SchedulerUtil being initialized!");
+            return;
+        }
+
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
 }
