@@ -74,7 +74,7 @@ public final class SocialConfigProvider {
         settings.getReactions().getReactions().forEach(reactionField -> {
             Reaction reaction;
             if (reactionField.sound() != null) {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), Sound.valueOf(reactionField.sound()), reactionField.triggerWords());
+                reaction = new Reaction(reactionField.name(), reactionField.texture(), findByName(reactionField.sound()), reactionField.triggerWords());
             } else {
                 reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
             }
@@ -94,6 +94,17 @@ public final class SocialConfigProvider {
             SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
             Social.get().getAnnouncementManager().registerAnnouncement(announcement);
         });
+    }
+
+    private Sound findByName(String name) {
+        Sound result = null;
+        for (Sound sound : Sound.values()) {
+            if (sound.name().equalsIgnoreCase(name)) {
+                result = sound;
+                break;
+            }
+        }
+        return result;
     }
 
 }

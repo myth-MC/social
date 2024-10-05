@@ -54,9 +54,10 @@ public abstract class SocialBootstrap<T> implements Social {
                 new SystemMessagesFeature()
         );
 
-        // Initialize scheduler
+        // Initialize scheduler and various utilities
         PluginUtil.setPlugin((JavaPlugin) getPlugin());
 
+        // Load settings
         reload();
 
         try {

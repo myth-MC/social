@@ -18,12 +18,12 @@ public final class SocialGestalt {
         return socialGestalt;
     }
 
-    private final List<SocialFeature> featureList = new ArrayList<>();
+    private final Map<SocialFeature, Boolean> featureMap = new HashMap<>();
 
     public void registerFeature(final @NotNull SocialFeature... features) {
         Arrays.stream(features).forEach(feature -> {
-            if (!featureList.contains(feature)) {
-                featureList.add(feature);
+            if (!featureMap.containsKey(feature)) {
+                featureMap.put(feature, false);
                 if (Social.get().getConfig().getSettings().isDebug())
                     Social.get().getLogger().info("Registered feature " + feature.featureType());
             }
@@ -31,11 +31,15 @@ public final class SocialGestalt {
     }
 
     public void unregisterFeature(final @NotNull SocialFeature... features) {
-        featureList.removeAll(Arrays.stream(features).toList());
+        Arrays.stream(features).forEach(feature -> {
+            featureMap.remove(feature);
+            if (Social.get().getConfig().getSettings().isDebug())
+                Social.get().getLogger().info("Unregistered feature " + feature.featureType());
+        });
     }
 
     public void enableAllFeatures() {
-        for (SocialFeature feature : featureList) {
+        for (SocialFeature feature : featureMap.keySet()) {
             if (feature.canBeEnabled() && isSupported(feature.featureType())) {
                 feature.enable();
                 if (Social.get().getConfig().getSettings().isDebug())
@@ -45,8 +49,11 @@ public final class SocialGestalt {
     }
 
     public void disableAllFeatures() {
-        for (int i = 0; i < featureList.size(); i++) {
-            SocialFeature feature = featureList.get(i);
+        for (int i = 0; i < featureMap.keySet().size(); i++) {
+            SocialFeature feature = featureMap.keySet().stream().toList().get(i);
+            if (!featureMap.get(feature))
+                continue;
+
             feature.disable();
             if (Social.get().getConfig().getSettings().isDebug())
                 Social.get().getLogger().info("Disabled feature " + feature.featureType());
@@ -54,7 +61,7 @@ public final class SocialGestalt {
     }
 
     public List<SocialFeature> getByType(final @NotNull SocialFeatureType socialFeatureType) {
-        return featureList.stream().filter(feature -> feature.featureType().equals(socialFeatureType)).toList();
+        return featureMap.keySet().stream().filter(feature -> feature.featureType().equals(socialFeatureType)).toList();
     }
 
     public boolean isEnabled(final @NotNull SocialFeatureType featureType) {
