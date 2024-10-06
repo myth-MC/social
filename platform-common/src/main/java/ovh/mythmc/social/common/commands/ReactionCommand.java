@@ -3,27 +3,22 @@ package ovh.mythmc.social.common.commands;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
-import ovh.mythmc.social.api.text.SocialTextProcessor;
 
 import java.util.*;
 
 public abstract class ReactionCommand {
 
-    private final SocialTextProcessor processor = Social.get().getTextProcessor();
-    private final SocialMessages messages = Social.get().getConfig().getMessages();
-
     public void run(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
         if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (args.length < 2) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
@@ -32,7 +27,7 @@ public abstract class ReactionCommand {
 
         Reaction reaction = Social.get().getReactionManager().get(categoryName, reactionName);
         if (reaction == null) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getUnknownReaction(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getUnknownReaction(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

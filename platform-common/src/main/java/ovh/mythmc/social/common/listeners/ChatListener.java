@@ -9,21 +9,16 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
 import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.UUID;
 
 public final class ChatListener implements Listener {
-
-    private final SocialTextProcessor processor = Social.get().getTextProcessor();
-    private final SocialMessages messages = Social.get().getConfig().getMessages();
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -72,7 +67,7 @@ public final class ChatListener implements Listener {
 
         ChatChannel mainChannel = socialPlayer.getMainChannel();
         if (mainChannel == null) {
-            processor.parseAndSend(socialPlayer, messages.errors.getUnexpectedError(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
             event.setCancelled(true);
             return;
         }
@@ -91,7 +86,7 @@ public final class ChatListener implements Listener {
             if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {
 
-                processor.parseAndSend(socialPlayer, messages.errors.getTypingTooFast(), messages.getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
                 event.setCancelled(true);
                 return;
             }
@@ -138,6 +133,6 @@ public final class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
-        processor.parseAndSend(event.getSocialPlayer(), messages.getCommands().getChannelChanged(), messages.getChannelType());
+        Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
     }
 }

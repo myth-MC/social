@@ -2,8 +2,6 @@ package ovh.mythmc.social.common.commands;
 
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.configuration.SocialMessages;
-import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.subcommands.ChannelSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.NicknameSubcommand;
@@ -16,9 +14,6 @@ public abstract class SocialCommand {
 
     private final Map<String, SubCommand> subCommands;
 
-    private final SocialTextProcessor processor = Social.get().getTextProcessor();
-    private final SocialMessages messages = Social.get().getConfig().getMessages();
-
     public SocialCommand() {
         this.subCommands = new HashMap<>();
         subCommands.put("channel", new ChannelSubcommand());
@@ -29,13 +24,13 @@ public abstract class SocialCommand {
 
     public void run(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
         if (args.length == 0) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         var command = subCommands.get(args[0]);
         if (command == null) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getInvalidCommand(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getInvalidCommand(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

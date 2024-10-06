@@ -4,8 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.configuration.SocialMessages;
-import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 
@@ -14,25 +12,23 @@ import java.util.List;
 
 public class NicknameSubcommand implements SubCommand {
 
-    private final SocialTextProcessor processor = Social.get().getTextProcessor();
-    private final SocialMessages messages = Social.get().getConfig().getMessages();
 
     @Override
     public void accept(SocialPlayer socialPlayer, String[] args) {
         if (!socialPlayer.getPlayer().hasPermission("social.command.nickname")) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughPermission(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (args.length == 0) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         String nickname = args[0];
 
         if (nickname.length() > 16) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getNicknameTooLong(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNicknameTooLong(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
@@ -41,7 +37,7 @@ public class NicknameSubcommand implements SubCommand {
                     !offlinePlayer.getName().equalsIgnoreCase(socialPlayer.getPlayer().getName()) && // Nickname belongs to sender
                     offlinePlayer.getName().equalsIgnoreCase(nickname) &&
                     offlinePlayer.hasPlayedBefore()) {
-                processor.parseAndSend(socialPlayer, messages.getErrors().getNicknameAlreadyInUse(), messages.getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNicknameAlreadyInUse(), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
         }
@@ -49,29 +45,29 @@ public class NicknameSubcommand implements SubCommand {
         if (args.length == 1) {
             if (nickname.equalsIgnoreCase("reset")) {
                 socialPlayer.getPlayer().setDisplayName(socialPlayer.getPlayer().getName());
-                processor.parseAndSend(socialPlayer, messages.getCommands().getNicknameResetted(), messages.getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getCommands().getNicknameResetted(), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
 
             socialPlayer.getPlayer().setDisplayName(nickname);
-            processor.parseAndSend(socialPlayer, messages.getCommands().getNicknameChanged(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null) {
-            processor.parseAndSend(socialPlayer, messages.getErrors().getPlayerNotFound(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getPlayerNotFound(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (nickname.equalsIgnoreCase("reset")) {
             target.setDisplayName(target.getName());
-            processor.parseAndSend(socialPlayer, String.format(messages.getCommands().getNicknameResettedOthers(), target.getName()), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameResettedOthers(), target.getName()), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         target.setDisplayName(nickname);
-        processor.parseAndSend(socialPlayer, String.format(messages.getCommands().getNicknameChangedOthers(), target.getName(), nickname), messages.getChannelType());
+        Social.get().getTextProcessor().parseAndSend(socialPlayer, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.getName(), nickname), Social.get().getConfig().getMessages().getChannelType());
     }
 
     @Override
