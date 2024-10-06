@@ -56,10 +56,10 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 
 |                                                         | Compatible? | Version | Notes                                        |
 |---------------------------------------------------------|-------------|---------|----------------------------------------------|
-| [PaperMC](https://papermc.io/)                          | ✅          | 1.21+   | Use the legacy version for 1.20 support      |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.21+   | Use the legacy version for 1.20 support      |
-| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.20+   | Consider using [PaperMC](https://papermc.io) |
-| [Bukkit](https://bukkit.org)                            | ✅          | 1.20+   | Consider using [PaperMC](https://papermc.io) |
+| [PaperMC](https://papermc.io/)                          | ✅          | 1.16+   | Use the legacy version for 1.20 support      |
+| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.16+   | Use the legacy version for 1.20 support      |
+| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.16+   | Consider using [PaperMC](https://papermc.io) |
+| [Bukkit](https://bukkit.org)                            | ✅          | 1.16+   | Consider using [PaperMC](https://papermc.io) |
 | [Folia](https://papermc.io/software/folia)              | ❌          |         |                                              |
 
 ## 🔌 Integrations
@@ -123,4 +123,4 @@ You can disable any feature by modifying `settings.yml`
 ## ☕️ The myth-MC Team _(in alphabetical order)_
 | Username                           | Real name       | Role                 |
 |------------------------------------|-----------------|----------------------|
-| [@U8092](https://github.com/U8092) | N/A             | Lead developer       |
+| [@U8092](https://github.com/U8092) |                 | Lead developer       |
