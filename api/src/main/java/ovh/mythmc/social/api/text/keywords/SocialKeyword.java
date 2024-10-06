@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.SocialPlayerInputParser;
+import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 
 import java.util.regex.Pattern;
 

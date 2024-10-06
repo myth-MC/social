@@ -1,4 +1,4 @@
-package ovh.mythmc.social.api.text;
+package ovh.mythmc.social.api.text.parsers;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;

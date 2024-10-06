@@ -1,7 +1,7 @@
 package ovh.mythmc.social.common.text.placeholders.chat;
 
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.SocialPlaceholder;
+import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
 
 public final class ChannelIconPlaceholder extends SocialPlaceholder {
 
