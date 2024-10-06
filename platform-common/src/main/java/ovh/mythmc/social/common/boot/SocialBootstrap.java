@@ -41,7 +41,7 @@ public abstract class SocialBootstrap<T> implements Social {
     }
 
     public final void initialize() {
-        // Initialize gestalt and register features
+        // Initialize gestalt
         SocialGestalt.set(new SocialGestalt());
         SocialGestalt.get().registerFeature(
                 new AnnouncementsFeature(),
@@ -97,9 +97,6 @@ public abstract class SocialBootstrap<T> implements Social {
         // Clear parsers
         Social.get().getTextProcessor().getParsers().clear();
 
-        // Enable Gestalt features
-        SocialGestalt.get().enableAllFeatures();
-
         // Reload settings.yml and messages.yml
         getConfig().load();
 
@@ -125,6 +122,9 @@ public abstract class SocialBootstrap<T> implements Social {
         // Fire event if plugin is already enabled
         if (Bukkit.getPluginManager().isPluginEnabled("social"))
             Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
+
+        // Enable Gestalt features
+        SocialGestalt.get().enableAllFeatures();
     }
 
     public abstract String version();
