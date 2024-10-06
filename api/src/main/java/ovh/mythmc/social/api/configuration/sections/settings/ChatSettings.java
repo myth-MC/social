@@ -37,6 +37,12 @@ public class ChatSettings {
             new Channel("staff", "#FF5555", "social.admin", "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", true, List.of("This channel is restricted to staff members"), "#FFFF55", "<gray>:raw_divider:</gray>", "#FFFFFF", true)
     );
 
+    @Comment("Whether mentions should be enabled or disabled")
+    private boolean mentions = true;
+
+    @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
+    private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$nickname</blue> has mentioned you!</gray>";
+
     @Comment("Filter module")
     private ChatFilterSettings filter = new ChatFilterSettings();
 

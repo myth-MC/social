@@ -57,3 +57,5 @@ permissions:
     default: false
   social.filter.bypass:
     default: false
+  social.mentions:
+    default: true

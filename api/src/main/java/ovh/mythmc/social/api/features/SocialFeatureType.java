@@ -7,6 +7,7 @@ public enum SocialFeatureType {
     CHAT,
     EMOJIS,
     IP_FILTER,
+    MENTIONS,
     MOTD,
     REACTIONS,
     SYSTEM_MESSAGES,
