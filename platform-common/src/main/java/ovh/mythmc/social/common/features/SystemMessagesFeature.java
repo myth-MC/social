@@ -22,7 +22,7 @@ public final class SystemMessagesFeature implements SocialFeature {
 
     @Override
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getReactions().isEnabled();
+        return Social.get().getConfig().getSettings().getSystemMessages().isEnabled();
     }
 
     @Override

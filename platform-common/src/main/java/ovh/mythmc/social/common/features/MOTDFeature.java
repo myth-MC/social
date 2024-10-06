@@ -23,7 +23,7 @@ public final class MOTDFeature implements SocialFeature {
 
     @Override
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().isEnabled();
+        return Social.get().getConfig().getSettings().getMotd().isEnabled();
     }
 
     @Override
