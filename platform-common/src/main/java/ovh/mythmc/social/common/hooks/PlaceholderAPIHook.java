@@ -10,7 +10,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.SocialParser;
+import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.common.util.PluginUtil;
 
 @Getter

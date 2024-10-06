@@ -9,7 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
+import ovh.mythmc.social.api.text.parsers.SocialParser;
+import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,8 +69,36 @@ public final class SocialTextProcessor {
         return parsePlayerInput(sender, Component.text(message));
     }
 
-    public Component parse(SocialPlayer player, Component component) {
+    private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {
+        List<SocialParser> socialParserList = new ArrayList<>();
         for (SocialParser parser : parsers) {
+            SocialParserProperties.ParserPriority parserPriority = SocialParserProperties.ParserPriority.NORMAL;
+            if (parser.getClass().isAnnotationPresent(SocialParserProperties.class))
+                parserPriority = parser.getClass().getAnnotation(SocialParserProperties.class).priority();
+
+            if (parserPriority.equals(priority))
+                socialParserList.add(parser);
+        }
+
+        return socialParserList;
+    }
+
+    public Component parse(SocialPlayer player, Component component) {
+        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.HIGH)) {
+            if (parser instanceof SocialFilterLike)
+                continue;
+
+            component = parser.parse(player, component);
+        }
+
+        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.NORMAL)) {
+            if (parser instanceof SocialFilterLike)
+                continue;
+
+            component = parser.parse(player, component);
+        }
+
+        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.LOW)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 

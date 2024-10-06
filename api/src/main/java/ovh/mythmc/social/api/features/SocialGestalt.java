@@ -25,7 +25,7 @@ public final class SocialGestalt {
             if (!featureMap.containsKey(feature)) {
                 featureMap.put(feature, false);
                 if (Social.get().getConfig().getSettings().isDebug())
-                    Social.get().getLogger().info("Registered feature " + feature.featureType());
+                    Social.get().getLogger().info("Registered feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
             }
         });
     }
@@ -34,16 +34,35 @@ public final class SocialGestalt {
         Arrays.stream(features).forEach(feature -> {
             featureMap.remove(feature);
             if (Social.get().getConfig().getSettings().isDebug())
-                Social.get().getLogger().info("Unregistered feature " + feature.featureType());
+                Social.get().getLogger().info("Unregistered feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
         });
     }
 
-    public void enableFeature(final @NotNull SocialFeature socialFeature) {
-        if (socialFeature.canBeEnabled() && isSupported(socialFeature.featureType())) {
-            featureMap.put(socialFeature, true);
-            socialFeature.enable();
+    public void unregisterAllFeatures() {
+        for (int i = 0; i < featureMap.keySet().size(); i++) {
+            SocialFeature feature = featureMap.keySet().stream().toList().get(i);
+            if (!featureMap.get(feature))
+                continue;
+
+            unregisterFeature(feature);
+        }
+    }
+
+    public void enableFeature(final @NotNull SocialFeature feature) {
+        if (feature.canBeEnabled() && isSupported(feature.featureType())) {
+            featureMap.put(feature, true);
+            feature.enable();
             if (Social.get().getConfig().getSettings().isDebug())
-                Social.get().getLogger().info("Enabled feature " + socialFeature.featureType());
+                Social.get().getLogger().info("Enabled feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
+        }
+    }
+
+    public void disableFeature(final @NotNull SocialFeature feature) {
+        if (featureMap.get(feature)) {
+            featureMap.put(feature, false);
+            feature.disable();
+            if (Social.get().getConfig().getSettings().isDebug())
+                Social.get().getLogger().info("Disabled feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
         }
     }
 
@@ -54,14 +73,8 @@ public final class SocialGestalt {
     }
 
     public void disableAllFeatures() {
-        for (int i = 0; i < featureMap.keySet().size(); i++) {
-            SocialFeature feature = featureMap.keySet().stream().toList().get(i);
-            if (!featureMap.get(feature))
-                continue;
-
-            feature.disable();
-            if (Social.get().getConfig().getSettings().isDebug())
-                Social.get().getLogger().info("Disabled feature " + feature.featureType());
+        for (SocialFeature feature : featureMap.keySet()) {
+            disableFeature(feature);
         }
     }
 

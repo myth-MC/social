@@ -4,32 +4,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.configuration.SocialMessages;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
-import ovh.mythmc.social.api.text.SocialTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.*;
 
 public abstract class PrivateMessageCommand {
 
-    private final SocialTextProcessor processor = Social.get().getTextProcessor();
-    private final SocialMessages messages = Social.get().getConfig().getMessages();
-
     public void run(@NotNull SocialPlayer messageSender, @NotNull String[] args) {
         if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled()) {
-            processor.parseAndSend(messageSender, messages.getErrors().getFeatureNotAvailable(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (args.length == 0) {
-            processor.parseAndSend(messageSender, messages.getErrors().getNotEnoughArguments(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
-            processor.parseAndSend(messageSender, messages.getErrors().getPlayerNotFound(), messages.getChannelType());
+            Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getPlayerNotFound(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

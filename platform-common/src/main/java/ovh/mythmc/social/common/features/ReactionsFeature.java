@@ -33,6 +33,7 @@ public final class ReactionsFeature implements SocialFeature {
     @Override
     public void disable() {
         HandlerList.unregisterAll(reactionsListener);
+        Social.get().getReactionManager().getReactionsMap().clear();
     }
 
 }
