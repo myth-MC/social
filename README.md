@@ -56,10 +56,10 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 
 |                                                         | Compatible? | Version | Notes                                        |
 |---------------------------------------------------------|-------------|---------|----------------------------------------------|
-| [PaperMC](https://papermc.io/)                          | ✅          | 1.16+   | Use the legacy version for 1.20 support      |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.16+   | Use the legacy version for 1.20 support      |
-| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.16+   | Consider using [PaperMC](https://papermc.io) |
-| [Bukkit](https://bukkit.org)                            | ✅          | 1.16+   | Consider using [PaperMC](https://papermc.io) |
+| [PaperMC](https://papermc.io/)                          | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
+| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
+| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
+| [Bukkit](https://bukkit.org)                            | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
 | [Folia](https://papermc.io/software/folia)              | ❌          |         |                                              |
 
 ## 🔌 Integrations
