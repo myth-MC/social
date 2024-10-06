@@ -98,10 +98,12 @@ public final class SocialConfigProvider {
         }
 
         // Register announcements
-        settings.getAnnouncements().getMessages().forEach(announcementField -> {
-            SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
-            Social.get().getAnnouncementManager().registerAnnouncement(announcement);
-        });
+        if (SocialGestalt.get().isEnabled(SocialFeatureType.ANNOUNCEMENTS)) {
+            settings.getAnnouncements().getMessages().forEach(announcementField -> {
+                SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
+                Social.get().getAnnouncementManager().registerAnnouncement(announcement);
+            });
+        }
     }
 
     private Sound findByName(String name) {

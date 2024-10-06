@@ -2,12 +2,11 @@ package ovh.mythmc.social.api.features;
 
 public enum SocialFeatureType {
 
-    //ANNOUNCEMENTS,
+    ADDON,
+    ANNOUNCEMENTS,
     CHAT,
     EMOJIS,
-    FLOOD_FILTER,
     IP_FILTER,
-    LITERAL_FILTER,
     MOTD,
     REACTIONS,
     SYSTEM_MESSAGES,

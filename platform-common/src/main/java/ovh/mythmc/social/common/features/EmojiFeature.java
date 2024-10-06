@@ -31,6 +31,7 @@ public final class EmojiFeature implements SocialFeature {
     @Override
     public void disable() {
         Social.get().getTextProcessor().unregisterParser(emojiParser);
+        Social.get().getEmojiManager().getEmojis().clear();
     }
 
 }

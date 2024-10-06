@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
-import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.api.features.SocialGestalt;
@@ -45,13 +44,14 @@ public abstract class SocialBootstrap<T> implements Social {
         // Initialize gestalt and register features
         SocialGestalt.set(new SocialGestalt());
         SocialGestalt.get().registerFeature(
-                new IPFilterFeature(),
-                new URLFilterFeature(),
-                new EmojiFeature(),
+                new AnnouncementsFeature(),
                 new ChatFeature(),
+                new EmojiFeature(),
+                new IPFilterFeature(),
                 new MOTDFeature(),
                 new ReactionsFeature(),
-                new SystemMessagesFeature()
+                new SystemMessagesFeature(),
+                new URLFilterFeature()
         );
 
         // Initialize scheduler and various utilities
@@ -94,12 +94,8 @@ public abstract class SocialBootstrap<T> implements Social {
     public final void reload() {
         SocialGestalt.get().disableAllFeatures();
 
-        // Clear channels, announcements, parsers, reactions and emojis (we don't want any duplicates)
-        Social.get().getChatManager().getChannels().clear();
-        Social.get().getAnnouncementManager().getAnnouncements().clear();
+        // Clear parsers
         Social.get().getTextProcessor().getParsers().clear();
-        Social.get().getReactionManager().getReactionsMap().clear();
-        Social.get().getEmojiManager().getEmojis().clear();
 
         // Enable Gestalt features
         SocialGestalt.get().enableAllFeatures();
@@ -125,18 +121,6 @@ public abstract class SocialBootstrap<T> implements Social {
                 new SuccessPlaceholder(),
                 new WarningPlaceholder()
         );
-
-        // Start all running tasks again
-        Social.get().getAnnouncementManager().restartTask();
-
-        // Assign channels to every SocialPlayer
-        ChatChannel defaultChannel = Social.get().getChatManager().getChannel(getConfig().getSettings().getChat().getDefaultChannel());
-        if (defaultChannel != null) {
-            Social.get().getPlayerManager().get().forEach(socialPlayer -> {
-                Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
-                Social.get().getPlayerManager().setMainChannel(socialPlayer, defaultChannel);
-            });
-        }
 
         // Fire event if plugin is already enabled
         if (Bukkit.getPluginManager().isPluginEnabled("social"))
