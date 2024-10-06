@@ -35,11 +35,14 @@ permissions:
   social.command.*:
     default: op
     children:
+      - social.command.announcement
       - social.command.channel
       - social.command.nickname
       - social.command.reaction
       - social.command.reload
       - social.command.socialspy
+  social.command.announcement:
+    default: false
   social.command.channel:
     default: false
   social.command.nickname:
