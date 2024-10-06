@@ -18,7 +18,7 @@ public class AnnouncementsSettings {
 
     @Comment("Announcements will be sent in sequential order")
     private List<Announcement> messages = List.of(
-            new Announcement("<gray>This is a test announcement! <blue><click:open_url:https://i.ytimg.com/vi/TK4I4RTOjQo/maxresdefault.jpg>Click here ;-)</click></blue>.</gray>", List.of("global")),
+            new Announcement("<gray>This is a test announcement! <blue><click:open_url:https://i.ytimg.com/vi/TK4I4RTOjQo/maxresdefault.jpg>Click here :smiling_face:</click></blue>.</gray>", List.of("global")),
             new Announcement("<gray>This is an <red>exclusive</red> announcement</gray>", List.of("staff"))
     );
 

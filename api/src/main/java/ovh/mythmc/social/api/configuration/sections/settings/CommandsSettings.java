@@ -9,7 +9,7 @@ import lombok.Getter;
 public class CommandsSettings {
 
     @Comment("/pm")
-    private PrivateMessageCommand privateMessage = new PrivateMessageCommand(true, "<dark_gray>[<green>:envelope:</green>]</dark_gray>", "<gray>:arrow:</gray>", "<gray>This message is sent through a <green>private channel</green></gray>");
+    private PrivateMessageCommand privateMessage = new PrivateMessageCommand(true, "<dark_gray>[<green>:raw_envelope:</green>]</dark_gray>", "<gray>:raw_arrow:</gray>", "<gray>This message is sent through a <green>private channel</green></gray>");
 
     @Comment("/reaction")
     private SimpleCommand reaction = new SimpleCommand(true);

@@ -33,8 +33,8 @@ public class ChatSettings {
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
-            new Channel("global", "#FFFF55", null, "<dark_gray>[<yellow>:pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>▶</gray>", "#FFFFFF", true),
-            new Channel("staff", "#FF5555", "social.admin", "<dark_gray>[<red>:pencil:</red>]</dark_gray>", true, List.of("This channel is restricted to staff members"), "#FFFF55", "<gray>▶</gray>", "#FFFFFF", true)
+            new Channel("global", "#FFFF55", null, "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
+            new Channel("staff", "#FF5555", "social.admin", "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", true, List.of("This channel is restricted to staff members"), "#FFFF55", "<gray>:raw_divider:</gray>", "#FFFFFF", true)
     );
 
     @Comment("Filter module")
