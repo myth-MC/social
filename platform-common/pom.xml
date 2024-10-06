@@ -6,11 +6,11 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>social</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </parent>
 
     <artifactId>social-common</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 
     <repositories>
         <repository>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>social-api</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
             <scope>compile</scope>
         </dependency>
 
