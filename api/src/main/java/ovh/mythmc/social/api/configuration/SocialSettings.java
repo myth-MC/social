@@ -30,6 +30,9 @@ public class SocialSettings {
     @Comment({"", "System messages module"})
     private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
 
+    @Comment({"", "Packets module"})
+    private PacketsSettings packets = new PacketsSettings();
+
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
 

@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.event.HandlerList;
+import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.features.SocialFeature;
 import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.PacketsListener;
@@ -20,7 +21,7 @@ public final class PacketsFeature implements SocialFeature {
 
     @Override
     public boolean canBeEnabled() {
-        return true; // Todo: enable/disable packet-based features in settings.yml
+        return Social.get().getConfig().getSettings().getPackets().isEnabled();
     }
 
     @Override

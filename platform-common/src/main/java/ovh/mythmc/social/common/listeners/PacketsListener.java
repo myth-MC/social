@@ -17,8 +17,11 @@ public final class PacketsListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!Social.get().getConfig().getSettings().getEmojis().isEnabled())
+        if (!Social.get().getConfig().getSettings().getEmojis().isEnabled() ||
+                !Social.get().getConfig().getSettings().getPackets().isChatEmojiTabCompletion())  {
+
             return;
+        }
 
         for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
             if (emoji.name().length() > 14)
