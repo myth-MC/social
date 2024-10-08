@@ -5,7 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -119,6 +123,32 @@ public final class SocialTextProcessor {
 
     public void parseAndSend(SocialPlayer player, String message, ChannelType type) {
         parseAndSend(player, parse(player, message), type);
+    }
+
+    public void parseAndSend(CommandSender commandSender, Component message, ChannelType type) {
+        SocialPlayer socialPlayer = null;
+
+        if (commandSender instanceof Player player)
+            socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
+
+        if (socialPlayer == null) {
+            sendToConsole(commandSender, message);
+            return;
+        }
+
+        parseAndSend(socialPlayer, message, type);
+    }
+
+    public void parseAndSend(CommandSender commandSender, String message, ChannelType type) {
+        Component component = MiniMessage.miniMessage().deserialize(message);
+        parseAndSend(commandSender, component, type);
+    }
+
+    @ApiStatus.Experimental
+    public void sendToConsole(final @NotNull CommandSender commandSender,
+                              @NotNull Component message) {
+        // Todo: parse?
+        SocialAdventureProvider.get().sender(commandSender).sendMessage(message);
     }
 
     public void send(final @NotNull SocialPlayer recipient,

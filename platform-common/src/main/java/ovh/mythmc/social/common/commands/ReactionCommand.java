@@ -1,8 +1,12 @@
 package ovh.mythmc.social.common.commands;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
@@ -11,7 +15,17 @@ import java.util.*;
 
 public abstract class ReactionCommand {
 
-    public void run(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
+    public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
+        SocialPlayer socialPlayer = null;
+        if (commandSender instanceof Player player)
+            socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
+
+        if (socialPlayer == null) {
+            String message = Social.get().getConfig().getMessages().getErrors().getCannotBeRunFromConsole();
+            SocialAdventureProvider.get().sender(commandSender).sendMessage(MiniMessage.miniMessage().deserialize(message));
+            return;
+        }
+
         if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
             Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
@@ -35,7 +49,7 @@ public abstract class ReactionCommand {
         Bukkit.getPluginManager().callEvent(socialReactionCallEvent);
     }
 
-    public @NotNull List<String> tabComplete(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender commandSender, @NotNull String[] args) {
         if (args.length == 1) {
             return List.copyOf(Social.get().getReactionManager().getCategories());
         } else if (args.length == 2) {

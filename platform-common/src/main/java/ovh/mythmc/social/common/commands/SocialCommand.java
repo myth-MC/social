@@ -1,8 +1,8 @@
 package ovh.mythmc.social.common.commands;
 
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.subcommands.ChannelSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.NicknameSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.ReloadSubcommand;
@@ -22,24 +22,24 @@ public abstract class SocialCommand {
         subCommands.put("socialspy", new SocialSpySubcommand());
     }
 
-    public void run(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
+    public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
         if (args.length == 0) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         var command = subCommands.get(args[0]);
         if (command == null) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getInvalidCommand(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getInvalidCommand(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
-        command.accept(socialPlayer, Arrays.copyOfRange(args, 1, args.length));
+        command.accept(commandSender, Arrays.copyOfRange(args, 1, args.length));
     }
 
-    public @NotNull List<String> tabComplete(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender commandSender, @NotNull String[] args) {
         List<String> commands = subCommands.keySet().stream()
-                .filter(s -> s.startsWith(args[0]) && socialPlayer.getPlayer().hasPermission("social.command." + s))
+                .filter(s -> s.startsWith(args[0]) && commandSender.hasPermission("social.command." + s))
                 .toList();
 
         if (commands.isEmpty())
@@ -50,7 +50,7 @@ public abstract class SocialCommand {
 
         SubCommand subCommand = subCommands.get(args[0]);
         if (subCommand != null) {
-            return subCommand.tabComplete(socialPlayer, Arrays.copyOfRange(args, 1, args.length));
+            return subCommand.tabComplete(commandSender, Arrays.copyOfRange(args, 1, args.length));
         } else {
             return List.of();
         }
