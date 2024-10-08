@@ -1,5 +1,6 @@
 package ovh.mythmc.social.common.util;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -9,6 +10,7 @@ import ovh.mythmc.social.api.Social;
 public final class PluginUtil {
 
     @Setter
+    @Getter
     private static JavaPlugin plugin;
 
     public static void runTask(Runnable runnable) {

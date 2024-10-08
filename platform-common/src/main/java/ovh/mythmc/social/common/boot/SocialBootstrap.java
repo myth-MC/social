@@ -14,7 +14,6 @@ import ovh.mythmc.social.api.features.SocialGestalt;
 import ovh.mythmc.social.common.features.*;
 import ovh.mythmc.social.common.hooks.DiscordSRVHook;
 import ovh.mythmc.social.common.hooks.PlaceholderAPIHook;
-import ovh.mythmc.social.common.hooks.ProtocolLibHook;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.ClickableNicknamePlaceholder;
@@ -51,6 +50,7 @@ public abstract class SocialBootstrap<T> implements Social {
                 new IPFilterFeature(),
                 new MentionsFeature(),
                 new MOTDFeature(),
+                new PacketsFeature(),
                 new ReactionsFeature(),
                 new SystemMessagesFeature(),
                 new URLFilterFeature()
@@ -91,11 +91,6 @@ public abstract class SocialBootstrap<T> implements Social {
         if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
             DiscordSRVHook discordSRVHook = new DiscordSRVHook(DiscordSRV.getPlugin());
             Social.get().getInternalHookManager().registerHooks(discordSRVHook);
-        }
-
-        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            ProtocolLibHook protocolLibHook = new ProtocolLibHook();
-            Social.get().getInternalHookManager().registerHooks(protocolLibHook);
         }
     }
 
