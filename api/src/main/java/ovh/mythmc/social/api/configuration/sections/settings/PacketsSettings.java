@@ -14,4 +14,7 @@ public class PacketsSettings {
     @Comment("Emoji tab completion in chat")
     private boolean chatEmojiTabCompletion = true;
 
+    @Comment("Keyword tab completion in chat")
+    private boolean chatKeywordTabCompletion = true;
+
 }
