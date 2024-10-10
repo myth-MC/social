@@ -3,6 +3,7 @@ package ovh.mythmc.social.common.commands;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+
 import ovh.mythmc.social.common.commands.subcommands.ChannelSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.NicknameSubcommand;
 import ovh.mythmc.social.common.commands.subcommands.ReloadSubcommand;
@@ -16,6 +17,7 @@ public abstract class SocialCommand {
 
     public SocialCommand() {
         this.subCommands = new HashMap<>();
+        subCommands.put("announcement", new AnnouncementSubcommand());
         subCommands.put("channel", new ChannelSubcommand());
         subCommands.put("nickname", new NicknameSubcommand());
         subCommands.put("reload", new ReloadSubcommand());

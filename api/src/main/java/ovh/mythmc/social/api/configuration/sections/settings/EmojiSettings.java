@@ -13,6 +13,12 @@ public class EmojiSettings {
     @Comment("Whether the emoji module should be enabled or disabled")
     private boolean enabled = true;
 
+    @Comment("Text that appears when hovering over an emoji to indicate its aliases")
+    private String hoverTextAliases = "<blue>Alias(es):</blue> <gray>%s</gray>";
+
+    @Comment("Text that appears when hovering over an emoji to let the player know that they can click to copy the emoji")
+    private String hoverTextClickToCopy = "<dark_gray>Click to copy to clipboard</dark_gray>";
+
     @Comment("You can add your own emojis or remove the default ones too")
     private List<EmojiField> emojis = List.of(
             new EmojiField("airplane", List.of(), "\u2708"),

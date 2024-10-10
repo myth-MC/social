@@ -48,7 +48,9 @@ public abstract class SocialBootstrap<T> implements Social {
                 new ChatFeature(),
                 new EmojiFeature(),
                 new IPFilterFeature(),
+                new MentionsFeature(),
                 new MOTDFeature(),
+                new PacketsFeature(),
                 new ReactionsFeature(),
                 new SystemMessagesFeature(),
                 new URLFilterFeature()
@@ -79,6 +81,7 @@ public abstract class SocialBootstrap<T> implements Social {
 
     public abstract void shutdown();
 
+    // Todo: move to features and completely remove internal hooks?
     public final void hooks() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PlaceholderAPIHook placeholderAPIHook = new PlaceholderAPIHook();

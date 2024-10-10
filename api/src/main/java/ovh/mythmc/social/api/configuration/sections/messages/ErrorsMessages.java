@@ -15,6 +15,8 @@ public class ErrorsMessages {
 
     private String invalidCommand = "$error_prefix <red>Invalid command.</red>";
 
+    private String invalidNumber = "$error_prefix <red>Invalid number.</red>";
+
     private String notEnoughPermission = "$error_prefix <red>You do not have enough permission to do this.</red>";
 
     private String notEnoughArguments = "$error_prefix <red>Not enough arguments.</red>";
