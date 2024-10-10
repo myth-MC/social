@@ -26,6 +26,10 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
     public DiscordSRVHook(DiscordSRV storedClass) {
         super(storedClass);
         DiscordSRV.getPlugin().getPluginHooks().add(this);
+        if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
+                Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
+            ovh.mythmc.social.common.util.PluginUtil.registerEvents(new DiscordSRVDeathHook());
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>social</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.2</version>
     </parent>
 
     <artifactId>social-bukkit</artifactId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>social-common</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
             <scope>compile</scope>
         </dependency>
 

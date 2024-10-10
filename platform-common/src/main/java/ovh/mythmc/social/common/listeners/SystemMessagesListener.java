@@ -22,6 +22,9 @@ public final class SystemMessagesListener implements Listener {
         if (socialPlayer == null)
             return;
 
+        if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeJoinMessage())
+            return;
+
         // Send message to console
         Social.get().getLogger().info(event.getJoinMessage() + "");
 
@@ -43,6 +46,9 @@ public final class SystemMessagesListener implements Listener {
        if (socialPlayer == null)
            return;
 
+       if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeQuitMessage())
+           return;
+
        // Send message to console
        Social.get().getLogger().info(event.getQuitMessage());
 
@@ -62,6 +68,9 @@ public final class SystemMessagesListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
         if (socialPlayer == null)
+            return;
+
+        if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage())
             return;
 
         String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getDeathMessage();
