@@ -1,12 +1,12 @@
 package ovh.mythmc.social.common.commands;
 
-import ovh.mythmc.social.api.players.SocialPlayer;
+import org.bukkit.command.CommandSender;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public interface SubCommand extends BiConsumer<SocialPlayer, String[]> {
+public interface SubCommand extends BiConsumer<CommandSender, String[]> {
 
-    List<String> tabComplete(SocialPlayer socialPlayer, String[] args);
+    List<String> tabComplete(CommandSender commandSender, String[] args);
 
 }

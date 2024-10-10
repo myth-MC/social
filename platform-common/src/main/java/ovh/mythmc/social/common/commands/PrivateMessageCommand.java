@@ -1,9 +1,12 @@
 package ovh.mythmc.social.common.commands;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -11,7 +14,17 @@ import java.util.*;
 
 public abstract class PrivateMessageCommand {
 
-    public void run(@NotNull SocialPlayer messageSender, @NotNull String[] args) {
+    public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
+        SocialPlayer messageSender = null;
+        if (commandSender instanceof Player player)
+            messageSender = Social.get().getPlayerManager().get(player.getUniqueId());
+
+        if (messageSender == null) {
+            String message = Social.get().getConfig().getMessages().getErrors().getCannotBeRunFromConsole();
+            SocialAdventureProvider.get().sender(commandSender).sendMessage(MiniMessage.miniMessage().deserialize(message));
+            return;
+        }
+
         if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled()) {
             Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
@@ -41,7 +54,7 @@ public abstract class PrivateMessageCommand {
         Bukkit.getPluginManager().callEvent(socialPrivateMessageEvent);
     }
 
-    public @NotNull List<String> tabComplete(@NotNull SocialPlayer socialPlayer, @NotNull String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender commandSender, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> onlinePlayers = new ArrayList<>();
             Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
