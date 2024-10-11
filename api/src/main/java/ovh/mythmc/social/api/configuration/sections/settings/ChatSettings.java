@@ -43,6 +43,9 @@ public class ChatSettings {
     @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
     private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$nickname</blue> has mentioned you!</gray>";
 
+    @Comment("Groups module")
+    private ChatGroupSettings groups = new ChatGroupSettings();
+
     @Comment("Filter module")
     private ChatFilterSettings filter = new ChatFilterSettings();
 

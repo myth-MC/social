@@ -23,4 +23,14 @@ public class CommandsMessages {
 
     private String socialSpyStatusChanged = "$info_prefix <gray>Social spy status has been set to $socialspy.</gray>";
 
+    private String createdGroup = "$success_prefix <green>You've created a new group. You can see the invite code by running <white><click:run_command:'/social:group code'>/group code</click></white> or send it to a player by using <white>/group invite <player_name></white>.</green>";
+
+    private String groupCode = "$info_prefix <gray>Your group's code is <blue>%s</blue>.</gray>";
+
+    private String joinedGroup = "$success_prefix <green>You've joined group <blue>%s</blue>.</green>";
+
+    private String leftGroup = "$success_prefix <green>You've left group <blue>%s</blue>.</green>";
+
+    private String groupDisbanded = "$success_prefix <green>Your group has been disbanded.</green>";
+
 }

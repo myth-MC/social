@@ -47,6 +47,7 @@ public abstract class SocialBootstrap<T> implements Social {
                 new AnnouncementsFeature(),
                 new ChatFeature(),
                 new EmojiFeature(),
+                new GroupsFeature(),
                 new IPFilterFeature(),
                 new MentionsFeature(),
                 new MOTDFeature(),

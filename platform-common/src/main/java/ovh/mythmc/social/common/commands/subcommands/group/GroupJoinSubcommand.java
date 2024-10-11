@@ -1,9 +1,11 @@
 package ovh.mythmc.social.common.commands.subcommands.group;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 
@@ -21,7 +23,7 @@ public class GroupJoinSubcommand implements SubCommand {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
 
         if (Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer) != null) {
-            // already belongs to a group
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getAlreadyBelongsToAGroup(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
@@ -38,15 +40,19 @@ public class GroupJoinSubcommand implements SubCommand {
 
         GroupChatChannel chatChannel = Social.get().getChatManager().getGroupChannelByCode(code);
         if (chatChannel == null) {
-            // group does not exist / invalid code
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getGroupDoesNotExist(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (chatChannel.addMember(socialPlayer)) {
-            // you've joined group <code>
+            SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(chatChannel, socialPlayer);
+            Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
+
+            String joinedGroupMessage = String.format(Social.get().getConfig().getMessages().getCommands().getJoinedGroup(), chatChannel.getName());
+            Social.get().getTextProcessor().parseAndSend(commandSender, joinedGroupMessage, Social.get().getConfig().getMessages().getChannelType());
             Social.get().getPlayerManager().setMainChannel(socialPlayer, chatChannel);
         } else {
-            // group is full / unexpected error
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getGroupIsFull(), Social.get().getConfig().getMessages().getChannelType());
         }
     }
 

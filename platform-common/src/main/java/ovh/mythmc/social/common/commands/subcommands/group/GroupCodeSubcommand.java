@@ -22,7 +22,7 @@ public class GroupCodeSubcommand implements SubCommand {
 
         GroupChatChannel chatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
         if (chatChannel == null) {
-            // does not belong to a group
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getDoesNotBelongToAGroup(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
@@ -31,7 +31,8 @@ public class GroupCodeSubcommand implements SubCommand {
             return;
         }
 
-        Social.get().getLogger().info(chatChannel.getCode() + "");
+        String codeMessage = String.format(Social.get().getConfig().getMessages().getCommands().getGroupCode(), chatChannel.getCode());
+        Social.get().getTextProcessor().parseAndSend(commandSender, codeMessage, Social.get().getConfig().getMessages().getChannelType());
     }
 
     @Override

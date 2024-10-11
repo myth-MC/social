@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.features.SocialFeatureType;
+import ovh.mythmc.social.api.features.SocialGestalt;
 import ovh.mythmc.social.common.commands.subcommands.group.*;
 
 import java.util.Arrays;
@@ -28,7 +30,10 @@ public abstract class GroupCommand {
     }
 
     public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        // Todo: check if groups are disabled in settings.yml
+        if (!SocialGestalt.get().isEnabled(SocialFeatureType.GROUPS)) {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
 
         if (!(commandSender instanceof Player)) {
             String message = Social.get().getConfig().getMessages().getErrors().getCannotBeRunFromConsole();

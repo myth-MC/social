@@ -1,14 +1,16 @@
 package ovh.mythmc.social.common.commands.subcommands.group;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 
 import java.util.List;
-import java.util.UUID;
 
 public class GroupLeaveSubcommand implements SubCommand {
 
@@ -22,23 +24,29 @@ public class GroupLeaveSubcommand implements SubCommand {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
 
         if (Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer) == null) {
-            // player does not belong to a group
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getDoesNotBelongToAGroup(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         GroupChatChannel chatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
         if (chatChannel.getLeaderUuid().equals(socialPlayer.getUuid())) {
             if (chatChannel.getMembers().size() < 2) {
+                SocialGroupDisbandEvent socialGroupDisbandEvent = new SocialGroupDisbandEvent(chatChannel);
+                Bukkit.getPluginManager().callEvent(socialGroupDisbandEvent);
+
                 Social.get().getChatManager().unregisterChatChannel(chatChannel);
-                // group has been deleted
+                Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
 
             chatChannel.setLeaderUuid(chatChannel.getMembers().get(1));
         }
 
+        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(chatChannel, socialPlayer);
+        Bukkit.getPluginManager().callEvent(socialGroupLeaveEvent);
+
+        Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getLeftGroup(), Social.get().getConfig().getMessages().getChannelType());
         chatChannel.removeMember(socialPlayer);
-        // you've left group
     }
 
     @Override

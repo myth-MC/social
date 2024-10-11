@@ -22,7 +22,7 @@ public class GroupChatSubcommand implements SubCommand {
 
         GroupChatChannel chatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
         if (chatChannel == null) {
-            // does not belong to a group
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getDoesNotBelongToAGroup(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

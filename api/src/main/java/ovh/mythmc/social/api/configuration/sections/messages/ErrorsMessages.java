@@ -33,4 +33,12 @@ public class ErrorsMessages {
 
     private String unknownReaction = "$error_prefix <red>Unknown reaction.</red>";
 
+    private String alreadyBelongsToAGroup = "$error_prefix <red>You already belong to a group.</red>";
+
+    private String doesNotBelongToAGroup = "$error_prefix <red>You don't belong to any group.</red>";
+
+    private String groupDoesNotExist = "$error_prefix <red>That channel does not exist.</red>";
+
+    private String groupIsFull = "$error_prefix <red>This group is full.</red>";
+
 }

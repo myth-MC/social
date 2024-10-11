@@ -6,6 +6,7 @@ public enum SocialFeatureType {
     ANNOUNCEMENTS,
     CHAT,
     EMOJIS,
+    GROUPS,
     IP_FILTER,
     MENTIONS,
     MOTD,

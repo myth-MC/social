@@ -29,7 +29,7 @@ public class ChannelSubcommand implements SubCommand {
         }
 
         ChatChannel channel = Social.get().getChatManager().getChannel(args[0]);
-        if (channel == null || channel instanceof GroupChatChannel) {
+        if (channel == null) {
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getChannelDoesNotExist(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
@@ -37,6 +37,11 @@ public class ChannelSubcommand implements SubCommand {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
         if (socialPlayer == null)
             return;
+
+        if (channel instanceof GroupChatChannel && !channel.getMembers().contains(socialPlayer.getUuid())) {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getChannelDoesNotExist(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
 
         if (channel == socialPlayer.getMainChannel())
             return;
