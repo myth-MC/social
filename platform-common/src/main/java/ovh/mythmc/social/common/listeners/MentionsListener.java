@@ -22,6 +22,9 @@ public final class MentionsListener implements Listener {
             return;
 
         String serializedMessage = MiniMessage.miniMessage().serialize(event.getMessage());
+        String textDivider = MiniMessage.miniMessage().serialize(Social.get().getTextProcessor().parse(event.getSender(), event.getChatChannel().getTextDivider()));
+
+        serializedMessage = serializedMessage.substring(serializedMessage.indexOf(textDivider));
 
         if (serializedMessage.contains(event.getRecipient().getNickname()) || serializedMessage.contains(event.getRecipient().getPlayer().getName())) {
             Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());

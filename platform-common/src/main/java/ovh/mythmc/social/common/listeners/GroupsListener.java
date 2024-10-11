@@ -9,10 +9,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
+import ovh.mythmc.social.api.events.groups.*;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class GroupsListener implements Listener {
@@ -43,6 +40,14 @@ public final class GroupsListener implements Listener {
 
             Social.get().getTextProcessor().send(socialPlayer, leftMessage, Social.get().getConfig().getMessages().getChannelType());
         });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGroupCreate(SocialGroupCreateEvent event) {
+        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getGroupChatChannel().getLeaderUuid());
+        if (socialPlayer == null) return;
+
+        Social.get().getPlayerManager().setMainChannel(socialPlayer, event.getGroupChatChannel());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
