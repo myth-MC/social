@@ -1,5 +1,6 @@
-package ovh.mythmc.social.common.commands.subcommands;
+package ovh.mythmc.social.common.commands.subcommands.social;
 
+import org.bukkit.command.CommandSender;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
 import ovh.mythmc.social.api.chat.ChannelType;
@@ -13,20 +14,20 @@ import java.util.List;
 public class AnnouncementSubcommand implements SubCommand {
 
     @Override
-    public void accept(SocialPlayer socialPlayer, String[] args) {
-        if (!socialPlayer.getPlayer().hasPermission("social.command.announcement")) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
+    public void accept(CommandSender commandSender, String[] args) {
+        if (!commandSender.hasPermission("social.command.announcement")) {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (args.length < 1) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         Integer integer = tryParse(args[0]);
         if (integer == null || integer < 0 || integer >= Social.get().getAnnouncementManager().getAnnouncements().size()) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getInvalidNumber(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getInvalidNumber(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
@@ -45,7 +46,7 @@ public class AnnouncementSubcommand implements SubCommand {
     }
 
     @Override
-    public List<String> tabComplete(SocialPlayer socialPlayer, String[] args) {
+    public List<String> tabComplete(CommandSender commandSender, String[] args) {
         List<String> integers = new ArrayList<>();
         for (int i = 0; i < Social.get().getAnnouncementManager().getAnnouncements().size(); i++) {
             integers.add(String.valueOf(i));

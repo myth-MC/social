@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.commands.subcommands;
+package ovh.mythmc.social.common.commands.subcommands.social;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

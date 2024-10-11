@@ -35,15 +35,50 @@ public final class ChatManager {
         return null;
     }
 
+    public GroupChatChannel getGroupChannelByCode(final int code) {
+        ChatChannel chatChannel = getChannel("G-" + code);
+        if (chatChannel instanceof GroupChatChannel)
+            return (GroupChatChannel) chatChannel;
+
+        return null;
+    }
+
+    public GroupChatChannel getGroupChannelByPlayer(final @NotNull UUID uuid) {
+        for (ChatChannel channel : getChannels()) {
+            if (channel instanceof GroupChatChannel && channel.getMembers().contains(uuid)) {
+                return (GroupChatChannel) channel;
+            }
+        }
+
+        return null;
+    }
+
+    public GroupChatChannel getGroupChannelByPlayer(final @NotNull SocialPlayer socialPlayer) {
+        return getGroupChannelByPlayer(socialPlayer.getUuid());
+    }
+
     public boolean exists(final @NotNull String channelName) {
         return getChannel(channelName) != null;
     }
 
     public boolean registerChatChannel(final @NotNull ChatChannel chatChannel) {
+        if (Social.get().getConfig().getSettings().isDebug())
+            Social.get().getLogger().info("Registered channel '" + chatChannel.getName() + "'");
+
         return channels.add(chatChannel);
     }
 
+    public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid) {
+        int code = (int) Math.floor(100000 + Math.random() * 900000);
+        GroupChatChannel chatChannel = new GroupChatChannel(leaderUuid, code);
+        chatChannel.addMember(leaderUuid);
+        return registerChatChannel(chatChannel);
+    }
+
     public boolean unregisterChatChannel(final @NotNull ChatChannel chatChannel) {
+        if (Social.get().getConfig().getSettings().isDebug())
+            Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
+
         return channels.remove(chatChannel);
     }
 
@@ -54,6 +89,14 @@ public final class ChatManager {
                     channel.addMember(socialPlayer.getUuid());
             }
         }
+    }
+
+    public boolean hasGroup(final @NotNull UUID uuid) {
+        return getGroupChannelByPlayer(uuid) != null;
+    }
+
+    public boolean hasGroup(final @NotNull SocialPlayer socialPlayer) {
+        return hasGroup(socialPlayer.getUuid());
     }
 
     public boolean hasPermission(final @NotNull SocialPlayer socialPlayer,
@@ -71,6 +114,15 @@ public final class ChatManager {
     public void sendChatMessage(final @NotNull SocialPlayer sender,
                                 final @NotNull ChatChannel chatChannel,
                                 final @NotNull String message) {
+
+        List<UUID> players = new ArrayList<>(List.copyOf(chatChannel.getMembers()));
+
+        // SocialSpy
+        for (SocialPlayer socialPlayer : Social.get().getPlayerManager().get()) {
+            if (chatChannel.getMembers().contains(socialPlayer.getUuid())) continue;
+            if (socialPlayer.isSocialSpy())
+                players.add(socialPlayer.getUuid());
+        }
 
         Component channelHoverText = text("");
         if (chatChannel.isShowHoverText()) {
@@ -98,8 +150,7 @@ public final class ChatManager {
 
         // Call SocialChatMessageReceiveEvent for each channel member
         Map<SocialPlayer, Component> playerMap = new HashMap<>();
-        for (int i = 0; i < chatChannel.getMembers().size(); i++) {
-            UUID uuid = chatChannel.getMembers().get(i);
+        for (UUID uuid : players) {
             SocialPlayer member = Social.get().getPlayerManager().get(uuid);
             SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, member, chatChannel, chatMessage);
             Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);

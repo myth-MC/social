@@ -9,6 +9,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
+import ovh.mythmc.social.bukkit.commands.impl.GroupCommandImpl;
 import ovh.mythmc.social.bukkit.commands.impl.PrivateMessageCommandImpl;
 import ovh.mythmc.social.bukkit.commands.impl.ReactionCommandImpl;
 import ovh.mythmc.social.bukkit.commands.impl.SocialCommandImpl;
@@ -73,10 +74,12 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         PluginCommand social = getPlugin().getCommand("social");
         PluginCommand privateMessage = getPlugin().getCommand("pm");
         PluginCommand reaction = getPlugin().getCommand("reaction");
+        PluginCommand group = getPlugin().getCommand("group");
 
         Objects.requireNonNull(social).setExecutor(new SocialCommandImpl());
         Objects.requireNonNull(privateMessage).setExecutor(new PrivateMessageCommandImpl());
         Objects.requireNonNull(reaction).setExecutor(new ReactionCommandImpl());
+        Objects.requireNonNull(group).setExecutor(new GroupCommandImpl());
     }
 
     private void registerListeners() {

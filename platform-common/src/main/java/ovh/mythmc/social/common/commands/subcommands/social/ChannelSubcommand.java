@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.commands.subcommands;
+package ovh.mythmc.social.common.commands.subcommands.social;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 
@@ -28,7 +29,7 @@ public class ChannelSubcommand implements SubCommand {
         }
 
         ChatChannel channel = Social.get().getChatManager().getChannel(args[0]);
-        if (channel == null) {
+        if (channel == null || channel instanceof GroupChatChannel) {
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getChannelDoesNotExist(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
@@ -61,6 +62,7 @@ public class ChannelSubcommand implements SubCommand {
         if (args.length == 1) {
             List<String> channels = new ArrayList<>();
             for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
+                if (channel instanceof GroupChatChannel) continue;
                 if (Social.get().getChatManager().hasPermission(socialPlayer, channel))
                     channels.add(channel.getName());
             }

@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public final class ChatChannel {
+public class ChatChannel {
 
     private final String name;
 
@@ -26,8 +26,6 @@ public final class ChatChannel {
     private final ChannelType type;
 
     private final String icon;
-
-    //private final TextColor iconColor;
 
     private final boolean showHoverText;
 
