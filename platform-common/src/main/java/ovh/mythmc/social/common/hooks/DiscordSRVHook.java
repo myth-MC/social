@@ -2,6 +2,8 @@ package ovh.mythmc.social.common.hooks;
 
 import github.scarsz.discordsrv.Debug;
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.api.Subscribe;
+import github.scarsz.discordsrv.api.events.GameChatMessagePostProcessEvent;
 import github.scarsz.discordsrv.dependencies.commons.lang3.StringUtils;
 import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
@@ -10,6 +12,7 @@ import github.scarsz.discordsrv.util.PluginUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
@@ -26,6 +29,7 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
     public DiscordSRVHook(DiscordSRV storedClass) {
         super(storedClass);
         DiscordSRV.getPlugin().getPluginHooks().add(this);
+        DiscordSRV.api.subscribe(this);
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
                 Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
             ovh.mythmc.social.common.util.PluginUtil.registerEvents(new DiscordSRVDeathHook());
@@ -45,6 +49,14 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
         }
 
         DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getMessage(), event.getChatChannel().getName(), event.isCancelled(), event);
+    }
+
+    @Subscribe
+    public void onGameChatMessagePostProcess(GameChatMessagePostProcessEvent event) {
+        if(event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent chatEvent) {
+            if (chatEvent.getRecipients().isEmpty())
+                event.setCancelled(true);
+        }
     }
 
     @Override
