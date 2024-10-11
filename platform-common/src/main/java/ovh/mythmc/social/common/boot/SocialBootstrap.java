@@ -45,6 +45,8 @@ public abstract class SocialBootstrap<T> implements Social {
         SocialGestalt.set(new SocialGestalt());
         SocialGestalt.get().registerFeature(
                 new AnnouncementsFeature(),
+                new AnvilFeature(),
+                new BooksFeature(),
                 new ChatFeature(),
                 new EmojiFeature(),
                 new GroupsFeature(),
@@ -53,6 +55,7 @@ public abstract class SocialBootstrap<T> implements Social {
                 new MOTDFeature(),
                 new PacketsFeature(),
                 new ReactionsFeature(),
+                new SignsFeature(),
                 new SystemMessagesFeature(),
                 new URLFilterFeature()
         );

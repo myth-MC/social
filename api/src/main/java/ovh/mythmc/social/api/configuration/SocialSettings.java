@@ -33,6 +33,9 @@ public class SocialSettings {
     @Comment({"", "Packets module"})
     private PacketsSettings packets = new PacketsSettings();
 
+    @Comment({"", "Text replacement module"})
+    private TextReplacementSettings textReplacement = new TextReplacementSettings();
+
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
 
