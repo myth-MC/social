@@ -6,6 +6,7 @@ import lombok.Getter;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.configuration.sections.messages.CommandsMessages;
 import ovh.mythmc.social.api.configuration.sections.messages.ErrorsMessages;
+import ovh.mythmc.social.api.configuration.sections.messages.InfoMessages;
 
 @Configuration
 @Getter
@@ -25,6 +26,9 @@ public class SocialMessages {
 
     @Comment({"", "General errors"})
     public ErrorsMessages errors = new ErrorsMessages();
+
+    @Comment({"", "Info messages"})
+    public InfoMessages info = new InfoMessages();
 
     @Comment({"", "Command messages"})
     public CommandsMessages commands = new CommandsMessages();

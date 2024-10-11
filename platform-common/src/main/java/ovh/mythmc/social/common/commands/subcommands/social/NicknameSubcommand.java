@@ -53,7 +53,7 @@ public class NicknameSubcommand implements SubCommand {
 
             if (nickname.equalsIgnoreCase("reset")) {
                 socialPlayer.getPlayer().setDisplayName(socialPlayer.getPlayer().getName());
-                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getCommands().getNicknameResetted(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getCommands().getNicknameReset(), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
 
@@ -70,7 +70,7 @@ public class NicknameSubcommand implements SubCommand {
 
         if (nickname.equalsIgnoreCase("reset")) {
             target.setDisplayName(target.getName());
-            Social.get().getTextProcessor().parseAndSend(commandSender, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameResettedOthers(), target.getName()), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(commandSender, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameResetOthers(), target.getName()), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

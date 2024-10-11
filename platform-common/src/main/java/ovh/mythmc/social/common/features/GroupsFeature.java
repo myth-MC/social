@@ -4,15 +4,30 @@ import org.bukkit.event.HandlerList;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.features.SocialFeature;
 import ovh.mythmc.social.api.features.SocialFeatureType;
+import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.common.listeners.GroupsListener;
+import ovh.mythmc.social.common.text.placeholders.groups.GroupIconPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.groups.GroupLeaderPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.groups.GroupCodePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.groups.GroupPlaceholder;
 import ovh.mythmc.social.common.util.PluginUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class GroupsFeature implements SocialFeature {
 
     private final GroupsListener groupsListener;
 
+    private final List<SocialParser> parsers = new ArrayList<>();
+
     public GroupsFeature() {
         this.groupsListener = new GroupsListener();
+
+        this.parsers.add(new GroupIconPlaceholder());
+        this.parsers.add(new GroupLeaderPlaceholder());
+        this.parsers.add(new GroupCodePlaceholder());
+        this.parsers.add(new GroupPlaceholder());
     }
 
     @Override
@@ -29,11 +44,13 @@ public final class GroupsFeature implements SocialFeature {
     @Override
     public void enable() {
         PluginUtil.registerEvents(groupsListener);
+        this.parsers.forEach(parser -> Social.get().getTextProcessor().registerParser(parser));
     }
 
     @Override
     public void disable() {
         HandlerList.unregisterAll(groupsListener);
+        this.parsers.forEach(parser -> Social.get().getTextProcessor().unregisterParser(parser));
     }
 
 }

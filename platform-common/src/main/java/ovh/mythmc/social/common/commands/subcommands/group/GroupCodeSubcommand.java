@@ -31,8 +31,7 @@ public class GroupCodeSubcommand implements SubCommand {
             return;
         }
 
-        String codeMessage = String.format(Social.get().getConfig().getMessages().getCommands().getGroupCode(), chatChannel.getCode());
-        Social.get().getTextProcessor().parseAndSend(commandSender, codeMessage, Social.get().getConfig().getMessages().getChannelType());
+        Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getGroupCode(), Social.get().getConfig().getMessages().getChannelType());
     }
 
     @Override

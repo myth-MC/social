@@ -48,8 +48,7 @@ public class GroupJoinSubcommand implements SubCommand {
             SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(chatChannel, socialPlayer);
             Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
 
-            String joinedGroupMessage = String.format(Social.get().getConfig().getMessages().getCommands().getJoinedGroup(), chatChannel.getName());
-            Social.get().getTextProcessor().parseAndSend(commandSender, joinedGroupMessage, Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getJoinedGroup(), Social.get().getConfig().getMessages().getChannelType());
             Social.get().getPlayerManager().setMainChannel(socialPlayer, chatChannel);
         } else {
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getGroupIsFull(), Social.get().getConfig().getMessages().getChannelType());

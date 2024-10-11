@@ -2,9 +2,9 @@ package ovh.mythmc.social.api.chat;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.social.api.Social;
 
 import java.util.UUID;
 
@@ -17,17 +17,16 @@ public class GroupChatChannel extends ChatChannel {
     private final int code;
 
     public GroupChatChannel(final @NotNull UUID leaderUuid, final int code) {
-        // Todo: move to settings.yml
         super(
                 "G-" + code,
-                NamedTextColor.BLUE,
+                TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getColor()),
                 ChannelType.CHAT,
-                "<dark_gray>[<gold>:raw_sword:</gold>]</dark_gray>",
-                true,
-                MiniMessage.miniMessage().deserialize("<gray>This is a private channel</gray>"),
-                NamedTextColor.WHITE,
-                ">",
-                NamedTextColor.WHITE,
+                Social.get().getConfig().getSettings().getChat().getGroups().getIcon(),
+                Social.get().getConfig().getSettings().getChat().getGroups().isShowHoverText(),
+                getHoverTextAsComponent(Social.get().getConfig().getSettings().getChat().getGroups().getHoverText()),
+                TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getNicknameColor()),
+                Social.get().getConfig().getSettings().getChat().getGroups().getTextDivider(),
+                TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getTextColor()),
                 null,
                 false,
                 false
@@ -42,7 +41,7 @@ public class GroupChatChannel extends ChatChannel {
         if (getMembers().contains(uuid))
             return false;
 
-        if (getMembers().size() >= 8) // Todo: limit settings.yml
+        if (getMembers().size() >= Social.get().getConfig().getSettings().getChat().getGroups().getPlayerLimit())
             return false;
 
         getMembers().add(uuid);
