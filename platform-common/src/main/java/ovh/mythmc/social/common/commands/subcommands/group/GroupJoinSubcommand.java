@@ -1,11 +1,9 @@
 package ovh.mythmc.social.common.commands.subcommands.group;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 
@@ -45,9 +43,6 @@ public class GroupJoinSubcommand implements SubCommand {
         }
 
         if (chatChannel.addMember(socialPlayer)) {
-            SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(chatChannel, socialPlayer);
-            Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
-
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getJoinedGroup(), Social.get().getConfig().getMessages().getChannelType());
             Social.get().getPlayerManager().setMainChannel(socialPlayer, chatChannel);
         } else {

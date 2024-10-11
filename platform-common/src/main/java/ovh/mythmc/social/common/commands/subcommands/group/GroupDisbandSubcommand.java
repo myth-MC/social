@@ -33,11 +33,8 @@ public class GroupDisbandSubcommand implements SubCommand {
             return;
         }
 
-        SocialGroupDisbandEvent socialGroupDisbandEvent = new SocialGroupDisbandEvent(chatChannel);
-        Bukkit.getPluginManager().callEvent(socialGroupDisbandEvent);
-
-        Social.get().getChatManager().unregisterChatChannel(chatChannel);
         Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
+        Social.get().getChatManager().unregisterChatChannel(chatChannel);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
+@Setter(AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode

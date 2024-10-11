@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.*;
@@ -57,6 +60,15 @@ public final class ChatManager {
         return getGroupChannelByPlayer(socialPlayer.getUuid());
     }
 
+    public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
+                                      final @NotNull UUID leaderUuid) {
+        SocialPlayer previousLeader = Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid());
+        SocialPlayer leader = Social.get().getPlayerManager().get(leaderUuid);
+
+        SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
+        Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
+    }
+
     public boolean exists(final @NotNull String channelName) {
         return getChannel(channelName) != null;
     }
@@ -72,10 +84,18 @@ public final class ChatManager {
         int code = (int) Math.floor(100000 + Math.random() * 900000);
         GroupChatChannel chatChannel = new GroupChatChannel(leaderUuid, code);
         chatChannel.addMember(leaderUuid);
+
+        SocialGroupCreateEvent socialGroupCreateEvent = new SocialGroupCreateEvent(chatChannel);
+        Bukkit.getPluginManager().callEvent(socialGroupCreateEvent);
         return registerChatChannel(chatChannel);
     }
 
     public boolean unregisterChatChannel(final @NotNull ChatChannel chatChannel) {
+        if (chatChannel instanceof GroupChatChannel) {
+            SocialGroupDisbandEvent socialGroupDisbandEvent = new SocialGroupDisbandEvent((GroupChatChannel) chatChannel);
+            Bukkit.getPluginManager().callEvent(socialGroupDisbandEvent);
+        }
+
         if (Social.get().getConfig().getSettings().isDebug())
             Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
 

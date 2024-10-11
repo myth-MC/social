@@ -1,15 +1,19 @@
 package ovh.mythmc.social.api.chat;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
 
 import java.util.UUID;
 
 @Getter
-@Setter
+@Setter(AccessLevel.PROTECTED)
 public class GroupChatChannel extends ChatChannel {
 
     private UUID leaderUuid;
@@ -38,14 +42,22 @@ public class GroupChatChannel extends ChatChannel {
 
     @Override
     public boolean addMember(UUID uuid) {
-        if (getMembers().contains(uuid))
-            return false;
-
         if (getMembers().size() >= Social.get().getConfig().getSettings().getChat().getGroups().getPlayerLimit())
             return false;
 
-        getMembers().add(uuid);
+        super.addMember(uuid);
+
+        SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(this, Social.get().getPlayerManager().get(uuid));
+        Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
+
         return true;
+    }
+
+    public boolean removeMember(UUID uuid) {
+        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(this, Social.get().getPlayerManager().get(uuid));
+        Bukkit.getPluginManager().callEvent(socialGroupLeaveEvent);
+
+        return super.removeMember(uuid);
     }
 
 }

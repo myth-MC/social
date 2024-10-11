@@ -4,8 +4,10 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
@@ -53,6 +55,27 @@ public final class GroupsListener implements Listener {
 
             setDefaultChannel(socialPlayer);
         });
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        if (socialPlayer == null)
+            return;
+
+        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
+        if (groupChatChannel == null)
+            return;
+
+        if (groupChatChannel.getLeaderUuid().equals(socialPlayer.getUuid())) {
+            if (groupChatChannel.getMembers().size() < 2) {
+                Social.get().getChatManager().unregisterChatChannel(groupChatChannel);
+            } else {
+                Social.get().getChatManager().setGroupChannelLeader(groupChatChannel, groupChatChannel.getMembers().get(1));
+            }
+        }
+
+        groupChatChannel.removeMember(socialPlayer);
     }
 
     private void setDefaultChannel(SocialPlayer socialPlayer) {
