@@ -54,6 +54,8 @@ permissions:
       - social.command.group.create
       - social.command.group.chat
       - social.command.group.join
+      - social.command.group.kick
+      - social.command.group.leader
       - social.command.group.leave
       - social.command.group.disband
       - social.command.group.code

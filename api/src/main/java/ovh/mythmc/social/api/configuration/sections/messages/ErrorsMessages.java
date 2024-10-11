@@ -29,6 +29,8 @@ public class ErrorsMessages {
 
     private String playerNotFound = "$error_prefix <red>Unknown player.</red>";
 
+    private String chooseAnotherPlayer = "$error_prefix <red>Choose another player.</red>";
+
     private String channelDoesNotExist = "$error_prefix <red>That channel does not exist.</red>";
 
     private String unknownReaction = "$error_prefix <red>Unknown reaction.</red>";

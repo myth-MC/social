@@ -25,6 +25,8 @@ public abstract class GroupCommand {
         subCommands.put("chat", new GroupChatSubcommand());
         subCommands.put("join", new GroupJoinSubcommand());
         subCommands.put("leave", new GroupLeaveSubcommand());
+        subCommands.put("kick", new GroupKickSubcommand());
+        subCommands.put("leader", new GroupLeaderSubcommand());
         subCommands.put("code", new GroupCodeSubcommand());
         subCommands.put("disband", new GroupDisbandSubcommand());
     }
