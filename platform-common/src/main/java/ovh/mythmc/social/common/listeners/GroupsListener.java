@@ -6,10 +6,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -36,8 +38,6 @@ public final class GroupsListener implements Listener {
         Component leftMessage = Social.get().getTextProcessor().parse(event.getPlayer(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
 
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            if (uuid.equals(event.getPlayer().getUuid())) return;
-
             SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null) return;
 
@@ -57,6 +57,18 @@ public final class GroupsListener implements Listener {
         });
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGroupLeaderChange(SocialGroupLeaderChangeEvent event) {
+        Component leaderChangeMessage = Social.get().getTextProcessor().parse(event.getLeader(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
+
+        event.getGroupChatChannel().getMembers().forEach(uuid -> {
+            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+            if (socialPlayer == null) return;
+
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, leaderChangeMessage, ChannelType.CHAT);
+        });
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
@@ -67,15 +79,16 @@ public final class GroupsListener implements Listener {
         if (groupChatChannel == null)
             return;
 
+        // Not necessary since ChatListener already takes care of this
+        groupChatChannel.removeMember(socialPlayer);
+
         if (groupChatChannel.getLeaderUuid().equals(socialPlayer.getUuid())) {
             if (groupChatChannel.getMembers().size() < 2) {
                 Social.get().getChatManager().unregisterChatChannel(groupChatChannel);
             } else {
-                Social.get().getChatManager().setGroupChannelLeader(groupChatChannel, groupChatChannel.getMembers().get(1));
+                Social.get().getChatManager().setGroupChannelLeader(groupChatChannel, groupChatChannel.getMembers().get(0));
             }
         }
-
-        groupChatChannel.removeMember(socialPlayer);
     }
 
     private void setDefaultChannel(SocialPlayer socialPlayer) {

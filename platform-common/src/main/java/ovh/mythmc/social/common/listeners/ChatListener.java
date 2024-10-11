@@ -44,7 +44,8 @@ public final class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         for (ChatChannel chatChannel : Social.get().getChatManager().getChannels()) {
-            chatChannel.removeMember(event.getPlayer().getUniqueId());
+            if (chatChannel.getMembers().contains(event.getPlayer().getUniqueId()))
+                chatChannel.removeMember(event.getPlayer().getUniqueId());
         }
     }
 

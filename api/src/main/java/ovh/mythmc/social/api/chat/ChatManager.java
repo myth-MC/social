@@ -67,6 +67,8 @@ public final class ChatManager {
 
         SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
         Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
+
+        groupChatChannel.setLeaderUuid(leaderUuid);
     }
 
     public boolean exists(final @NotNull String channelName) {
