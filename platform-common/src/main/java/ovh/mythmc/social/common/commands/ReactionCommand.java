@@ -10,6 +10,7 @@ import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
+import ovh.mythmc.social.common.menus.ReactionsMenu;
 
 import java.util.*;
 
@@ -28,6 +29,11 @@ public abstract class ReactionCommand {
 
         if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
             Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
+
+        if (args.length == 0) {
+            new ReactionsMenu().openMenu(socialPlayer.getPlayer());
             return;
         }
 

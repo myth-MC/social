@@ -48,6 +48,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>ovh.mythmc.social.libs.org.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>dev.triumphteam</pattern>
+                            <shadedPattern>ovh.mythmc.social.libs.dev.triumphteam</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 
@@ -115,6 +119,12 @@
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.17.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.triumphteam</groupId>
+            <artifactId>triumph-gui</artifactId>
+            <version>3.1.10</version>
         </dependency>
 
         <dependency>
