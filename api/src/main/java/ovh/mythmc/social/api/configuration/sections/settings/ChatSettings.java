@@ -40,6 +40,9 @@ public class ChatSettings {
     @Comment("Whether mentions should be enabled or disabled")
     private boolean mentions = true;
 
+    @Comment("Sound that will be played to the mentioned player")
+    private String mentionSound = "BLOCK_CHAIN_PLACE";
+
     @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
     private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$nickname</blue> has mentioned you!</gray>";
 

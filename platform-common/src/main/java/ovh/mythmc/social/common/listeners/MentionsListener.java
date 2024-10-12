@@ -43,7 +43,7 @@ public final class MentionsListener implements Listener {
                     .build()
             ));
 
-            event.getRecipient().getPlayer().playSound(event.getRecipient().getPlayer(), Sound.BLOCK_ANVIL_HIT, 0.75F, 1.75F);
+            event.getRecipient().getPlayer().playSound(event.getRecipient().getPlayer(), Sound.valueOf(Social.get().getConfig().getSettings().getChat().getMentionSound()), 0.75F, 1.75F);
         }
     }
 
