@@ -12,6 +12,12 @@ public class SocialSettings {
     @Comment("Enabling this will send more logs to console to help debugging")
     private boolean debug = true;
 
+    @Comment("Whether to enable the update checker or not")
+    private boolean updateChecker = true;
+
+    @Comment("Time interval of the update checker in hours")
+    private int updateCheckerIntervalInHours = 6;
+
     @Comment({"", "Chat module"})
     private ChatSettings chat = new ChatSettings();
 

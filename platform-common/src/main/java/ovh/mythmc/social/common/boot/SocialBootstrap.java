@@ -21,6 +21,7 @@ import ovh.mythmc.social.common.text.placeholders.player.NicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.SocialSpyPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.prefix.*;
+import ovh.mythmc.social.common.update.UpdateChecker;
 import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.io.File;
@@ -57,6 +58,7 @@ public abstract class SocialBootstrap<T> implements Social {
                 new ReactionsFeature(),
                 new SignsFeature(),
                 new SystemMessagesFeature(),
+                new UpdateCheckerFeature(),
                 new URLFilterFeature()
         );
 
@@ -68,7 +70,10 @@ public abstract class SocialBootstrap<T> implements Social {
 
         try {
             // Register external plugin hooks
+            // Will be deprecated in 0.3.x
             hooks();
+
+            // Enable plugin
             enable();
         } catch (Throwable throwable) {
             getLogger().error("An error has occurred while initializing social: {}", throwable);
@@ -76,7 +81,7 @@ public abstract class SocialBootstrap<T> implements Social {
             return;
         }
 
-        // Todo: update checker
+        UpdateChecker.startTask();
 
         Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
     }
