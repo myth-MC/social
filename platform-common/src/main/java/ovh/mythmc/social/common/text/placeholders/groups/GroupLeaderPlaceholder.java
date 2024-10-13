@@ -1,6 +1,7 @@
 package ovh.mythmc.social.common.text.placeholders.groups;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -19,7 +20,7 @@ public final class GroupLeaderPlaceholder extends SocialPlaceholder {
         if (groupChatChannel == null)
             return "";
 
-        return Bukkit.getPlayer(groupChatChannel.getLeaderUuid()).getDisplayName();
+        return ChatColor.stripColor(Bukkit.getPlayer(groupChatChannel.getLeaderUuid()).getDisplayName());
     }
 
 }

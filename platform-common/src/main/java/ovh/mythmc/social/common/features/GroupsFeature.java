@@ -23,7 +23,10 @@ public final class GroupsFeature implements SocialFeature {
 
     public GroupsFeature() {
         this.groupsListener = new GroupsListener();
+    }
 
+    @Override
+    public void initialize() {
         this.parsers.add(new GroupIconPlaceholder());
         this.parsers.add(new GroupLeaderPlaceholder());
         this.parsers.add(new GroupCodePlaceholder());
