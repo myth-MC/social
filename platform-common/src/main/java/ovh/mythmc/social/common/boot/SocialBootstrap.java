@@ -42,6 +42,9 @@ public abstract class SocialBootstrap<T> implements Social {
     }
 
     public final void initialize() {
+        // Initialize scheduler and various utilities
+        PluginUtil.setPlugin((JavaPlugin) getPlugin());
+
         // Initialize gestalt
         SocialGestalt.set(new SocialGestalt());
         SocialGestalt.get().registerFeature(
@@ -56,14 +59,12 @@ public abstract class SocialBootstrap<T> implements Social {
                 new MOTDFeature(),
                 new PacketsFeature(),
                 new ReactionsFeature(),
+                new ServerLinksFeature(),
                 new SignsFeature(),
                 new SystemMessagesFeature(),
                 new UpdateCheckerFeature(),
                 new URLFilterFeature()
         );
-
-        // Initialize scheduler and various utilities
-        PluginUtil.setPlugin((JavaPlugin) getPlugin());
 
         // Load settings
         reload();

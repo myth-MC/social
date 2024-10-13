@@ -24,6 +24,7 @@ public final class SocialGestalt {
         Arrays.stream(features).forEach(feature -> {
             if (!featureMap.containsKey(feature)) {
                 featureMap.put(feature, false);
+                feature.initialize();
                 if (Social.get().getConfig().getSettings().isDebug())
                     Social.get().getLogger().info("Registered feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
             }
@@ -33,6 +34,7 @@ public final class SocialGestalt {
     public void unregisterFeature(final @NotNull SocialFeature... features) {
         Arrays.stream(features).forEach(feature -> {
             featureMap.remove(feature);
+            feature.shutdown();
             if (Social.get().getConfig().getSettings().isDebug())
                 Social.get().getLogger().info("Unregistered feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
         });
@@ -106,7 +108,10 @@ public final class SocialGestalt {
                     version.startsWith("1.19") ||
                     version.startsWith("1.20") ||
                     version.startsWith("1.21");
-            case REACTIONS -> version.startsWith("1.20") ||
+            case REACTIONS ->
+                    version.startsWith("1.20") ||
+                    version.startsWith("1.21");
+            case SERVER_LINKS ->
                     version.startsWith("1.21");
             default -> true;
         };

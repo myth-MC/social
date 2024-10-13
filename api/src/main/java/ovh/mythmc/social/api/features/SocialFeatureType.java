@@ -11,6 +11,7 @@ public enum SocialFeatureType {
     MENTIONS,
     MOTD,
     REACTIONS,
+    SERVER_LINKS,
     SYSTEM_MESSAGES,
     UPDATE_CHECKER,
     URL_FILTER,

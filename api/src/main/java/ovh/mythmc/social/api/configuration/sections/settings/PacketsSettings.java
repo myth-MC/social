@@ -17,4 +17,7 @@ public class PacketsSettings {
     @Comment("Keyword tab completion in chat")
     private boolean chatKeywordTabCompletion = true;
 
+    @Comment("Server links module")
+    private ServerLinksSettings serverLinks = new ServerLinksSettings();
+
 }

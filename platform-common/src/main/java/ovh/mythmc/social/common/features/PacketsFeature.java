@@ -25,7 +25,7 @@ public final class PacketsFeature implements SocialFeature {
     }
 
     @Override
-    public void enable() {
+    public void initialize() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(PluginUtil.getPlugin()));
 
         // Disable update checker
@@ -37,18 +37,24 @@ public final class PacketsFeature implements SocialFeature {
 
         // Initialize PacketEvents API
         PacketEvents.getAPI().init();
+    }
 
+    @Override
+    public void enable() {
         // Register listener
         PluginUtil.registerEvents(packetsListener);
     }
 
     @Override
     public void disable() {
-        // Terminate PacketEvents API
-        PacketEvents.getAPI().terminate();
-
         // Unregister listener
         HandlerList.unregisterAll(packetsListener);
+    }
+
+    @Override
+    public void shutdown() {
+        // Terminate PacketEvents API
+        PacketEvents.getAPI().terminate();
     }
 
 }
