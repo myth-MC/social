@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class SystemMessagesListener implements Listener {
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)

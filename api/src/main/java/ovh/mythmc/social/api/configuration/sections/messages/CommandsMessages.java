@@ -13,7 +13,7 @@ public class CommandsMessages {
 
     private String nicknameChangedOthers = "$success_prefix <gray><blue>%s</blue>'s nickname has been set to <green>%s</green></gray>";
 
-    private String nicknameReset = "$info_prefix <gray>Your nickname has been resetted.</gray>";
+    private String nicknameReset = "$info_prefix <gray>Your nickname has been reset.</gray>";
 
     private String nicknameResetOthers = "$success_prefix <gray><blue>%s</blue>'s name has been reset.</gray>";
 

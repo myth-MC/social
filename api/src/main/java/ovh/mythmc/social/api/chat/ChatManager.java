@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
@@ -26,6 +28,8 @@ import static net.kyori.adventure.text.Component.text;
 public final class ChatManager {
 
     public static final ChatManager instance = new ChatManager();
+
+    private final ChatHistory history = new ChatHistory();
 
     private final List<ChatChannel> channels = new ArrayList<>();
 
@@ -133,11 +137,23 @@ public final class ChatManager {
         return false;
     }
 
-    public void sendChatMessage(final @NotNull SocialPlayer sender,
-                                final @NotNull ChatChannel chatChannel,
-                                final @NotNull String message) {
+    public SocialChatMessageSendEvent sendChatMessage(final @NotNull SocialPlayer sender,
+                                @NotNull ChatChannel chatChannel,
+                                @NotNull String message,
+                                Integer replyId) {
 
-        List<UUID> players = new ArrayList<>(List.copyOf(chatChannel.getMembers()));
+        // Prepare and send MessagePrepare event
+        SocialChatMessagePrepareEvent socialChatMessagePrepareEvent = new SocialChatMessagePrepareEvent(sender, chatChannel, message, replyId);
+        Bukkit.getPluginManager().callEvent(socialChatMessagePrepareEvent);
+        if (socialChatMessagePrepareEvent.isCancelled())
+            return null;
+
+        // Update values in case they've been changed
+        message = socialChatMessagePrepareEvent.getRawMessage();
+        chatChannel = socialChatMessagePrepareEvent.getChatChannel();
+
+        // List of players who will receive this message (channel + socialspy)
+        List<UUID> players = new ArrayList<>();
 
         // SocialSpy
         for (SocialPlayer socialPlayer : Social.get().getPlayerManager().get()) {
@@ -155,9 +171,60 @@ public final class ChatManager {
 
         Component textDivider = Social.get().getTextProcessor().parse(sender, " " + chatChannel.getTextDivider() + " ");
 
-        Component nickname = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component nickname = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
+                .color(NamedTextColor.GRAY);
 
         Component filteredMessage = Social.get().getTextProcessor().parsePlayerInput(sender, message);
+
+        // This message's ID
+        int messageId = 0;
+
+        // Apply reply text
+        if (socialChatMessagePrepareEvent.isReply()) {
+            SocialChatMessageSendEvent replyEvent = Social.get().getChatManager().getHistory().getById(replyId);
+            if (replyEvent.isReply())
+                replyId = replyEvent.getReplyId();
+
+            if (!replyEvent.getChatChannel().equals(chatChannel) && Social.get().getChatManager().hasPermission(sender, replyEvent.getChatChannel()))
+                chatChannel = replyEvent.getChatChannel();
+
+            messageId = Social.get().getChatManager().getHistory().register(new SocialChatMessageSendEvent(sender, chatChannel, message, replyId));
+
+            if (replyEvent.getSender().getPlayer() != null) {
+                Component nicknameHoverText = Component.empty();
+
+                for (SocialChatMessageSendEvent reply : Social.get().getChatManager().getHistory().getThread(replyEvent, 8)) {
+                    nicknameHoverText = nicknameHoverText
+                            .append(text(reply.getSender().getNickname() + ": ", NamedTextColor.GRAY))
+                            .append(reply.getParsedRawMessage().color(NamedTextColor.WHITE))
+                            .appendNewline();
+                }
+
+                if (Social.get().getChatManager().getHistory().getThread(replyEvent, 9).size() >= 8) {
+                    nicknameHoverText = nicknameHoverText
+                            .append(text("...", NamedTextColor.BLUE))
+                            .appendNewline();
+                }
+
+                String formatString = Social.get().getConfig().getSettings().getChat().getReplyFormat();
+                if (Social.get().getChatManager().getHistory().isThread(replyEvent))
+                    formatString = Social.get().getConfig().getSettings().getChat().getThreadFormat();
+
+                nicknameHoverText = nicknameHoverText
+                        .appendNewline()
+                        .append(Social.get().getTextProcessor().parse(replyEvent.getSender(), Social.get().getConfig().getSettings().getChat().getReplyHoverText()));
+
+                nickname = Social.get().getTextProcessor().parse(replyEvent.getSender(), formatString)
+                        .hoverEvent(HoverEvent.showText(nicknameHoverText))
+                        .clickEvent(ClickEvent.suggestCommand("(re:#" + replyEvent.getId() + ") "))
+                        .appendSpace()
+                        .append(nickname);
+            }
+        }
+
+        SocialChatMessageSendEvent socialChatMessageSendEvent = new SocialChatMessageSendEvent(sender, chatChannel, message, replyId);
+        if (messageId == 0)
+            messageId = Social.get().getChatManager().getHistory().register(socialChatMessageSendEvent);
 
         Component chatMessage =
                 text("")
@@ -165,23 +232,33 @@ public final class ChatManager {
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
                         )
-                        .append(nickname.color(chatChannel.getNicknameColor()))
+                        .append(nickname)
                         .append(textDivider)
-                        .append(filteredMessage)
+                        .append(filteredMessage
+                                .clickEvent(ClickEvent.suggestCommand("(re:#" + messageId + ") "))
+                        )
                         .color(chatChannel.getTextColor());
+
+        // Add channel members
+        players.addAll(chatChannel.getMembers());
 
         // Call SocialChatMessageReceiveEvent for each channel member
         Map<SocialPlayer, Component> playerMap = new HashMap<>();
         for (UUID uuid : players) {
             SocialPlayer member = Social.get().getPlayerManager().get(uuid);
-            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, member, chatChannel, chatMessage);
+
+            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, member, chatChannel, chatMessage, message, replyId, messageId);
             Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
             if (!socialChatMessageReceiveEvent.isCancelled())
                 playerMap.put(member, socialChatMessageReceiveEvent.getMessage());
         }
 
-        playerMap.forEach((s, m) -> Social.get().getTextProcessor().send(s, m, chatChannel.getType()));
+        for (Map.Entry<SocialPlayer, Component> entry : playerMap.entrySet()) {
+            Social.get().getTextProcessor().send(entry.getKey(), entry.getValue(), chatChannel.getType());
+        }
+
         Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
+        return socialChatMessageSendEvent;
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,

@@ -26,6 +26,7 @@ public class EmojiSettings {
             new EmojiField("ballot_box", List.of(), "\u2610"),
             new EmojiField("ballot_box_with_x", List.of(), "\u2612"),
             new EmojiField("bow", List.of(), "\uD83C\uDFF9"),
+            new EmojiField("box_up_and_right", List.of(), "\u2514"),
             new EmojiField("checkmark", List.of(), "\u2714"),
             new EmojiField("check_box_with_check", List.of(), "\u2611"),
             new EmojiField("cloud", List.of(), "\u2601"),

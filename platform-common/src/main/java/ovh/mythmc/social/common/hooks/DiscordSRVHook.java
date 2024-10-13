@@ -17,7 +17,7 @@ import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -37,18 +37,18 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onMessage(SocialChatMessageSendEvent event) {
+    public void onMessage(SocialChatMessagePrepareEvent event) {
         if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChatChannel().getName()) == null) {
             DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + event.getChatChannel().getName() + " but none found");
             return;
         }
 
-        if (StringUtils.isBlank(event.getMessage())) {
+        if (StringUtils.isBlank(event.getRawMessage())) {
             DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Received blank social message, not processing");
             return;
         }
 
-        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getMessage(), event.getChatChannel().getName(), event.isCancelled(), event);
+        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getRawMessage(), event.getChatChannel().getName(), event.isCancelled(), event);
     }
 
     @Subscribe

@@ -1,6 +1,6 @@
 package ovh.mythmc.social.common.listeners;
 
-import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -9,10 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
-import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
+import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.util.PluginUtil;
 
@@ -76,10 +73,6 @@ public final class ChatListener implements Listener {
         if (mainChannel.isPassthrough())
             return;
 
-        // This will allow the message to be logged in console and sent to plugins such as DiscordSRV
-        event.getRecipients().clear();
-        event.setFormat("(" + mainChannel.getName() + ") %s: %s");
-
         // Flood filter
         if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
             int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
@@ -93,14 +86,34 @@ public final class ChatListener implements Listener {
             }
         }
 
-        SocialChatMessageSendEvent socialChatMessageEvent = new SocialChatMessageSendEvent(socialPlayer, mainChannel, event.getMessage());
-        Bukkit.getPluginManager().callEvent(socialChatMessageEvent);
-        if (!socialChatMessageEvent.isCancelled())
-            Social.get().getChatManager().sendChatMessage(socialChatMessageEvent.getSender(), socialChatMessageEvent.getChatChannel(), socialChatMessageEvent.getMessage());
+        // Check if message is a reply
+        Integer replyId = null;
+        if (event.getMessage().startsWith("(re:#") && event.getMessage().contains(")")) {
+            String replyIdString = event.getMessage().substring(5, event.getMessage().indexOf(")"));
+            replyId = tryParse(replyIdString);
+            event.setMessage(event.getMessage().replace("(re:#" + replyId + ")", "").trim());
+        }
+
+        // Cancel event if message is empty
+        if (event.getMessage().isEmpty() || event.getMessage().isBlank()) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // Send chat message
+        SocialChatMessageSendEvent socialChatMessageSendEvent = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
+        if (socialChatMessageSendEvent == null || socialChatMessageSendEvent.isCancelled()) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // This allows the message to be logged in console and sent to plugins such as DiscordSRV
+        event.getRecipients().clear();
+        event.setFormat("(" + socialChatMessageSendEvent.getChatChannel().getName() + ") %s: %s");
     }
 
     @EventHandler
-    public void onSocialChatMessageSend(SocialChatMessageSendEvent event) {
+    public void onSocialChatMessageSend(SocialChatMessagePrepareEvent event) {
         // Check if player still has permission to chat in their selected channel
         if (!Social.get().getChatManager().hasPermission(event.getSender(), event.getChatChannel())) {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
@@ -113,6 +126,10 @@ public final class ChatListener implements Listener {
 
     @EventHandler
     public void onSocialChatMessageReceive(SocialChatMessageReceiveEvent event) {
+        // Play reply sound
+        if (event.isReply())
+            event.getSender().getPlayer().playSound(event.getSender().getPlayer(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.5F, 1.7F);
+
         if (event.getChatChannel().getPermission() == null)
             return;
 
@@ -136,4 +153,13 @@ public final class ChatListener implements Listener {
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
         Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
     }
+
+    private Integer tryParse(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
 }

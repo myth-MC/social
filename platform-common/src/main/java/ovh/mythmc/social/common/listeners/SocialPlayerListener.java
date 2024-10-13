@@ -20,24 +20,23 @@ public final class SocialPlayerListener implements Listener {
     // Temporary workaround for nicknames
     NamespacedKey key = new NamespacedKey("social", "nickname");
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
+
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
 
         if (socialPlayer == null) {
             Social.get().getPlayerManager().registerSocialPlayer(uuid);
         }
-    }
 
-    // Temporary workaround for nicknames
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
-        if (socialPlayer == null)
-            return;
+        socialPlayer = Social.get().getPlayerManager().get(uuid);
 
+        // Temporary workaround for nicknames
         PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();
         if (container.has(key, PersistentDataType.STRING)) {
             String nickname = container.get(key, PersistentDataType.STRING);

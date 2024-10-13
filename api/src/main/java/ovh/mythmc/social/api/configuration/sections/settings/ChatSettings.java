@@ -31,6 +31,15 @@ public class ChatSettings {
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "$clickable_nickname";
 
+    @Comment("Message that appears when a player replies to a message")
+    private String replyFormat = "<dark_gray>:raw_box_up_and_right:</dark_gray>";
+
+    @Comment({"Message that appears when a player replies to a thread", "A thread is a set of replies to the same message"})
+    private String threadFormat = "<blue>:raw_box_up_and_right:</blue>";
+
+    @Comment("Text that appears when hovering over a message reply")
+    private String replyHoverText = "$info_prefix <dark_gray>Click here to reply to <gray>$nickname</gray>'s message</dark_gray>";
+
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
             new Channel("global", "#FFFF55", null, "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
