@@ -45,15 +45,15 @@ public final class EmojiParser implements SocialPlayerInputParser {
             hoverText = hoverText
                     .appendNewline()
                     .appendNewline()
-                    .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getSettings().getEmojis().getHoverTextClickToCopy()));
+                    .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getSettings().getEmojis().getHoverTextInsertion()));
 
             message = message.replaceText(TextReplacementConfig
                     .builder()
                     .match(regex)
                     .replacement(
                             Component.text(emoji.unicodeCharacter())
+                                    .insertion(":" + emoji.name() + ": ")
                                     .hoverEvent(HoverEvent.showText(hoverText))
-                                    .clickEvent(ClickEvent.copyToClipboard(":" + emoji.name() + ":"))
                     )
                     .build());
         }

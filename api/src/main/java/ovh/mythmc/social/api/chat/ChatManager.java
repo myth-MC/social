@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -232,7 +233,7 @@ public final class ChatManager {
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
                         )
-                        .append(nickname)
+                        .append(trim(nickname))
                         .append(textDivider)
                         .append(filteredMessage
                                 .clickEvent(ClickEvent.suggestCommand("(re:#" + messageId + ") "))
@@ -292,11 +293,11 @@ public final class ChatManager {
                 .append(prefix
                         .hoverEvent(HoverEvent.showText(prefixHoverText))
                 )
-                .append(senderNickname
+                .append(trim(senderNickname)
                         .hoverEvent(HoverEvent.showText(senderHoverText))
                 )
                 .append(arrow)
-                .append(recipientNickname
+                .append(trim(recipientNickname)
                         .hoverEvent(HoverEvent.showText(recipientHoverText))
                 )
                 .append(text(": ").color(NamedTextColor.GRAY))
@@ -316,6 +317,15 @@ public final class ChatManager {
 
         // Send message to console
         SocialAdventureProvider.get().console().sendMessage(chatMessage);
+    }
+
+    private Component trim(final @NotNull Component component) {
+        if (component instanceof TextComponent textComponent) {
+            textComponent.content(textComponent.content().trim());
+            return textComponent;
+        }
+
+        return component;
     }
 
 }

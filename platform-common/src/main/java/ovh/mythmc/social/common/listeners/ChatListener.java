@@ -128,7 +128,7 @@ public final class ChatListener implements Listener {
     public void onSocialChatMessageReceive(SocialChatMessageReceiveEvent event) {
         // Play reply sound
         if (event.isReply())
-            event.getSender().getPlayer().playSound(event.getSender().getPlayer(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.5F, 1.7F);
+            event.getSender().getPlayer().playSound(event.getSender().getPlayer(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F);
 
         if (event.getChatChannel().getPermission() == null)
             return;

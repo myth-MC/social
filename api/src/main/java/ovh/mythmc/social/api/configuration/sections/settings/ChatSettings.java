@@ -38,7 +38,7 @@ public class ChatSettings {
     private String threadFormat = "<blue>:raw_box_up_and_right:</blue>";
 
     @Comment("Text that appears when hovering over a message reply")
-    private String replyHoverText = "$info_prefix <dark_gray>Click here to reply to <gray>$nickname</gray>'s message</dark_gray>";
+    private String replyHoverText = "<dark_gray>Click here to reply to <gray>$nickname</gray>'s message</dark_gray>";
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(

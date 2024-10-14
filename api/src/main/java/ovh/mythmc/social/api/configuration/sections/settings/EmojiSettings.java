@@ -16,8 +16,8 @@ public class EmojiSettings {
     @Comment("Text that appears when hovering over an emoji to indicate its aliases")
     private String hoverTextAliases = "<blue>Alias(es):</blue> <gray>%s</gray>";
 
-    @Comment("Text that appears when hovering over an emoji to let the player know that they can click to copy the emoji")
-    private String hoverTextClickToCopy = "<dark_gray>Click to copy to clipboard</dark_gray>";
+    @Comment("Text that appears when hovering over an emoji to let the player know that they can shift-click to insert the emoji")
+    private String hoverTextInsertion = "<dark_gray>Shift and click to insert in chatbox</dark_gray>";
 
     @Comment("You can add your own emojis or remove the default ones too")
     private List<EmojiField> emojis = List.of(
