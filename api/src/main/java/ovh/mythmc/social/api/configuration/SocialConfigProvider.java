@@ -82,12 +82,7 @@ public final class SocialConfigProvider {
         });
 
         // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> {
-            Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
-
-            if (settings.isDebug())
-                Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
-        });
+        settings.getChat().getChannels().forEach(channel -> Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel)));
 
         // Register announcements
         settings.getAnnouncements().getMessages().forEach(announcementField -> {

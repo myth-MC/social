@@ -4,7 +4,6 @@ import org.bukkit.event.HandlerList;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.features.SocialFeature;
 import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.common.listeners.ChatListener;
 import ovh.mythmc.social.common.listeners.MOTDListener;
 import ovh.mythmc.social.common.util.PluginUtil;
 
