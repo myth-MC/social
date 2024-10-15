@@ -10,7 +10,7 @@ import ovh.mythmc.social.api.configuration.sections.settings.*;
 public class SocialSettings {
 
     @Comment("Enabling this will send more logs to console to help debugging")
-    private boolean debug = true;
+    private boolean debug = false;
 
     @Comment("Whether to enable the update checker or not")
     private boolean updateChecker = true;

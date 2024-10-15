@@ -181,7 +181,7 @@ public final class ChatManager {
         int messageId = 0;
 
         // Apply reply text
-        if (socialChatMessagePrepareEvent.isReply()) {
+        if (socialChatMessagePrepareEvent.isReply() && Social.get().getChatManager().hasPermission(sender, socialChatMessagePrepareEvent.getChatChannel())) {
             SocialChatMessageSendEvent replyEvent = Social.get().getChatManager().getHistory().getById(replyId);
             if (replyEvent.isReply())
                 replyId = replyEvent.getReplyId();
