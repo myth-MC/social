@@ -36,7 +36,9 @@ public class GroupCreateSubcommand implements SubCommand {
             Social.get().getChatManager().registerGroupChatChannel(socialPlayer.getUuid(), alias);
         }
 
-        Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), Social.get().getConfig().getMessages().getChannelType());
+        int groupCode = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer).getCode();
+        String createdMessage = String.format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
+        Social.get().getTextProcessor().parseAndSend(commandSender, createdMessage, Social.get().getConfig().getMessages().getChannelType());
     }
 
     @Override
