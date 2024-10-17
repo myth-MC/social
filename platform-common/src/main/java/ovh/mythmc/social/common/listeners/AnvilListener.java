@@ -18,10 +18,10 @@ public final class AnvilListener implements Listener {
         if (socialPlayer == null)
             return;
 
-        if (event.getResult() == null || !event.getResult().hasItemMeta() || Objects.equals(event.getInventory().getRenameText(), ""))
+        if (event.getResult() == null || !event.getResult().hasItemMeta() || Objects.equals(event.getView().getRenameText(), ""))
             return;
 
-        String name = event.getInventory().getRenameText();
+        String name = event.getView().getRenameText();
         String parsedName = LegacyComponentSerializer.legacySection().serialize(
                 Social.get().getTextProcessor().parsePlayerInput(socialPlayer, name)
         );

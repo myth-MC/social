@@ -88,7 +88,7 @@ public final class GroupsListener implements Listener {
         groupChatChannel.removeMember(socialPlayer);
 
         if (groupChatChannel.getLeaderUuid().equals(socialPlayer.getUuid())) {
-            if (groupChatChannel.getMembers().size() < 2) {
+            if (groupChatChannel.getMembers().size() < 1) {
                 Social.get().getChatManager().unregisterChatChannel(groupChatChannel);
             } else {
                 Social.get().getChatManager().setGroupChannelLeader(groupChatChannel, groupChatChannel.getMembers().get(0));
