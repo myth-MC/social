@@ -3,7 +3,6 @@ package ovh.mythmc.social.api.events.chat;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -11,7 +10,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
 @Setter
-public class SocialChatMessageReceiveEvent extends SocialChatMessageSendEvent implements Cancellable {
+public class SocialChatMessageReceiveEvent extends SocialChatMessageSendEvent {
 
     private final SocialPlayer recipient;
 

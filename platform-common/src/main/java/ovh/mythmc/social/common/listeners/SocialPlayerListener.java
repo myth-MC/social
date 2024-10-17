@@ -52,9 +52,9 @@ public final class SocialPlayerListener implements Listener {
         if (socialPlayer != null)
             Social.get().getPlayerManager().unregisterSocialPlayer(socialPlayer);
 
-        PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();
+        PersistentDataContainer container = event.getPlayer().getPersistentDataContainer();
 
-        container.set(key, PersistentDataType.STRING, socialPlayer.getPlayer().getDisplayName());
+        container.set(key, PersistentDataType.STRING, event.getPlayer().getDisplayName());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

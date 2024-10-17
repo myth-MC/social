@@ -3,7 +3,6 @@ package ovh.mythmc.social.api.configuration.sections.settings;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 

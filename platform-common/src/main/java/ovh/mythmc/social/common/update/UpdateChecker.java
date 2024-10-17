@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.util.Objects;
 import java.util.Scanner;
@@ -63,7 +63,7 @@ public class UpdateChecker {
     private void performTask() {
         URLConnection connection = null;
         try {
-            connection = new URL(url).openConnection();
+            connection = URI.create(url).toURL().openConnection();
         } catch (IOException e) {
             if (Social.get().getConfig().getSettings().isDebug())
                 logger.warn(e.getMessage());
