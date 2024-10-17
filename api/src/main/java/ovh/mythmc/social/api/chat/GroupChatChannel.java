@@ -12,15 +12,19 @@ import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 @Getter
 @Setter(AccessLevel.PROTECTED)
 public class GroupChatChannel extends ChatChannel {
 
     private UUID leaderUuid;
 
+    private String alias;
+
     private final int code;
 
-    public GroupChatChannel(final @NotNull UUID leaderUuid, final int code) {
+    public GroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias, final int code) {
         super(
                 "G-" + code,
                 TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getColor()),
@@ -37,6 +41,7 @@ public class GroupChatChannel extends ChatChannel {
         );
 
         this.leaderUuid = leaderUuid;
+        this.alias = alias;
         this.code = code;
     }
 

@@ -15,12 +15,15 @@ import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
+import ovh.mythmc.social.api.events.groups.SocialGroupAliasChangeEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.*;
+
+import javax.annotation.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -76,6 +79,13 @@ public final class ChatManager {
         groupChatChannel.setLeaderUuid(leaderUuid);
     }
 
+    public void setGroupChannelAlias(final @NotNull GroupChatChannel groupChatChannel, final @Nullable String alias) {
+        SocialGroupAliasChangeEvent socialGroupAliasChangeEvent = new SocialGroupAliasChangeEvent(groupChatChannel, alias);
+        Bukkit.getPluginManager().callEvent(socialGroupAliasChangeEvent);
+        
+        groupChatChannel.setAlias(socialGroupAliasChangeEvent.getAlias());
+    }
+
     public boolean exists(final @NotNull String channelName) {
         return getChannel(channelName) != null;
     }
@@ -87,14 +97,18 @@ public final class ChatManager {
         return channels.add(chatChannel);
     }
 
-    public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid) {
+    public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias) {
         int code = (int) Math.floor(100000 + Math.random() * 900000);
-        GroupChatChannel chatChannel = new GroupChatChannel(leaderUuid, code);
+        GroupChatChannel chatChannel = new GroupChatChannel(leaderUuid, alias, code);
         chatChannel.addMember(leaderUuid);
 
         SocialGroupCreateEvent socialGroupCreateEvent = new SocialGroupCreateEvent(chatChannel);
         Bukkit.getPluginManager().callEvent(socialGroupCreateEvent);
         return registerChatChannel(chatChannel);
+    }
+
+    public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid) {
+        return registerGroupChatChannel(leaderUuid, null);
     }
 
     public boolean unregisterChatChannel(final @NotNull ChatChannel chatChannel) {

@@ -51,6 +51,7 @@ permissions:
   social.command.group:
     default: true
     children:
+      - social.command.group.alias
       - social.command.group.create
       - social.command.group.chat
       - social.command.group.join

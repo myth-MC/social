@@ -21,6 +21,7 @@ public abstract class GroupCommand {
 
     public GroupCommand() {
         this.subCommands = new HashMap<>();
+        subCommands.put("alias", new GroupAliasSubcommand());
         subCommands.put("create", new GroupCreateSubcommand());
         subCommands.put("chat", new GroupChatSubcommand());
         subCommands.put("join", new GroupJoinSubcommand());

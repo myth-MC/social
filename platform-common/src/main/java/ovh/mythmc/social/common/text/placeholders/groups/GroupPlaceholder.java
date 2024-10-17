@@ -18,6 +18,9 @@ public final class GroupPlaceholder extends SocialPlaceholder {
         if (groupChatChannel == null)
             return "";
 
+        if (groupChatChannel.getAlias() != null)
+            return groupChatChannel.getAlias();
+
         return groupChatChannel.getName();
     }
 

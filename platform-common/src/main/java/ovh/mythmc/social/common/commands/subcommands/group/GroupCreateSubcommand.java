@@ -24,7 +24,17 @@ public class GroupCreateSubcommand implements SubCommand {
             return;
         }
 
-        Social.get().getChatManager().registerGroupChatChannel(socialPlayer.getUuid());
+        if (args.length == 0) {
+            Social.get().getChatManager().registerGroupChatChannel(socialPlayer.getUuid());
+        } else if (args.length == 1) {
+            String alias = args[0];
+            if (alias.length() > 16) {
+                Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getGroupAliasTooLong(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+
+            Social.get().getChatManager().registerGroupChatChannel(socialPlayer.getUuid(), alias);
+        }
 
         Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), Social.get().getConfig().getMessages().getChannelType());
     }

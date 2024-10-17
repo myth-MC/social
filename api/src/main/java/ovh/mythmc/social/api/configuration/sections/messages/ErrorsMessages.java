@@ -43,4 +43,6 @@ public class ErrorsMessages {
 
     private String groupIsFull = "$error_prefix <red>This group is full.</red>";
 
+    private String groupAliasTooLong = "$error_prefix <red>Aliases cannot exceed 16 characters.</red>";
+
 }
