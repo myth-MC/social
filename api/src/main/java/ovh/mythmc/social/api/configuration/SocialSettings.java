@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
+import lombok.Setter;
 import ovh.mythmc.social.api.configuration.sections.settings.*;
 
 @Configuration
@@ -44,6 +45,10 @@ public class SocialSettings {
 
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
+
+    @Comment("DO NOT CHANGE THIS PLEASE")
+    @Setter
+    private int migrationVersion = 0;
 
     // @Comment({"", "Interaction Menu module"})
     // private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();

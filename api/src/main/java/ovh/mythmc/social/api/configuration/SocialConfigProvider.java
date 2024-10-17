@@ -91,6 +91,10 @@ public final class SocialConfigProvider {
         });
     }
 
+    public void save() {
+        YamlConfigurations.save(settingsFilePath, SocialSettings.class, settings);
+    }
+
     private Sound findByName(String name) {
         Sound result = null;
         for (Sound sound : Sound.values()) {

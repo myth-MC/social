@@ -56,6 +56,7 @@ public abstract class SocialBootstrap<T> implements Social {
                 new GroupsFeature(),
                 new IPFilterFeature(),
                 new MentionsFeature(),
+                new MigrationFeature(),
                 new MOTDFeature(),
                 new PacketsFeature(),
                 new ReactionsFeature(),

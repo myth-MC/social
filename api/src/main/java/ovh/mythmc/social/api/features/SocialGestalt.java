@@ -69,9 +69,17 @@ public final class SocialGestalt {
     }
 
     public void enableAllFeatures() {
-        for (SocialFeature feature : featureMap.keySet()) {
+        getByPriority(SocialFeatureProperties.Priority.HIGH).forEach(feature -> {
             enableFeature(feature);
-        }
+        });
+
+        getByPriority(SocialFeatureProperties.Priority.NORMAL).forEach(feature -> {
+            enableFeature(feature);
+        });
+
+        getByPriority(SocialFeatureProperties.Priority.LOW).forEach(feature -> {
+            enableFeature(feature);
+        });
     }
 
     public void disableAllFeatures() {
@@ -82,6 +90,20 @@ public final class SocialGestalt {
 
     public List<SocialFeature> getByType(final @NotNull SocialFeatureType socialFeatureType) {
         return featureMap.keySet().stream().filter(feature -> feature.featureType().equals(socialFeatureType)).toList();
+    }
+
+    public List<SocialFeature> getByPriority(final @NotNull SocialFeatureProperties.Priority priority) {
+        List<SocialFeature> features = new ArrayList<>();
+        for (SocialFeature feature : featureMap.keySet()) {
+            SocialFeatureProperties.Priority featurePriority = SocialFeatureProperties.Priority.NORMAL;
+            if (feature.getClass().isAnnotationPresent(SocialFeatureProperties.class))
+                featurePriority = feature.getClass().getAnnotation(SocialFeatureProperties.class).priority();
+
+            if (featurePriority.equals(priority))
+                features.add(feature);
+        }
+
+        return features;
     }
 
     public boolean isEnabled(final @NotNull SocialFeatureType featureType) {
