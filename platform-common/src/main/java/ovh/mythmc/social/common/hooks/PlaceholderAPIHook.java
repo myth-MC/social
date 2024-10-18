@@ -8,7 +8,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +40,27 @@ public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> i
             if (socialPlayer == null)
                 return null;
 
+            if (params.startsWith("player_")) {
+                if (params.equalsIgnoreCase("player_is_in_group")) {
+                    if (Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer) == null)
+                        return "false";
+                    return "true";
+                }
+                if (params.startsWith("player_is_in_group_")) {
+                    String username = params.substring(params.lastIndexOf("_") + 1);
+                    Player target = Bukkit.getPlayerExact(username);
+                    if (target == null) 
+                        return "false";
+                    GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(player.getUniqueId());
+                    if (groupChatChannel == null)
+                        return "false";
+                    return "true";
+                }
+            }
+
             if (params.startsWith("group_")) {
                 GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
-                if (groupChatChannel == null)
-                    return null;
+                if (groupChatChannel == null) return null;
 
                 if (params.equalsIgnoreCase("group_name")) {
                     return groupChatChannel.getName();
@@ -58,6 +77,33 @@ public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> i
                 if (params.equalsIgnoreCase("group_leader")) {
                     return Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid()).getNickname();
                 }
+                if (params.equalsIgnoreCase("group_leader_username")) {
+                    return Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid()).getPlayer().getName();
+                }
+                if (params.equalsIgnoreCase("group_leader_uuid")) {
+                    return groupChatChannel.getLeaderUuid().toString();
+                }
+                
+                if (params.startsWith("group_player_uuid_")) {
+                    Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
+                    if (integer == null || integer >= groupChatChannel.getMembers().size())
+                        return null;
+                    UUID uuid = groupChatChannel.getMembers().get(integer);
+                    if (uuid == null)
+                        return null;
+
+                    return uuid.toString();
+                }
+                if (params.startsWith("group_player_username_")) {
+                    Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
+                    if (integer == null || integer >= groupChatChannel.getMembers().size())
+                        return null;
+                    UUID uuid = groupChatChannel.getMembers().get(integer);
+                    if (uuid == null)
+                        return null;
+
+                    return Social.get().getPlayerManager().get(uuid).getPlayer().getName();
+                }
                 if (params.startsWith("group_player_")) {
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.getMembers().size())
@@ -65,6 +111,7 @@ public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> i
                     UUID uuid = groupChatChannel.getMembers().get(integer);
                     if (uuid == null)
                         return null;
+
                     return Social.get().getPlayerManager().get(uuid).getNickname();
                 }
             }
