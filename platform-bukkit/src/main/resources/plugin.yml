@@ -22,7 +22,10 @@ commands:
     aliases:
       - emote
       - e
-
+  group:
+    permission: social.command.group
+    aliases:
+      - g
 
 permissions:
   social.user:
@@ -35,13 +38,28 @@ permissions:
   social.command.*:
     default: op
     children:
+      - social.command.announcement
       - social.command.channel
       - social.command.nickname
       - social.command.reaction
       - social.command.reload
       - social.command.socialspy
+  social.command.announcement:
+    default: false
   social.command.channel:
     default: false
+  social.command.group:
+    default: true
+    children:
+      - social.command.group.alias
+      - social.command.group.create
+      - social.command.group.chat
+      - social.command.group.join
+      - social.command.group.kick
+      - social.command.group.leader
+      - social.command.group.leave
+      - social.command.group.disband
+      - social.command.group.code
   social.command.nickname:
     default: false
   social.command.pm:
@@ -54,3 +72,5 @@ permissions:
     default: false
   social.filter.bypass:
     default: false
+  social.mentions:
+    default: true

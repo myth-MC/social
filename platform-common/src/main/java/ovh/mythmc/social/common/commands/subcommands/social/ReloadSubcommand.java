@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.commands.subcommands;
+package ovh.mythmc.social.common.commands.subcommands.social;
 
 import org.bukkit.command.CommandSender;
 import ovh.mythmc.social.api.Social;

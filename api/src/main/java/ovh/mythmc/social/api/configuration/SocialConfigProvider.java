@@ -82,18 +82,17 @@ public final class SocialConfigProvider {
         });
 
         // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> {
-            Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel));
-
-            if (settings.isDebug())
-                Social.get().getLogger().info("Registered channel '" + channel.name() + "'");
-        });
+        settings.getChat().getChannels().forEach(channel -> Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel)));
 
         // Register announcements
         settings.getAnnouncements().getMessages().forEach(announcementField -> {
             SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
             Social.get().getAnnouncementManager().registerAnnouncement(announcement);
         });
+    }
+
+    public void save() {
+        YamlConfigurations.save(settingsFilePath, SocialSettings.class, settings);
     }
 
     private Sound findByName(String name) {

@@ -24,6 +24,7 @@ public final class SocialGestalt {
         Arrays.stream(features).forEach(feature -> {
             if (!featureMap.containsKey(feature)) {
                 featureMap.put(feature, false);
+                feature.initialize();
                 if (Social.get().getConfig().getSettings().isDebug())
                     Social.get().getLogger().info("Registered feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
             }
@@ -33,6 +34,7 @@ public final class SocialGestalt {
     public void unregisterFeature(final @NotNull SocialFeature... features) {
         Arrays.stream(features).forEach(feature -> {
             featureMap.remove(feature);
+            feature.shutdown();
             if (Social.get().getConfig().getSettings().isDebug())
                 Social.get().getLogger().info("Unregistered feature " + feature.getClass().getSimpleName() + " (" + feature.featureType() + ")");
         });
@@ -67,9 +69,17 @@ public final class SocialGestalt {
     }
 
     public void enableAllFeatures() {
-        for (SocialFeature feature : featureMap.keySet()) {
+        getByPriority(SocialFeatureProperties.Priority.HIGH).forEach(feature -> {
             enableFeature(feature);
-        }
+        });
+
+        getByPriority(SocialFeatureProperties.Priority.NORMAL).forEach(feature -> {
+            enableFeature(feature);
+        });
+
+        getByPriority(SocialFeatureProperties.Priority.LOW).forEach(feature -> {
+            enableFeature(feature);
+        });
     }
 
     public void disableAllFeatures() {
@@ -80,6 +90,20 @@ public final class SocialGestalt {
 
     public List<SocialFeature> getByType(final @NotNull SocialFeatureType socialFeatureType) {
         return featureMap.keySet().stream().filter(feature -> feature.featureType().equals(socialFeatureType)).toList();
+    }
+
+    public List<SocialFeature> getByPriority(final @NotNull SocialFeatureProperties.Priority priority) {
+        List<SocialFeature> features = new ArrayList<>();
+        for (SocialFeature feature : featureMap.keySet()) {
+            SocialFeatureProperties.Priority featurePriority = SocialFeatureProperties.Priority.NORMAL;
+            if (feature.getClass().isAnnotationPresent(SocialFeatureProperties.class))
+                featurePriority = feature.getClass().getAnnotation(SocialFeatureProperties.class).priority();
+
+            if (featurePriority.equals(priority))
+                features.add(feature);
+        }
+
+        return features;
     }
 
     public boolean isEnabled(final @NotNull SocialFeatureType featureType) {
@@ -106,7 +130,10 @@ public final class SocialGestalt {
                     version.startsWith("1.19") ||
                     version.startsWith("1.20") ||
                     version.startsWith("1.21");
-            case REACTIONS -> version.startsWith("1.20") ||
+            case REACTIONS ->
+                    version.startsWith("1.20") ||
+                    version.startsWith("1.21");
+            case SERVER_LINKS ->
                     version.startsWith("1.21");
             default -> true;
         };

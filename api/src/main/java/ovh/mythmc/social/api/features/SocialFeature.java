@@ -6,8 +6,12 @@ public interface SocialFeature {
 
     boolean canBeEnabled();
 
+    default void initialize() { }
+
     void enable();
 
     void disable();
+
+    default void shutdown() { }
 
 }

@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.commands.subcommands;
+package ovh.mythmc.social.common.commands.subcommands.social;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
