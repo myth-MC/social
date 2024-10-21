@@ -2,6 +2,8 @@ package ovh.mythmc.social.common.hooks;
 
 import github.scarsz.discordsrv.Debug;
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.api.Subscribe;
+import github.scarsz.discordsrv.api.events.GameChatMessagePostProcessEvent;
 import github.scarsz.discordsrv.dependencies.commons.lang3.StringUtils;
 import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
@@ -10,11 +12,12 @@ import github.scarsz.discordsrv.util.PluginUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
+import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -26,6 +29,7 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
     public DiscordSRVHook(DiscordSRV storedClass) {
         super(storedClass);
         DiscordSRV.getPlugin().getPluginHooks().add(this);
+        DiscordSRV.api.subscribe(this);
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
                 Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
             ovh.mythmc.social.common.util.PluginUtil.registerEvents(new DiscordSRVDeathHook());
@@ -33,18 +37,26 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onMessage(SocialChatMessageSendEvent event) {
+    public void onMessage(SocialChatMessagePrepareEvent event) {
         if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChatChannel().getName()) == null) {
             DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + event.getChatChannel().getName() + " but none found");
             return;
         }
 
-        if (StringUtils.isBlank(event.getMessage())) {
+        if (StringUtils.isBlank(event.getRawMessage())) {
             DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Received blank social message, not processing");
             return;
         }
 
-        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getMessage(), event.getChatChannel().getName(), event.isCancelled(), event);
+        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getRawMessage(), event.getChatChannel().getName(), event.isCancelled(), event);
+    }
+
+    @Subscribe
+    public void onGameChatMessagePostProcess(GameChatMessagePostProcessEvent event) {
+        if(event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent chatEvent) {
+            if (chatEvent.getRecipients().isEmpty())
+                event.setCancelled(true);
+        }
     }
 
     @Override

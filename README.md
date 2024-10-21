@@ -44,7 +44,11 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 * ✨ Fully compatible with [MiniMessage](https://docs.advntr.dev/minimessage/index.html) and [PlaceholderAPI](https://wiki.placeholderapi.com) to have great-looking messages
 * 🗣️ **Channel-based chat provider**. You can add or remove channels according to your server's needs. For example, you could have a global and a staff channel
 * 😲 **Reactions** that appear above a player's head with nice animations
+* 🧵 **Chat replies and threads**. Players can click on a message to reply to it.
+* 🛡️ **Group chat channels**. Players can create their own group channel with `/group`. Server owners can see group messages with Social Spy.
 * 😎 **Emoji support** in a very similar way as Discord: `:emoji_name:`
+* ‼️ **Mentions** that work with usernames and nicknames.
+* 🔗 **Server links**. Available since Minecraft 1.21, server links are a great way of sharing external resources with your players in the pause menu.
 * 📢 **Built-in announcements** with a configurable interval. Can broadcast messages through the action bar
 * 🤫 **Private messages** with social spy for staff members
 * 🤬 **Chat filters** that block IPs, URLs or words. Even in private messages

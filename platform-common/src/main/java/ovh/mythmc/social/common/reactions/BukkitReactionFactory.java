@@ -20,6 +20,7 @@ import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
@@ -159,7 +160,8 @@ public final class BukkitReactionFactory extends ReactionFactory {
                         this.cancel();
                     }
                 } else {
-                    itemDisplay.remove();
+                    if (itemDisplay != null)
+                        itemDisplay.remove();
                     this.cancel();
                 }
             }
@@ -171,7 +173,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {
-            urlObject = new URL(textureUrl); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+            urlObject = URI.create(textureUrl).toURL(); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
         } catch (MalformedURLException exception) {
             throw new RuntimeException("Invalid URL", exception);
         }

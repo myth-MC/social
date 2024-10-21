@@ -15,6 +15,8 @@ public class ErrorsMessages {
 
     private String invalidCommand = "$error_prefix <red>Invalid command.</red>";
 
+    private String invalidNumber = "$error_prefix <red>Invalid number.</red>";
+
     private String notEnoughPermission = "$error_prefix <red>You do not have enough permission to do this.</red>";
 
     private String notEnoughArguments = "$error_prefix <red>Not enough arguments.</red>";
@@ -27,8 +29,20 @@ public class ErrorsMessages {
 
     private String playerNotFound = "$error_prefix <red>Unknown player.</red>";
 
+    private String chooseAnotherPlayer = "$error_prefix <red>Choose another player.</red>";
+
     private String channelDoesNotExist = "$error_prefix <red>That channel does not exist.</red>";
 
     private String unknownReaction = "$error_prefix <red>Unknown reaction.</red>";
+
+    private String alreadyBelongsToAGroup = "$error_prefix <red>You already belong to a group.</red>";
+
+    private String doesNotBelongToAGroup = "$error_prefix <red>You don't belong to any group.</red>";
+
+    private String groupDoesNotExist = "$error_prefix <red>That channel does not exist.</red>";
+
+    private String groupIsFull = "$error_prefix <red>This group is full.</red>";
+
+    private String groupAliasTooLong = "$error_prefix <red>Aliases cannot exceed 16 characters.</red>";
 
 }

@@ -13,6 +13,12 @@ public class EmojiSettings {
     @Comment("Whether the emoji module should be enabled or disabled")
     private boolean enabled = true;
 
+    @Comment("Text that appears when hovering over an emoji to indicate its aliases")
+    private String hoverTextAliases = "<blue>Alias(es):</blue> <gray>%s</gray>";
+
+    @Comment("Text that appears when hovering over an emoji to let the player know that they can shift-click to insert the emoji")
+    private String hoverTextInsertion = "<dark_gray>Shift and click to insert in chatbox</dark_gray>";
+
     @Comment("You can add your own emojis or remove the default ones too")
     private List<EmojiField> emojis = List.of(
             new EmojiField("airplane", List.of(), "\u2708"),
@@ -20,6 +26,7 @@ public class EmojiSettings {
             new EmojiField("ballot_box", List.of(), "\u2610"),
             new EmojiField("ballot_box_with_x", List.of(), "\u2612"),
             new EmojiField("bow", List.of(), "\uD83C\uDFF9"),
+            new EmojiField("box_up_and_right", List.of(), "\u2514"),
             new EmojiField("checkmark", List.of(), "\u2714"),
             new EmojiField("check_box_with_check", List.of(), "\u2611"),
             new EmojiField("cloud", List.of(), "\u2601"),

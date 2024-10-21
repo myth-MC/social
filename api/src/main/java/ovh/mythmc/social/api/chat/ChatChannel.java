@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
+@Setter(AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public final class ChatChannel {
+public class ChatChannel {
 
     private final String name;
 
@@ -26,8 +26,6 @@ public final class ChatChannel {
     private final ChannelType type;
 
     private final String icon;
-
-    //private final TextColor iconColor;
 
     private final boolean showHoverText;
 
@@ -68,19 +66,13 @@ public final class ChatChannel {
     }
 
     public static ChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {
-        Component hoverText = Component.text("");
-        for (String line : channelField.hoverText()) {
-            Component parsedLine = MiniMessage.miniMessage().deserialize(line);
-            hoverText = hoverText.append(parsedLine);
-        }
-
         return new ChatChannel(
                 channelField.name(),
                 TextColor.fromHexString(channelField.color()),
                 ChannelType.CHAT,
                 channelField.icon(),
                 channelField.showHoverText(),
-                hoverText,
+                getHoverTextAsComponent(channelField.hoverText()),
                 TextColor.fromHexString(channelField.nicknameColor()),
                 channelField.textDivider(),
                 TextColor.fromHexString(channelField.textColor()),
@@ -88,6 +80,18 @@ public final class ChatChannel {
                 channelField.joinByDefault(),
                 false
         );
+    }
+
+    protected static Component getHoverTextAsComponent(List<String> hoverTextList) {
+        Component hoverText = Component.empty();
+        for (String line : hoverTextList) {
+            Component parsedLine = MiniMessage.miniMessage().deserialize(line);
+            hoverText = hoverText
+                    .appendNewline()
+                    .append(parsedLine);
+        }
+
+        return hoverText;
     }
 
 }

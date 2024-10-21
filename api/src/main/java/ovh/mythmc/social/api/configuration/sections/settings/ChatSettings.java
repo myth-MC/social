@@ -31,11 +31,32 @@ public class ChatSettings {
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "$clickable_nickname";
 
+    @Comment("Message that appears when a player replies to a message")
+    private String replyFormat = "<dark_gray>:raw_box_up_and_right:</dark_gray>";
+
+    @Comment({"Message that appears when a player replies to a thread", "A thread is a set of replies to the same message"})
+    private String threadFormat = "<blue>:raw_box_up_and_right:</blue>";
+
+    @Comment("Text that appears when hovering over a message reply")
+    private String replyHoverText = "<dark_gray>Click here to reply to <gray>$nickname</gray>'s message</dark_gray>";
+
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
-            new Channel("global", "#FFFF55", null, "<dark_gray>[<yellow>:pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>▶</gray>", "#FFFFFF", true),
-            new Channel("staff", "#FF5555", "social.admin", "<dark_gray>[<red>:pencil:</red>]</dark_gray>", true, List.of("This channel is restricted to staff members"), "#FFFF55", "<gray>▶</gray>", "#FFFFFF", true)
+            new Channel("global", "#FFFF55", null, "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
+            new Channel("staff", "#FF5555", "social.admin", "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", true, List.of("This channel is restricted to staff members"), "#FFFF55", "<gray>:raw_divider:</gray>", "#FFFFFF", true)
     );
+
+    @Comment("Whether mentions should be enabled or disabled")
+    private boolean mentions = true;
+
+    @Comment("Sound that will be played to the mentioned player")
+    private String mentionSound = "BLOCK_CHAIN_PLACE";
+
+    @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
+    private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$nickname</blue> has mentioned you!</gray>";
+
+    @Comment("Groups module")
+    private ChatGroupSettings groups = new ChatGroupSettings();
 
     @Comment("Filter module")
     private ChatFilterSettings filter = new ChatFilterSettings();

@@ -5,7 +5,6 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -16,7 +15,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class SystemMessagesListener implements Listener {
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)

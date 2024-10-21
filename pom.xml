@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>social</artifactId>
-    <version>0.1.2</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>api</module>
@@ -74,6 +74,11 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -94,7 +99,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20-R0.1-SNAPSHOT</version>
+            <version>1.21-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -110,6 +115,12 @@
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.17.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
+            <version>2.5.0</version>
         </dependency>
 
         <dependency>
