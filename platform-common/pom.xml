@@ -9,6 +9,10 @@
         <version>0.2.0</version>
     </parent>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <artifactId>social-common</artifactId>
 
     <repositories>
