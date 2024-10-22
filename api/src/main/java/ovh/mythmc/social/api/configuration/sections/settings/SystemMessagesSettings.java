@@ -18,13 +18,13 @@ public class SystemMessagesSettings {
     private boolean customizeJoinMessage = true;
 
     @Comment("Message that will be sent to everyone when a player joins the server")
-    private String joinMessage = "<dark_gray>[<green>+</green>]</dark_gray> <white>$clickable_nickname</white>";
+    private String joinMessage = "<dark_gray>[<green>+</green>]</dark_gray> <white>$(clickable_nickname)</white>";
 
     @Comment("Whether the quit message should be customized or not")
     private boolean customizeQuitMessage = true;
 
     @Comment("Message that will be sent to everyone when a player quits the server")
-    private String quitMessage = "<dark_gray>[<red>-</red>]</dark_gray> <white>$clickable_nickname</white>";
+    private String quitMessage = "<dark_gray>[<red>-</red>]</dark_gray> <white>$(clickable_nickname)</white>";
 
     @Comment("Whether the death message should be customized or not")
     private boolean customizeDeathMessage = true;

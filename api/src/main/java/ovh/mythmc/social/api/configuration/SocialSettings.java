@@ -46,7 +46,7 @@ public class SocialSettings {
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
 
-    @Comment("DO NOT CHANGE THIS PLEASE")
+    @Comment({"", "DO NOT CHANGE THIS PLEASE"})
     @Setter
     private int migrationVersion = 0;
 

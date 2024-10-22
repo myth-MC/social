@@ -21,11 +21,14 @@ public final class PacketsFeature implements SocialFeature {
 
     @Override
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getPackets().isEnabled();
+        return isSupported() && Social.get().getConfig().getSettings().getPackets().isEnabled();
     }
 
     @Override
     public void initialize() {
+        if(!isSupported())
+            return;
+
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(PluginUtil.getPlugin()));
 
         // Disable update checker
@@ -57,4 +60,12 @@ public final class PacketsFeature implements SocialFeature {
         PacketEvents.getAPI().terminate();
     }
 
+    private boolean isSupported() {
+        try {
+            Class.forName("com.mohistmc.banner.bukkit.remapping.ReflectionHandler");
+            return false;
+        } catch (ClassNotFoundException e) {
+            return true;
+        }
+    }
 }
