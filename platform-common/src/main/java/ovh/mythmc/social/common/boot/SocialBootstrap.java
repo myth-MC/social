@@ -14,6 +14,7 @@ import ovh.mythmc.social.api.features.SocialGestalt;
 import ovh.mythmc.social.common.features.*;
 import ovh.mythmc.social.common.hooks.DiscordSRVHook;
 import ovh.mythmc.social.common.hooks.PlaceholderAPIHook;
+import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.ClickableNicknamePlaceholder;
@@ -131,6 +132,11 @@ public abstract class SocialBootstrap<T> implements Social {
                 new PrivateMessagePlaceholder(),
                 new SuccessPlaceholder(),
                 new WarningPlaceholder()
+        );
+
+        // Register parsers that do not necessarily belong to any feature
+        Social.get().getTextProcessor().registerParser(
+            new MiniMessageParser()
         );
 
         // Fire event if plugin is already enabled
