@@ -12,6 +12,7 @@ import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -25,36 +26,39 @@ public final class MentionsListener implements Listener {
         if (!event.getSender().getPlayer().hasPermission("social.mentions"))
             return;
 
-        String serializedMessage = MiniMessage.miniMessage().serialize(event.getMessage());
-        String textDivider = MiniMessage.miniMessage().serialize(Social.get().getTextProcessor().parse(event.getSender(), event.getChatChannel().getTextDivider()));
+        Pattern pattern = Pattern.compile("(^" + Pattern.quote("@" + event.getRecipient().getNickname()) + "$)|(^" + "@" + Pattern.quote(event.getRecipient().getPlayer().getName()) + "$)");
 
-        serializedMessage = serializedMessage.substring(serializedMessage.indexOf(textDivider));
+        Arrays.asList(event.getRawMessage().split("\\s+")).forEach(word -> {
+            // Replace player's name and nickname
+            if (pattern.matcher(word).find()) {
+                Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
 
-        Pattern pattern = Pattern.compile("(\\b" + event.getRecipient().getNickname() + "\\b)|(\\b" + event.getRecipient().getPlayer().getName() + "\\b)");
+                List<Component> children = new ArrayList<>(List.copyOf(event.getMessage().children()));
 
-        // Replace player's name and nickname
-        if (pattern.matcher(serializedMessage).find()) {
-            Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
+                Component replaced = children.get(children.size() - 1);
 
-            List<Component> children = new ArrayList<>(List.copyOf(event.getMessage().children()));
+                if (word.substring(1).equalsIgnoreCase(event.getRecipient().getNickname())) {
+                    // Nickname
+                    replaced = replaced.replaceText(TextReplacementConfig.builder()
+                        .matchLiteral("@" + event.getRecipient().getNickname())
+                        .replacement(Component.text("@" + event.getRecipient().getNickname(), event.getChatChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
+                        .build()
+                    );
+                } else if (word.substring(1).equalsIgnoreCase(event.getRecipient().getPlayer().getName())) {
+                    // Username
+                    replaced = replaced.replaceText(TextReplacementConfig.builder()
+                            .matchLiteral("@" + event.getRecipient().getPlayer().getName())
+                            .replacement(Component.text("@" + event.getRecipient().getPlayer().getName(), event.getChatChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
+                            .build()
+                    );
+                }
 
-            Component replaced = children.get(children.size() - 1).replaceText(TextReplacementConfig.builder()
-                    .match(Pattern.compile("\\b" + event.getRecipient().getNickname() + "\\b"))
-                    .replacement(Component.text(event.getRecipient().getNickname(), event.getChatChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
-                    .build()
-            );
+                children.set(children.size() - 1, replaced);
+                event.setMessage(event.getMessage().children(children));
 
-            replaced = replaced.replaceText(TextReplacementConfig.builder()
-                    .match(Pattern.compile("\\b" + event.getRecipient().getPlayer().getDisplayName() + "\\b"))
-                    .replacement(Component.text(event.getRecipient().getPlayer().getDisplayName(), event.getChatChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
-                    .build()
-            );
-
-            children.set(children.size() - 1, replaced);
-            event.setMessage(event.getMessage().children(children));
-
-            event.getRecipient().getPlayer().playSound(event.getRecipient().getPlayer(), Sound.valueOf(Social.get().getConfig().getSettings().getChat().getMentionSound()), 0.75F, 1.75F);
-        }
+                event.getRecipient().getPlayer().playSound(event.getRecipient().getPlayer(), Sound.valueOf(Social.get().getConfig().getSettings().getChat().getMentionSound()), 0.75F, 1.75F);
+            }
+        });
     }
 
     @EventHandler
