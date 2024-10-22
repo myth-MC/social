@@ -7,6 +7,11 @@ import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
 public final class WarningPlaceholder extends SocialPlaceholder {
 
     @Override
+    public boolean legacySupport() {
+        return true;
+    }
+
+    @Override
     public String identifier() {
         return "warning_prefix";
     }

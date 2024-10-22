@@ -13,12 +13,24 @@ public abstract class SocialPlaceholder implements SocialParser {
 
     public abstract String process(SocialPlayer player);
 
+    public boolean legacySupport() { return false; }
+
     @Override
     public Component parse(SocialPlayer player, Component component) {
         Component processedText = MiniMessage.miniMessage().deserialize(process(player));
-        return component.replaceText(TextReplacementConfig
+
+        // Legacy support (not delimited)
+        if (legacySupport()) {
+            component = component.replaceText(TextReplacementConfig
                 .builder()
                 .match(Pattern.compile("\\$(?i:" + identifier() + "\\b)"))
+                .replacement(processedText)
+                .build());
+        }
+
+        return component.replaceText(TextReplacementConfig
+                .builder()
+                .match(Pattern.compile("\\$\\((?i:" + identifier() + "\\))"))
                 .replacement(processedText)
                 .build());
     }

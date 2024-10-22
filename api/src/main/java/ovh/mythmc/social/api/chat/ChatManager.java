@@ -8,6 +8,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
@@ -250,7 +252,7 @@ public final class ChatManager {
                         .append(trim(nickname))
                         .append(textDivider)
                         .append(filteredMessage
-                                .clickEvent(ClickEvent.suggestCommand("(re:#" + messageId + ") "))
+                                .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + messageId + ") ")))
                         )
                         .color(chatChannel.getTextColor());
 

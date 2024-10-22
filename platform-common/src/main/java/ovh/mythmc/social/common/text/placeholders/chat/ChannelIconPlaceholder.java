@@ -6,6 +6,11 @@ import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
 public final class ChannelIconPlaceholder extends SocialPlaceholder {
 
     @Override
+    public boolean legacySupport() {
+        return true;
+    }
+
+    @Override
     public String identifier() {
         return "channel_icon";
     }

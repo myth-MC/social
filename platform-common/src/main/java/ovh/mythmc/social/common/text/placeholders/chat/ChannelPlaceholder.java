@@ -7,6 +7,11 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 public final class ChannelPlaceholder extends SocialPlaceholder {
 
     @Override
+    public boolean legacySupport() {
+        return true;
+    }
+
+    @Override
     public String identifier() {
         return "channel";
     }

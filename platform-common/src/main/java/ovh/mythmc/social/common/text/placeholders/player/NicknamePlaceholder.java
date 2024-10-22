@@ -6,6 +6,11 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 public final class NicknamePlaceholder extends SocialPlaceholder {
 
     @Override
+    public boolean legacySupport() {
+        return true;
+    }
+
+    @Override
     public String identifier() {
         return "nickname";
     }
