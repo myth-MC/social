@@ -9,6 +9,8 @@ import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
 import github.scarsz.discordsrv.util.MessageUtil;
 import github.scarsz.discordsrv.util.PluginUtil;
+import net.kyori.adventure.text.TextComponent;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -16,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -68,7 +71,15 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
         SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L);
 
         String miniMessage = MessageUtil.toMiniMessage(message);
-        miniMessage = miniMessage.replace("%channel%", Social.get().getTextProcessor().getPlaceholder("channel_icon").process(fakePlayer));
+        
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(fakePlayer)
+            .playerChannel(chatChannel)
+            .build();
+
+        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getContextualPlaceholder("channel_icon").get(context);
+
+        miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 
         String finalMiniMessage = miniMessage;
         chatChannel.getMembers().forEach(uuid -> {

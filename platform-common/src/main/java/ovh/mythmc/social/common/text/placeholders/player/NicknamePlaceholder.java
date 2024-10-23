@@ -1,9 +1,10 @@
 package ovh.mythmc.social.common.text.placeholders.player;
 
-import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
+import net.kyori.adventure.text.Component;
+import ovh.mythmc.social.api.context.SocialParserContext;
 
-public final class NicknamePlaceholder extends SocialPlaceholder {
+public final class NicknamePlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public boolean legacySupport() {
@@ -16,8 +17,8 @@ public final class NicknamePlaceholder extends SocialPlaceholder {
     }
 
     @Override
-    public String process(SocialPlayer player) {
-        return player.getNickname();
+    public Component get(SocialParserContext context) {
+        return Component.text(context.socialPlayer().getNickname());
     }
 
 }

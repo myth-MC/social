@@ -1,9 +1,11 @@
 package ovh.mythmc.social.common.text.placeholders.player;
 
-import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 
-public final class SocialSpyPlaceholder extends SocialPlaceholder {
+public final class SocialSpyPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public boolean legacySupport() {
@@ -16,12 +18,12 @@ public final class SocialSpyPlaceholder extends SocialPlaceholder {
     }
 
     @Override
-    public String process(SocialPlayer player) {
-        if (player.isSocialSpy()) {
-            return "<green>true</green>";
+    public Component get(SocialParserContext context) {
+        if (context.socialPlayer().isSocialSpy()) {
+            return Component.text("true", NamedTextColor.GREEN);
         }
 
-        return "<red>false</red>";
+        return Component.text("false", NamedTextColor.RED);
     }
 
 }

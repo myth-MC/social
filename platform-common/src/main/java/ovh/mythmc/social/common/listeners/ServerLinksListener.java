@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.ArrayList;
@@ -27,7 +28,13 @@ public final class ServerLinksListener implements Listener {
                 WrapperCommonServerServerLinks.KnownType knownType = WrapperCommonServerServerLinks.KnownType.valueOf(serverLink.type());
                 serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(knownType, serverLink.url()));
             } else {
-                Component customType = Social.get().getTextProcessor().parse(socialPlayer, socialPlayer.getMainChannel(), serverLink.displayName());
+                SocialParserContext context = SocialParserContext.builder()
+                    .socialPlayer(socialPlayer)
+                    .playerChannel(socialPlayer.getMainChannel())
+                    .message(Component.text(serverLink.displayName()))
+                    .build();
+
+                Component customType = Social.get().getTextProcessor().parse(context);
                 serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(customType, serverLink.url()));
             }
         });

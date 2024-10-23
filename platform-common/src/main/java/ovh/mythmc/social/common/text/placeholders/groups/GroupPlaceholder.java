@@ -1,11 +1,12 @@
 package ovh.mythmc.social.common.text.placeholders.groups;
 
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 
-public final class GroupPlaceholder extends SocialPlaceholder {
+public final class GroupPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public boolean legacySupport() {
@@ -18,15 +19,15 @@ public final class GroupPlaceholder extends SocialPlaceholder {
     }
 
     @Override
-    public String process(SocialPlayer player) {
-        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(player);
+    public Component get(SocialParserContext context) {
+        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(context.socialPlayer());
         if (groupChatChannel == null)
-            return "";
+            return Component.empty();
 
         if (groupChatChannel.getAlias() != null)
-            return groupChatChannel.getAlias();
+            return Component.text(groupChatChannel.getAlias());
 
-        return groupChatChannel.getName();
+        return Component.text(groupChatChannel.getName());
     }
 
 }

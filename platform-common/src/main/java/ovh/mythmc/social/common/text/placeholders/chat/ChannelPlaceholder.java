@@ -1,10 +1,11 @@
 package ovh.mythmc.social.common.text.placeholders.chat;
 
-import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.context.SocialParserContext;
 
-public final class ChannelPlaceholder extends SocialPlaceholder {
+public final class ChannelPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public boolean legacySupport() {
@@ -17,12 +18,13 @@ public final class ChannelPlaceholder extends SocialPlaceholder {
     }
 
     @Override
-    public String process(SocialPlayer player) {
-        String channelName = player.getMainChannel().getName();
-        if (player.getMainChannel() instanceof GroupChatChannel groupChatChannel && groupChatChannel.getAlias() != null)
+    public Component get(SocialParserContext context) {
+        String channelName = context.playerChannel().getName();
+        if (context.playerChannel() instanceof GroupChatChannel groupChatChannel && groupChatChannel.getAlias() != null)
             channelName = groupChatChannel.getAlias();
-        String hexColor = "<color:" + player.getMainChannel().getColor().asHexString().toUpperCase() + ">";
-        return hexColor + channelName + "</color>";
+
+        return Component.text(channelName)
+            .color(context.playerChannel().getColor());
     }
 
 }

@@ -1,9 +1,10 @@
 package ovh.mythmc.social.common.text.placeholders.chat;
 
-import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import net.kyori.adventure.text.Component;
+import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 
-public final class ChannelIconPlaceholder extends SocialPlaceholder {
+public final class ChannelIconPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public boolean legacySupport() {
@@ -16,8 +17,8 @@ public final class ChannelIconPlaceholder extends SocialPlaceholder {
     }
 
     @Override
-    public String process(SocialPlayer player) {
-        return player.getMainChannel().getIcon();
+    public Component get(SocialParserContext context) {
+        return Component.text(context.playerChannel().getIcon());
     }
 
 }

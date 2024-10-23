@@ -15,12 +15,9 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
-import ovh.mythmc.social.api.text.filters.SocialFilterLike;
-import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
-import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -48,6 +45,16 @@ public final class SocialTextProcessor {
         return null;
     }
 
+    public SocialContextualPlaceholder getContextualPlaceholder(final @NotNull String identifier) {
+        for (SocialParser parser : parsers) {
+            if (parser instanceof SocialContextualPlaceholder placeholder)
+                if (placeholder.identifier().equals(identifier))
+                    return placeholder;
+        }
+
+        return null;
+    }
+
     public boolean isPlaceholder(final @NotNull String identifier) {
         return getPlaceholder(identifier) != null;
     }
@@ -67,73 +74,20 @@ public final class SocialTextProcessor {
     }
 
     public Component parsePlayerInput(SocialParserContext context) {
-        Component message = context.message();
+        CustomTextProcessor textProcessor = CustomTextProcessor.builder()
+            .parsers(parsers)
+            .playerInput(true)
+            .build();
 
-        // TODO: priorities
-        for (SocialParser parser : parsers) {
-            if (parser instanceof SocialPlayerInputParser) {
-                if (parser instanceof SocialContextualParser contextualParser) {
-                    message = contextualParser.parse(context.withMessage(message));
-                } else {
-                    message = parser.parse(context.socialPlayer(), message);
-                }
-            }
-        }
-
-        return message;
-    }
-
-    private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {
-        List<SocialParser> socialParserList = new ArrayList<>();
-        for (SocialParser parser : parsers) {
-            SocialParserProperties.ParserPriority parserPriority = SocialParserProperties.ParserPriority.NORMAL;
-            if (parser.getClass().isAnnotationPresent(SocialParserProperties.class))
-                parserPriority = parser.getClass().getAnnotation(SocialParserProperties.class).priority();
-
-            if (parserPriority.equals(priority))
-                socialParserList.add(parser);
-        }
-
-        return socialParserList;
+        return textProcessor.parse(context);
     }
 
     public Component parse(SocialParserContext context) {
-        Component message = context.message();
+        CustomTextProcessor textProcessor = CustomTextProcessor.builder()
+            .parsers(parsers)
+            .build();
 
-        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.HIGH)) {
-            if (parser instanceof SocialFilterLike)
-                continue;
-
-            if (parser instanceof SocialContextualParser contextualParser) {
-                message = contextualParser.parse(context.withMessage(message));
-            } else {
-                message = parser.parse(context.socialPlayer(), context.message());
-            }
-        }
-
-        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.NORMAL)) {
-            if (parser instanceof SocialFilterLike)
-                continue;
-
-            if (parser instanceof SocialContextualParser contextualParser) {
-                message = contextualParser.parse(context.withMessage(message));
-            } else {
-                message = parser.parse(context.socialPlayer(), context.message());
-            }
-        }
-
-        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.LOW)) {
-            if (parser instanceof SocialFilterLike)
-                continue;
-
-            if (parser instanceof SocialContextualParser contextualParser) {
-                message = contextualParser.parse(context.withMessage(message));
-            } else {
-                message = parser.parse(context.socialPlayer(), context.message());
-            }
-        }
-
-        return message;
+        return textProcessor.parse(context);
     }
 
     public Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message, ChannelType channelType) {
@@ -200,7 +154,6 @@ public final class SocialTextProcessor {
     }
 
     public void parseAndSend(CommandSender commandSender, String message, ChannelType type) {
-        //Component component = MiniMessage.miniMessage().deserialize(message);
         parseAndSend(commandSender, Component.text(message), type);
     }
 
