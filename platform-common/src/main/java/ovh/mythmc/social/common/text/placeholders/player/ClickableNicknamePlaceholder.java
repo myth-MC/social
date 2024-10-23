@@ -25,7 +25,8 @@ public final class ClickableNicknamePlaceholder extends SocialPlaceholder {
 
         // Temporary workaround for usernames
         String command = Social.get().getConfig().getSettings().getChat().getClickableNicknameCommand();
-        command = command.replace("$username", player.getPlayer().getName());
+        command = command.replace("$username", player.getPlayer().getName())
+            .replace("$(username)", player.getPlayer().getName());
 
         if (command.equalsIgnoreCase(""))
             return "<hover:show_text:'" + hoverText + "'>" + player.getNickname() + "</hover>";
