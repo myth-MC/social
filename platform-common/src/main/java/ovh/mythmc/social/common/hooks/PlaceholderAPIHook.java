@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.context.SocialPlayerContext;
 import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -133,9 +134,9 @@ public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> i
     }
 
     @Override
-    public Component parse(SocialPlayer socialPlayer, Component message) {
-        String serialized = MiniMessage.miniMessage().serialize(message);
-        String parsedMessage = PlaceholderAPI.setPlaceholders(socialPlayer.getPlayer(), serialized);
+    public Component parse(SocialPlayerContext context) {
+        String serialized = MiniMessage.miniMessage().serialize(context.message());
+        String parsedMessage = PlaceholderAPI.setPlaceholders(context.socialPlayer().getPlayer(), serialized);
         return MiniMessage.miniMessage().deserialize(parsedMessage);
     }
 

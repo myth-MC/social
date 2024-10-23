@@ -8,9 +8,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.context.SocialCommandSenderContext;
+import ovh.mythmc.social.api.context.SocialPlayerContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
@@ -59,15 +63,39 @@ public final class SocialTextProcessor {
             unregisterParser(placeholder);
     }
 
-    public Component parsePlayerInput(SocialPlayer sender, Component message) {
-        for (SocialParser parser : parsers) {
+    public Component parsePlayerInput(SocialPlayerContext context) {
+        Component message = context.message();
+
+        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.HIGH)) {
             if (parser instanceof SocialPlayerInputParser)
-                message = parser.parse(sender, message);
+                message = parser.parse(context);
+        }
+
+        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.NORMAL)) {
+            if (parser instanceof SocialPlayerInputParser)
+                message = parser.parse(context);
+        }
+
+        for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.LOW)) {
+            if (parser instanceof SocialPlayerInputParser)
+                message = parser.parse(context);
         }
 
         return message;
     }
 
+    @Deprecated
+    @ScheduledForRemoval
+    public Component parsePlayerInput(SocialPlayer sender, Component message) {
+        return parsePlayerInput(SocialPlayerContext.builder()
+            .socialPlayer(sender)
+            .message(message)
+            .build()
+        );
+    }
+
+    @Deprecated
+    @ScheduledForRemoval
     public Component parsePlayerInput(SocialPlayer sender, String message) {
         return parsePlayerInput(sender, Component.text(message));
     }
@@ -86,60 +114,98 @@ public final class SocialTextProcessor {
         return socialParserList;
     }
 
-    public Component parse(SocialPlayer player, Component component) {
+    public Component parse(SocialPlayerContext context) {
+        Component message = context.message();
+
         for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.HIGH)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 
-            component = parser.parse(player, component);
+            message = parser.parse(context);
         }
 
         for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.NORMAL)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 
-            component = parser.parse(player, component);
+            message = parser.parse(context);
         }
 
         for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.LOW)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 
-            component = parser.parse(player, component);
+            message = parser.parse(context);
         }
 
-        return component;
+        return message;
     }
 
+    @Deprecated
+    @ScheduledForRemoval
+    public Component parse(SocialPlayer player, Component component) {
+        return parse(SocialPlayerContext.builder()
+            .socialPlayer(player)
+            .message(component)
+            .build()
+        );
+    }
+
+    @Deprecated
+    @ScheduledForRemoval
     public Component parse(SocialPlayer player, String message) {
-        //Component component = MiniMessage.miniMessage().deserialize(message);
         return parse(player, Component.text(message));
     }
 
-    public void parseAndSend(SocialPlayer player, Component component, ChannelType type) {
-        send(List.of(player), parse(player, component), type);
+    public void parseAndSend(SocialPlayerContext context) {
+        send(List.of(context.socialPlayer()), parse(context), context.channelType());
     }
 
+    @Deprecated
+    @ScheduledForRemoval
+    public void parseAndSend(SocialPlayer player, Component component, ChannelType type) {
+        parseAndSend(SocialPlayerContext.builder()
+            .socialPlayer(player)
+            .channelType(type)
+            .message(component)
+            .build()
+        );
+    }
+
+    @Deprecated
+    @ScheduledForRemoval
     public void parseAndSend(SocialPlayer player, String message, ChannelType type) {
         parseAndSend(player, parse(player, message), type);
     }
 
-    public void parseAndSend(CommandSender commandSender, Component message, ChannelType type) {
+    public void parseAndSend(SocialCommandSenderContext context) {
         SocialPlayer socialPlayer = null;
 
-        if (commandSender instanceof Player player)
+        if (context.commandSender() instanceof Player player)
             socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
 
         if (socialPlayer == null) {
-            sendToConsole(commandSender, message);
+            sendToConsole(context.commandSender(), context.message());
             return;
         }
 
-        parseAndSend(socialPlayer, message, type);
+        parseAndSend(context);
     }
 
+    @Deprecated
+    @ScheduledForRemoval
+    public void parseAndSend(CommandSender commandSender, Component message, ChannelType type) {
+        parseAndSend(SocialCommandSenderContext.builder()
+            .commandSender(commandSender)
+            .message(message)
+            .channelType(type)
+            .build()
+        );
+    }
+
+    @Deprecated
+    @ScheduledForRemoval
     public void parseAndSend(CommandSender commandSender, String message, ChannelType type) {
-        //Component component = MiniMessage.miniMessage().deserialize(message);
         parseAndSend(commandSender, Component.text(message), type);
     }
 

@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.context.SocialPlayerContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
@@ -181,9 +182,9 @@ public final class ChatManager {
 
         Component channelHoverText = text("");
         if (chatChannel.isShowHoverText()) {
-            channelHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
+            channelHoverText = Social.get().getTextProcessor().parse(SocialPlayerContext.builder().socialPlayer(sender).rawMessage(Social.get().getConfig().getSettings().getChat().getChannelHoverText()).build())
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().parse(sender, chatChannel.getHoverText()));
+                    .append(Social.get().getTextProcessor().parse(SocialPlayerContext.builder().socialPlayer(sender).message(chatChannel.getHoverText()).build()));
         }
 
         Component textDivider = Social.get().getTextProcessor().parse(sender, " " + chatChannel.getTextDivider() + " ");
