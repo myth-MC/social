@@ -31,7 +31,7 @@ public final class MentionsListener implements Listener {
         Arrays.asList(event.getRawMessage().split("\\s+")).forEach(word -> {
             // Replace player's name and nickname
             if (pattern.matcher(word).find()) {
-                Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
+                Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), event.getChatChannel(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
 
                 List<Component> children = new ArrayList<>(List.copyOf(event.getMessage().children()));
 
@@ -64,13 +64,13 @@ public final class MentionsListener implements Listener {
     @EventHandler
     public void onReply(SocialChatMessageReceiveEvent event) {
         if (event.isReply()) {
-            Component replyFormat = Social.get().getTextProcessor().parse(event.getRecipient(), Social.get().getConfig().getSettings().getChat().getReplyFormat());
+            Component replyFormat = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChatChannel(), Social.get().getConfig().getSettings().getChat().getReplyFormat());
             String replyFormatStripped = MiniMessage.miniMessage().stripTags(MiniMessage.miniMessage().serialize(replyFormat));
 
             SocialChatMessageSendEvent socialChatMessageSendEvent = Social.get().getChatManager().getHistory().getById(event.getReplyId());
 
             if (socialChatMessageSendEvent.getSender().equals(event.getRecipient())) {
-                Component replacement = Social.get().getTextProcessor().parse(event.getRecipient(), replyFormat);
+                Component replacement = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChatChannel(), replyFormat);
                 Component message = event.getMessage().replaceText(TextReplacementConfig.builder()
                         .matchLiteral(replyFormatStripped)
                         .replacement(replacement.color(event.getChatChannel().getColor()))

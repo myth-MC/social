@@ -4,7 +4,7 @@ import org.bukkit.event.HandlerList;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.features.SocialFeature;
 import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.common.listeners.GroupsListener;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupLeaderPlaceholder;
@@ -19,7 +19,7 @@ public final class GroupsFeature implements SocialFeature {
 
     private final GroupsListener groupsListener;
 
-    private final List<SocialParser> parsers = new ArrayList<>();
+    private final List<SocialContextualParser> parsers = new ArrayList<>();
 
     public GroupsFeature() {
         this.groupsListener = new GroupsListener();

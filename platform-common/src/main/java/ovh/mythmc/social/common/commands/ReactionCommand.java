@@ -27,12 +27,12 @@ public abstract class ReactionCommand {
         }
 
         if (!Social.get().getConfig().getSettings().getCommands().getReaction().enabled()) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (args.length < 2) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
@@ -41,7 +41,7 @@ public abstract class ReactionCommand {
 
         Reaction reaction = Social.get().getReactionManager().get(categoryName, reactionName);
         if (reaction == null) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getUnknownReaction(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUnknownReaction(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

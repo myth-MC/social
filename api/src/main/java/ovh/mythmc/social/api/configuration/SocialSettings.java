@@ -48,7 +48,7 @@ public class SocialSettings {
 
     @Comment({"", "DO NOT CHANGE THIS PLEASE"})
     @Setter
-    private int migrationVersion = 0;
+    private int migrationVersion = 1;
 
     // @Comment({"", "Interaction Menu module"})
     // private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();

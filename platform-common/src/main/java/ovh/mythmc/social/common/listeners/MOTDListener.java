@@ -16,7 +16,7 @@ public final class MOTDListener implements Listener {
         if (player == null)
             return;
 
-        Social.get().getConfig().getSettings().getMotd().getMessage().forEach(line -> Social.get().getTextProcessor().parseAndSend(player, line, ChannelType.CHAT));
+        Social.get().getConfig().getSettings().getMotd().getMessage().forEach(line -> Social.get().getTextProcessor().parseAndSend(player, player.getMainChannel(), line, ChannelType.CHAT));
     }
 
 }

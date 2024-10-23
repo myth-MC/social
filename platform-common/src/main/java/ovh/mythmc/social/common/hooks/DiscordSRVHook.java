@@ -11,7 +11,6 @@ import github.scarsz.discordsrv.util.MessageUtil;
 import github.scarsz.discordsrv.util.PluginUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.social.api.Social;
@@ -23,7 +22,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.UUID;
 
-public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook, Listener {
+public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook {
 
     // SocialPluginHook
     public DiscordSRVHook(DiscordSRV storedClass) {
@@ -81,7 +80,7 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
                 return;
 
             // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, finalMiniMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), finalMiniMessage, ChannelType.CHAT);
         });
     }
 

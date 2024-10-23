@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
@@ -181,17 +182,17 @@ public final class ChatManager {
 
         Component channelHoverText = text("");
         if (chatChannel.isShowHoverText()) {
-            channelHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
+            channelHoverText = parse(sender, chatChannel, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().parse(sender, chatChannel.getHoverText()));
+                    .append(parse(sender, chatChannel, chatChannel.getHoverText()));
         }
 
-        Component textDivider = Social.get().getTextProcessor().parse(sender, " " + chatChannel.getTextDivider() + " ");
+        Component textDivider = parse(sender, chatChannel, " " + chatChannel.getTextDivider() + " ");
 
-        Component nickname = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
+        Component nickname = parse(sender, chatChannel, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
                 .color(NamedTextColor.GRAY);
 
-        Component filteredMessage = Social.get().getTextProcessor().parsePlayerInput(sender, message);
+        Component filteredMessage = parsePlayerInput(sender, chatChannel, message);
 
         // This message's ID
         int messageId = 0;
@@ -229,9 +230,9 @@ public final class ChatManager {
 
                 nicknameHoverText = nicknameHoverText
                         .appendNewline()
-                        .append(Social.get().getTextProcessor().parse(replyEvent.getSender(), Social.get().getConfig().getSettings().getChat().getReplyHoverText()));
+                        .append(parse(replyEvent.getSender(), replyEvent.getChatChannel(), Social.get().getConfig().getSettings().getChat().getReplyHoverText()));
 
-                nickname = Social.get().getTextProcessor().parse(replyEvent.getSender(), formatString)
+                nickname = parse(replyEvent.getSender(), replyEvent.getChatChannel(), formatString)
                         .hoverEvent(HoverEvent.showText(nicknameHoverText))
                         .clickEvent(ClickEvent.suggestCommand("(re:#" + replyEvent.getId() + ") "))
                         .appendSpace()
@@ -245,7 +246,7 @@ public final class ChatManager {
 
         Component chatMessage =
                 text("")
-                        .append(Social.get().getTextProcessor().parse(sender, chatChannel.getIcon() + " ")
+                        .append(parse(sender, chatChannel, chatChannel.getIcon() + " ")
                                 .hoverEvent(HoverEvent.showText(channelHoverText))
                                 .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
                         )
@@ -282,28 +283,28 @@ public final class ChatManager {
                                    final @NotNull SocialPlayer recipient,
                                    final @NotNull String message) {
 
-        Component prefix = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
-        Component prefixHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
+        Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
+        Component prefixHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
 
-        Component senderNickname = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
-        Component senderHoverText = Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+        Component senderNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component senderHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
 
-        Component recipientNickname = Social.get().getTextProcessor().parse(recipient, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
-        Component recipientHoverText = Social.get().getTextProcessor().parse(recipient, Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+        Component recipientNickname = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component recipientHoverText = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
 
-        Component arrow = Social.get().getTextProcessor().parse(recipient, " " + Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow() + " ");
+        Component arrow = parse(recipient, recipient.getMainChannel(), " " + Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow() + " ");
 
-        Component filteredMessage = Social.get().getTextProcessor().parsePlayerInput(sender, message);
+        Component filteredMessage = parsePlayerInput(sender, sender.getMainChannel(), message);
 
         if (!sender.getNickname().equals(sender.getPlayer().getName()))
             senderHoverText = senderHoverText
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().parse(sender, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+                    .append(parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
         if (!recipient.getNickname().equals(recipient.getPlayer().getName()))
             recipientHoverText = recipientHoverText
                     .appendNewline()
-                    .append(Social.get().getTextProcessor().parse(recipient, Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+                    .append(parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
 
         Component chatMessage = Component.empty()
                 .append(prefix
@@ -342,6 +343,32 @@ public final class ChatManager {
         }
 
         return component;
+    }
+
+    private Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message) {
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(socialPlayer)
+            .playerChannel(channel)
+            .message(message)
+            .messageChannelType(channel.getType())
+            .build();
+
+        return Social.get().getTextProcessor().parse(context);
+    }
+
+    private Component parse(SocialPlayer socialPlayer, ChatChannel channel, String message) {
+        return parse(socialPlayer, channel, text(message));
+    }
+
+    private Component parsePlayerInput(SocialPlayer socialPlayer, ChatChannel channel, String message) {
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(socialPlayer)
+            .playerChannel(channel)
+            .message(text(message))
+            .messageChannelType(channel.getType())
+            .build();
+
+        return Social.get().getTextProcessor().parsePlayerInput(context);
     }
 
 }

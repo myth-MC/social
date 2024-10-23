@@ -8,21 +8,28 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
 import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
+
+import static net.kyori.adventure.text.Component.text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public final class SocialTextProcessor {
@@ -59,17 +66,21 @@ public final class SocialTextProcessor {
             unregisterParser(placeholder);
     }
 
-    public Component parsePlayerInput(SocialPlayer sender, Component message) {
+    public Component parsePlayerInput(SocialParserContext context) {
+        Component message = context.message();
+
+        // TODO: priorities
         for (SocialParser parser : parsers) {
-            if (parser instanceof SocialPlayerInputParser)
-                message = parser.parse(sender, message);
+            if (parser instanceof SocialPlayerInputParser) {
+                if (parser instanceof SocialContextualParser contextualParser) {
+                    message = contextualParser.parse(context.withMessage(message));
+                } else {
+                    message = parser.parse(context.socialPlayer(), message);
+                }
+            }
         }
 
         return message;
-    }
-
-    public Component parsePlayerInput(SocialPlayer sender, String message) {
-        return parsePlayerInput(sender, Component.text(message));
     }
 
     private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {
@@ -86,42 +97,92 @@ public final class SocialTextProcessor {
         return socialParserList;
     }
 
-    public Component parse(SocialPlayer player, Component component) {
+    public Component parse(SocialParserContext context) {
+        Component message = context.message();
+
         for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.HIGH)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 
-            component = parser.parse(player, component);
+            if (parser instanceof SocialContextualParser contextualParser) {
+                message = contextualParser.parse(context.withMessage(message));
+            } else {
+                message = parser.parse(context.socialPlayer(), context.message());
+            }
         }
 
         for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.NORMAL)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 
-            component = parser.parse(player, component);
+            if (parser instanceof SocialContextualParser contextualParser) {
+                message = contextualParser.parse(context.withMessage(message));
+            } else {
+                message = parser.parse(context.socialPlayer(), context.message());
+            }
         }
 
         for (SocialParser parser : getByPriority(SocialParserProperties.ParserPriority.LOW)) {
             if (parser instanceof SocialFilterLike)
                 continue;
 
-            component = parser.parse(player, component);
+            if (parser instanceof SocialContextualParser contextualParser) {
+                message = contextualParser.parse(context.withMessage(message));
+            } else {
+                message = parser.parse(context.socialPlayer(), context.message());
+            }
         }
 
-        return component;
+        return message;
     }
 
-    public Component parse(SocialPlayer player, String message) {
-        //Component component = MiniMessage.miniMessage().deserialize(message);
-        return parse(player, Component.text(message));
+    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message, ChannelType channelType) {
+        return parse(SocialParserContext.builder()
+            .socialPlayer(socialPlayer)
+            .playerChannel(channel)
+            .message(message)
+            .messageChannelType(channelType)
+            .build()
+        );
     }
 
-    public void parseAndSend(SocialPlayer player, Component component, ChannelType type) {
-        send(List.of(player), parse(player, component), type);
+    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, String message, ChannelType channelType) {
+        return parse(socialPlayer, channel, text(message), channelType);
     }
 
-    public void parseAndSend(SocialPlayer player, String message, ChannelType type) {
-        parseAndSend(player, parse(player, message), type);
+    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message) {
+        return parse(socialPlayer, channel, message, ChannelType.CHAT);
+    }
+
+    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, String message) {
+        return parse(socialPlayer, channel, text(message));
+    }
+
+    public void parseAndSend(SocialParserContext context) {
+        send(List.of(context.socialPlayer()), parse(context), context.messageChannelType());
+    }
+
+    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, Component message, ChannelType channelType) {
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(socialPlayer)
+            .playerChannel(chatChannel)
+            .message(message)
+            .messageChannelType(channelType)
+            .build();
+
+        parseAndSend(context);
+    }
+
+    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, String message, ChannelType channelType) {
+        parseAndSend(socialPlayer, chatChannel, text(message), channelType);
+    }
+
+    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, Component message) {
+        parseAndSend(socialPlayer, chatChannel, message, ChannelType.CHAT);
+    }
+
+    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, String message) {
+        parseAndSend(socialPlayer, chatChannel, text(message));
     }
 
     public void parseAndSend(CommandSender commandSender, Component message, ChannelType type) {
@@ -135,7 +196,7 @@ public final class SocialTextProcessor {
             return;
         }
 
-        parseAndSend(socialPlayer, message, type);
+        parseAndSend(socialPlayer, socialPlayer.getMainChannel(), message, type);
     }
 
     public void parseAndSend(CommandSender commandSender, String message, ChannelType type) {

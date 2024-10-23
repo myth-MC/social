@@ -7,6 +7,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
@@ -20,7 +21,12 @@ public class SocialChatMessageSendEvent extends SocialChatMessagePrepareEvent {
     }
 
     public Component getParsedRawMessage() {
-        return Social.get().getTextProcessor().parsePlayerInput(getSender(), getRawMessage());
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(getSender())
+            .message(Component.text(getRawMessage()))
+            .build();
+
+        return Social.get().getTextProcessor().parsePlayerInput(context);
     }
 
     public Integer getId() {

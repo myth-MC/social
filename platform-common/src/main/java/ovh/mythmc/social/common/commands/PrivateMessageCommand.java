@@ -26,18 +26,18 @@ public abstract class PrivateMessageCommand {
         }
 
         if (!Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled()) {
-            Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(messageSender, messageSender.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         if (args.length == 0) {
-            Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(messageSender, messageSender.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
         Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
-            Social.get().getTextProcessor().parseAndSend(messageSender, Social.get().getConfig().getMessages().getErrors().getPlayerNotFound(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(messageSender, messageSender.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getPlayerNotFound(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

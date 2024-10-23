@@ -6,7 +6,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
+
+import static net.kyori.adventure.text.Component.text;
 
 import java.util.Objects;
 
@@ -23,7 +26,7 @@ public final class AnvilListener implements Listener {
 
         String name = event.getView().getRenameText();
         String parsedName = LegacyComponentSerializer.legacySection().serialize(
-                Social.get().getTextProcessor().parsePlayerInput(socialPlayer, name)
+                Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().socialPlayer(socialPlayer).playerChannel(socialPlayer.getMainChannel()).message(text(name)).build())
         );
 
         ItemMeta resultMeta = event.getResult().getItemMeta();

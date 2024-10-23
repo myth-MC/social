@@ -27,7 +27,7 @@ public final class ServerLinksListener implements Listener {
                 WrapperCommonServerServerLinks.KnownType knownType = WrapperCommonServerServerLinks.KnownType.valueOf(serverLink.type());
                 serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(knownType, serverLink.url()));
             } else {
-                Component customType = Social.get().getTextProcessor().parse(socialPlayer, serverLink.displayName());
+                Component customType = Social.get().getTextProcessor().parse(socialPlayer, socialPlayer.getMainChannel(), serverLink.displayName());
                 serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(customType, serverLink.url()));
             }
         });

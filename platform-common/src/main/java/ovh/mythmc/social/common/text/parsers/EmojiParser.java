@@ -6,8 +6,8 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.emojis.Emoji;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 
@@ -17,7 +17,9 @@ import java.util.regex.Pattern;
 public final class EmojiParser implements SocialPlayerInputParser {
 
     @Override
-    public Component parse(SocialPlayer socialPlayer, Component message) {
+    public Component parse(SocialParserContext context) {
+        Component message = context.message();
+
         for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
             StringBuilder aliases = new StringBuilder();
             for (String alias : emoji.aliases()) {

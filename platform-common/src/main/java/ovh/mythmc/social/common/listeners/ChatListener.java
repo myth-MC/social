@@ -65,7 +65,7 @@ public final class ChatListener implements Listener {
 
         ChatChannel mainChannel = socialPlayer.getMainChannel();
         if (mainChannel == null) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
             event.setCancelled(true);
             return;
         }
@@ -80,7 +80,7 @@ public final class ChatListener implements Listener {
             if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {
 
-                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
                 event.setCancelled(true);
                 return;
             }
@@ -151,7 +151,7 @@ public final class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
-        Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
+        Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), event.getChatChannel(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
     }
 
     private Integer tryParse(String text) {

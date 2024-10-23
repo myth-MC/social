@@ -34,12 +34,12 @@ public class AnnouncementSubcommand implements SubCommand {
         SocialAnnouncement announcement = Social.get().getAnnouncementManager().getAnnouncements().get(integer);
 
         if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
-            Social.get().getPlayerManager().get().forEach(s -> Social.get().getTextProcessor().parseAndSend(s, announcement.message(), ChannelType.ACTION_BAR));
+            Social.get().getPlayerManager().get().forEach(s -> Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), ChannelType.ACTION_BAR));
         } else {
             for (ChatChannel channel : announcement.channels()) {
                 channel.getMembers().forEach(uuid -> {
                     SocialPlayer s = Social.get().getPlayerManager().get(uuid);
-                    Social.get().getTextProcessor().parseAndSend(s, announcement.message(), channel.getType());
+                    Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), channel.getType());
                 });
             }
         }
