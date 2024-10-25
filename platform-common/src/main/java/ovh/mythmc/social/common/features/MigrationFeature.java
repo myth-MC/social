@@ -2,29 +2,25 @@ package ovh.mythmc.social.common.features;
 
 import java.util.List;
 
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
+import ovh.mythmc.gestalt.features.FeaturePriority;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.sections.settings.EmojiSettings.EmojiField;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureProperties;
-import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.api.features.SocialFeatureProperties.Priority;
 
-@SocialFeatureProperties(priority = Priority.HIGH)
-public final class MigrationFeature implements SocialFeature {
+@Feature(key = "social", type = "MIGRATION", priority = FeaturePriority.HIGH)
+public final class MigrationFeature {
 
     private final int currentMigrationVersion = 1;
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.OTHER;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return currentMigrationVersion != Social.get().getConfig().getSettings().getMigrationVersion();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
         // Update migration version
         Social.get().getConfig().getSettings().setMigrationVersion(currentMigrationVersion);
@@ -36,11 +32,11 @@ public final class MigrationFeature implements SocialFeature {
         disable();
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         // Save changes and reload
         Social.get().getConfig().save();
-        Social.get().reload();
+        // Social.get().reload();
     }
 
     private List<EmojiField> registerEmojis() {

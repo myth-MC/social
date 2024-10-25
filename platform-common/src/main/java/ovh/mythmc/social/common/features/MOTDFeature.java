@@ -1,36 +1,36 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.MOTDListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class MOTDFeature implements SocialFeature {
+@RequiredArgsConstructor
+@Feature(key = "social", type = "MOTD")
+public final class MOTDFeature {
 
-    private final MOTDListener motdListener;
+    private final JavaPlugin plugin;
 
-    public MOTDFeature() {
-        this.motdListener = new MOTDListener();
-    }
+    private final MOTDListener motdListener = new MOTDListener();
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.MOTD;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getMotd().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(motdListener);
+        Bukkit.getPluginManager().registerEvents(motdListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(motdListener);
     }

@@ -4,11 +4,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.api.features.SocialGestalt;
 import ovh.mythmc.social.common.commands.subcommands.group.*;
+import ovh.mythmc.social.common.features.GroupsFeature;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public abstract class GroupCommand {
     }
 
     public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        if (!SocialGestalt.get().isEnabled(SocialFeatureType.GROUPS)) {
+        if (!Gestalt.get().isEnabled(GroupsFeature.class)) {
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }

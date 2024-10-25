@@ -3,33 +3,40 @@ package ovh.mythmc.social.common.features;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import org.bukkit.event.HandlerList;
-import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.common.listeners.PacketsListener;
-import ovh.mythmc.social.common.util.PluginUtil;
+import lombok.RequiredArgsConstructor;
 
-public final class PacketsFeature implements SocialFeature {
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
+import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
+import ovh.mythmc.gestalt.annotations.status.FeatureShutdown;
+import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.common.listeners.PacketsListener;
+
+@RequiredArgsConstructor
+@Feature(key = "social", type = "PACKETS")
+public final class PacketsFeature {
+
+    private final JavaPlugin plugin;
 
     private final PacketsListener packetsListener = new PacketsListener();
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.OTHER;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return isSupported() && Social.get().getConfig().getSettings().getPackets().isEnabled();
     }
 
-    @Override
+    @FeatureInitialize
     public void initialize() {
         if(!isSupported())
             return;
 
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(PluginUtil.getPlugin()));
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
 
         // Disable update checker
         PacketEventsSettings settings = PacketEvents.getAPI().getSettings();
@@ -42,21 +49,18 @@ public final class PacketsFeature implements SocialFeature {
         PacketEvents.getAPI().init();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        // Register listener
-        PluginUtil.registerEvents(packetsListener);
+        Bukkit.getPluginManager().registerEvents(packetsListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
-        // Unregister listener
         HandlerList.unregisterAll(packetsListener);
     }
 
-    @Override
+    @FeatureShutdown
     public void shutdown() {
-        // Terminate PacketEvents API
         PacketEvents.getAPI().terminate();
     }
 
@@ -68,4 +72,5 @@ public final class PacketsFeature implements SocialFeature {
             return true;
         }
     }
+    
 }

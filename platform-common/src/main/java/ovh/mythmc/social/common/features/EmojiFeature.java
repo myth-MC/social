@@ -1,12 +1,15 @@
 package ovh.mythmc.social.common.features;
 
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.text.parsers.EmojiParser;
 import ovh.mythmc.social.common.text.parsers.RawEmojiParser;
 
-public final class EmojiFeature implements SocialFeature {
+@Feature(key = "social", type = "EMOJIS")
+public final class EmojiFeature {
 
     private final EmojiParser emojiParser;
     private final RawEmojiParser rawEmojiParser;
@@ -16,22 +19,17 @@ public final class EmojiFeature implements SocialFeature {
         this.rawEmojiParser = new RawEmojiParser();
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.EMOJIS;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getEmojis().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
         Social.get().getTextProcessor().registerParser(emojiParser, rawEmojiParser);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         Social.get().getTextProcessor().unregisterParser(emojiParser, rawEmojiParser);
         Social.get().getEmojiManager().getEmojis().clear();

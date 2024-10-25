@@ -1,11 +1,14 @@
 package ovh.mythmc.social.common.features;
 
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 
-public final class IPFilterFeature implements SocialFeature {
+@Feature(key = "social", type = "IP_FILTER")
+public final class IPFilterFeature {
 
     private final IPFilter ipFilter;
 
@@ -13,23 +16,18 @@ public final class IPFilterFeature implements SocialFeature {
         this.ipFilter = new IPFilter();
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.IP_FILTER;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getChat().getFilter().isEnabled() &&
                 Social.get().getConfig().getSettings().getChat().getFilter().isIpFilter();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
         Social.get().getTextProcessor().registerParser(ipFilter);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         Social.get().getTextProcessor().unregisterParser(ipFilter);
     }

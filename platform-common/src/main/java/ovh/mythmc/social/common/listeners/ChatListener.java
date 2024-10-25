@@ -7,6 +7,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.events.chat.*;
@@ -15,7 +18,10 @@ import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public final class ChatListener implements Listener {
+
+    private final JavaPlugin plugin;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -119,7 +125,8 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getSender());
-            PluginUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
+
+            PluginUtil.runGlobalTask(plugin, () -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -138,7 +145,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getRecipient());
-            PluginUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
+            PluginUtil.runGlobalTask(plugin, () -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
     }

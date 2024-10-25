@@ -1,11 +1,14 @@
 package ovh.mythmc.social.common.features;
 
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.text.filters.URLFilter;
 
-public final class URLFilterFeature implements SocialFeature {
+@Feature(key = "social", type = "URL_FILTER")
+public final class URLFilterFeature {
 
     private final URLFilter urlFilter;
 
@@ -13,23 +16,18 @@ public final class URLFilterFeature implements SocialFeature {
         this.urlFilter = new URLFilter();
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.URL_FILTER;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getChat().getFilter().isEnabled() &&
                 Social.get().getConfig().getSettings().getChat().getFilter().isUrlFilter();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
         Social.get().getTextProcessor().registerParser(urlFilter);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         Social.get().getTextProcessor().unregisterParser(urlFilter);
     }

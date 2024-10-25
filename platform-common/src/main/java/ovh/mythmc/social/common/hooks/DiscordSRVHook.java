@@ -11,10 +11,13 @@ import github.scarsz.discordsrv.util.MessageUtil;
 import github.scarsz.discordsrv.util.PluginUtil;
 import net.kyori.adventure.text.TextComponent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -28,13 +31,13 @@ import java.util.UUID;
 public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook {
 
     // SocialPluginHook
-    public DiscordSRVHook(DiscordSRV storedClass) {
+    public DiscordSRVHook(DiscordSRV storedClass, JavaPlugin plugin) {
         super(storedClass);
         DiscordSRV.getPlugin().getPluginHooks().add(this);
         DiscordSRV.api.subscribe(this);
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
                 Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
-            ovh.mythmc.social.common.util.PluginUtil.registerEvents(new DiscordSRVDeathHook());
+            Bukkit.getPluginManager().registerEvents(this, plugin);
         }
     }
 

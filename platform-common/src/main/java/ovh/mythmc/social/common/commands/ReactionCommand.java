@@ -5,17 +5,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
+import ovh.mythmc.social.common.features.ReactionsFeature;
 
 import java.util.*;
 
 public abstract class ReactionCommand {
 
     public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
+        if (!Gestalt.get().isEnabled(ReactionsFeature.class)) {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getFeatureNotAvailable(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
+
         SocialPlayer socialPlayer = null;
         if (commandSender instanceof Player player)
             socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());

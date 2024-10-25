@@ -1,36 +1,36 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.SystemMessagesListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class SystemMessagesFeature implements SocialFeature {
+@RequiredArgsConstructor
+@Feature(key = "social", type = "SYSTEM_MESSAGES")
+public final class SystemMessagesFeature {
 
-    private final SystemMessagesListener systemMessagesListener;
+    private final JavaPlugin plugin;
 
-    public SystemMessagesFeature() {
-        this.systemMessagesListener = new SystemMessagesListener();
-    }
+    private final SystemMessagesListener systemMessagesListener = new SystemMessagesListener();
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.SYSTEM_MESSAGES;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getSystemMessages().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(systemMessagesListener);
+        Bukkit.getPluginManager().registerEvents(systemMessagesListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(systemMessagesListener);
     }

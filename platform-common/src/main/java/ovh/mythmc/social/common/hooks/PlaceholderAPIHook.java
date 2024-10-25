@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
@@ -22,7 +23,6 @@ import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
-import ovh.mythmc.social.common.util.PluginUtil;
 
 @Getter
 public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> implements SocialContextualParser, Listener {
@@ -121,9 +121,9 @@ public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> i
         }
     }
 
-    public PlaceholderAPIHook() {
+    public PlaceholderAPIHook(JavaPlugin plugin) {
         super(null);
-        PluginUtil.registerEvents(this);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         Social.get().getTextProcessor().registerParser(this);
         expansion.register();
     }

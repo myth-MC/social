@@ -1,36 +1,36 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.MentionsListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class MentionsFeature implements SocialFeature {
+@RequiredArgsConstructor
+@Feature(key = "social", type = "MENTIONS")
+public final class MentionsFeature {
 
-    private final MentionsListener mentionsListener;
+    private final JavaPlugin plugin;
 
-    public MentionsFeature() {
-        this.mentionsListener = new MentionsListener();
-    }
+    private final MentionsListener mentionsListener = new MentionsListener();
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.MENTIONS;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getChat().isMentions();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(mentionsListener);
+        Bukkit.getPluginManager().registerEvents(mentionsListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(mentionsListener);
     }

@@ -1,37 +1,37 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.ServerLinksListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class ServerLinksFeature implements SocialFeature {
+@RequiredArgsConstructor
+@Feature(key = "social", type = "SERVER_LINKS")
+public final class ServerLinksFeature {
 
-    private final ServerLinksListener serverLinksListener;
+    private final JavaPlugin plugin;
 
-    public ServerLinksFeature() {
-        this.serverLinksListener = new ServerLinksListener();
-    }
+    private final ServerLinksListener serverLinksListener = new ServerLinksListener();
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.SERVER_LINKS;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getPackets().isEnabled() &&
                 Social.get().getConfig().getSettings().getPackets().getServerLinks().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(serverLinksListener);
+        Bukkit.getPluginManager().registerEvents(serverLinksListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(serverLinksListener);
     }
