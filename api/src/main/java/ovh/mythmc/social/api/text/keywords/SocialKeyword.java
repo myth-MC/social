@@ -16,6 +16,10 @@ public abstract class SocialKeyword implements SocialPlayerInputParser {
 
     @Override
     public Component parse(SocialPlayer socialPlayer, Component message) {
+        String processedString = process(socialPlayer);
+        if (processedString == null || processedString.isEmpty())
+            return message;
+            
         Component processedText = MiniMessage.miniMessage().deserialize(process(socialPlayer));
         return message.replaceText(TextReplacementConfig
                 .builder()
