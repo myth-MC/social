@@ -10,7 +10,7 @@ import ovh.mythmc.gestalt.features.FeaturePriority;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.sections.settings.EmojiSettings.EmojiField;
 
-@Feature(key = "social", type = "MIGRATION", priority = FeaturePriority.HIGH)
+@Feature(group = "social", identifier = "MIGRATION", priority = FeaturePriority.HIGH)
 public final class MigrationFeature {
 
     private final int currentMigrationVersion = 1;

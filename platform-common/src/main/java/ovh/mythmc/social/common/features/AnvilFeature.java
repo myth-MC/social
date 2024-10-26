@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.AnvilListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "EMOJIS")
+@Feature(group = "social", identifier = "EMOJIS")
 public final class AnvilFeature {
 
     private final JavaPlugin plugin;

@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.MentionsListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "MENTIONS")
+@Feature(group = "social", identifier = "MENTIONS")
 public final class MentionsFeature {
 
     private final JavaPlugin plugin;

@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.ServerLinksListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "SERVER_LINKS")
+@Feature(group = "social", identifier = "SERVER_LINKS")
 public final class ServerLinksFeature {
 
     private final JavaPlugin plugin;

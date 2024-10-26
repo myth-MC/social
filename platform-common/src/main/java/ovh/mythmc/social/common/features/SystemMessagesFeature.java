@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.SystemMessagesListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "SYSTEM_MESSAGES")
+@Feature(group = "social", identifier = "SYSTEM_MESSAGES")
 public final class SystemMessagesFeature {
 
     private final JavaPlugin plugin;

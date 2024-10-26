@@ -1,21 +1,21 @@
 package ovh.mythmc.social.common.boot;
 
-import github.scarsz.discordsrv.DiscordSRV;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.bukkit.BukkitGestaltBuilder;
+import ovh.mythmc.gestalt.features.FeatureConstructorParams;
+import ovh.mythmc.gestalt.features.GestaltFeature;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
-import ovh.mythmc.social.api.events.SocialBootstrapEvent;
 import ovh.mythmc.social.common.features.*;
-import ovh.mythmc.social.common.hooks.DiscordSRVHook;
-import ovh.mythmc.social.common.hooks.PlaceholderAPIHook;
+import ovh.mythmc.social.common.features.hooks.DiscordSRVFeature;
+import ovh.mythmc.social.common.features.hooks.PlaceholderAPIFeature;
+import ovh.mythmc.social.common.listeners.InternalFeatureListener;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelPlaceholder;
@@ -27,6 +27,7 @@ import ovh.mythmc.social.common.text.placeholders.prefix.*;
 import ovh.mythmc.social.common.update.UpdateChecker;
 
 import java.io.File;
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -51,32 +52,34 @@ public abstract class SocialBootstrap<T> implements Social {
         // Register gestalt features
         Gestalt.get().register(
             AnnouncementsFeature.class,
+            EmojiFeature.class,
+            IPFilterFeature.class,
+            UpdateCheckerFeature.class,
+            URLFilterFeature.class
+        );
+
+        // Register features that require a plugin instance
+        registerFeatureWithPluginParam(
             AnvilFeature.class,
             BooksFeature.class,
             ChatFeature.class,
-            EmojiFeature.class,
             GroupsFeature.class,
-            IPFilterFeature.class,
             MentionsFeature.class,
-            MigrationFeature.class,
             MOTDFeature.class,
             PacketsFeature.class,
             ReactionsFeature.class,
             ServerLinksFeature.class,
             SignsFeature.class,
             SystemMessagesFeature.class,
-            UpdateCheckerFeature.class,
-            URLFilterFeature.class
-        );
+            DiscordSRVFeature.class,
+            PlaceholderAPIFeature.class);
+
+        Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 
         // Load settings
         reload();
 
         try {
-            // Register external plugin hooks
-            // Will be deprecated in 0.3.x
-            hooks();
-
             // Enable plugin
             enable();
         } catch (Throwable throwable) {
@@ -86,25 +89,22 @@ public abstract class SocialBootstrap<T> implements Social {
         }
 
         UpdateChecker.startTask();
-
-        Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
     }
 
     public abstract void enable();
 
     public abstract void shutdown();
 
-    // Todo: move to features and completely remove internal hooks?
-    public final void hooks() {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            PlaceholderAPIHook placeholderAPIHook = new PlaceholderAPIHook(plugin);
-            Social.get().getInternalHookManager().registerHooks(placeholderAPIHook);
-        }
-
-        if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
-            DiscordSRVHook discordSRVHook = new DiscordSRVHook(DiscordSRV.getPlugin(), plugin);
-            Social.get().getInternalHookManager().registerHooks(discordSRVHook);
-        }
+    private void registerFeatureWithPluginParam(Class<?>... classes) {
+        Arrays.stream(classes).forEach(clazz -> {
+            Gestalt.get().register(GestaltFeature.builder()
+                .featureClass(clazz)
+                .params(FeatureConstructorParams.builder()
+                    .params(plugin)
+                    .types(JavaPlugin.class)
+                    .build())
+                .build());
+        });
     }
 
     public final void reload() {
@@ -139,10 +139,6 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().registerParser(
             new MiniMessageParser()
         );
-
-        // Fire event if plugin is already enabled
-        if (Bukkit.getPluginManager().isPluginEnabled("social"))
-            Bukkit.getPluginManager().callEvent(new SocialBootstrapEvent());
 
         // Enable Gestalt features
         Gestalt.get().enableAllFeatures("social");

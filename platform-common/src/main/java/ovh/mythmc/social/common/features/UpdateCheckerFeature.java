@@ -6,7 +6,7 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.update.UpdateChecker;
 
-@Feature(key = "social", type = "UPDATE_CHECKER")
+@Feature(group = "social", identifier = "UPDATE_CHECKER")
 public final class UpdateCheckerFeature {
 
     @FeatureConditionBoolean

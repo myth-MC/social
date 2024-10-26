@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.common.listeners.ChatListener;
 
-@Feature(key = "social", type = "CHAT")
+@Feature(group = "social", identifier = "CHAT")
 public final class ChatFeature {
 
     private final JavaPlugin plugin;

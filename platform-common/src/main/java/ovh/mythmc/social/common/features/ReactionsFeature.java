@@ -1,8 +1,5 @@
 package ovh.mythmc.social.common.features;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +13,8 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.ReactionsListener;
 
-@Feature(key = "social", type = "REACTIONS")
+@Feature(group = "social", identifier = "REACTIONS")
+@FeatureConditionVersion(versions = { "1.21" } )
 public final class ReactionsFeature {
     
     private final JavaPlugin plugin;
@@ -31,11 +29,6 @@ public final class ReactionsFeature {
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getReactions().isEnabled();
-    }
-
-    @FeatureConditionVersion
-    public Collection<String> supportedVersions() {
-        return List.of("1.21");
     }
 
     @FeatureEnable

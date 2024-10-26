@@ -6,7 +6,7 @@ import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 
-@Feature(key = "social", type = "ANNOUNCEMENTS")
+@Feature(group = "social", identifier = "ANNOUNCEMENTS")
 public final class AnnouncementsFeature {
 
     @FeatureConditionBoolean

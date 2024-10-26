@@ -7,14 +7,10 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.text.filters.IPFilter;
 
-@Feature(key = "social", type = "IP_FILTER")
+@Feature(group = "social", identifier = "IP_FILTER")
 public final class IPFilterFeature {
 
-    private final IPFilter ipFilter;
-
-    public IPFilterFeature() {
-        this.ipFilter = new IPFilter();
-    }
+    private final IPFilter ipFilter = new IPFilter();
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {

@@ -8,16 +8,11 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.text.parsers.EmojiParser;
 import ovh.mythmc.social.common.text.parsers.RawEmojiParser;
 
-@Feature(key = "social", type = "EMOJIS")
+@Feature(group = "social", identifier = "EMOJIS")
 public final class EmojiFeature {
 
-    private final EmojiParser emojiParser;
-    private final RawEmojiParser rawEmojiParser;
-
-    public EmojiFeature() {
-        this.emojiParser = new EmojiParser();
-        this.rawEmojiParser = new RawEmojiParser();
-    }
+    private final EmojiParser emojiParser = new EmojiParser();
+    private final RawEmojiParser rawEmojiParser = new RawEmojiParser();
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "GROUPS")
+@Feature(group = "social", identifier = "GROUPS")
 public final class GroupsFeature {
 
     private final JavaPlugin plugin;

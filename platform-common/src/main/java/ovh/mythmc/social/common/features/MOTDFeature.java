@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.MOTDListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "MOTD")
+@Feature(group = "social", identifier = "MOTD")
 public final class MOTDFeature {
 
     private final JavaPlugin plugin;

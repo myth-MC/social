@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.SignsListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "EMOJIS")
+@Feature(group = "social", identifier = "EMOJIS")
 public final class SignsFeature {
 
     private final JavaPlugin plugin;

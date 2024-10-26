@@ -19,7 +19,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.PacketsListener;
 
 @RequiredArgsConstructor
-@Feature(key = "social", type = "PACKETS")
+@Feature(group = "social", identifier = "PACKETS")
 public final class PacketsFeature {
 
     private final JavaPlugin plugin;

@@ -19,9 +19,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.util.function.BiFunction;
 
-// Todo: change to a better solution
 // Copy of DiscordSRV's PlayerDeathListener with a lower EventPriority
-public final class DiscordSRVDeathHook implements Listener {
+// Not the most elegant fix, but it works for now
+public final class DiscordSRVDeathListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerDeath(PlayerDeathEvent event) {

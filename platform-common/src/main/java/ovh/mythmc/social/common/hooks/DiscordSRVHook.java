@@ -8,10 +8,9 @@ import github.scarsz.discordsrv.dependencies.commons.lang3.StringUtils;
 import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
 import github.scarsz.discordsrv.util.MessageUtil;
-import github.scarsz.discordsrv.util.PluginUtil;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.TextComponent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -23,23 +22,14 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
-import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.UUID;
 
-public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook {
+@RequiredArgsConstructor
+public final class DiscordSRVHook implements ChatHook {
 
-    // SocialPluginHook
-    public DiscordSRVHook(DiscordSRV storedClass, JavaPlugin plugin) {
-        super(storedClass);
-        DiscordSRV.getPlugin().getPluginHooks().add(this);
-        DiscordSRV.api.subscribe(this);
-        if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
-                Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
-            Bukkit.getPluginManager().registerEvents(this, plugin);
-        }
-    }
+    private final JavaPlugin plugin;
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMessage(SocialChatMessagePrepareEvent event) {
@@ -109,12 +99,7 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
 
     @Override
     public Plugin getPlugin() {
-        return PluginUtil.getPlugin("social");
+        return plugin;
     }
 
-    // SocialPluginHook
-    @Override
-    public String identifier() {
-        return "DiscordSRV";
-    }
 }
