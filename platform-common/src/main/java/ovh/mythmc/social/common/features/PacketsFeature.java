@@ -3,11 +3,11 @@ package ovh.mythmc.social.common.features;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import lombok.RequiredArgsConstructor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
@@ -18,13 +18,16 @@ import ovh.mythmc.gestalt.annotations.status.FeatureShutdown;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.PacketsListener;
 
-@RequiredArgsConstructor
 @Feature(group = "social", identifier = "PACKETS")
 public final class PacketsFeature {
 
     private final JavaPlugin plugin;
 
     private final PacketsListener packetsListener = new PacketsListener();
+
+    public PacketsFeature(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {

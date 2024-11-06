@@ -1,5 +1,8 @@
 package ovh.mythmc.social.api.context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -25,5 +28,8 @@ public class SocialParserContext implements SocialContext {
     private final Component message;
 
     private final ChannelType messageChannelType;
+
+    @Builder.Default
+    private final List<Class<?>> appliedParsers = new ArrayList<>();
     
 }

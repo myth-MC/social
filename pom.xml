@@ -224,10 +224,17 @@
         </dependency>
 
         <dependency>
-            <groupId>ovh.mythmc</groupId>
-            <artifactId>gestalt</artifactId>
-            <version>0.1.5</version>
+            <groupId>com.github.myth-MC.gestalt</groupId>
+            <artifactId>gestalt-api</artifactId>
+            <version>6d901bd</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth-MC.gestalt</groupId>
+            <artifactId>gestalt-loader</artifactId>
+            <version>6d901bd</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

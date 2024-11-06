@@ -10,6 +10,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
+import lombok.With;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
@@ -23,6 +25,8 @@ import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Builder
 @Data
+@With
+@Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
 @SuppressWarnings("deprecation")
 public class CustomTextProcessor {
@@ -61,17 +65,17 @@ public class CustomTextProcessor {
         Component message = context.message();
 
         for (SocialParser parser : getByPriority(priority)) {
-            if (exclusions.contains(parser.getClass()))
-                continue;
-
             if (parser instanceof SocialFilterLike && playerInput == false)
                 continue;
 
             if (!(parser instanceof SocialPlayerInputParser) && playerInput)
                 continue;
 
+            List<Class<?>> appliedParsers = context.appliedParsers();
+            appliedParsers.add(parser.getClass());
+
             if (parser instanceof SocialContextualParser contextualParser) {
-                message = contextualParser.parse(context.withMessage(message));
+                message = contextualParser.parse(context.withMessage(message).withAppliedParsers(appliedParsers));
             } else {
                 message = parser.parse(context.socialPlayer(), message);
             }
@@ -82,7 +86,7 @@ public class CustomTextProcessor {
 
     private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {
         List<SocialParser> socialParserList = new ArrayList<>();
-        for (SocialParser parser : parsers) {
+        for (SocialParser parser : getWithExclusions()) {
             SocialParserProperties.ParserPriority parserPriority = SocialParserProperties.ParserPriority.NORMAL;
             if (parser.getClass().isAnnotationPresent(SocialParserProperties.class))
                 parserPriority = parser.getClass().getAnnotation(SocialParserProperties.class).priority();
@@ -92,6 +96,12 @@ public class CustomTextProcessor {
         }
 
         return socialParserList;
+    }
+
+    private List<SocialParser> getWithExclusions() {
+        return parsers.stream()
+            .filter(parser -> !exclusions.contains(parser.getClass()))
+            .toList();
     }
     
 }

@@ -1,7 +1,5 @@
 package ovh.mythmc.social.common.text.placeholders.groups;
 
-import java.util.List;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -30,7 +28,7 @@ public final class GroupCodePlaceholder extends SocialContextualPlaceholder {
             return Component.empty();
 
         CustomTextProcessor textProcessor = CustomTextProcessor.defaultProcessor()
-            .exclusions(List.of(GroupCodePlaceholder.class));
+            .withExclusions(context.appliedParsers());
 
         Component hoverText = textProcessor.parse(context.withMessage(Component.text(Social.get().getConfig().getSettings().getChat().getGroups().getCodeHoverText())));
 

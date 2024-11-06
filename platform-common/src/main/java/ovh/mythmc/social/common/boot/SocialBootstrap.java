@@ -6,9 +6,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.Gestalt;
-import ovh.mythmc.gestalt.bukkit.BukkitGestaltBuilder;
 import ovh.mythmc.gestalt.features.FeatureConstructorParams;
 import ovh.mythmc.gestalt.features.GestaltFeature;
+import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
@@ -46,8 +46,8 @@ public abstract class SocialBootstrap<T> implements Social {
 
     public final void initialize() {
         // Initialize gestalt
-        if (!Gestalt.isGestaltInitialized())
-            Gestalt.set(BukkitGestaltBuilder.builder().plugin(plugin).build());
+        BukkitGestaltLoader gestalt = BukkitGestaltLoader.builder().initializer(plugin).build();
+        gestalt.initialize();
 
         // Register gestalt features
         Gestalt.get().register(

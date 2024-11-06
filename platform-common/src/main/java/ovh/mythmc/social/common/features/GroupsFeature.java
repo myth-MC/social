@@ -3,8 +3,8 @@ package ovh.mythmc.social.common.features;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import lombok.RequiredArgsConstructor;
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
@@ -21,7 +21,6 @@ import ovh.mythmc.social.common.text.placeholders.groups.GroupPlaceholder;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Feature(group = "social", identifier = "GROUPS")
 public final class GroupsFeature {
 
@@ -30,6 +29,10 @@ public final class GroupsFeature {
     private final GroupsListener groupsListener = new GroupsListener();
 
     private final List<SocialContextualParser> parsers = new ArrayList<>();
+
+    public GroupsFeature(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
