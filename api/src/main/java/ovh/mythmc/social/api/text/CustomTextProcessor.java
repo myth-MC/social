@@ -53,6 +53,8 @@ public class CustomTextProcessor {
     }
 
     public Component parse(SocialParserContext context) {
+        context = context.withTextProcessor(this);
+
         for (SocialParserProperties.ParserPriority priority : SocialParserProperties.ParserPriority.values()) {
             context = parseByPriority(context, priority);
         }

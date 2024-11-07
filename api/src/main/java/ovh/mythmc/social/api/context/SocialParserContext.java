@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.text.CustomTextProcessor;
 
 @Data
 @Builder
@@ -31,5 +32,7 @@ public class SocialParserContext implements SocialContext {
 
     @Builder.Default
     private final List<Class<?>> appliedParsers = new ArrayList<>();
+
+    private final CustomTextProcessor textProcessor;
     
 }
