@@ -226,14 +226,14 @@
         <dependency>
             <groupId>com.github.myth-MC.gestalt</groupId>
             <artifactId>gestalt-api</artifactId>
-            <version>6d901bd</version>
+            <version>6d181a8</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.myth-MC.gestalt</groupId>
             <artifactId>gestalt-loader</artifactId>
-            <version>6d901bd</version>
+            <version>6d181a8</version>
             <scope>compile</scope>
         </dependency>
 

@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,18 +53,14 @@ public class CustomTextProcessor {
     }
 
     public Component parse(SocialParserContext context) {
-        Component message = context.message();
+        for (SocialParserProperties.ParserPriority priority : SocialParserProperties.ParserPriority.values()) {
+            context = parseByPriority(context, priority);
+        }
 
-        message = parseByPriority(context.withMessage(message), SocialParserProperties.ParserPriority.HIGH);
-        message = parseByPriority(context.withMessage(message), SocialParserProperties.ParserPriority.NORMAL);
-        message = parseByPriority(context.withMessage(message), SocialParserProperties.ParserPriority.LOW);
-
-        return message;
+        return context.message();
     }
 
-    private Component parseByPriority(SocialParserContext context, SocialParserProperties.ParserPriority priority) {
-        Component message = context.message();
-
+    private SocialParserContext parseByPriority(SocialParserContext context, SocialParserProperties.ParserPriority priority) {
         for (SocialParser parser : getByPriority(priority)) {
             if (parser instanceof SocialFilterLike && playerInput == false)
                 continue;
@@ -72,16 +69,22 @@ public class CustomTextProcessor {
                 continue;
 
             List<Class<?>> appliedParsers = context.appliedParsers();
+            if (Collections.frequency(appliedParsers, parser.getClass()) > 2) {
+                Social.get().getLogger().warn("Parser " + parser.getClass().getName() + " has been called twice. This can potentially degrade performance. Please, inform the author of " + parser.getClass().getName() + " about this. THIS IS NOT RELATED WITH SOCIAL.");
+                break;
+            }
+
             appliedParsers.add(parser.getClass());
+            context = context.withAppliedParsers(appliedParsers);
 
             if (parser instanceof SocialContextualParser contextualParser) {
-                message = contextualParser.parse(context.withMessage(message).withAppliedParsers(appliedParsers));
+                context = context.withMessage(contextualParser.parse(context));
             } else {
-                message = parser.parse(context.socialPlayer(), message);
+                context = context.withMessage(parser.parse(context.socialPlayer(), context.message()));
             }
         }
 
-        return message;
+        return context;
     }
 
     private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {

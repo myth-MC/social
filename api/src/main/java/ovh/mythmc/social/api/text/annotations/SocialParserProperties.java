@@ -12,9 +12,11 @@ public @interface SocialParserProperties {
     ParserPriority priority() default ParserPriority.NORMAL;
 
     enum ParserPriority {
+        HIGHEST,
         HIGH,
         NORMAL,
-        LOW
+        LOW,
+        LOWEST
     }
 
 }

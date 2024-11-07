@@ -6,6 +6,8 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.CustomTextProcessor;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 
+import java.util.ArrayList;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -32,12 +34,12 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
             hoverTextAsString = hoverTextAsString + "\n" + Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText();
         }
         String commandAsString = Social.get().getConfig().getSettings().getChat().getClickableNicknameCommand();
-        
+
         CustomTextProcessor textProcessor = CustomTextProcessor.defaultProcessor()
             .withExclusions(context.appliedParsers());
             
-        TextComponent hoverText = (TextComponent) textProcessor.parse(context.withMessage(Component.text(hoverTextAsString)));
-        TextComponent command = (TextComponent) textProcessor.parse(context.withMessage(Component.text(commandAsString)));
+        TextComponent hoverText = (TextComponent) textProcessor.parse(context.withAppliedParsers(new ArrayList<>()).withMessage(Component.text(hoverTextAsString)));
+        TextComponent command = (TextComponent) textProcessor.parse(context.withAppliedParsers(new ArrayList<>()).withMessage(Component.text(commandAsString)));
 
         if (command.content().equals(""))
             return Component.text(player.getNickname())

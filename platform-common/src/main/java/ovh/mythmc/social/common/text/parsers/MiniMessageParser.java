@@ -6,7 +6,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 
-@SocialParserProperties(priority = SocialParserProperties.ParserPriority.LOW)
+@SocialParserProperties(priority = SocialParserProperties.ParserPriority.LOWEST)
 public final class MiniMessageParser implements SocialContextualParser {
 
     @Override

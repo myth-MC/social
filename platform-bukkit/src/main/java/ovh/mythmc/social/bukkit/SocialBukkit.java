@@ -40,7 +40,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     @Override
     public void shutdown() {
-
+        super.shutdown();
     }
 
     @Override

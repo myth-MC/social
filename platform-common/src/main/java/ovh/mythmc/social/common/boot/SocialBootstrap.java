@@ -36,17 +36,19 @@ public abstract class SocialBootstrap<T> implements Social {
     private final JavaPlugin plugin;
     private final SocialConfigProvider config;
 
+    private final BukkitGestaltLoader gestalt;
+
     public SocialBootstrap(final @NotNull JavaPlugin plugin,
                            final File dataDirectory) {
         SocialSupplier.set(this);
 
         this.plugin = plugin;
         this.config = new SocialConfigProvider(dataDirectory);
+        this.gestalt = BukkitGestaltLoader.builder().initializer(plugin).build();
     }
 
     public final void initialize() {
         // Initialize gestalt
-        BukkitGestaltLoader gestalt = BukkitGestaltLoader.builder().initializer(plugin).build();
         gestalt.initialize();
 
         // Register gestalt features
@@ -93,13 +95,15 @@ public abstract class SocialBootstrap<T> implements Social {
 
     public abstract void enable();
 
-    public abstract void shutdown();
+    public void shutdown() {
+        gestalt.terminate();
+    }
 
     private void registerFeatureWithPluginParam(Class<?>... classes) {
         Arrays.stream(classes).forEach(clazz -> {
             Gestalt.get().register(GestaltFeature.builder()
                 .featureClass(clazz)
-                .params(FeatureConstructorParams.builder()
+                .constructorParams(FeatureConstructorParams.builder()
                     .params(plugin)
                     .types(JavaPlugin.class)
                     .build())
@@ -135,7 +139,7 @@ public abstract class SocialBootstrap<T> implements Social {
                 new WarningPlaceholder()
         );
 
-        // Register parsers that do not necessarily belong to any feature
+        // Register parsers that do not necessarily belong to any feature group
         Social.get().getTextProcessor().registerParser(
             new MiniMessageParser()
         );
