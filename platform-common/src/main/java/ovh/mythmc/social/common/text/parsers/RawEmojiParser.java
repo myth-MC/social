@@ -5,12 +5,10 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.emojis.Emoji;
-import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 
 import java.util.regex.Pattern;
 
-@SocialParserProperties(priority = SocialParserProperties.ParserPriority.LOW)
 public final class RawEmojiParser implements SocialContextualParser {
 
     @Override

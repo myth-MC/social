@@ -9,6 +9,10 @@ import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 
 import java.util.regex.Pattern;
 
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
+@Deprecated
+@ScheduledForRemoval
 public abstract class SocialKeyword implements SocialPlayerInputParser {
 
     public abstract String keyword();

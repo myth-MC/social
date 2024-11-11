@@ -8,12 +8,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.emojis.Emoji;
-import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 
 import java.util.regex.Pattern;
 
-@SocialParserProperties(priority = SocialParserProperties.ParserPriority.LOW)
 public final class EmojiParser implements SocialPlayerInputParser {
 
     @Override

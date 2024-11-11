@@ -11,6 +11,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class SystemMessagesListener implements Listener {
@@ -31,7 +33,7 @@ public final class SystemMessagesListener implements Listener {
         if (unformattedMessage == null || unformattedMessage.isEmpty())
             return;
 
-        Component message = Social.get().getTextProcessor().parse(socialPlayer, socialPlayer.getMainChannel(), unformattedMessage);
+        Component message = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
         Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
@@ -55,7 +57,7 @@ public final class SystemMessagesListener implements Listener {
        if (unformattedMessage == null || unformattedMessage.isEmpty())
            return;
 
-       Component message = Social.get().getTextProcessor().parse(socialPlayer, socialPlayer.getMainChannel(), unformattedMessage);
+       Component message = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
@@ -78,7 +80,7 @@ public final class SystemMessagesListener implements Listener {
 
         unformattedMessage = String.format(unformattedMessage, event.getDeathMessage());
 
-        Component deathMessage = Social.get().getTextProcessor().parse(socialPlayer, socialPlayer.getMainChannel(), unformattedMessage);
+        Component deathMessage = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (unformattedMessage.contains(player.getName())) {
@@ -102,5 +104,16 @@ public final class SystemMessagesListener implements Listener {
 
         event.setDeathMessage("");
    }
+
+    private Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message) {
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(socialPlayer)
+            .playerChannel(channel)
+            .message(message)
+            .messageChannelType(channel.getType())
+            .build();
+
+        return Social.get().getTextProcessor().parse(context);
+    }
 
 }

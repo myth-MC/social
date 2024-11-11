@@ -15,6 +15,9 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.text.group.SocialParserGroup;
+import ovh.mythmc.social.api.text.keywords.SocialContextualKeyword;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
@@ -29,14 +32,17 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public final class SocialTextProcessor {
+public final class GlobalTextProcessor {
 
-    public static final SocialTextProcessor instance = new SocialTextProcessor();
+    public static final GlobalTextProcessor instance = new GlobalTextProcessor();
 
     private final Collection<SocialParser> parsers = new ArrayList<>();
 
+    public final SocialParserGroup PLAYER_PARSERS = SocialParserGroup.builder().build();
+
+    @Deprecated
     public SocialPlaceholder getPlaceholder(final @NotNull String identifier) {
-        for (SocialParser parser : parsers) {
+        for (SocialParser parser : getParsers()) {
             if (parser instanceof SocialPlaceholder placeholder)
                 if (placeholder.identifier().equals(identifier))
                     return placeholder;
@@ -46,10 +52,20 @@ public final class SocialTextProcessor {
     }
 
     public SocialContextualPlaceholder getContextualPlaceholder(final @NotNull String identifier) {
-        for (SocialParser parser : parsers) {
+        for (SocialParser parser : getParsers()) {
             if (parser instanceof SocialContextualPlaceholder placeholder)
                 if (placeholder.identifier().equals(identifier))
                     return placeholder;
+        }
+
+        return null;
+    }
+
+    public SocialContextualKeyword getContextualKeyword(final @NotNull String keyword) {
+        for (SocialParser parser : getParsers()) {
+            if (parser instanceof SocialContextualKeyword contextualKeyword)
+                if (contextualKeyword.keyword().equals(keyword))
+                    return contextualKeyword;
         }
 
         return null;
@@ -67,24 +83,54 @@ public final class SocialTextProcessor {
         parsers.removeAll(List.of(socialParsers));
     }
 
+    @Deprecated
     public void unregisterPlaceholder(final @NotNull String identifier) {
         SocialPlaceholder placeholder = getPlaceholder(identifier);
         if (placeholder != null)
             unregisterParser(placeholder);
     }
 
-    public Component parsePlayerInput(SocialParserContext context) {
+    public List<SocialParser> getParsers() {
+        List<SocialParser> parserList = new ArrayList<>();
+        parserList.addAll(PLAYER_PARSERS.get());
+        parserList.addAll(parsers);
+        return parserList;
+    }
+
+    public List<SocialContextualParser> getContextualParsers() {
+        return getParsers().stream().filter(parser -> parser instanceof SocialContextualParser).map(parser -> (SocialContextualParser) parser).toList();
+    }
+
+    public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
+        return getContextualParsers().stream().filter(parser -> parser.getClass().equals(clazz)).toList().get(0);
+    }
+
+    public List<SocialContextualParser> getContextualParsersWithGroupMembers() {
+        List<SocialContextualParser> contextualParsers = new ArrayList<>();
+        getContextualParsers().stream().forEach(contextualParser -> {
+            if (contextualParser instanceof SocialParserGroup group) {
+                contextualParsers.addAll(group.get());
+                return;
+            }
+
+            contextualParsers.add(contextualParser);
+        });
+        
+        return contextualParsers;
+    }
+
+    public Component parsePlayerInput(@NotNull SocialParserContext context) {
         CustomTextProcessor textProcessor = CustomTextProcessor.builder()
-            .parsers(parsers)
+            .parsers(getParsers())
             .playerInput(true)
             .build();
 
         return textProcessor.parse(context);
     }
 
-    public Component parse(SocialParserContext context) {
+    public Component parse(@NotNull SocialParserContext context) {
         CustomTextProcessor textProcessor = CustomTextProcessor.builder()
-            .parsers(parsers)
+            .parsers(getParsers())
             .build();
 
         return textProcessor.parse(context);
