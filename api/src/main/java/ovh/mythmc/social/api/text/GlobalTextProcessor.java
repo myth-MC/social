@@ -38,7 +38,9 @@ public final class GlobalTextProcessor {
 
     private final Collection<SocialParser> parsers = new ArrayList<>();
 
-    public final SocialParserGroup PLAYER_PARSERS = SocialParserGroup.builder().build();
+    public final SocialParserGroup EARLY_PARSERS = SocialParserGroup.builder().build();
+
+    public final SocialParserGroup LATE_PARSERS = SocialParserGroup.builder().build();
 
     @Deprecated
     public SocialPlaceholder getPlaceholder(final @NotNull String identifier) {
@@ -92,8 +94,9 @@ public final class GlobalTextProcessor {
 
     public List<SocialParser> getParsers() {
         List<SocialParser> parserList = new ArrayList<>();
-        parserList.addAll(PLAYER_PARSERS.get());
+        parserList.addAll(EARLY_PARSERS.get());
         parserList.addAll(parsers);
+        parserList.addAll(LATE_PARSERS.get());
         return parserList;
     }
 
