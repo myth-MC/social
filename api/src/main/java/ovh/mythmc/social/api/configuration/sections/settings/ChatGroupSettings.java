@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class ChatGroupSettings {
 
-    @Comment("Whether the filter module should be enabled or disabled")
+    @Comment("Whether the groups module should be enabled or disabled")
     private boolean enabled = true;
 
     @Comment("Player limit per group")

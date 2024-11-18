@@ -1,6 +1,7 @@
 package ovh.mythmc.social.common.listeners;
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -25,8 +26,13 @@ public final class AnvilListener implements Listener {
             return;
 
         String name = event.getView().getRenameText();
-        String parsedName = LegacyComponentSerializer.legacySection().serialize(
-                Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().socialPlayer(socialPlayer).playerChannel(socialPlayer.getMainChannel()).message(text(name)).build())
+
+        String parsedName = PlainTextComponentSerializer.plainText().serialize(
+            Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
+                .socialPlayer(socialPlayer)
+                .playerChannel(socialPlayer.getMainChannel())
+                .message(text(name))
+                .build())
         );
 
         ItemMeta resultMeta = event.getResult().getItemMeta();

@@ -224,6 +224,13 @@
         </dependency>
 
         <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-plain</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-api</artifactId>
             <version>0.1.8</version>

@@ -32,6 +32,11 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
     }
 
     @Override
+    public Audience player(final @NotNull Player player) {
+        return adventure.player(player);
+    }
+
+    @Override
     public Audience console() {
         return adventure.console();
     }

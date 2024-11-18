@@ -17,7 +17,8 @@ public final class MigrationFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return currentMigrationVersion != Social.get().getConfig().getSettings().getMigrationVersion();
+        return false;
+        //return currentMigrationVersion != Social.get().getConfig().getSettings().getMigrationVersion();
     }
 
     @FeatureEnable
