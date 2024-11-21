@@ -61,7 +61,7 @@ public final class DiscordSRVHook implements ChatHook {
             return;
 
         // Workaround for placeholders
-        SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L);
+        SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
 
         String miniMessage = MessageUtil.toMiniMessage(message);
         

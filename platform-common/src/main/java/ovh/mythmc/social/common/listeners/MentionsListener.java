@@ -8,8 +8,8 @@ import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageSendEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,9 +67,9 @@ public final class MentionsListener implements Listener {
             Component replyFormat = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChatChannel(), Social.get().getConfig().getSettings().getChat().getReplyFormat());
             String replyFormatStripped = MiniMessage.miniMessage().stripTags(MiniMessage.miniMessage().serialize(replyFormat));
 
-            SocialChatMessageSendEvent socialChatMessageSendEvent = Social.get().getChatManager().getHistory().getById(event.getReplyId());
+            SocialMessageContext context = Social.get().getChatManager().getHistory().getById(event.getReplyId());
 
-            if (socialChatMessageSendEvent.getSender().equals(event.getRecipient())) {
+            if (context.sender().equals(event.getRecipient())) {
                 Component replacement = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChatChannel(), replyFormat);
                 Component message = event.getMessage().replaceText(TextReplacementConfig.builder()
                         .matchLiteral(replyFormatStripped)

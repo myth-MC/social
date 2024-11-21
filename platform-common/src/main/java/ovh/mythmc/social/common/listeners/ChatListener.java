@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.util.PluginUtil;
@@ -107,15 +108,22 @@ public final class ChatListener implements Listener {
         }
 
         // Send chat message
+        /*
         SocialChatMessageSendEvent socialChatMessageSendEvent = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
         if (socialChatMessageSendEvent == null || socialChatMessageSendEvent.isCancelled()) {
+            event.setCancelled(true);
+            return;
+        }
+        */
+        SocialMessageContext context = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
+        if (context == null) {
             event.setCancelled(true);
             return;
         }
 
         // This allows the message to be logged in console and sent to plugins such as DiscordSRV
         event.getRecipients().clear();
-        event.setFormat("(" + socialChatMessageSendEvent.getChatChannel().getName() + ") %s: %s");
+        event.setFormat("(" + context.chatChannel().getName() + ") %s: %s");
     }
 
     @EventHandler

@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.context.SocialMenuContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
+import ovh.mythmc.social.common.context.SocialMenuContext;
 import ovh.mythmc.social.common.gui.impl.EmojiDictionaryMenu;
 
 public class DictionarySubcommand implements SubCommand {
@@ -28,7 +28,7 @@ public class DictionarySubcommand implements SubCommand {
             return;
 
         SocialMenuContext context = SocialMenuContext.builder()
-            .socialPlayer(socialPlayer)
+            .viewer(socialPlayer)
             .build();
 
         EmojiDictionaryMenu dictionary = new EmojiDictionaryMenu();

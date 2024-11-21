@@ -26,12 +26,17 @@ public final class SocialPlayer {
 
     private long latestMessageInMilliseconds = 0L;
 
+    private String cachedNickname = null;
+
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid);
     }
 
     public String getNickname() {
-        return ChatColor.stripColor(getPlayer().getDisplayName());
+        if (getPlayer() != null)
+            cachedNickname = ChatColor.stripColor(getPlayer().getDisplayName());
+
+        return cachedNickname;
     }
 
 }

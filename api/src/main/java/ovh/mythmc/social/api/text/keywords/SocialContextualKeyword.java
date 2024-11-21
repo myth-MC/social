@@ -21,6 +21,9 @@ public abstract class SocialContextualKeyword extends SocialKeyword {
 
     @Override
     public Component parse(SocialParserContext context) {
+        if (!context.message().toString().contains(keyword()))
+            return context.message();
+        
         return context.message().replaceText(TextReplacementConfig
                 .builder()
                 .match(Pattern.compile("\\[(?i:" + keyword() + "\\b)\\]"))

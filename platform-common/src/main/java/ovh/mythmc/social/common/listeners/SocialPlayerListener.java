@@ -49,8 +49,8 @@ public final class SocialPlayerListener implements Listener {
         UUID uuid = event.getPlayer().getUniqueId();
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
 
-        if (socialPlayer != null)
-            Social.get().getPlayerManager().unregisterSocialPlayer(socialPlayer);
+        //if (socialPlayer != null)
+            //Social.get().getPlayerManager().unregisterSocialPlayer(socialPlayer);
 
         PersistentDataContainer container = event.getPlayer().getPersistentDataContainer();
 

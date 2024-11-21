@@ -23,6 +23,9 @@ public abstract class SocialContextualPlaceholder implements SocialContextualPar
         Component processedText = get(context.withMessage(text(identifier())));
         Component message = context.message();
 
+        if (!message.toString().contains(identifier()))
+            return message;
+
         // Legacy support (not delimited)
         if (legacySupport()) {
             message = message.replaceText(TextReplacementConfig

@@ -6,17 +6,31 @@ import java.util.List;
 
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.emojis.Emoji;
-import ovh.mythmc.social.common.gui.BookMenu;
+import ovh.mythmc.social.common.context.SocialMenuContext;
+import ovh.mythmc.social.common.gui.SimpleBookMenu;
 
-public final class EmojiDictionaryMenu implements BookMenu {
+public final class EmojiDictionaryMenu implements SimpleBookMenu {
 
     private final int maxEmojisPerPage = 3;
 
     @Override
-    public Book book() {
+    public Component header(SocialMenuContext context) {
+        return Component.text("╒═══════════╕", NamedTextColor.DARK_GRAY)
+            .appendNewline()
+            .append(Component.text(" |         ᴇᴍᴏᴊɪѕ         |", NamedTextColor.DARK_GRAY))
+            .appendNewline()
+            .append(Component.text("╘═══════════╛", NamedTextColor.DARK_GRAY))
+            .appendNewline()
+            .appendNewline();
+    }
+
+    @Override
+    public Book book(SocialMenuContext context) {
         Component title = Component.text("Emoji Dictionary");
         Component author = Component.text("social (myth-MC)");
         List<DictionaryPage> pages = new ArrayList<>();
@@ -41,22 +55,18 @@ public final class EmojiDictionaryMenu implements BookMenu {
             this.emojis.addAll(emojis);
         }
 
-        protected Component asComponent() {
-            Component component = Component.text("╒═══════════╕", NamedTextColor.DARK_GRAY)
-                .appendNewline()
-                .append(Component.text(" |         ᴇᴍᴏᴊɪѕ         |", NamedTextColor.DARK_GRAY))
-                .appendNewline()
-                .append(Component.text("╘═══════════╛", NamedTextColor.DARK_GRAY))
-                .appendNewline()
-                .appendNewline();
+        private Component asComponent() {
+            Component page = Component.empty();
 
             for (Emoji emoji : emojis) {
-                component = component.append(emoji.asDescription(NamedTextColor.BLUE, NamedTextColor.DARK_GRAY, false)
+                page = page.append(emoji.asDescription(NamedTextColor.BLUE, NamedTextColor.DARK_GRAY, false)
+                    .clickEvent(ClickEvent.copyToClipboard(":" + emoji.name() + ": "))
+                    .hoverEvent(HoverEvent.showText(Component.text("Click to copy to clipboard", NamedTextColor.LIGHT_PURPLE)))
                     .appendNewline()
                     .appendNewline());
             }
 
-            return component;
+            return page;
         }
 
     }

@@ -8,12 +8,13 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
-import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
 @Setter
+@Deprecated
+@ScheduledForRemoval
 public class SocialChatMessageSendEvent extends SocialChatMessagePrepareEvent {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
@@ -35,10 +36,6 @@ public class SocialChatMessageSendEvent extends SocialChatMessagePrepareEvent {
             .build();
 
         return Social.get().getTextProcessor().parsePlayerInput(context); */
-    }
-
-    public Integer getId() {
-        return Social.get().getChatManager().getHistory().getIdByEvent(this);
     }
 
     @NotNull

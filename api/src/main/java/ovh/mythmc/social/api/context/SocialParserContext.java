@@ -35,5 +35,12 @@ public class SocialParserContext implements SocialContext {
     @Builder.Default private final List<Class<?>> appliedParsers = new ArrayList<>();
 
     @Experimental private final SocialParserGroup group;
+
+    public ChatChannel playerChannel() {
+        if (playerChannel != null)
+            return playerChannel;
+
+        return socialPlayer.getMainChannel();
+    }
     
 }

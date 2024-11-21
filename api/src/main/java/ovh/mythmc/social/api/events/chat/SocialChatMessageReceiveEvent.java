@@ -10,7 +10,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
 @Setter
-public class SocialChatMessageReceiveEvent extends SocialChatMessageSendEvent {
+public class SocialChatMessageReceiveEvent extends SocialChatMessagePrepareEvent {
 
     private final SocialPlayer recipient;
 
