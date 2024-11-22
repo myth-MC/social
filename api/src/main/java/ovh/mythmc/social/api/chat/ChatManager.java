@@ -235,8 +235,6 @@ public final class ChatManager {
                 }
 
                 String formatString = Social.get().getConfig().getSettings().getChat().getReplyFormat();
-                if (Social.get().getChatManager().getHistory().isThread(reply))
-                    formatString = Social.get().getConfig().getSettings().getChat().getThreadFormat();
 
                 nicknameHoverText = nicknameHoverText
                         .appendNewline()
@@ -245,6 +243,8 @@ public final class ChatManager {
                 nickname = parse(reply.sender(), reply.chatChannel(), formatString)
                         .hoverEvent(HoverEvent.showText(nicknameHoverText))
                         .clickEvent(ClickEvent.suggestCommand("(re:#" + reply.id() + ") "))
+                        .appendSpace()
+                        .append(Component.text("(#" + reply.id() + ")", NamedTextColor.DARK_GRAY))
                         .appendSpace()
                         .append(nickname);
             }
@@ -261,6 +261,10 @@ public final class ChatManager {
             messageId = Social.get().getChatManager().getHistory().register(context);
         }
 
+        int idToReply = messageId;
+        if (replyId != null)
+            idToReply = Integer.min(messageId, replyId);
+
         Component chatMessage =
                 text("")
                         .append(parse(sender, chatChannel, chatChannel.getIcon() + " ")
@@ -270,7 +274,7 @@ public final class ChatManager {
                         .append(trim(nickname))
                         .append(textDivider)
                         .append(filteredMessage
-                                .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + messageId + ") ")))
+                                .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") ")))
                         )
                         .color(chatChannel.getTextColor());
 

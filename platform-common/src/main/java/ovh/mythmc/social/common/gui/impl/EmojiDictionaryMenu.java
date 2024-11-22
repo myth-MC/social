@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.emojis.Emoji;
 import ovh.mythmc.social.common.context.SocialMenuContext;
@@ -16,16 +17,14 @@ import ovh.mythmc.social.common.gui.SimpleBookMenu;
 
 public final class EmojiDictionaryMenu implements SimpleBookMenu {
 
-    private final int maxEmojisPerPage = 3;
-
     @Override
     public Component header(SocialMenuContext context) {
-        return Component.text("╒═══════════╕", NamedTextColor.DARK_GRAY)
-            .appendNewline()
-            .append(Component.text(" |         ᴇᴍᴏᴊɪѕ         |", NamedTextColor.DARK_GRAY))
-            .appendNewline()
-            .append(Component.text("╘═══════════╛", NamedTextColor.DARK_GRAY))
-            .appendNewline()
+        Component headerFromConfig = Component.empty();
+        for (Component line : Social.get().getConfig().getMenus().getEmojiDictionary().getHeader()) {
+            headerFromConfig = headerFromConfig.append(line).appendNewline();
+        }
+
+        return headerFromConfig
             .appendNewline();
     }
 
@@ -36,7 +35,7 @@ public final class EmojiDictionaryMenu implements SimpleBookMenu {
         List<DictionaryPage> pages = new ArrayList<>();
 
         for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
-            if (pages.size() > 0 && pages.getLast().emojis.size() < maxEmojisPerPage) {
+            if (pages.size() > 0 && pages.getLast().emojis.size() < Social.get().getConfig().getMenus().getEmojiDictionary().getMaxEmojisPerPage()) {
                 pages.getLast().emojis.add(emoji);
                 continue;
             }
@@ -61,7 +60,9 @@ public final class EmojiDictionaryMenu implements SimpleBookMenu {
             for (Emoji emoji : emojis) {
                 page = page.append(emoji.asDescription(NamedTextColor.BLUE, NamedTextColor.DARK_GRAY, false)
                     .clickEvent(ClickEvent.copyToClipboard(":" + emoji.name() + ": "))
-                    .hoverEvent(HoverEvent.showText(Component.text("Click to copy to clipboard", NamedTextColor.LIGHT_PURPLE)))
+                    .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getEmojiDictionary().getCopyToClipboard())))
+                    .appendNewline()
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getEmojiDictionary().getCategory()), Component.text(Social.get().getEmojiManager().getCategory(emoji))))
                     .appendNewline()
                     .appendNewline());
             }

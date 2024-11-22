@@ -1,11 +1,14 @@
 package ovh.mythmc.social.common.context;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialMessageContext;
 import lombok.Setter;
 
 @Getter
@@ -14,8 +17,10 @@ import lombok.Setter;
 @Accessors(fluent = true)
 public class SocialHistoryMenuContext extends SocialMenuContext {
 
+    private final List<SocialMessageContext> messages;
+
     @Builder.Default
-    private final Scope scope = Scope.GLOBAL;
+    private final HeaderType headerType = HeaderType.GLOBAL;
 
     @Builder.Default
     private final Order order = Order.MOST_RECENT_TO_OLDEST;
@@ -24,22 +29,18 @@ public class SocialHistoryMenuContext extends SocialMenuContext {
     private final ChatChannel channel = null;
 
     @Builder.Default
-    private final PlayerVisibility playerVisibility = PlayerVisibility.ALL;
+    private final int replyId = 0;
 
-    public enum Scope {
+    public enum HeaderType {
         GLOBAL,
-        PLAYER
+        CHANNEL,
+        PLAYER,
+        THREAD
     }
 
     public enum Order {
         OLDEST_TO_MOST_RECENT,
         MOST_RECENT_TO_OLDEST
-    }
-
-    public enum PlayerVisibility {
-        ALL,
-        ONLINE,
-        OFFLINE
     }
     
 }

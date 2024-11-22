@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.chat;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
@@ -69,6 +70,8 @@ public final class ChatHistory {
                 .toList();
     }
 
+    @Deprecated
+    @ScheduledForRemoval // replies and threads are the same thing since v0.3
     public boolean isThread(final @NotNull SocialMessageContext messageContext) {
         return getThread(messageContext, 3).size() > 2;
     }

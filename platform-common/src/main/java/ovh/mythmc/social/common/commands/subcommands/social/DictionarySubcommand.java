@@ -12,6 +12,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 import ovh.mythmc.social.common.context.SocialMenuContext;
 import ovh.mythmc.social.common.gui.impl.EmojiDictionaryMenu;
+import ovh.mythmc.social.common.gui.impl.KeywordDictionaryMenu;
 
 public class DictionarySubcommand implements SubCommand {
 
@@ -27,16 +28,36 @@ public class DictionarySubcommand implements SubCommand {
         if (socialPlayer == null)
             return;
 
-        SocialMenuContext context = SocialMenuContext.builder()
-            .viewer(socialPlayer)
-            .build();
+        if (args.length == 0) {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughArguments(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
 
-        EmojiDictionaryMenu dictionary = new EmojiDictionaryMenu();
-        dictionary.open(context);
+        if (args[0].equalsIgnoreCase("emojis")) {
+            SocialMenuContext context = SocialMenuContext.builder()
+                .viewer(socialPlayer)
+                .build();
+
+            EmojiDictionaryMenu dictionary = new EmojiDictionaryMenu();
+            dictionary.open(context);
+        } else if (args[0].equalsIgnoreCase("keywords")) {
+            SocialMenuContext context = SocialMenuContext.builder()
+                .viewer(socialPlayer)
+                .build();
+
+            KeywordDictionaryMenu dictionary = new KeywordDictionaryMenu();
+            dictionary.open(context);
+        } else {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getInvalidCommand(), Social.get().getConfig().getMessages().getChannelType());
+        }
+
     }
 
     @Override
     public List<String> tabComplete(CommandSender commandSender, String[] args) {
+        if (args.length == 1)
+            return List.of("emojis", "keywords");
+        
         return List.of();
     }
     

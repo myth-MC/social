@@ -11,11 +11,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext;
-import ovh.mythmc.social.common.gui.impl.PlayerHistoryMenu;
-import ovh.mythmc.social.common.gui.impl.ChannelHistoryMenu;
+import ovh.mythmc.social.common.context.SocialHistoryMenuContext.HeaderType;
+import ovh.mythmc.social.common.gui.impl.HistoryMenu;
 
 public final class HistorySubcommand implements SubCommand {
 
@@ -31,16 +32,19 @@ public final class HistorySubcommand implements SubCommand {
         if (sender == null)
             return;
 
+        // Global history
         if (args.length < 1) {
             SocialHistoryMenuContext context = SocialHistoryMenuContext.builder()
+                .messages(Social.get().getChatManager().getHistory().get())
                 .viewer(sender)
                 .build();
 
-            ChannelHistoryMenu history = new ChannelHistoryMenu();
+            HistoryMenu history = new HistoryMenu();
             history.open(context);
             return;
         }
 
+        // Channel history
         if (args[0].startsWith("?")) {
             ChatChannel chatChannel = Social.get().getChatManager().getChannel(args[0].substring(1));
             if (chatChannel == null) {
@@ -49,15 +53,48 @@ public final class HistorySubcommand implements SubCommand {
             }
 
             SocialHistoryMenuContext context = SocialHistoryMenuContext.builder()
+                .headerType(HeaderType.CHANNEL)
+                .messages(Social.get().getChatManager().getHistory().getByChannel(chatChannel))
                 .viewer(sender)
                 .channel(chatChannel)
                 .build();
 
-            ChannelHistoryMenu history = new ChannelHistoryMenu();
+            HistoryMenu history = new HistoryMenu();
             history.open(context);
             return;
         }
 
+        // Thread history
+        if (args[0].startsWith("#")) {
+            SocialMessageContext message = Social.get().getChatManager().getHistory().getById(tryParse(args[0].substring(1)));
+            if (message == null) {
+                // message does not exist
+                return;
+            }
+
+            SocialHistoryMenuContext context = SocialHistoryMenuContext.builder()
+                .headerType(HeaderType.THREAD)
+                .messages(Social.get().getChatManager().getHistory().getThread(message, 128))
+                .viewer(sender)
+                .build();
+
+            HistoryMenu history = new HistoryMenu();
+            history.open(context);
+            return;
+        }
+
+        // Special options
+        if (args[0].startsWith("!")) {
+            switch (args[0].substring(1)) {
+                case "export" -> {
+
+                }
+            }
+
+            return;
+        }
+
+        // Player history
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getPlayerNotFound(), Social.get().getConfig().getMessages().getChannelType());
@@ -65,11 +102,13 @@ public final class HistorySubcommand implements SubCommand {
         }
 
         SocialHistoryMenuContext context = SocialHistoryMenuContext.builder()
+            .headerType(HeaderType.PLAYER)
+            .messages(Social.get().getChatManager().getHistory().getByPlayer(Social.get().getPlayerManager().get(target.getUniqueId())))
             .viewer(sender)
             .target(Social.get().getPlayerManager().get(target.getUniqueId()))
             .build();
 
-        PlayerHistoryMenu history = new PlayerHistoryMenu();
+        HistoryMenu history = new HistoryMenu();
         history.open(context);
     }
 
@@ -85,16 +124,29 @@ public final class HistorySubcommand implements SubCommand {
         if (args.length == 1) {
             List<String> scope = new ArrayList<>();
 
+            // Channels
             Social.get().getChatManager().getChannels().stream()
                 .filter(channel -> Social.get().getChatManager().hasPermission(socialPlayer, channel))
                 .map(channel -> "?" + channel.getName())
                 .forEach(scope::add);
 
+            // Players
             Bukkit.getOnlinePlayers().stream().map(player -> player.getName()).forEach(scope::add);
+
+            // Special options
+            scope.addAll(List.of("!export"));
             return scope;
         }
 
         return List.of();
+    }
+
+    private Integer tryParse(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
     
 }

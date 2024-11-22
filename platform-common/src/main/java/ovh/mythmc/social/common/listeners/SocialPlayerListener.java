@@ -46,12 +46,6 @@ public final class SocialPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
-
-        //if (socialPlayer != null)
-            //Social.get().getPlayerManager().unregisterSocialPlayer(socialPlayer);
-
         PersistentDataContainer container = event.getPlayer().getPersistentDataContainer();
 
         container.set(key, PersistentDataType.STRING, event.getPlayer().getDisplayName());

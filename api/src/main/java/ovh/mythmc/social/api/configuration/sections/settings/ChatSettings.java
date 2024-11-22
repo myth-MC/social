@@ -32,10 +32,7 @@ public class ChatSettings {
     private String playerNicknameFormat = "$(clickable_nickname)";
 
     @Comment("Message that appears when a player replies to a message")
-    private String replyFormat = "<dark_gray>:raw_box_up_and_right:</dark_gray>";
-
-    @Comment({"Message that appears when a player replies to a thread", "A thread is a set of replies to the same message"})
-    private String threadFormat = "<blue>:raw_box_up_and_right:</blue>";
+    private String replyFormat = "<blue>:raw_box_up_and_right:</blue>";
 
     @Comment("Text that appears when hovering over a message reply")
     private String replyHoverText = "<dark_gray>Click here to reply to <gray>$(nickname)</gray>'s message</dark_gray>";
