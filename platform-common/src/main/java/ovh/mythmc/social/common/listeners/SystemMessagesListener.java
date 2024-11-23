@@ -3,6 +3,7 @@ package ovh.mythmc.social.common.listeners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +28,7 @@ public final class SystemMessagesListener implements Listener {
             return;
 
         // Send message to console
-        Social.get().getLogger().info(event.getJoinMessage() + "");
+        Social.get().getLogger().info(ChatColor.stripColor(event.getJoinMessage().trim()));
 
         String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
         if (unformattedMessage == null || unformattedMessage.isEmpty())
@@ -51,7 +52,7 @@ public final class SystemMessagesListener implements Listener {
            return;
 
        // Send message to console
-       Social.get().getLogger().info(event.getQuitMessage());
+       Social.get().getLogger().info(ChatColor.stripColor(event.getQuitMessage().trim()));
 
        String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
        if (unformattedMessage == null || unformattedMessage.isEmpty())
@@ -100,7 +101,7 @@ public final class SystemMessagesListener implements Listener {
         Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), deathMessage, channelType);
 
         // Send message to console
-        Social.get().getLogger().info(event.getDeathMessage());
+        Social.get().getLogger().info(ChatColor.stripColor(event.getDeathMessage().trim()));
 
         event.setDeathMessage("");
    }
