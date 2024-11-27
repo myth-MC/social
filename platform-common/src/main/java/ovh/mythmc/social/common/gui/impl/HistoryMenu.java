@@ -106,7 +106,7 @@ public class HistoryMenu implements HistoryBookMenu {
                     .appendNewline()
                     .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext()).colorIfAbsent(NamedTextColor.BLUE))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getChannel()), Component.text(message.chatChannel().getName(), message.chatChannel().getColor())));
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.chatChannel().getName(), message.chatChannel().getColor())));
 
                 Component toAppend = Component.empty()
                     .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))
@@ -128,7 +128,7 @@ public class HistoryMenu implements HistoryBookMenu {
 
                     hoverText = hoverText
                         .appendNewline()
-                        .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getReplyTo()), replyMessage));
+                        .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextReplyTo()), replyMessage));
                 }
 
                 page = page.append(toAppend.hoverEvent(HoverEvent.showText(hoverText)));

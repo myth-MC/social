@@ -27,7 +27,7 @@ public abstract class SocialContextualKeyword extends SocialKeyword {
         return context.message().replaceText(TextReplacementConfig
                 .builder()
                 .match(Pattern.compile("\\[(?i:" + keyword() + "\\b)\\]"))
-                .replacement(process(context))
+                .replacement(process(context).insertion("[" + keyword() + "] "))
                 .build());
     }
     

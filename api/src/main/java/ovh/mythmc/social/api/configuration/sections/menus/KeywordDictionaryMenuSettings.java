@@ -2,6 +2,7 @@ package ovh.mythmc.social.api.configuration.sections.menus;
 
 import java.util.List;
 
+import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -11,12 +12,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 @Getter
 public class KeywordDictionaryMenuSettings {
 
+    @Comment("The header of this menu")
     private List<String> header = List.of(
         "╒═══════════╕",
         " |       ᴋᴇʏᴡᴏʀᴅѕ       |",
         "╒═══════════╕"
     );
 
+    @Comment("Max amount of keywords that will be shown per page")
     private int maxKeywordsPerPage = 3;
 
     private String copyToClipboard = "<gray>Click to copy to clipboard</gray>";

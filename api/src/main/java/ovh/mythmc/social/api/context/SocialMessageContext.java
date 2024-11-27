@@ -21,7 +21,7 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 @With
 public class SocialMessageContext implements SocialContext {
 
-    private final Date date;;
+    private final Date date;
 
     private final SocialPlayer sender;
 
@@ -32,7 +32,7 @@ public class SocialMessageContext implements SocialContext {
     private final Integer replyId;
 
     public String date() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Social.get().getConfig().getSettings().getDateFormat());
         return dateFormat.format(date);
     }
 

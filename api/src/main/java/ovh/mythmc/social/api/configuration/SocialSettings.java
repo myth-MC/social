@@ -19,6 +19,9 @@ public class SocialSettings {
     @Comment("Time interval of the update checker in hours")
     private int updateCheckerIntervalInHours = 6;
 
+    @Comment("Date format to use in menus and other text fields (mainly chat history)")
+    private String dateFormat = "MM-dd hh:mm";
+
     @Comment({"", "Chat module"})
     private ChatSettings chat = new ChatSettings();
 
