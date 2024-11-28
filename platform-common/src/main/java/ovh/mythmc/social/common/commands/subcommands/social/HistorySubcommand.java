@@ -84,15 +84,19 @@ public final class HistorySubcommand implements SubCommand {
         }
 
         // Special options
+        /*
         if (args[0].startsWith("!")) {
             switch (args[0].substring(1)) {
-                case "export" -> {
+                case "clear" -> {
+                    if (args.length < 2) {
 
+                    }
                 }
             }
 
             return;
         }
+        */
 
         // Player history
         Player target = Bukkit.getPlayer(args[0]);
@@ -134,7 +138,7 @@ public final class HistorySubcommand implements SubCommand {
             Bukkit.getOnlinePlayers().stream().map(player -> player.getName()).forEach(scope::add);
 
             // Special options
-            scope.addAll(List.of("!export"));
+            //scope.addAll(List.of("!clear"));
             return scope;
         }
 
