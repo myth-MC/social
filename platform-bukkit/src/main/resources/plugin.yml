@@ -41,21 +41,40 @@ permissions:
     children:
       - social.command.*
       - social.filter.bypass
+      - social.mentions
   social.command.*:
     default: op
     children:
       - social.command.announcement
       - social.command.channel
+      - social.command.dictionary
+      - social.command.history
+      - social.command.info
       - social.command.nickname
-      - social.command.reaction
       - social.command.reload
+      - social.command.reaction
       - social.command.socialspy
+      - social.command.group
   social.command.announcement:
     default: false
   social.command.channel:
-    default: false
+    default: true
   social.command.dictionary:
     default: true
+  social.command.history:
+    default: false
+  social.command.info:
+    default: false
+  social.command.nickname:
+    default: false
+  social.command.reload:
+    default: false
+  social.command.pm:
+    default: true
+  social.command.reaction:
+    default: true
+  social.command.socialspy:
+    default: false
   social.command.group:
     default: true
     children:
@@ -68,16 +87,6 @@ permissions:
       - social.command.group.leave
       - social.command.group.disband
       - social.command.group.code
-  social.command.nickname:
-    default: false
-  social.command.pm:
-    default: true
-  social.command.reaction:
-    default: true
-  social.command.reload:
-    default: false
-  social.command.socialspy:
-    default: false
   social.filter.bypass:
     default: false
   social.mentions:

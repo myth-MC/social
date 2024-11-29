@@ -18,6 +18,11 @@ public class DictionarySubcommand implements SubCommand {
 
     @Override
     public void accept(CommandSender commandSender, String[] args) {
+        if (!commandSender.hasPermission("social.command.dictionary")) {
+            Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
+
         if (!(commandSender instanceof Player)) {
             String message = Social.get().getConfig().getMessages().getErrors().getCannotBeRunFromConsole();
             SocialAdventureProvider.get().sender(commandSender).sendMessage(MiniMessage.miniMessage().deserialize(message));

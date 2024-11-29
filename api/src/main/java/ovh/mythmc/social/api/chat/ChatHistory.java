@@ -20,16 +20,8 @@ public final class ChatHistory {
 
     public int register(final @NotNull SocialMessageContext messageContext) {
         int id = messages.size() + 1;
-        messages.put(id, messageContext.withDate(new Date()));
+        messages.put(id, messageContext.withId(id).withDate(new Date()));
         return id;
-    }
-
-    public int getIdByContext(final @NotNull SocialMessageContext messageContext) {
-        List<Map.Entry<Integer, SocialMessageContext>> entry = messages.entrySet().stream().filter(e -> e.getValue().equals(messageContext)).toList();
-        if (entry.isEmpty())
-            return 0;
-
-        return entry.get(0).getKey();
     }
 
     public SocialMessageContext getById(final @NotNull Integer id) {

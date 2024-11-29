@@ -69,8 +69,8 @@ public class CustomTextProcessor {
                 continue;
 
             List<Class<?>> appliedParsers = context.appliedParsers();
-            if (Collections.frequency(appliedParsers, parser.getClass()) > 2) {
-                Social.get().getLogger().warn("Parser " + parser.getClass().getName() + " has been called twice. This can potentially degrade performance. Please, inform the author of " + parser.getClass().getName() + " about this. THIS IS NOT RELATED WITH SOCIAL.");
+            if (Collections.frequency(appliedParsers, parser.getClass()) > 3) {
+                Social.get().getLogger().warn("Parser " + parser.getClass().getName() + " has been called too many times. This can potentially degrade performance. Please, inform the author(s) of " + parser.getClass().getName() + " about this.");
                 break;
             }
 

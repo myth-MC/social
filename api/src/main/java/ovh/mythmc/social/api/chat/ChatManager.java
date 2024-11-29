@@ -25,6 +25,7 @@ import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -124,6 +125,12 @@ public final class ChatManager {
             Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
 
         return channels.remove(chatChannel);
+    }
+
+    public List<ChatChannel> getVisibleChannels(final @NotNull SocialPlayer socialPlayer) {
+        return channels.stream()
+            .filter(channel -> hasPermission(socialPlayer, channel))
+            .collect(Collectors.toList());
     }
 
     public void assignChannelsToPlayer(final @NotNull SocialPlayer socialPlayer) {

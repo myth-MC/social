@@ -21,6 +21,9 @@ import ovh.mythmc.social.api.players.SocialPlayer;
 @With
 public class SocialMessageContext implements SocialContext {
 
+    @Builder.Default
+    private final Integer id = 0;
+
     private final Date date;
 
     private final SocialPlayer sender;
@@ -41,10 +44,6 @@ public class SocialMessageContext implements SocialContext {
             return false;
 
         return Social.get().getChatManager().getHistory().getById(replyId) != null;
-    }
-
-    public Integer id() {
-        return Social.get().getChatManager().getHistory().getIdByContext(this);
     }
     
 }

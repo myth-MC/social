@@ -50,12 +50,17 @@ public interface BookMenu extends Menu {
     }
 
     default Component getField(Component key, Component value) {
-        return Component.text("└", NamedTextColor.DARK_GRAY)
+        Component field = Component.text("└", NamedTextColor.DARK_GRAY)
             .appendSpace()
-            .append(key.colorIfAbsent(NamedTextColor.WHITE))
-            .append(Component.text(":", NamedTextColor.DARK_GRAY))
-            .appendSpace()
-            .append(value.colorIfAbsent(NamedTextColor.GRAY));
+            .append(key.colorIfAbsent(NamedTextColor.WHITE));
+
+        if (value != null && !value.equals(Component.empty()))
+            field = field
+                .append(Component.text(":", NamedTextColor.DARK_GRAY))
+                .appendSpace()
+                .append(value.colorIfAbsent(NamedTextColor.GRAY));
+
+        return field;
     }
 
 }
