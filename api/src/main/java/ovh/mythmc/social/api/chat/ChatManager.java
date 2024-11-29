@@ -361,7 +361,7 @@ public final class ChatManager {
         Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console
-        SocialAdventureProvider.get().console().sendMessage(chatMessage);
+        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getNickname() + " -> " + recipient.getNickname() + ": " + message));
     }
 
     private Component trim(final @NotNull Component component) {
