@@ -3,18 +3,18 @@ package ovh.mythmc.social.common.text.parsers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.emojis.Emoji;
-import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 
 import java.util.regex.Pattern;
 
-@SocialParserProperties(priority = SocialParserProperties.ParserPriority.LOW)
-public final class RawEmojiParser implements SocialParser {
+public final class RawEmojiParser implements SocialContextualParser {
 
     @Override
-    public Component parse(SocialPlayer socialPlayer, Component message) {
+    public Component parse(SocialParserContext context) {
+        Component message = context.message();
+
         for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
             StringBuilder aliases = new StringBuilder();
             for (String alias : emoji.aliases()) {

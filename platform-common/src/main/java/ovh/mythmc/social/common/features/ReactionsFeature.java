@@ -1,36 +1,42 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
-import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.common.listeners.ReactionsListener;
-import ovh.mythmc.social.common.util.PluginUtil;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-public final class ReactionsFeature implements SocialFeature {
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionVersion;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
+import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.common.listeners.ReactionsListener;
+
+@Feature(group = "social", identifier = "REACTIONS")
+@FeatureConditionVersion(versions = { "1.21" } )
+public final class ReactionsFeature {
+    
+    private final JavaPlugin plugin;
 
     private final ReactionsListener reactionsListener;
 
-    public ReactionsFeature() {
-        this.reactionsListener = new ReactionsListener();
+    public ReactionsFeature(final @NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.reactionsListener = new ReactionsListener(plugin);
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.REACTIONS;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getReactions().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(reactionsListener);
+        Bukkit.getPluginManager().registerEvents(reactionsListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(reactionsListener);
         Social.get().getReactionManager().getReactionsMap().clear();

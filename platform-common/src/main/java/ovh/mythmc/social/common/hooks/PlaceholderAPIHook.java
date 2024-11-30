@@ -11,25 +11,22 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.events.SocialBootstrapEvent;
-import ovh.mythmc.social.api.hooks.SocialPluginHook;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
-import ovh.mythmc.social.common.util.PluginUtil;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 
 @Getter
-public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> implements SocialParser, Listener {
+public final class PlaceholderAPIHook implements SocialContextualParser, Listener {
 
     private final SocialPlaceholderExpansion expansion = new SocialPlaceholderExpansion();
 
     @Getter
-    private class SocialPlaceholderExpansion extends PlaceholderExpansion {
+    public class SocialPlaceholderExpansion extends PlaceholderExpansion {
         private final String identifier = "social";
         private final String author = "myth-MC";
         private final String version = Social.get().version();
@@ -120,28 +117,11 @@ public final class PlaceholderAPIHook extends SocialPluginHook<PlaceholderAPI> i
         }
     }
 
-    public PlaceholderAPIHook() {
-        super(null);
-        PluginUtil.registerEvents(this);
-        Social.get().getTextProcessor().registerParser(this);
-        expansion.register();
-    }
-
-    @EventHandler
-    public void onSocialBootstrap(SocialBootstrapEvent event) {
-        Social.get().getTextProcessor().registerParser(this);
-    }
-
     @Override
-    public Component parse(SocialPlayer socialPlayer, Component message) {
-        String serialized = MiniMessage.miniMessage().serialize(message);
-        String parsedMessage = PlaceholderAPI.setPlaceholders(socialPlayer.getPlayer(), serialized);
+    public Component parse(SocialParserContext context) {
+        String serialized = MiniMessage.miniMessage().serialize(context.message());
+        String parsedMessage = PlaceholderAPI.setPlaceholders(context.socialPlayer().getPlayer(), serialized);
         return MiniMessage.miniMessage().deserialize(parsedMessage);
-    }
-
-    @Override
-    public String identifier() {
-        return "PlaceholderAPI";
     }
 
     private Integer tryParse(String text) {

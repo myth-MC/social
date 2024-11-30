@@ -17,28 +17,25 @@ public class ChatSettings {
     private String defaultChannel = "global";
 
     @Comment("Text that appears when hovering over a message's channel icon")
-    private String channelHoverText = "$channel_icon <gray>Click here to switch to channel $channel</gray>";
+    private String channelHoverText = "$(channel_icon) <gray>Click here to switch to channel $(channel)</gray>";
 
     @Comment("Command that will be suggested when a player clicks on another player's nickname")
-    private String clickableNicknameCommand = "pm $username ";
+    private String clickableNicknameCommand = "pm $(username) ";
 
     @Comment("Text that appears when hovering over a player's name")
-    private String clickableNicknameHoverText = "$private_message_prefix <gray>Click here to message <blue>$nickname</blue></gray>";
+    private String clickableNicknameHoverText = "$(private_message_prefix) <gray>Click here to message <blue>$(nickname)</blue></gray>";
 
     @Comment("Text that appears when hovering over a player's name when they have a nickname")
-    private String playerAliasWarningHoverText = "$warning_prefix <gray>This player is using an alias. Their real username is <blue>$username</blue></gray>";
+    private String playerAliasWarningHoverText = "$(warning_prefix) <gray>This player is using an alias. Their real username is <blue>$(username)</blue></gray>";
 
     @Comment("You can add placeholders such as the player's rank")
-    private String playerNicknameFormat = "$clickable_nickname";
+    private String playerNicknameFormat = "$(clickable_nickname)";
 
     @Comment("Message that appears when a player replies to a message")
-    private String replyFormat = "<dark_gray>:raw_box_up_and_right:</dark_gray>";
-
-    @Comment({"Message that appears when a player replies to a thread", "A thread is a set of replies to the same message"})
-    private String threadFormat = "<blue>:raw_box_up_and_right:</blue>";
+    private String replyFormat = "<blue>:raw_box_up_and_right:</blue>";
 
     @Comment("Text that appears when hovering over a message reply")
-    private String replyHoverText = "<dark_gray>Click here to reply to <gray>$nickname</gray>'s message</dark_gray>";
+    private String replyHoverText = "<dark_gray>Click here to reply to <gray>$(nickname)</gray>'s message</dark_gray>";
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
@@ -53,7 +50,7 @@ public class ChatSettings {
     private String mentionSound = "BLOCK_CHAIN_PLACE";
 
     @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
-    private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$nickname</blue> has mentioned you!</gray>";
+    private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$(nickname)</blue> has mentioned you!</gray>";
 
     @Comment("Groups module")
     private ChatGroupSettings groups = new ChatGroupSettings();

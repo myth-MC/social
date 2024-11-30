@@ -13,25 +13,25 @@ import ovh.mythmc.social.api.configuration.sections.messages.InfoMessages;
 public class SocialMessages {
 
     @Comment("Message prefixes")
-    public String errorPrefix = "<dark_gray>[<red>:raw_x:</red>]</dark_gray>";
+    private String errorPrefix = "<dark_gray>[<red>:raw_x:</red>]</dark_gray>";
 
-    public String warningPrefix = "<dark_gray>[<yellow>:raw_warning:</yellow>]</dark_gray>";
+    private String warningPrefix = "<dark_gray>[<yellow>:raw_warning:</yellow>]</dark_gray>";
 
-    public String successPrefix = "<dark_gray>[<green>:raw_checkmark:</green>]</dark_gray>";
+    private String successPrefix = "<dark_gray>[<green>:raw_checkmark:</green>]</dark_gray>";
 
-    public String infoPrefix = "<dark_gray>[<blue>:raw_comet:</blue>]</dark_gray>";
+    private String infoPrefix = "<dark_gray>[<blue>:raw_comet:</blue>]</dark_gray>";
 
     @Comment({"", "Enabling this will make messages show in action bar instead of using chat channels"})
     private boolean useActionBar = false;
 
     @Comment({"", "General errors"})
-    public ErrorsMessages errors = new ErrorsMessages();
+    private ErrorsMessages errors = new ErrorsMessages();
 
     @Comment({"", "Info messages"})
-    public InfoMessages info = new InfoMessages();
+    private InfoMessages info = new InfoMessages();
 
     @Comment({"", "Command messages"})
-    public CommandsMessages commands = new CommandsMessages();
+    private CommandsMessages commands = new CommandsMessages();
 
     public ChannelType getChannelType() {
         if (useActionBar)

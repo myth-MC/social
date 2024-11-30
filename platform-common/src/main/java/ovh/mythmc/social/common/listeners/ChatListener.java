@@ -7,15 +7,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public final class ChatListener implements Listener {
+
+    private final JavaPlugin plugin;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -65,7 +72,7 @@ public final class ChatListener implements Listener {
 
         ChatChannel mainChannel = socialPlayer.getMainChannel();
         if (mainChannel == null) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
             event.setCancelled(true);
             return;
         }
@@ -80,7 +87,7 @@ public final class ChatListener implements Listener {
             if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {
 
-                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
                 event.setCancelled(true);
                 return;
             }
@@ -101,15 +108,22 @@ public final class ChatListener implements Listener {
         }
 
         // Send chat message
+        /*
         SocialChatMessageSendEvent socialChatMessageSendEvent = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
         if (socialChatMessageSendEvent == null || socialChatMessageSendEvent.isCancelled()) {
+            event.setCancelled(true);
+            return;
+        }
+        */
+        SocialMessageContext context = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
+        if (context == null) {
             event.setCancelled(true);
             return;
         }
 
         // This allows the message to be logged in console and sent to plugins such as DiscordSRV
         event.getRecipients().clear();
-        event.setFormat("(" + socialChatMessageSendEvent.getChatChannel().getName() + ") %s: %s");
+        event.setFormat("(" + context.chatChannel().getName() + ") %s: %s");
     }
 
     @EventHandler
@@ -119,7 +133,8 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getSender());
-            PluginUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
+
+            PluginUtil.runGlobalTask(plugin, () -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -138,7 +153,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getRecipient());
-            PluginUtil.runTask(() -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
+            PluginUtil.runGlobalTask(plugin, () -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -151,7 +166,7 @@ public final class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
-        Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
+        Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), event.getChatChannel(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
     }
 
     private Integer tryParse(String text) {

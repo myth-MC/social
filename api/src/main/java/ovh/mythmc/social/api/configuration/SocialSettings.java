@@ -19,6 +19,9 @@ public class SocialSettings {
     @Comment("Time interval of the update checker in hours")
     private int updateCheckerIntervalInHours = 6;
 
+    @Comment("Date format to use in menus and other text fields (mainly chat history)")
+    private String dateFormat = "MM-dd hh:mm";
+
     @Comment({"", "Chat module"})
     private ChatSettings chat = new ChatSettings();
 
@@ -46,9 +49,9 @@ public class SocialSettings {
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
 
-    @Comment("DO NOT CHANGE THIS PLEASE")
+    @Comment({"", "DO NOT CHANGE THIS PLEASE"})
     @Setter
-    private int migrationVersion = 0;
+    private int migrationVersion = 1;
 
     // @Comment({"", "Interaction Menu module"})
     // private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();

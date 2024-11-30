@@ -1,34 +1,38 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.ChatListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class ChatFeature implements SocialFeature {
+@Feature(group = "social", identifier = "CHAT")
+public final class ChatFeature {
+
+    private final JavaPlugin plugin;
 
     private final ChatListener chatListener;
 
-    public ChatFeature() {
-        this.chatListener = new ChatListener();
+    public ChatFeature(final @NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.chatListener = new ChatListener(plugin);
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.CHAT;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getChat().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(chatListener);
+        Bukkit.getPluginManager().registerEvents(chatListener, plugin);
 
         // Assign channels to every SocialPlayer
         ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
@@ -40,7 +44,7 @@ public final class ChatFeature implements SocialFeature {
         }
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(chatListener);
         Social.get().getChatManager().getChannels().clear();

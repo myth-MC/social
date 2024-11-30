@@ -16,6 +16,9 @@ public abstract class SocialCommand {
         this.subCommands = new HashMap<>();
         subCommands.put("announcement", new AnnouncementSubcommand());
         subCommands.put("channel", new ChannelSubcommand());
+        subCommands.put("dictionary", new DictionarySubcommand());
+        subCommands.put("history", new HistorySubcommand());
+        subCommands.put("info", new InfoSubcommand());
         subCommands.put("nickname", new NicknameSubcommand());
         subCommands.put("reload", new ReloadSubcommand());
         subCommands.put("socialspy", new SocialSpySubcommand());

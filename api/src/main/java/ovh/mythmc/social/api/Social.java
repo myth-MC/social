@@ -6,10 +6,9 @@ import ovh.mythmc.social.api.announcements.AnnouncementManager;
 import ovh.mythmc.social.api.chat.ChatManager;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.emojis.EmojiManager;
-import ovh.mythmc.social.api.hooks.SocialHookManager;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.ReactionManager;
-import ovh.mythmc.social.api.text.SocialTextProcessor;
+import ovh.mythmc.social.api.text.GlobalTextProcessor;
 import ovh.mythmc.social.api.players.SocialPlayerManager;
 
 public interface Social {
@@ -32,12 +31,10 @@ public interface Social {
 
     @NotNull default ChatManager getChatManager() { return ChatManager.instance; }
 
-    @NotNull default SocialTextProcessor getTextProcessor() { return SocialTextProcessor.instance; }
+    @NotNull default GlobalTextProcessor getTextProcessor() { return GlobalTextProcessor.instance; }
 
     @NotNull default ReactionManager getReactionManager() { return ReactionManager.instance; }
 
     @NotNull default EmojiManager getEmojiManager() { return EmojiManager.instance; }
-
-    @NotNull default SocialHookManager getInternalHookManager() { return SocialHookManager.instance; }
 
 }

@@ -3,30 +3,43 @@ package ovh.mythmc.social.common.features;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import org.bukkit.event.HandlerList;
-import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.common.listeners.PacketsListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class PacketsFeature implements SocialFeature {
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
+import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
+import ovh.mythmc.gestalt.annotations.status.FeatureShutdown;
+import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.common.listeners.PacketsListener;
+
+@Feature(group = "social", identifier = "PACKETS")
+public final class PacketsFeature {
+
+    private final JavaPlugin plugin;
 
     private final PacketsListener packetsListener = new PacketsListener();
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.OTHER;
+    public PacketsFeature(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
     }
 
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getPackets().isEnabled();
+        return isSupported() && Social.get().getConfig().getSettings().getPackets().isEnabled();
     }
 
-    @Override
+    @FeatureInitialize
     public void initialize() {
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(PluginUtil.getPlugin()));
+        if(!isSupported())
+            return;
+
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
 
         // Disable update checker
         PacketEventsSettings settings = PacketEvents.getAPI().getSettings();
@@ -39,22 +52,28 @@ public final class PacketsFeature implements SocialFeature {
         PacketEvents.getAPI().init();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        // Register listener
-        PluginUtil.registerEvents(packetsListener);
+        Bukkit.getPluginManager().registerEvents(packetsListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
-        // Unregister listener
         HandlerList.unregisterAll(packetsListener);
     }
 
-    @Override
+    @FeatureShutdown
     public void shutdown() {
-        // Terminate PacketEvents API
         PacketEvents.getAPI().terminate();
     }
 
+    private boolean isSupported() {
+        try {
+            Class.forName("com.mohistmc.banner.bukkit.remapping.ReflectionHandler");
+            return false;
+        } catch (ClassNotFoundException e) {
+            return true;
+        }
+    }
+    
 }

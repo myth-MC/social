@@ -15,42 +15,49 @@ import ovh.mythmc.social.api.text.filters.SocialFilterRegex;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 
+@Getter
 public final class SocialConfigProvider {
 
-    @Getter
-    private SocialSettings settings;
-    private final Path settingsFilePath;
+    private final File pluginFolder;
 
-    @Getter
+    private SocialSettings settings;
+
     private SocialMessages messages;
-    private final Path messagesFilePath;
+
+    private SocialMenus menus;
 
     public SocialConfigProvider(final @NotNull File pluginFolder) {
-        this.settings = new SocialSettings();
-        this.messages = new SocialMessages();
-        this.settingsFilePath = new File(pluginFolder, "settings.yml").toPath();
-        this.messagesFilePath = new File(pluginFolder, "messages.yml").toPath();
+        this.pluginFolder = pluginFolder;
+
+        settings = new SocialSettings();
+        messages = new SocialMessages();
+        menus = new SocialMenus();
     }
 
     public void load() {
         this.settings = YamlConfigurations.update(
-                settingsFilePath,
+                new File(pluginFolder, "settings.yml").toPath(),
                 SocialSettings.class,
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
 
         this.messages = YamlConfigurations.update(
-                messagesFilePath,
+                new File(pluginFolder, "messages.yml").toPath(),
                 SocialMessages.class,
+                YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+        );
+
+        this.menus = YamlConfigurations.update(
+                new File(pluginFolder, "menus.yml").toPath(),
+                SocialMenus.class,
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
 
         // Register emojis
         settings.getEmojis().getEmojis().forEach(emojiField -> {
             Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
-            Social.get().getEmojiManager().registerEmoji(emoji);
+            Social.get().getEmojiManager().registerEmoji("server", emoji);
         });
 
         // Register custom placeholders
@@ -92,7 +99,7 @@ public final class SocialConfigProvider {
     }
 
     public void save() {
-        YamlConfigurations.save(settingsFilePath, SocialSettings.class, settings);
+        YamlConfigurations.save(new File(pluginFolder, "settings.yml").toPath(), SocialSettings.class, settings);
     }
 
     private Sound findByName(String name) {

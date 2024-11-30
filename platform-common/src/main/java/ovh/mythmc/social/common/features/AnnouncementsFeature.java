@@ -1,27 +1,25 @@
 package ovh.mythmc.social.common.features;
 
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 
-public final class AnnouncementsFeature implements SocialFeature {
+@Feature(group = "social", identifier = "ANNOUNCEMENTS")
+public final class AnnouncementsFeature {
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.ANNOUNCEMENTS;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getAnnouncements().isEnabled();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
         Social.get().getAnnouncementManager().restartTask();
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         Social.get().getAnnouncementManager().getAnnouncements().clear();
     }

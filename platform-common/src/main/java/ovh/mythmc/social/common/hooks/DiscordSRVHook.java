@@ -8,33 +8,28 @@ import github.scarsz.discordsrv.dependencies.commons.lang3.StringUtils;
 import github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
 import github.scarsz.discordsrv.util.MessageUtil;
-import github.scarsz.discordsrv.util.PluginUtil;
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.TextComponent;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
-import ovh.mythmc.social.api.hooks.SocialPluginHook;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.UUID;
 
-public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implements ChatHook, Listener {
+@RequiredArgsConstructor
+public final class DiscordSRVHook implements ChatHook {
 
-    // SocialPluginHook
-    public DiscordSRVHook(DiscordSRV storedClass) {
-        super(storedClass);
-        DiscordSRV.getPlugin().getPluginHooks().add(this);
-        DiscordSRV.api.subscribe(this);
-        if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
-                Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
-            ovh.mythmc.social.common.util.PluginUtil.registerEvents(new DiscordSRVDeathHook());
-        }
-    }
+    private final JavaPlugin plugin;
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMessage(SocialChatMessagePrepareEvent event) {
@@ -66,10 +61,18 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
             return;
 
         // Workaround for placeholders
-        SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L);
+        SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
 
         String miniMessage = MessageUtil.toMiniMessage(message);
-        miniMessage = miniMessage.replace("%channel%", Social.get().getTextProcessor().getPlaceholder("channel_icon").process(fakePlayer));
+        
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(fakePlayer)
+            .playerChannel(chatChannel)
+            .build();
+
+        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getContextualPlaceholder("channel_icon").get(context);
+
+        miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 
         String finalMiniMessage = miniMessage;
         chatChannel.getMembers().forEach(uuid -> {
@@ -81,7 +84,7 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
                 return;
 
             // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, finalMiniMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), finalMiniMessage, ChannelType.CHAT);
         });
     }
 
@@ -96,12 +99,7 @@ public final class DiscordSRVHook extends SocialPluginHook<DiscordSRV> implement
 
     @Override
     public Plugin getPlugin() {
-        return PluginUtil.getPlugin("social");
+        return plugin;
     }
 
-    // SocialPluginHook
-    @Override
-    public String identifier() {
-        return "DiscordSRV";
-    }
 }

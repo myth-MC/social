@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class ChatGroupSettings {
 
-    @Comment("Whether the filter module should be enabled or disabled")
+    @Comment("Whether the groups module should be enabled or disabled")
     private boolean enabled = true;
 
     @Comment("Player limit per group")
@@ -29,7 +29,7 @@ public class ChatGroupSettings {
     private boolean showHoverText = true;
 
     @Comment("Text that will be shown when hovering over the icon")
-    private List<String> hoverText = List.of("<yellow>:raw_sword:</yellow> <gray>Leader: <white>$group_leader</white></gray>", "<dark_gray>This is a group channel.</dark_gray>");
+    private List<String> hoverText = List.of("<yellow>:raw_sword:</yellow> <gray>Leader: <white>$(group_leader)</white></gray>", "<dark_gray>This is a group channel.</dark_gray>");
 
     @Comment("Group nickname color")
     private String nicknameColor = "#FFFFFF";

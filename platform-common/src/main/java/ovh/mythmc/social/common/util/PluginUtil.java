@@ -1,34 +1,59 @@
 package ovh.mythmc.social.common.util;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import ovh.mythmc.social.api.Social;
+import org.jetbrains.annotations.NotNull;
 
-public final class PluginUtil {
+public final class PluginUtil { 
 
-    @Setter
-    @Getter
-    private static JavaPlugin plugin;
-
-    public static void runTask(Runnable runnable) {
-        if (plugin == null) {
-            Social.get().getLogger().error("A task was scheduled without SchedulerUtil being initialized!");
+    public static void runGlobalTask(final @NotNull JavaPlugin plugin, final @NotNull Runnable runnable) {
+        if (!isPaper()) {
+            Bukkit.getScheduler().runTask(plugin, runnable);
             return;
         }
 
+        // paper
         Bukkit.getScheduler().runTask(plugin, runnable);
     }
 
-    public static void registerEvents(Listener listener) {
-        if (plugin == null) {
-            Social.get().getLogger().error("An event was registered without SchedulerUtil being initialized!");
+    public static void runRegionTask(final @NotNull JavaPlugin plugin, final @NotNull Runnable runnable) {
+        if (!isPaper()) {
+            Bukkit.getScheduler().runTask(plugin, runnable);
             return;
         }
 
-        Bukkit.getPluginManager().registerEvents(listener, plugin);
+        // paper
+        Bukkit.getScheduler().runTask(plugin, runnable);
+    }
+
+    public static void runAsyncTask(final @NotNull JavaPlugin plugin, final @NotNull Runnable runnable) {
+        if (!isPaper()) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
+            return;
+        }
+
+        // paper
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
+    }
+
+    public static void runEntityTask(final @NotNull JavaPlugin plugin, final @NotNull Runnable runnable) {
+        if (!isPaper()) {
+            Bukkit.getScheduler().runTask(plugin, runnable);
+            return;
+        }
+
+        // paper
+        Bukkit.getScheduler().runTask(plugin, runnable);
+    }
+
+    public static boolean isPaper() {
+        boolean isPaper = false;
+        try {
+            Class.forName("com.destroystokyo.paper.ParticleBuilder");
+            isPaper = true;
+        } catch (ClassNotFoundException ignored) { }
+        
+        return isPaper;
     }
 
 }

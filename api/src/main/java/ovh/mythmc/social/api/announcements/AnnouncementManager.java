@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.context.SocialParserContext;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -46,12 +46,25 @@ public final class AnnouncementManager {
                 SocialAnnouncement announcement = announcements.get(latest);
 
                 if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
-                    Social.get().getPlayerManager().get().forEach(socialPlayer -> Social.get().getTextProcessor().parseAndSend(socialPlayer, announcement.message(), ChannelType.ACTION_BAR));
+                    Social.get().getPlayerManager().get().forEach(socialPlayer -> {
+                        SocialParserContext context = SocialParserContext.builder()
+                            .socialPlayer(socialPlayer)
+                            .message(announcement.message())
+                            .messageChannelType(ChannelType.ACTION_BAR)
+                            .build();
+
+                        Social.get().getTextProcessor().parseAndSend(context);
+                    });
                 } else {
                     for (ChatChannel channel : announcement.channels()) {
                         channel.getMembers().forEach(uuid -> {
-                            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
-                            Social.get().getTextProcessor().parseAndSend(socialPlayer, announcement.message(), channel.getType());
+                            SocialParserContext context = SocialParserContext.builder()
+                                .socialPlayer(Social.get().getPlayerManager().get(uuid))
+                                .message(announcement.message())
+                                .messageChannelType(channel.getType())
+                                .build();
+
+                            Social.get().getTextProcessor().parseAndSend(context);
                         });
                     }
                 }

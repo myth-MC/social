@@ -14,6 +14,6 @@ public class MOTDSettings {
     private boolean enabled = true;
 
     @Comment("Message that will be sent to player when they join")
-    private List<String> message = List.of("<yellow>:smile:</yellow> <white>Welcome back, <blue>$nickname</blue>!</white>");
+    private List<String> message = List.of("<yellow>:smile:</yellow> <white>Welcome back, <blue>$(nickname)</blue>!</white>");
 
 }

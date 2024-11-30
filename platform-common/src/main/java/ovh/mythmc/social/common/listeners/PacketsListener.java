@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.emojis.Emoji;
 import ovh.mythmc.social.api.text.keywords.SocialKeyword;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -31,11 +30,10 @@ public final class PacketsListener implements Listener {
 
         // Keyword completion
         if (Social.get().getConfig().getSettings().getPackets().isChatKeywordTabCompletion()) {
-            for (SocialParser parser  : Social.get().getTextProcessor().getParsers()) {
-                if (parser instanceof SocialKeyword keyword) {
+            Social.get().getTextProcessor().getParsers().forEach(parser -> {
+                if (parser instanceof SocialKeyword keyword)
                     createFakePlayer(event.getPlayer(), "[" + keyword.keyword() + "]");
-                }
-            }
+            });
         }
     }
 

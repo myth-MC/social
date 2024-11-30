@@ -1,10 +1,17 @@
 package ovh.mythmc.social.common.text.placeholders.prefix;
 
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.players.SocialPlayer;
-import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
+import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 
-public final class PrivateMessagePlaceholder extends SocialPlaceholder {
+public final class PrivateMessagePlaceholder extends SocialContextualPlaceholder {
+    
+    @Override
+    public boolean legacySupport() {
+        return true;
+    }
 
     @Override
     public String identifier() {
@@ -12,8 +19,9 @@ public final class PrivateMessagePlaceholder extends SocialPlaceholder {
     }
 
     @Override
-    public String process(SocialPlayer player) {
-        return Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix();
+    public Component get(SocialParserContext context) {
+        Component prefix = Component.text(Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix());
+        return request(context.withMessage(prefix), MiniMessageParser.class);
     }
 
 }

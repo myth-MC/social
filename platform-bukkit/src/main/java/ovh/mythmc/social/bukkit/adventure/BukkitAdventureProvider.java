@@ -25,10 +25,18 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
         if (adventure == null)
             return;
 
+        if (player == null)
+            return;
+
         switch (type) {
             case CHAT -> adventure.player(player).sendMessage(message);
             case ACTION_BAR -> adventure.player(player).sendActionBar(message);
         }
+    }
+
+    @Override
+    public Audience player(final @NotNull Player player) {
+        return adventure.player(player);
     }
 
     @Override

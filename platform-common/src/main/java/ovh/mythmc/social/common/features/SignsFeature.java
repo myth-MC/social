@@ -1,37 +1,40 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
 import ovh.mythmc.social.common.listeners.SignsListener;
-import ovh.mythmc.social.common.util.PluginUtil;
 
-public final class SignsFeature implements SocialFeature {
+@Feature(group = "social", identifier = "EMOJIS")
+public final class SignsFeature {
 
-    private final SignsListener signsListener;
+    private final JavaPlugin plugin;
 
-    public SignsFeature() {
-        this.signsListener = new SignsListener();
+    private SignsListener signsListener = new SignsListener();
+
+    public SignsFeature(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.EMOJIS;
-    }
-
-    @Override
+    @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getTextReplacement().isEnabled() &&
                 Social.get().getConfig().getSettings().getTextReplacement().isSigns();
     }
 
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(signsListener);
+        Bukkit.getPluginManager().registerEvents(signsListener, plugin);
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(signsListener);
     }

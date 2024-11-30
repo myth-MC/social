@@ -1,26 +1,22 @@
 package ovh.mythmc.social.api.text.parsers;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
-import java.util.regex.Pattern;
+import static net.kyori.adventure.text.Component.text;
 
-public abstract class SocialPlaceholder implements SocialParser {
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
-    public abstract String identifier();
+@Deprecated
+@ScheduledForRemoval
+public abstract class SocialPlaceholder extends SocialContextualPlaceholder {
 
     public abstract String process(SocialPlayer player);
 
     @Override
-    public Component parse(SocialPlayer player, Component component) {
-        Component processedText = MiniMessage.miniMessage().deserialize(process(player));
-        return component.replaceText(TextReplacementConfig
-                .builder()
-                .match(Pattern.compile("\\$(?i:" + identifier() + "\\b)"))
-                .replacement(processedText)
-                .build());
+    public Component get(SocialParserContext context) {
+        return text(process(context.socialPlayer()));
     }
 
 }

@@ -1,31 +1,46 @@
 package ovh.mythmc.social.common.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
+import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
+import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
+import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.features.SocialFeature;
-import ovh.mythmc.social.api.features.SocialFeatureType;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.common.listeners.GroupsListener;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupLeaderPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupCodePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupPlaceholder;
-import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GroupsFeature implements SocialFeature {
+@Feature(group = "social", identifier = "GROUPS")
+public final class GroupsFeature {
 
-    private final GroupsListener groupsListener;
+    private final JavaPlugin plugin;
 
-    private final List<SocialParser> parsers = new ArrayList<>();
+    private final GroupsListener groupsListener = new GroupsListener();
 
-    public GroupsFeature() {
-        this.groupsListener = new GroupsListener();
+    private final List<SocialContextualParser> parsers = new ArrayList<>();
+
+    public GroupsFeature(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
     }
 
-    @Override
+    @FeatureConditionBoolean
+    public boolean canBeEnabled() {
+        return Social.get().getConfig().getSettings().getChat().isEnabled() &&
+                Social.get().getConfig().getSettings().getChat().getGroups().isEnabled();
+    }
+
+    @FeatureInitialize
     public void initialize() {
         this.parsers.add(new GroupIconPlaceholder());
         this.parsers.add(new GroupLeaderPlaceholder());
@@ -33,24 +48,13 @@ public final class GroupsFeature implements SocialFeature {
         this.parsers.add(new GroupPlaceholder());
     }
 
-    @Override
-    public SocialFeatureType featureType() {
-        return SocialFeatureType.GROUPS;
-    }
-
-    @Override
-    public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().isEnabled() &&
-                Social.get().getConfig().getSettings().getChat().getGroups().isEnabled();
-    }
-
-    @Override
+    @FeatureEnable
     public void enable() {
-        PluginUtil.registerEvents(groupsListener);
+        Bukkit.getPluginManager().registerEvents(groupsListener, plugin);
         this.parsers.forEach(parser -> Social.get().getTextProcessor().registerParser(parser));
     }
 
-    @Override
+    @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(groupsListener);
         this.parsers.forEach(parser -> Social.get().getTextProcessor().unregisterParser(parser));

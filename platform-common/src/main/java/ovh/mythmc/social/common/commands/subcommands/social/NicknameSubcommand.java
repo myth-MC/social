@@ -53,12 +53,12 @@ public class NicknameSubcommand implements SubCommand {
 
             if (nickname.equalsIgnoreCase("reset")) {
                 socialPlayer.getPlayer().setDisplayName(socialPlayer.getPlayer().getName());
-                Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getCommands().getNicknameReset(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameReset(), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
 
             socialPlayer.getPlayer().setDisplayName(nickname);
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 
