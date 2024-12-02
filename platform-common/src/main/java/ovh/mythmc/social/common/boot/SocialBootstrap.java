@@ -6,15 +6,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.Gestalt;
-import ovh.mythmc.gestalt.features.FeatureConstructorParams;
-import ovh.mythmc.gestalt.features.GestaltFeature;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
-import ovh.mythmc.social.common.features.*;
-import ovh.mythmc.social.common.features.hooks.DiscordSRVFeature;
-import ovh.mythmc.social.common.features.hooks.PlaceholderAPIFeature;
+import ovh.mythmc.social.common.features.BootstrapFeature;
 import ovh.mythmc.social.common.listeners.InternalFeatureListener;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelIconPlaceholder;
@@ -24,10 +20,8 @@ import ovh.mythmc.social.common.text.placeholders.player.NicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.SocialSpyPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.prefix.*;
-import ovh.mythmc.social.common.update.UpdateChecker;
 
 import java.io.File;
-import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -51,31 +45,7 @@ public abstract class SocialBootstrap<T> implements Social {
         // Initialize gestalt
         gestalt.initialize();
 
-        // Register gestalt features
-        Gestalt.get().register(
-            AnnouncementsFeature.class,
-            EmojiFeature.class,
-            IPFilterFeature.class,
-            UpdateCheckerFeature.class,
-            URLFilterFeature.class
-        );
-
-        // Register features that require a plugin instance
-        registerFeatureWithPluginParam(
-            AnvilFeature.class,
-            BooksFeature.class,
-            ChatFeature.class,
-            GroupsFeature.class,
-            MentionsFeature.class,
-            MOTDFeature.class,
-            PacketsFeature.class,
-            ReactionsFeature.class,
-            ServerLinksFeature.class,
-            SignsFeature.class,
-            SystemMessagesFeature.class,
-            DiscordSRVFeature.class,
-            PlaceholderAPIFeature.class);
-
+        Gestalt.get().register(BootstrapFeature.class);
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 
         // Load settings
@@ -89,8 +59,6 @@ public abstract class SocialBootstrap<T> implements Social {
             throwable.printStackTrace(System.err);
             return;
         }
-
-        UpdateChecker.startTask();
     }
 
     public abstract void enable();
@@ -99,20 +67,8 @@ public abstract class SocialBootstrap<T> implements Social {
         gestalt.terminate();
     }
 
-    private void registerFeatureWithPluginParam(Class<?>... classes) {
-        Arrays.stream(classes).forEach(clazz -> {
-            Gestalt.get().register(GestaltFeature.builder()
-                .featureClass(clazz)
-                .constructorParams(FeatureConstructorParams.builder()
-                    .params(plugin)
-                    .types(JavaPlugin.class)
-                    .build())
-                .build());
-        });
-    }
-
     public final void reload() {
-        Gestalt.get().disableAllFeatures("social");
+        Gestalt.get().disableFeature(BootstrapFeature.class);
 
         // Clear parsers
         Social.get().getTextProcessor().getParsers().clear();
@@ -128,12 +84,9 @@ public abstract class SocialBootstrap<T> implements Social {
         );
 
         Social.get().getTextProcessor().registerParser(
-                //new ClickableNicknamePlaceholder(),
-                //new NicknamePlaceholder(),
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
                 new SocialSpyPlaceholder()
-                //new UsernamePlaceholder()
         );
 
         // Register internal non-contextual placeholders
@@ -151,7 +104,7 @@ public abstract class SocialBootstrap<T> implements Social {
         );
 
         // Enable Gestalt features
-        Gestalt.get().enableAllFeatures("social");
+        Gestalt.get().enableFeature(BootstrapFeature.class);;
     }
 
     public abstract String version();
