@@ -1,16 +1,16 @@
 name: social
 authors: [myth-MC, U8092]
 version: '${project.version}'
-api-version: 1.16
+api-version: 1.19
 
 main: ovh.mythmc.social.bukkit.SocialBukkitPlugin
-softdepend: [ PlaceholderAPI, DiscordSRV ]
+softdepend: [ PlaceholderAPI, DiscordSRV, gestalt ]
 
 libraries:
-  - net.kyori:adventure-api:4.17.0
+  - net.kyori:adventure-api:4.12.0
   - net.kyori:adventure-platform-bukkit:4.3.4
-  - net.kyori:adventure-text-minimessage:4.17.0
-  - net.kyori:adventure-text-serializer-plain:4.17.0
+  - net.kyori:adventure-text-minimessage:4.12.0
+  - net.kyori:adventure-text-serializer-plain:4.12.0
 
 commands:
   social:
