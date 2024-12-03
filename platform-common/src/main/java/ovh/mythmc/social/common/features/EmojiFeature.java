@@ -27,7 +27,7 @@ public final class EmojiFeature {
     @FeatureDisable
     public void disable() {
         Social.get().getTextProcessor().unregisterParser(emojiParser, rawEmojiParser);
-        Social.get().getEmojiManager().getEmojis().clear();
+        Social.get().getEmojiManager().unregisterAll();
     }
 
 }

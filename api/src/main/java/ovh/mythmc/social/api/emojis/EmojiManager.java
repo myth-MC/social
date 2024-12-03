@@ -26,6 +26,10 @@ public final class EmojiManager {
         emojis.remove(emoji);
     }
 
+    public void unregisterAll() {
+        emojis.clear();
+    }
+
     public List<Emoji> getEmojis() {
         return emojis.keySet().stream().toList();
     }
