@@ -35,8 +35,8 @@ public final class EmojiDictionaryMenu implements SimpleBookMenu {
         List<DictionaryPage> pages = new ArrayList<>();
 
         for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
-            if (pages.size() > 0 && pages.getLast().emojis.size() < Social.get().getConfig().getMenus().getEmojiDictionary().getMaxEmojisPerPage()) {
-                pages.getLast().emojis.add(emoji);
+            if (pages.size() > 0 && pages.get(pages.size() -1).emojis.size() < Social.get().getConfig().getMenus().getEmojiDictionary().getMaxEmojisPerPage()) {
+                pages.get(pages.size() -1).emojis.add(emoji);
                 continue;
             }
 
