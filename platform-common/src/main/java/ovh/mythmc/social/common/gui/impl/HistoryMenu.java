@@ -2,6 +2,7 @@ package ovh.mythmc.social.common.gui.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import net.kyori.adventure.inventory.Book;
@@ -50,7 +51,7 @@ public class HistoryMenu implements HistoryBookMenu {
                 break;
             case THREAD:
                 if (context.messages() != null && !context.messages().isEmpty())
-                    scope = Component.text("#" + context.messages().getFirst().id(), NamedTextColor.BLUE);
+                    scope = Component.text("#" + context.messages().get(0).id(), NamedTextColor.BLUE);
                 break;
             default:
                 break;
@@ -76,9 +77,11 @@ public class HistoryMenu implements HistoryBookMenu {
         Component author = Component.text("social (myth-MC)");
 
         List<HistoryPage> pages = new ArrayList<>();
-        for (SocialMessageContext message : context.messages().reversed()) {
-            if (pages.size() > 0 && pages.getLast().messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
-                pages.getLast().messages.add(message);
+        List<SocialMessageContext> messages = new ArrayList<>(context.messages());
+        Collections.reverse(messages);
+        for (SocialMessageContext message : messages) {
+            if (pages.size() > 0 && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
+                pages.get(pages.size() -1).messages.add(message);
                 continue;
             }
 

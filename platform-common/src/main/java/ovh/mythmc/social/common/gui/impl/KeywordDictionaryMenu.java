@@ -42,8 +42,8 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
             .collect(Collectors.toList());
 
         for (SocialContextualKeyword keyword : keywords) {
-            if (pages.size() > 0 && pages.getLast().keywords.size() < Social.get().getConfig().getMenus().getKeywordDictionary().getMaxKeywordsPerPage()) {
-                pages.getLast().keywords.add(keyword);
+            if (pages.size() > 0 && pages.get(pages.size() -1).keywords.size() < Social.get().getConfig().getMenus().getKeywordDictionary().getMaxKeywordsPerPage()) {
+                pages.get(pages.size() -1).keywords.add(keyword);
                 continue;
             }
 
