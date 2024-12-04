@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 

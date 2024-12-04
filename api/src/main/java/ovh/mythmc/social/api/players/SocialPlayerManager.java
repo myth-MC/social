@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
 import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
 
@@ -39,7 +39,7 @@ public final class SocialPlayerManager {
     public void registerSocialPlayer(final @NotNull UUID uuid) {
         // Todo: recover data from last session
         String defaultChatChannelName = Social.get().getConfig().getSettings().getChat().getDefaultChannel();
-        ChatChannel defaultChatChannel = Social.get().getChatManager().getChannel(defaultChatChannelName);
+        ChatChannel defaultChatChannel = Social.get().getChannelManager().getChannel(defaultChatChannelName);
 
         SocialPlayer socialPlayer = new SocialPlayer(uuid);
         socialPlayer.setMuted(false);

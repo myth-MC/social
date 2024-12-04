@@ -1,10 +1,11 @@
 package ovh.mythmc.social.api.players;
 
 import lombok.*;
+import ovh.mythmc.social.api.channels.ChatChannel;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import ovh.mythmc.social.api.chat.ChatChannel;
 
 import java.util.UUID;
 

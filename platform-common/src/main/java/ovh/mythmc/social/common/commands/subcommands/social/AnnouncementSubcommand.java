@@ -2,9 +2,9 @@ package ovh.mythmc.social.common.commands.subcommands.social;
 
 import org.bukkit.command.CommandSender;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.announcements.SocialAnnouncement;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.announcements.Announcement;
+import ovh.mythmc.social.api.channels.ChannelType;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;
 
@@ -31,7 +31,7 @@ public class AnnouncementSubcommand implements SubCommand {
             return;
         }
 
-        SocialAnnouncement announcement = Social.get().getAnnouncementManager().getAnnouncements().get(integer);
+        Announcement announcement = Social.get().getAnnouncementManager().getAnnouncements().get(integer);
 
         if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
             Social.get().getPlayerManager().get().forEach(s -> Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), ChannelType.ACTION_BAR));

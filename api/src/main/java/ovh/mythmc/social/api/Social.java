@@ -3,6 +3,7 @@ package ovh.mythmc.social.api;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.announcements.AnnouncementManager;
+import ovh.mythmc.social.api.channels.ChannelManager;
 import ovh.mythmc.social.api.chat.ChatManager;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.emojis.EmojiManager;
@@ -28,6 +29,8 @@ public interface Social {
     @NotNull default AnnouncementManager getAnnouncementManager() { return AnnouncementManager.instance; }
 
     @NotNull default SocialPlayerManager getPlayerManager() { return SocialPlayerManager.instance; }
+
+    @NotNull default ChannelManager getChannelManager() { return ChannelManager.instance; }
 
     @NotNull default ChatManager getChatManager() { return ChatManager.instance; }
 

@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;

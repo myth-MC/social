@@ -3,10 +3,11 @@ package ovh.mythmc.social.api.events.groups;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
 
 @Getter
 @Setter

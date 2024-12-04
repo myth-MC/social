@@ -11,7 +11,7 @@ import lombok.Setter;
 import lombok.With;
 import lombok.experimental.Accessors;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Data

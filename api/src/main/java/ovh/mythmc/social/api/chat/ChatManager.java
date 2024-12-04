@@ -14,20 +14,15 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.channels.ChannelType;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupAliasChangeEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -40,127 +35,6 @@ public final class ChatManager {
     private final ChatHistory history = new ChatHistory();
 
     private final List<ChatChannel> channels = new ArrayList<>();
-
-    public ChatChannel getChannel(final @NotNull String channelName) {
-        for (ChatChannel chatChannel : channels) {
-            if (chatChannel.getName().equals(channelName))
-                return chatChannel;
-        }
-
-        return null;
-    }
-
-    public GroupChatChannel getGroupChannelByCode(final int code) {
-        ChatChannel chatChannel = getChannel("G-" + code);
-        if (chatChannel instanceof GroupChatChannel)
-            return (GroupChatChannel) chatChannel;
-
-        return null;
-    }
-
-    public GroupChatChannel getGroupChannelByPlayer(final @NotNull UUID uuid) {
-        for (ChatChannel channel : getChannels()) {
-            if (channel instanceof GroupChatChannel && channel.getMembers().contains(uuid)) {
-                return (GroupChatChannel) channel;
-            }
-        }
-
-        return null;
-    }
-
-    public GroupChatChannel getGroupChannelByPlayer(final @NotNull SocialPlayer socialPlayer) {
-        return getGroupChannelByPlayer(socialPlayer.getUuid());
-    }
-
-    public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
-                                      final @NotNull UUID leaderUuid) {
-        SocialPlayer previousLeader = Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid());
-        SocialPlayer leader = Social.get().getPlayerManager().get(leaderUuid);
-
-        SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
-        Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
-
-        groupChatChannel.setLeaderUuid(leaderUuid);
-    }
-
-    public void setGroupChannelAlias(final @NotNull GroupChatChannel groupChatChannel, final @Nullable String alias) {
-        SocialGroupAliasChangeEvent socialGroupAliasChangeEvent = new SocialGroupAliasChangeEvent(groupChatChannel, alias);
-        Bukkit.getPluginManager().callEvent(socialGroupAliasChangeEvent);
-        
-        groupChatChannel.setAlias(socialGroupAliasChangeEvent.getAlias());
-    }
-
-    public boolean exists(final @NotNull String channelName) {
-        return getChannel(channelName) != null;
-    }
-
-    public boolean registerChatChannel(final @NotNull ChatChannel chatChannel) {
-        if (Social.get().getConfig().getSettings().isDebug())
-            Social.get().getLogger().info("Registered channel '" + chatChannel.getName() + "'");
-
-        return channels.add(chatChannel);
-    }
-
-    public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias) {
-        int code = (int) Math.floor(100000 + Math.random() * 900000);
-        GroupChatChannel chatChannel = new GroupChatChannel(leaderUuid, alias, code);
-        chatChannel.addMember(leaderUuid);
-
-        SocialGroupCreateEvent socialGroupCreateEvent = new SocialGroupCreateEvent(chatChannel);
-        Bukkit.getPluginManager().callEvent(socialGroupCreateEvent);
-        return registerChatChannel(chatChannel);
-    }
-
-    public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid) {
-        return registerGroupChatChannel(leaderUuid, null);
-    }
-
-    public boolean unregisterChatChannel(final @NotNull ChatChannel chatChannel) {
-        if (chatChannel instanceof GroupChatChannel) {
-            SocialGroupDisbandEvent socialGroupDisbandEvent = new SocialGroupDisbandEvent((GroupChatChannel) chatChannel);
-            Bukkit.getPluginManager().callEvent(socialGroupDisbandEvent);
-        }
-
-        if (Social.get().getConfig().getSettings().isDebug())
-            Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
-
-        return channels.remove(chatChannel);
-    }
-
-    public List<ChatChannel> getVisibleChannels(final @NotNull SocialPlayer socialPlayer) {
-        return channels.stream()
-            .filter(channel -> hasPermission(socialPlayer, channel))
-            .collect(Collectors.toList());
-    }
-
-    public void assignChannelsToPlayer(final @NotNull SocialPlayer socialPlayer) {
-        for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
-            if (channel.isJoinByDefault()) {
-                if (channel.getPermission() == null || socialPlayer.getPlayer().hasPermission(channel.getPermission()))
-                    channel.addMember(socialPlayer.getUuid());
-            }
-        }
-    }
-
-    public boolean hasGroup(final @NotNull UUID uuid) {
-        return getGroupChannelByPlayer(uuid) != null;
-    }
-
-    public boolean hasGroup(final @NotNull SocialPlayer socialPlayer) {
-        return hasGroup(socialPlayer.getUuid());
-    }
-
-    public boolean hasPermission(final @NotNull SocialPlayer socialPlayer,
-                              final @NotNull ChatChannel chatChannel) {
-
-        if (chatChannel.getPermission() == null)
-            return true;
-
-        if (socialPlayer.getPlayer().hasPermission(chatChannel.getPermission()))
-            return true;
-
-        return false;
-    }
 
     public SocialMessageContext sendChatMessage(final @NotNull SocialPlayer sender, @NotNull ChatChannel chatChannel, @NotNull String message, Integer replyId) {
         // Prepare and send MessagePrepare event
@@ -208,12 +82,12 @@ public final class ChatManager {
         int messageId = 0;
 
         // Apply reply text
-        if (socialChatMessagePrepareEvent.isReply() && Social.get().getChatManager().hasPermission(sender, socialChatMessagePrepareEvent.getChatChannel())) {
+        if (socialChatMessagePrepareEvent.isReply() && Social.get().getChannelManager().hasPermission(sender, socialChatMessagePrepareEvent.getChatChannel())) {
             SocialMessageContext reply = Social.get().getChatManager().getHistory().getById(replyId);
             if (reply.isReply())
                 replyId = reply.replyId();
 
-            if (!reply.chatChannel().equals(chatChannel) && Social.get().getChatManager().hasPermission(sender, reply.chatChannel()))
+            if (!reply.chatChannel().equals(chatChannel) && Social.get().getChannelManager().hasPermission(sender, reply.chatChannel()))
                 chatChannel = reply.chatChannel();
 
             context = SocialMessageContext.builder()
@@ -378,7 +252,7 @@ public final class ChatManager {
             .socialPlayer(socialPlayer)
             .playerChannel(channel)
             .message(message)
-            .messageChannelType(channel.getType())
+            //.messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parse(context);
@@ -393,7 +267,7 @@ public final class ChatManager {
             .socialPlayer(socialPlayer)
             .playerChannel(channel)
             .message(text(message))
-            .messageChannelType(channel.getType())
+            //.messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parsePlayerInput(context);

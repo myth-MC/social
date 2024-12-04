@@ -6,8 +6,8 @@ import lombok.Getter;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.announcements.SocialAnnouncement;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.announcements.Announcement;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.emojis.Emoji;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.text.filters.SocialFilterLiteral;
@@ -89,11 +89,11 @@ public final class SocialConfigProvider {
         });
 
         // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel)));
+        settings.getChat().getChannels().forEach(channel -> Social.get().getChannelManager().registerChatChannel(ChatChannel.fromConfigField(channel)));
 
         // Register announcements
         settings.getAnnouncements().getMessages().forEach(announcementField -> {
-            SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
+            Announcement announcement = Announcement.fromConfigField(announcementField);
             Social.get().getAnnouncementManager().registerAnnouncement(announcement);
         });
     }

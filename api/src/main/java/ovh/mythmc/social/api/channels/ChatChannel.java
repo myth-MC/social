@@ -1,10 +1,13 @@
-package ovh.mythmc.social.api.chat;
+package ovh.mythmc.social.api.channels;
 
 import lombok.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.social.api.channels.handlers.ChannelHandler;
+import ovh.mythmc.social.api.channels.handlers.ChannelHandlers;
 import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
@@ -23,7 +26,7 @@ public class ChatChannel {
 
     private final TextColor color;
 
-    private final ChannelType type;
+    private final ChannelHandler handler;
 
     private final String icon;
 
@@ -69,7 +72,7 @@ public class ChatChannel {
         return new ChatChannel(
                 channelField.name(),
                 TextColor.fromHexString(channelField.color()),
-                ChannelType.CHAT,
+                ChannelHandlers.getChatChannelHandler(),
                 channelField.icon(),
                 channelField.showHoverText(),
                 getHoverTextAsComponent(channelField.hoverText()),

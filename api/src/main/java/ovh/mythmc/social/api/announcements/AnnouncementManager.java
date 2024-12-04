@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChannelType;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 import java.util.*;
@@ -26,13 +26,13 @@ public final class AnnouncementManager {
 
     private boolean running = false;
 
-    private final List<SocialAnnouncement> announcements = new ArrayList<>();
+    private final List<Announcement> announcements = new ArrayList<>();
 
-    public boolean registerAnnouncement(final @NotNull SocialAnnouncement announcement) {
+    public boolean registerAnnouncement(final @NotNull Announcement announcement) {
         return announcements.add(announcement);
     }
 
-    public boolean unregisterAnnouncement(final @NotNull SocialAnnouncement announcement) {
+    public boolean unregisterAnnouncement(final @NotNull Announcement announcement) {
         return announcements.remove(announcement);
     }
 
@@ -43,7 +43,7 @@ public final class AnnouncementManager {
         asyncScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
-                SocialAnnouncement announcement = announcements.get(latest);
+                Announcement announcement = announcements.get(latest);
 
                 if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
                     Social.get().getPlayerManager().get().forEach(socialPlayer -> {
@@ -61,7 +61,7 @@ public final class AnnouncementManager {
                             SocialParserContext context = SocialParserContext.builder()
                                 .socialPlayer(Social.get().getPlayerManager().get(uuid))
                                 .message(announcement.message())
-                                .messageChannelType(channel.getType())
+                                .playerChannel(channel)
                                 .build();
 
                             Social.get().getTextProcessor().parseAndSend(context);

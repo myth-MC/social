@@ -11,8 +11,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChannelType;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 

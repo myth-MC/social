@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import lombok.Setter;
 

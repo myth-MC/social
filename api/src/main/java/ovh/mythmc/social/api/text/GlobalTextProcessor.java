@@ -11,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChannelType;
+import ovh.mythmc.social.api.channels.ChatChannel;
+import ovh.mythmc.social.api.channels.handlers.ChannelHandler;
+import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
@@ -144,7 +146,6 @@ public final class GlobalTextProcessor {
             .socialPlayer(socialPlayer)
             .playerChannel(channel)
             .message(message)
-            .messageChannelType(channelType)
             .build()
         );
     }
@@ -162,7 +163,7 @@ public final class GlobalTextProcessor {
     }
 
     public void parseAndSend(SocialParserContext context) {
-        send(List.of(context.socialPlayer()), parse(context), context.messageChannelType());
+        send(List.of(context.socialPlayer()), parse(context), context.playerChannel().getHandler());
     }
 
     public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, Component message, ChannelType channelType) {
@@ -170,7 +171,6 @@ public final class GlobalTextProcessor {
             .socialPlayer(socialPlayer)
             .playerChannel(chatChannel)
             .message(message)
-            .messageChannelType(channelType)
             .build();
 
         parseAndSend(context);
@@ -213,17 +213,29 @@ public final class GlobalTextProcessor {
         SocialAdventureProvider.get().sender(commandSender).sendMessage(message);
     }
 
+    /*
+    public void send(final @NotNull SocialParserContext context) {
+        SocialMessageContext message = SocialMessageContext.builder()
+            .sender(context.socialPlayer())
+            .chatChannel(context.playerChannel())
+            .
+        context.playerChannel().getHandler().send(context);
+    } */
+
+    /*
     public void send(final @NotNull SocialPlayer recipient,
                      @NotNull Component message,
-                     final @NotNull ChannelType type) {
-        send(List.of(recipient), message, type);
-    }
+                     final @NotNull ChannelHandler handler) {
+        send(List.of(recipient), message, handler);
+    } */
 
+    /*
     public void send(final @NotNull Collection<SocialPlayer> members,
                      @NotNull Component message,
-                     final @NotNull ChannelType type) {
+                     final @NotNull ChannelHandler handler) {
 
-        members.forEach(socialPlayer -> SocialAdventureProvider.get().sendMessage(socialPlayer, message, type));
-    }
+        members.forEach(member -> handler.s);
+        members.forEach(socialPlayer -> SocialAdventureProvider.get().sendMessage(socialPlayer, message, handler));
+    } */
 
 }

@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;

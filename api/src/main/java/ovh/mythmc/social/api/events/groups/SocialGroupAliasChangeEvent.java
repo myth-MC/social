@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
 
 @Getter
 @Setter

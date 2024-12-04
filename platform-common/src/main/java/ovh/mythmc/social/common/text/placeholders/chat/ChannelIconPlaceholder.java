@@ -1,7 +1,7 @@
 package ovh.mythmc.social.common.text.placeholders.chat;
 
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 

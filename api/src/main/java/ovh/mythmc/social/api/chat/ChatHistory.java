@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 

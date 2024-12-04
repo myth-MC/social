@@ -1,4 +1,4 @@
-package ovh.mythmc.social.api.chat;
+package ovh.mythmc.social.api.channels;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.channels.handlers.ChannelHandlers;
 import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
 
@@ -28,7 +29,7 @@ public class GroupChatChannel extends ChatChannel {
         super(
                 "G-" + code,
                 TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getColor()),
-                ChannelType.CHAT,
+                ChannelHandlers.getChatChannelHandler(),
                 Social.get().getConfig().getSettings().getChat().getGroups().getIcon(),
                 Social.get().getConfig().getSettings().getChat().getGroups().isShowHoverText(),
                 getHoverTextAsComponent(Social.get().getConfig().getSettings().getChat().getGroups().getHoverText()),

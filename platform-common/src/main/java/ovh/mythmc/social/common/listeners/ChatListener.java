@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.players.SocialPlayer;

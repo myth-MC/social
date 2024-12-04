@@ -5,7 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.channels.ChannelType;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 public final class MOTDListener implements Listener {

@@ -10,7 +10,7 @@ import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.common.listeners.ChatListener;
 
 @Feature(group = "social", identifier = "CHAT")

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.commands.SubCommand;

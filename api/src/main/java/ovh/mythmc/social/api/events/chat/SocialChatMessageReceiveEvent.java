@@ -5,7 +5,8 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.chat.ChatChannel;
+
+import ovh.mythmc.social.api.channels.ChatChannel;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter

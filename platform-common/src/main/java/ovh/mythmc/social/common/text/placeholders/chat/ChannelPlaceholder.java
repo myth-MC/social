@@ -2,8 +2,8 @@ package ovh.mythmc.social.common.text.placeholders.chat;
 
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.channels.ChatChannel;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 public final class ChannelPlaceholder extends SocialContextualPlaceholder {

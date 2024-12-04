@@ -6,9 +6,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.channels.ChannelType;
+import ovh.mythmc.social.api.channels.ChatChannel;
+import ovh.mythmc.social.api.channels.GroupChatChannel;
 import ovh.mythmc.social.api.events.groups.*;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
