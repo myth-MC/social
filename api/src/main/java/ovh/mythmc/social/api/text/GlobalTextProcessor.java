@@ -92,6 +92,12 @@ public final class GlobalTextProcessor {
             unregisterParser(placeholder);
     }
 
+    public void unregisterAllParsers() {
+        EARLY_PARSERS.removeAll();
+        parsers.clear();
+        LATE_PARSERS.removeAll();
+    }
+
     public List<SocialParser> getParsers() {
         List<SocialParser> parserList = new ArrayList<>();
         parserList.addAll(EARLY_PARSERS.get());
