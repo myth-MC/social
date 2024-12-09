@@ -213,21 +213,18 @@ public final class GlobalTextProcessor {
     }
 
     @ApiStatus.Experimental
-    public void sendToConsole(final @NotNull CommandSender commandSender,
-                              @NotNull Component message) {
+    public void sendToConsole(final @NotNull CommandSender commandSender, @NotNull Component message) {
         // Todo: parse?
         SocialAdventureProvider.get().sender(commandSender).sendMessage(message);
     }
 
-    public void send(final @NotNull SocialPlayer recipient,
-                     @NotNull Component message,
-                     final @NotNull ChannelType type) {
+    public void send(final @NotNull SocialPlayer recipient, @NotNull Component message, final @NotNull ChannelType type) {
         send(List.of(recipient), message, type);
     }
 
-    public void send(final @NotNull Collection<SocialPlayer> members,
-                     @NotNull Component message,
-                     final @NotNull ChannelType type) {
+    public void send(final @NotNull Collection<SocialPlayer> members, @NotNull Component message, final @NotNull ChannelType type) {
+        if (message == null || message.equals(Component.empty()))
+            return;
 
         members.forEach(socialPlayer -> SocialAdventureProvider.get().sendMessage(socialPlayer, message, type));
     }
