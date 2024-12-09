@@ -10,9 +10,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.common.util.PluginUtil;
@@ -166,7 +168,13 @@ public final class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
-        Social.get().getTextProcessor().parseAndSend(event.getSocialPlayer(), event.getChatChannel(), Social.get().getConfig().getMessages().getCommands().getChannelChanged(), Social.get().getConfig().getMessages().getChannelType());
+        SocialParserContext context = SocialParserContext.builder()
+            .socialPlayer(event.getSocialPlayer())
+            .playerChannel(event.getChatChannel())
+            .message(Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
+            .build();
+
+        Social.get().getTextProcessor().parseAndSend(context);
     }
 
     private Integer tryParse(String text) {

@@ -70,8 +70,8 @@ public abstract class SocialBootstrap<T> implements Social {
     public final void reload() {
         Gestalt.get().disableFeature(BootstrapFeature.class);
 
-        // Clear parsers
-        Social.get().getTextProcessor().getParsers().clear();
+        // Unregister all parsers
+        Social.get().getTextProcessor().unregisterAllParsers();
 
         // Reload settings.yml and messages.yml
         getConfig().load();

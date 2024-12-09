@@ -30,7 +30,8 @@ public class SocialParserContext implements SocialContext {
 
     private final Component message;
 
-    private final ChannelType messageChannelType;
+    @Builder.Default
+    private final ChannelType messageChannelType = ChannelType.CHAT;
 
     @Builder.Default private final List<Class<?>> appliedParsers = new ArrayList<>();
 
