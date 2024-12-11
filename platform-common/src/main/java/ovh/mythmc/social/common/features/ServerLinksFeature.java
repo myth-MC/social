@@ -5,6 +5,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionVersion;
@@ -19,7 +20,7 @@ public final class ServerLinksFeature {
 
     private final JavaPlugin plugin;
 
-    private final ServerLinksListener serverLinksListener = new ServerLinksListener();
+    private ServerLinksListener serverLinksListener;
 
     public ServerLinksFeature(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -28,11 +29,13 @@ public final class ServerLinksFeature {
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
         return Social.get().getConfig().getSettings().getPackets().isEnabled() &&
-                Social.get().getConfig().getSettings().getPackets().getServerLinks().isEnabled();
+                Social.get().getConfig().getSettings().getPackets().getServerLinks().isEnabled() &&
+                Gestalt.get().isEnabled(PacketsFeature.class);
     }
 
     @FeatureEnable
     public void enable() {
+        this.serverLinksListener = new ServerLinksListener();
         Bukkit.getPluginManager().registerEvents(serverLinksListener, plugin);
     }
 

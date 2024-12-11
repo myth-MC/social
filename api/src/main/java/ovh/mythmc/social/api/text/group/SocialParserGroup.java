@@ -31,6 +31,10 @@ public class SocialParserGroup implements SocialContextualParser {
         Arrays.stream(parsers).forEach(content::remove);
     }
 
+    public void removeAll() {
+        get().forEach(content::remove);
+    }
+
     @Experimental
     public Component requestToGroup(@NotNull SocialContextualParser requester, @NotNull SocialParserContext context) {
         return request(context, content.stream().filter(parser -> !parser.getClass().equals(requester.getClass())).toList());

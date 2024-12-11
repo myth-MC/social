@@ -4,7 +4,7 @@ version: '${project.version}'
 api-version: 1.19
 
 main: ovh.mythmc.social.bukkit.SocialBukkitPlugin
-softdepend: [ PlaceholderAPI, DiscordSRV, gestalt ]
+softdepend: [ PlaceholderAPI, DiscordSRV, packetevents, gestalt ]
 
 libraries:
   - net.kyori:adventure-api:4.12.0
