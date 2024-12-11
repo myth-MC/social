@@ -25,9 +25,8 @@ public final class SocialPlayerListener implements Listener {
         UUID uuid = event.getPlayer().getUniqueId();
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
 
-        if (socialPlayer == null) {
+        if (socialPlayer == null)
             Social.get().getPlayerManager().registerSocialPlayer(uuid);
-        }
     }
 
     @EventHandler
@@ -39,6 +38,7 @@ public final class SocialPlayerListener implements Listener {
         if (container.has(key, PersistentDataType.STRING)) {
             String nickname = container.get(key, PersistentDataType.STRING);
             socialPlayer.getPlayer().setDisplayName(nickname);
+            socialPlayer.getNickname(); // Updates cached nickname
         }
     }
 

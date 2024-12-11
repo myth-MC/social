@@ -26,6 +26,7 @@ public final class SocialPlayer {
 
     private long latestMessageInMilliseconds = 0L;
 
+    @Getter(AccessLevel.PRIVATE)
     private String cachedNickname = null;
 
     public Player getPlayer() {
