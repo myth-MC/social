@@ -1,7 +1,6 @@
 package ovh.mythmc.social.common.features;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 
 import org.bukkit.Bukkit;
@@ -13,7 +12,6 @@ import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
-import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 import ovh.mythmc.gestalt.annotations.status.FeatureShutdown;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.listeners.PacketsListener;
@@ -23,7 +21,7 @@ public final class PacketsFeature {
 
     private final JavaPlugin plugin;
 
-    private final PacketsListener packetsListener = new PacketsListener();
+    private PacketsListener packetsListener;
 
     public PacketsFeature(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -31,29 +29,21 @@ public final class PacketsFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return isSupported() && Social.get().getConfig().getSettings().getPackets().isEnabled();
+        return isSupported() && Bukkit.getPluginManager().isPluginEnabled("PacketEvents") && Social.get().getConfig().getSettings().getPackets().isEnabled();
     }
 
-    @FeatureInitialize
-    public void initialize() {
-        if(!isSupported())
-            return;
+    @FeatureEnable
+    public void enable() {        
+        this.packetsListener = new PacketsListener();
 
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
-
-        // Disable update checker
-        PacketEventsSettings settings = PacketEvents.getAPI().getSettings();
-        settings.checkForUpdates(false);
 
         // Load PacketEvents API
         PacketEvents.getAPI().load();
 
         // Initialize PacketEvents API
         PacketEvents.getAPI().init();
-    }
 
-    @FeatureEnable
-    public void enable() {
         Bukkit.getPluginManager().registerEvents(packetsListener, plugin);
     }
 
