@@ -29,7 +29,7 @@ public final class SocialPlayerListener implements Listener {
             Social.get().getPlayerManager().registerSocialPlayer(uuid);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
 
