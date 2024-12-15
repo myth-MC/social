@@ -10,7 +10,6 @@ import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
-import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.hooks.DiscordSRVDeathListener;
 import ovh.mythmc.social.common.hooks.DiscordSRVHook;
@@ -30,14 +29,11 @@ public final class DiscordSRVFeature {
         return Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
     }
 
-    @FeatureInitialize
-    public void initialize() {
-        this.hook = new DiscordSRVHook(plugin);
-        this.deathListener = new DiscordSRVDeathListener();
-    }
-
     @FeatureEnable
     public void enable() {
+        this.hook = new DiscordSRVHook(plugin);
+        this.deathListener = new DiscordSRVDeathListener();
+
         // Register hook and subscribe to API events
         DiscordSRV.getPlugin().getPluginHooks().add(hook);
         DiscordSRV.api.subscribe(hook);
