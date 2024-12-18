@@ -4,7 +4,7 @@ import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.UUID;
 
@@ -119,9 +119,9 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
     @Override
     public Component parse(SocialParserContext context) {
-        String serialized = MiniMessage.miniMessage().serialize(context.message());
+        String serialized = LegacyComponentSerializer.legacySection().serialize(context.message());
         String parsedMessage = PlaceholderAPI.setPlaceholders(context.socialPlayer().getPlayer(), serialized);
-        return MiniMessage.miniMessage().deserialize(parsedMessage);
+        return LegacyComponentSerializer.legacySection().deserialize(parsedMessage);
     }
 
     private Integer tryParse(String text) {
