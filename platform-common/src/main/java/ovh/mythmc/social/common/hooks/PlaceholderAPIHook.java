@@ -119,9 +119,9 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
     @Override
     public Component parse(SocialParserContext context) {
-        String serialized = LegacyComponentSerializer.legacySection().serialize(context.message());
+        String serialized = LegacyComponentSerializer.legacyAmpersand().serialize(context.message());
         String parsedMessage = PlaceholderAPI.setPlaceholders(context.socialPlayer().getPlayer(), serialized);
-        return LegacyComponentSerializer.legacySection().deserialize(parsedMessage);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(parsedMessage);
     }
 
     private Integer tryParse(String text) {
