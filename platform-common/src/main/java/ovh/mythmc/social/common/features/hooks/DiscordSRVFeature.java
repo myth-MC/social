@@ -15,7 +15,7 @@ import ovh.mythmc.social.common.hooks.DiscordSRVDeathListener;
 import ovh.mythmc.social.common.hooks.DiscordSRVHook;
 
 @RequiredArgsConstructor
-@Feature(group = "social", identifier = "ADDON")
+@Feature(group = "social", identifier = "HOOKS")
 public final class DiscordSRVFeature {
 
     private final JavaPlugin plugin;
@@ -34,12 +34,12 @@ public final class DiscordSRVFeature {
         this.hook = new DiscordSRVHook(plugin);
         this.deathListener = new DiscordSRVDeathListener();
 
+        // Register Bukkit listeners
+        Bukkit.getPluginManager().registerEvents(hook, plugin);
+
         // Register hook and subscribe to API events
         DiscordSRV.getPlugin().getPluginHooks().add(hook);
         DiscordSRV.api.subscribe(hook);
-
-        // Register Bukkit listeners
-        Bukkit.getPluginManager().registerEvents(hook, plugin);
 
         // Register death listener if custom system messages are enabled
         if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
@@ -53,6 +53,11 @@ public final class DiscordSRVFeature {
     public void disable() {
         // Unregister Bukkit listeners
         HandlerList.unregisterAll(deathListener);
+        HandlerList.unregisterAll(hook);
+
+        // Unregister hook and unsuscribe from API events
+        DiscordSRV.getPlugin().getPluginHooks().remove(hook);
+        DiscordSRV.api.unsubscribe(hook);
     }
     
 }
