@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.chat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -25,6 +26,7 @@ import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.players.SocialPlayer;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -272,39 +274,45 @@ public final class ChatManager {
         if (replyId != null)
             idToReply = Integer.min(messageId, replyId);
 
-        Component chatMessage =
-                text("")
-                        .append(parse(sender, chatChannel, chatChannel.getIcon() + " ")
-                                .hoverEvent(HoverEvent.showText(channelHoverText))
-                                .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
-                        )
-                        .append(trim(nickname))
-                        .append(textDivider)
-                        .append(filteredMessage
-                                .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") ")))
-                        )
-                        .color(chatChannel.getTextColor());
+        Component messagePrefix = Component.empty()
+            .append(parse(sender, chatChannel, chatChannel.getIcon() + " ")
+                    .hoverEvent(HoverEvent.showText(channelHoverText))
+                    .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
+            )
+            .append(trim(nickname))
+            .append(textDivider);
+
+        Component chatMessage = Component.empty()
+            .append(filteredMessage
+                    .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") ")))
+            )
+            .colorIfAbsent(chatChannel.getTextColor());
 
         // Add channel members
         players.addAll(chatChannel.getMembers());
 
         // Call SocialChatMessageReceiveEvent for each channel member
-        Map<SocialPlayer, Component> playerMap = new HashMap<>();
         for (UUID uuid : players) {
-            SocialPlayer member = Social.get().getPlayerManager().get(uuid);
-
-            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, member, chatChannel, chatMessage, message, replyId, messageId);
-            Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
-            if (!socialChatMessageReceiveEvent.isCancelled())
-                playerMap.put(member, socialChatMessageReceiveEvent.getMessage());
-        }
-
-        for (Map.Entry<SocialPlayer, Component> entry : playerMap.entrySet()) {
-            Social.get().getTextProcessor().send(entry.getKey(), entry.getValue(), chatChannel.getType());
+            SocialPlayer recipient = Social.get().getPlayerManager().get(uuid);
+            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, recipient, chatChannel, chatMessage, message, replyId, messageId);
+            receiveAsync(recipient, messagePrefix, socialChatMessageReceiveEvent);
         }
 
         Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
         return context;
+    }
+
+    private void receiveAsync(@NonNull SocialPlayer recipient, @NonNull Component messagePrefix, @NonNull SocialChatMessageReceiveEvent event) {
+        CompletableFuture.supplyAsync(() -> {
+            Bukkit.getPluginManager().callEvent(event);
+            
+            return event;
+        }).thenAccept(receivedMessage -> {
+            if (receivedMessage.isCancelled())
+                return;
+
+            Social.get().getTextProcessor().send(receivedMessage.getRecipient(), messagePrefix.append(receivedMessage.getMessage()), receivedMessage.getChatChannel().getType());
+        });
     }
 
     public void sendPrivateMessage(final @NotNull SocialPlayer sender,
