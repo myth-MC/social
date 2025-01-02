@@ -5,7 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.SubCommand;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class NicknameSubcommand implements SubCommand {
                 return;
             }
 
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
             if (socialPlayer == null)
                 return;
 

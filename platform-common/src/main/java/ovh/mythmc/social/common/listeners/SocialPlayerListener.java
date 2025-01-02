@@ -11,7 +11,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.UUID;
 
@@ -23,7 +23,7 @@ public final class SocialPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
 
         if (socialPlayer == null)
             Social.get().getPlayerManager().registerSocialPlayer(uuid);
@@ -31,7 +31,7 @@ public final class SocialPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
 
         // Temporary workaround for nicknames
         PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();

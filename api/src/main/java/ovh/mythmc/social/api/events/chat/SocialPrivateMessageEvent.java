@@ -2,19 +2,20 @@ package ovh.mythmc.social.api.events.chat;
 
 import lombok.Getter;
 import lombok.Setter;
+import ovh.mythmc.social.api.users.SocialUser;
+
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.players.SocialPlayer;
 
 @Getter
 @Setter
 public class SocialPrivateMessageEvent extends Event implements Cancellable {
 
-    private final SocialPlayer sender;
+    private final SocialUser sender;
 
-    private final SocialPlayer recipient;
+    private final SocialUser recipient;
 
     private String message;
 
@@ -22,7 +23,7 @@ public class SocialPrivateMessageEvent extends Event implements Cancellable {
 
     private boolean cancelled = false;
 
-    public SocialPrivateMessageEvent(SocialPlayer sender, SocialPlayer recipient, String message) {
+    public SocialPrivateMessageEvent(SocialUser sender, SocialUser recipient, String message) {
         this.sender = sender;
         this.recipient = recipient;
         this.message = message;

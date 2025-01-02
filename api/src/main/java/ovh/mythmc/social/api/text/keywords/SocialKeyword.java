@@ -4,8 +4,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.regex.Pattern;
 
@@ -17,11 +17,11 @@ public abstract class SocialKeyword implements SocialPlayerInputParser {
 
     public abstract String keyword();
 
-    public abstract String process(SocialPlayer socialPlayer);
+    public abstract String process(SocialUser socialPlayer);
 
     @Override
     public Component parse(SocialParserContext context) {
-        String processedString = process(context.socialPlayer());
+        String processedString = process(context.user());
         if (processedString == null || processedString.isEmpty())
             return context.message();
             

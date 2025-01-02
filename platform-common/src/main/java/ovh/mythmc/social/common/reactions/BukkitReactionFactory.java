@@ -15,9 +15,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -40,7 +40,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
     }
 
     @Override
-    public void displayReaction(SocialPlayer player, Reaction emoji) {
+    public void displayReaction(SocialUser player, Reaction emoji) {
         if (player.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getPlayer().getGameMode() == GameMode.SPECTATOR) {
             return;
         }

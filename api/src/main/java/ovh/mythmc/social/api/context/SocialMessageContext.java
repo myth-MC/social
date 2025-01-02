@@ -12,7 +12,7 @@ import lombok.With;
 import lombok.experimental.Accessors;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Data
 @Builder
@@ -26,7 +26,7 @@ public class SocialMessageContext implements SocialContext {
 
     private final Date date;
 
-    private final SocialPlayer sender;
+    private final SocialUser sender;
 
     private final ChatChannel chatChannel;
 

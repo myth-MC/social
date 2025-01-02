@@ -1,7 +1,8 @@
 package ovh.mythmc.social.api.reactions;
 
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.players.SocialPlayer;
+
+import ovh.mythmc.social.api.users.SocialUser;
 
 public abstract class ReactionFactory {
 
@@ -13,6 +14,6 @@ public abstract class ReactionFactory {
 
     public static @NotNull ReactionFactory get() { return reactionFactory; }
 
-    public abstract void displayReaction(SocialPlayer player, Reaction emoji);
+    public abstract void displayReaction(SocialUser player, Reaction emoji);
 
 }

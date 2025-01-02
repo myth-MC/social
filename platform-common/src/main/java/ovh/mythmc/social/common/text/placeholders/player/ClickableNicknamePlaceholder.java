@@ -2,8 +2,8 @@ package ovh.mythmc.social.common.text.placeholders.player;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -23,7 +23,7 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
 
     @Override
     public Component get(SocialParserContext context) {
-        SocialPlayer player = context.socialPlayer();
+        SocialUser player = context.user();
 
         String hoverTextAsString = Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText();
         if (!player.getNickname().equals(player.getPlayer().getName())) {
@@ -32,8 +32,8 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
 
         // Todo: temporary workaround
         String commandAsString = Social.get().getConfig().getSettings().getChat().getClickableNicknameCommand();
-        commandAsString = commandAsString.replace("$username", context.socialPlayer().getPlayer().getName());
-        commandAsString = commandAsString.replace("$(username)", context.socialPlayer().getPlayer().getName());
+        commandAsString = commandAsString.replace("$username", context.user().getPlayer().getName());
+        commandAsString = commandAsString.replace("$(username)", context.user().getPlayer().getName());
 
         Component hoverText = request(context.withMessage(Component.text(hoverTextAsString)),
             NicknamePlaceholder.class,

@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.emojis.EmojiManager;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.ReactionManager;
 import ovh.mythmc.social.api.text.GlobalTextProcessor;
-import ovh.mythmc.social.api.players.SocialPlayerManager;
+import ovh.mythmc.social.api.users.SocialUserManager;
 
 public interface Social {
 
@@ -27,7 +27,7 @@ public interface Social {
 
     @NotNull default AnnouncementManager getAnnouncementManager() { return AnnouncementManager.instance; }
 
-    @NotNull default SocialPlayerManager getPlayerManager() { return SocialPlayerManager.instance; }
+    @NotNull default SocialUserManager getPlayerManager() { return SocialUserManager.instance; }
 
     @NotNull default ChatManager getChatManager() { return ChatManager.instance; }
 

@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ import java.util.Objects;
 @Setter
 public class SocialChatMessagePrepareEvent extends Event implements Cancellable {
 
-    private final SocialPlayer sender;
+    private final SocialUser sender;
 
     private ChatChannel chatChannel;
 
@@ -28,7 +28,7 @@ public class SocialChatMessagePrepareEvent extends Event implements Cancellable 
 
     private boolean cancelled = false;
 
-    public SocialChatMessagePrepareEvent(SocialPlayer sender, ChatChannel chatChannel, String message, Integer replyId) {
+    public SocialChatMessagePrepareEvent(SocialUser sender, ChatChannel chatChannel, String message, Integer replyId) {
         super(true);
         this.sender = sender;
         this.chatChannel = chatChannel;

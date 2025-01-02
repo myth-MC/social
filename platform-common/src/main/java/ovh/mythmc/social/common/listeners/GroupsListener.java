@@ -10,7 +10,7 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.events.groups.*;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 public final class GroupsListener implements Listener {
 
@@ -21,7 +21,7 @@ public final class GroupsListener implements Listener {
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
             if (uuid.equals(event.getPlayer().getUuid())) return;
 
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null) return;
 
             Social.get().getTextProcessor().send(socialPlayer, joinMessage, Social.get().getConfig().getMessages().getChannelType());
@@ -35,7 +35,7 @@ public final class GroupsListener implements Listener {
         Component leftMessage = Social.get().getTextProcessor().parse(event.getPlayer(), event.getPlayer().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
 
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null) return;
 
             Social.get().getTextProcessor().send(socialPlayer, leftMessage, Social.get().getConfig().getMessages().getChannelType());
@@ -44,7 +44,7 @@ public final class GroupsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupCreate(SocialGroupCreateEvent event) {
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getGroupChatChannel().getLeaderUuid());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getGroupChatChannel().getLeaderUuid());
         if (socialPlayer == null) return;
 
         Social.get().getPlayerManager().setMainChannel(socialPlayer, event.getGroupChatChannel());
@@ -53,7 +53,7 @@ public final class GroupsListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupDisband(SocialGroupDisbandEvent event) {
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null) return;
 
             Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
@@ -67,7 +67,7 @@ public final class GroupsListener implements Listener {
         Component leaderChangeMessage = Social.get().getTextProcessor().parse(event.getLeader(), event.getLeader().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
 
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null) return;
 
             Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), leaderChangeMessage, ChannelType.CHAT);
@@ -76,7 +76,7 @@ public final class GroupsListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)
             return;
 
@@ -96,7 +96,7 @@ public final class GroupsListener implements Listener {
         }
     }
 
-    private void setDefaultChannel(SocialPlayer socialPlayer) {
+    private void setDefaultChannel(SocialUser socialPlayer) {
         ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
         if (defaultChannel == null) return;
 

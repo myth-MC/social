@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.SubCommand;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class SocialSpySubcommand implements SubCommand {
 
     @Override
     public void accept(CommandSender commandSender, String[] args) {
-        SocialPlayer socialPlayer = null;
+        SocialUser socialPlayer = null;
         if (commandSender instanceof Player player)
             socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
 

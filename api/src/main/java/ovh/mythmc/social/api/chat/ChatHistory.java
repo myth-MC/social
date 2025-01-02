@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.social.api.context.SocialMessageContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public final class ChatHistory {
                 .toList();
     }
 
-    public List<SocialMessageContext> getByPlayer(final @NotNull SocialPlayer socialPlayer) {
+    public List<SocialMessageContext> getByPlayer(final @NotNull SocialUser socialPlayer) {
         return messages.values().stream()
                 .filter(message -> message.sender().equals(socialPlayer))
                 .toList();

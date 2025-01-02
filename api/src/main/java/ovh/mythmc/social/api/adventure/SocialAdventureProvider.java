@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 public abstract class SocialAdventureProvider {
 
@@ -22,7 +22,7 @@ public abstract class SocialAdventureProvider {
                                      final @NotNull ComponentLike message,
                                      final @NotNull ChannelType type);
 
-    public void sendMessage(final @NotNull SocialPlayer socialPlayer,
+    public void sendMessage(final @NotNull SocialUser socialPlayer,
                             final @NotNull ComponentLike message,
                             final @NotNull ChannelType type) {
         sendMessage(socialPlayer.getPlayer(), message, type);

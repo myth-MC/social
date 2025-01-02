@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Getter
 @Setter
@@ -19,7 +19,7 @@ public class SocialChatMessageSendEvent extends SocialChatMessagePrepareEvent {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
-    public SocialChatMessageSendEvent(SocialPlayer sender, ChatChannel chatChannel, String message, Integer replyId) {
+    public SocialChatMessageSendEvent(SocialUser sender, ChatChannel chatChannel, String message, Integer replyId) {
         super(sender, chatChannel, message, replyId);
     }
 

@@ -12,7 +12,7 @@ public abstract class SocialFilterRegex implements SocialFilterLike {
 
     @Override
     public Component parse(SocialParserContext context) {
-        if (context.socialPlayer().getPlayer().hasPermission("social.filter.bypass"))
+        if (context.user().getPlayer() != null && context.user().getPlayer().hasPermission("social.filter.bypass"))
             return context.message();
 
         return context.message().replaceText(TextReplacementConfig

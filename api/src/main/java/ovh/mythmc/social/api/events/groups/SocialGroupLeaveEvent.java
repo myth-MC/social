@@ -7,7 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ public class SocialGroupLeaveEvent extends Event {
 
     private final GroupChatChannel groupChatChannel;
 
-    private final SocialPlayer player;
+    private final SocialUser player;
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 

@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.SubCommand;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class GroupJoinSubcommand implements SubCommand {
             return;
         }
 
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
 
         if (Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer) != null) {
             Social.get().getTextProcessor().parseAndSend(commandSender, Social.get().getConfig().getMessages().getErrors().getAlreadyBelongsToAGroup(), Social.get().getConfig().getMessages().getChannelType());

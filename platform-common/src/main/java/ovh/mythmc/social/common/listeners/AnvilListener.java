@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -18,7 +18,7 @@ public final class AnvilListener implements Listener {
 
     @EventHandler
     public void onItemRename(PrepareAnvilEvent event) {
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getInventory().getViewers().get(0).getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getInventory().getViewers().get(0).getUniqueId());
         if (socialPlayer == null)
             return;
 
@@ -29,8 +29,8 @@ public final class AnvilListener implements Listener {
 
         String parsedName = PlainTextComponentSerializer.plainText().serialize(
             Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
-                .socialPlayer(socialPlayer)
-                .playerChannel(socialPlayer.getMainChannel())
+                .user(socialPlayer)
+                .channel(socialPlayer.getMainChannel())
                 .message(text(name))
                 .build())
         );

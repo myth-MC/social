@@ -8,14 +8,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 public class SocialChannelPreSwitchEvent extends Event implements Cancellable {
 
-    private final SocialPlayer socialPlayer;
+    private final SocialUser socialPlayer;
 
     private final ChatChannel previousChannel;
 

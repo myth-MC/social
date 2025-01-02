@@ -6,7 +6,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class ChatChannel {
         return true;
     }
 
-    public boolean addMember(SocialPlayer socialPlayer) {
+    public boolean addMember(SocialUser socialPlayer) {
         return addMember(socialPlayer.getUuid());
     }
 
@@ -61,7 +61,7 @@ public class ChatChannel {
         return members.remove(uuid);
     }
 
-    public boolean removeMember(SocialPlayer socialPlayer) {
+    public boolean removeMember(SocialUser socialPlayer) {
         return removeMember(socialPlayer.getUuid());
     }
 

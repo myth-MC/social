@@ -1,4 +1,4 @@
-package ovh.mythmc.social.api.players;
+package ovh.mythmc.social.api.users;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -14,17 +14,17 @@ import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SocialPlayerManager {
+public final class SocialUserManager {
 
-    public static final SocialPlayerManager instance = new SocialPlayerManager();
-    private static final List<SocialPlayer> playerList = new ArrayList<>();
+    public static final SocialUserManager instance = new SocialUserManager();
+    private static final List<SocialUser> playerList = new ArrayList<>();
 
-    public @NotNull List<SocialPlayer> get() {
+    public @NotNull List<SocialUser> get() {
         return List.copyOf(playerList);
     }
 
-    public SocialPlayer get(final @NotNull UUID uuid) {
-        for (SocialPlayer player : playerList) {
+    public SocialUser get(final @NotNull UUID uuid) {
+        for (SocialUser player : playerList) {
             if (player.getUuid().equals(uuid))
                 return player;
         }
@@ -32,7 +32,7 @@ public final class SocialPlayerManager {
         return null;
     }
 
-    public void registerSocialPlayer(final @NotNull SocialPlayer socialPlayer) {
+    public void registerSocialPlayer(final @NotNull SocialUser socialPlayer) {
         playerList.add(socialPlayer);
     }
 
@@ -41,7 +41,7 @@ public final class SocialPlayerManager {
         String defaultChatChannelName = Social.get().getConfig().getSettings().getChat().getDefaultChannel();
         ChatChannel defaultChatChannel = Social.get().getChatManager().getChannel(defaultChatChannelName);
 
-        SocialPlayer socialPlayer = new SocialPlayer(uuid);
+        SocialUser socialPlayer = new SocialUser(uuid);
         socialPlayer.setMuted(false);
         socialPlayer.setSocialSpy(false);
 
@@ -57,11 +57,11 @@ public final class SocialPlayerManager {
         registerSocialPlayer(socialPlayer);
     }
 
-    public void unregisterSocialPlayer(final @NotNull SocialPlayer socialPlayer) {
+    public void unregisterSocialPlayer(final @NotNull SocialUser socialPlayer) {
         playerList.remove(socialPlayer);
     }
 
-    public void setMainChannel(final @NotNull SocialPlayer socialPlayer,
+    public void setMainChannel(final @NotNull SocialUser socialPlayer,
                                final @NotNull ChatChannel chatChannel) {
 
         ChatChannel previousChannel = socialPlayer.getMainChannel();
@@ -77,13 +77,13 @@ public final class SocialPlayerManager {
         Bukkit.getPluginManager().callEvent(socialChannelPostSwitchEvent);
     }
 
-    public void setLatestMessage(final @NotNull SocialPlayer socialPlayer,
+    public void setLatestMessage(final @NotNull SocialUser socialPlayer,
                                  final long latestMessageInMilliseconds) {
 
         socialPlayer.setLatestMessageInMilliseconds(latestMessageInMilliseconds);
     }
 
-    public void setSocialSpy(final @NotNull SocialPlayer socialPlayer,
+    public void setSocialSpy(final @NotNull SocialUser socialPlayer,
                              final boolean socialSpy) {
 
         socialPlayer.setSocialSpy(socialSpy);

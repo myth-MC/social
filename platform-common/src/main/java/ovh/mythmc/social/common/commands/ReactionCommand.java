@@ -10,8 +10,8 @@ import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.features.ReactionsFeature;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public abstract class ReactionCommand {
             return;
         }
 
-        SocialPlayer socialPlayer = null;
+        SocialUser socialPlayer = null;
         if (commandSender instanceof Player player)
             socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
 

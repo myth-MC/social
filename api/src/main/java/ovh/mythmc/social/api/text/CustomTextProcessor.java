@@ -80,7 +80,7 @@ public class CustomTextProcessor {
             if (parser instanceof SocialContextualParser contextualParser) {
                 context = context.withMessage(contextualParser.parse(context));
             } else {
-                context = context.withMessage(parser.parse(context.socialPlayer(), context.message()));
+                context = context.withMessage(parser.parse(context.user(), context.message()));
             }
         }
 

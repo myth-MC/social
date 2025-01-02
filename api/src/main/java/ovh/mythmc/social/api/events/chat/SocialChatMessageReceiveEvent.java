@@ -6,13 +6,13 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Getter
 @Setter
 public class SocialChatMessageReceiveEvent extends SocialChatMessagePrepareEvent {
 
-    private final SocialPlayer recipient;
+    private final SocialUser recipient;
 
     private Component message;
 
@@ -22,7 +22,7 @@ public class SocialChatMessageReceiveEvent extends SocialChatMessagePrepareEvent
 
     private boolean cancelled = false;
 
-    public SocialChatMessageReceiveEvent(SocialPlayer sender, SocialPlayer recipient, ChatChannel chatChannel, Component message, String rawMessage, Integer replyId, int messageId) {
+    public SocialChatMessageReceiveEvent(SocialUser sender, SocialUser recipient, ChatChannel chatChannel, Component message, String rawMessage, Integer replyId, int messageId) {
         super(sender, chatChannel, rawMessage, replyId);
         this.recipient = recipient;
         this.message = message;

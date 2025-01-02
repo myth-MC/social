@@ -6,13 +6,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 public final class MOTDListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialPlayer player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (player == null)
             return;
 

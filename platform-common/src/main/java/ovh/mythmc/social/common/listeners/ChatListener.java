@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.*;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.UUID;
@@ -30,7 +30,7 @@ public final class ChatListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
         if (socialPlayer == null) {
             // unexpected error;
             return;
@@ -61,7 +61,7 @@ public final class ChatListener implements Listener {
             return;
 
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
         if (socialPlayer == null) {
             Social.get().getLogger().error("Unexpected error (missing SocialPlayer)");
             return;
@@ -110,13 +110,6 @@ public final class ChatListener implements Listener {
         }
 
         // Send chat message
-        /*
-        SocialChatMessageSendEvent socialChatMessageSendEvent = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
-        if (socialChatMessageSendEvent == null || socialChatMessageSendEvent.isCancelled()) {
-            event.setCancelled(true);
-            return;
-        }
-        */
         SocialMessageContext context = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
         if (context == null) {
             event.setCancelled(true);
@@ -169,8 +162,8 @@ public final class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
         SocialParserContext context = SocialParserContext.builder()
-            .socialPlayer(event.getSocialPlayer())
-            .playerChannel(event.getChatChannel())
+            .user(event.getSocialPlayer())
+            .channel(event.getChatChannel())
             .message(Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
             .build();
 

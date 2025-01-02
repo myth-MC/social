@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @SuppressWarnings("deprecation") // Compatibility reasons
 public abstract class SocialContextualKeyword extends SocialKeyword {
@@ -15,7 +15,7 @@ public abstract class SocialContextualKeyword extends SocialKeyword {
     public abstract Component process(SocialParserContext context);
 
     @Override
-    public String process(SocialPlayer socialPlayer) {
+    public String process(SocialUser socialPlayer) {
         return "";
     }
 

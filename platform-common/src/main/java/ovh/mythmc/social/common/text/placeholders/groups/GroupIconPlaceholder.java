@@ -20,7 +20,7 @@ public final class GroupIconPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(context.socialPlayer());
+        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(context.user());
         if (groupChatChannel == null)
             return Component.empty();
 

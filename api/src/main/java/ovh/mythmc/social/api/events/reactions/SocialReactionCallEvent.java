@@ -7,15 +7,16 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.players.SocialPlayer;
+
 import ovh.mythmc.social.api.reactions.Reaction;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @RequiredArgsConstructor
 @Getter
 @Setter
 public class SocialReactionCallEvent extends Event implements Cancellable {
 
-    private final SocialPlayer socialPlayer;
+    private final SocialUser socialPlayer;
 
     private final Reaction reaction;
 

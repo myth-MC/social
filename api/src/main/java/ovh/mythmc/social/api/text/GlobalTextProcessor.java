@@ -14,13 +14,13 @@ import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.keywords.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.api.text.parsers.SocialPlaceholder;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -145,36 +145,36 @@ public final class GlobalTextProcessor {
         return textProcessor.parse(context);
     }
 
-    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message, ChannelType channelType) {
+    public Component parse(SocialUser socialPlayer, ChatChannel channel, Component message, ChannelType channelType) {
         return parse(SocialParserContext.builder()
-            .socialPlayer(socialPlayer)
-            .playerChannel(channel)
+            .user(socialPlayer)
+            .channel(channel)
             .message(message)
             .messageChannelType(channelType)
             .build()
         );
     }
 
-    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, String message, ChannelType channelType) {
+    public Component parse(SocialUser socialPlayer, ChatChannel channel, String message, ChannelType channelType) {
         return parse(socialPlayer, channel, text(message), channelType);
     }
 
-    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message) {
+    public Component parse(SocialUser socialPlayer, ChatChannel channel, Component message) {
         return parse(socialPlayer, channel, message, ChannelType.CHAT);
     }
 
-    public Component parse(SocialPlayer socialPlayer, ChatChannel channel, String message) {
+    public Component parse(SocialUser socialPlayer, ChatChannel channel, String message) {
         return parse(socialPlayer, channel, text(message));
     }
 
     public void parseAndSend(SocialParserContext context) {
-        send(List.of(context.socialPlayer()), parse(context), context.messageChannelType());
+        send(List.of(context.user()), parse(context), context.messageChannelType());
     }
 
-    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, Component message, ChannelType channelType) {
+    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, Component message, ChannelType channelType) {
         SocialParserContext context = SocialParserContext.builder()
-            .socialPlayer(socialPlayer)
-            .playerChannel(chatChannel)
+            .user(socialPlayer)
+            .channel(chatChannel)
             .message(message)
             .messageChannelType(channelType)
             .build();
@@ -182,20 +182,20 @@ public final class GlobalTextProcessor {
         parseAndSend(context);
     }
 
-    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, String message, ChannelType channelType) {
+    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, String message, ChannelType channelType) {
         parseAndSend(socialPlayer, chatChannel, text(message), channelType);
     }
 
-    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, Component message) {
+    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, Component message) {
         parseAndSend(socialPlayer, chatChannel, message, ChannelType.CHAT);
     }
 
-    public void parseAndSend(SocialPlayer socialPlayer, ChatChannel chatChannel, String message) {
+    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, String message) {
         parseAndSend(socialPlayer, chatChannel, text(message));
     }
 
     public void parseAndSend(CommandSender commandSender, Component message, ChannelType type) {
-        SocialPlayer socialPlayer = null;
+        SocialUser socialPlayer = null;
 
         if (commandSender instanceof Player player)
             socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
@@ -218,11 +218,11 @@ public final class GlobalTextProcessor {
         SocialAdventureProvider.get().sender(commandSender).sendMessage(message);
     }
 
-    public void send(final @NotNull SocialPlayer recipient, @NotNull Component message, final @NotNull ChannelType type) {
+    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {
         send(List.of(recipient), message, type);
     }
 
-    public void send(final @NotNull Collection<SocialPlayer> members, @NotNull Component message, final @NotNull ChannelType type) {
+    public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type) {
         if (message == null || message.equals(Component.empty()))
             return;
 

@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.*;
 
 public abstract class PrivateMessageCommand {
 
     public void run(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        SocialPlayer messageSender = null;
+        SocialUser messageSender = null;
         if (commandSender instanceof Player player)
             messageSender = Social.get().getPlayerManager().get(player.getUniqueId());
 
@@ -41,7 +41,7 @@ public abstract class PrivateMessageCommand {
             return;
         }
 
-        SocialPlayer messageRecipient = Social.get().getPlayerManager().get(player.getUniqueId());
+        SocialUser messageRecipient = Social.get().getPlayerManager().get(player.getUniqueId());
 
         if (messageRecipient == null) {
             // error: unexpected error (socialplayer not registered)

@@ -65,7 +65,7 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
             Component page = Component.empty();
 
             SocialParserContext parserContext = SocialParserContext.builder()
-                .socialPlayer(context.viewer())
+                .user(context.viewer())
                 .build();
 
             for (SocialContextualKeyword keyword : keywords) {

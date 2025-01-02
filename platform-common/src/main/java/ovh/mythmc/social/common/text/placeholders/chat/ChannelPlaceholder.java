@@ -20,13 +20,8 @@ public final class ChannelPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        ChatChannel chatChannel = null;
-        if (context.playerChannel() != null) {
-            chatChannel = context.playerChannel();
-        } else {
-            chatChannel = context.socialPlayer().getMainChannel();
-        }
-
+        ChatChannel chatChannel = context.channel();
+        
         String channelName = chatChannel.getName();
         if (chatChannel instanceof GroupChatChannel groupChatChannel && groupChatChannel.getAlias() != null)
             channelName = groupChatChannel.getAlias();

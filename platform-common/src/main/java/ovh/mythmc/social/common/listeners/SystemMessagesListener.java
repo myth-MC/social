@@ -14,13 +14,13 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 public final class SystemMessagesListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)
             return;
 
@@ -44,7 +44,7 @@ public final class SystemMessagesListener implements Listener {
 
    @EventHandler
    public void onPlayerQuit(PlayerQuitEvent event) {
-       SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+       SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
        if (socialPlayer == null)
            return;
 
@@ -68,7 +68,7 @@ public final class SystemMessagesListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
         if (socialPlayer == null)
             return;
 
@@ -85,7 +85,7 @@ public final class SystemMessagesListener implements Listener {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (unformattedMessage.contains(player.getName())) {
-                SocialPlayer s = Social.get().getPlayerManager().get(player.getUniqueId());
+                SocialUser s = Social.get().getPlayerManager().get(player.getUniqueId());
                 deathMessage = deathMessage.replaceText(TextReplacementConfig
                         .builder()
                         .matchLiteral(player.getName())
@@ -106,10 +106,10 @@ public final class SystemMessagesListener implements Listener {
         event.setDeathMessage("");
    }
 
-    private Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message) {
+    private Component parse(SocialUser socialPlayer, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder()
-            .socialPlayer(socialPlayer)
-            .playerChannel(channel)
+            .user(socialPlayer)
+            .channel(channel)
             .message(message)
             .messageChannelType(channel.getType())
             .build();

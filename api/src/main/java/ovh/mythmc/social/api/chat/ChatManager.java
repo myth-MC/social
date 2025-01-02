@@ -23,7 +23,7 @@ import ovh.mythmc.social.api.events.groups.SocialGroupAliasChangeEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -70,14 +70,14 @@ public final class ChatManager {
         return null;
     }
 
-    public GroupChatChannel getGroupChannelByPlayer(final @NotNull SocialPlayer socialPlayer) {
+    public GroupChatChannel getGroupChannelByPlayer(final @NotNull SocialUser socialPlayer) {
         return getGroupChannelByPlayer(socialPlayer.getUuid());
     }
 
     public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
                                       final @NotNull UUID leaderUuid) {
-        SocialPlayer previousLeader = Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid());
-        SocialPlayer leader = Social.get().getPlayerManager().get(leaderUuid);
+        SocialUser previousLeader = Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid());
+        SocialUser leader = Social.get().getPlayerManager().get(leaderUuid);
 
         SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
         Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
@@ -129,13 +129,13 @@ public final class ChatManager {
         return channels.remove(chatChannel);
     }
 
-    public List<ChatChannel> getVisibleChannels(final @NotNull SocialPlayer socialPlayer) {
+    public List<ChatChannel> getVisibleChannels(final @NotNull SocialUser socialPlayer) {
         return channels.stream()
             .filter(channel -> hasPermission(socialPlayer, channel))
             .collect(Collectors.toList());
     }
 
-    public void assignChannelsToPlayer(final @NotNull SocialPlayer socialPlayer) {
+    public void assignChannelsToPlayer(final @NotNull SocialUser socialPlayer) {
         for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
             if (channel.isJoinByDefault()) {
                 if (channel.getPermission() == null || socialPlayer.getPlayer().hasPermission(channel.getPermission()))
@@ -148,11 +148,11 @@ public final class ChatManager {
         return getGroupChannelByPlayer(uuid) != null;
     }
 
-    public boolean hasGroup(final @NotNull SocialPlayer socialPlayer) {
+    public boolean hasGroup(final @NotNull SocialUser socialPlayer) {
         return hasGroup(socialPlayer.getUuid());
     }
 
-    public boolean hasPermission(final @NotNull SocialPlayer socialPlayer,
+    public boolean hasPermission(final @NotNull SocialUser socialPlayer,
                               final @NotNull ChatChannel chatChannel) {
 
         if (chatChannel.getPermission() == null)
@@ -164,7 +164,7 @@ public final class ChatManager {
         return false;
     }
 
-    public SocialMessageContext sendChatMessage(final @NotNull SocialPlayer sender, @NotNull ChatChannel chatChannel, @NotNull String message, Integer replyId) {
+    public SocialMessageContext sendChatMessage(final @NotNull SocialUser sender, @NotNull ChatChannel chatChannel, @NotNull String message, Integer replyId) {
         // Prepare and send MessagePrepare event
         SocialChatMessagePrepareEvent socialChatMessagePrepareEvent = new SocialChatMessagePrepareEvent(sender, chatChannel, message, replyId);
         Bukkit.getPluginManager().callEvent(socialChatMessagePrepareEvent);
@@ -179,7 +179,7 @@ public final class ChatManager {
         List<UUID> players = new ArrayList<>();
 
         // Apply socialspy
-        for (SocialPlayer socialPlayer : Social.get().getPlayerManager().get()) {
+        for (SocialUser socialPlayer : Social.get().getPlayerManager().get()) {
             if (chatChannel.getMembers().contains(socialPlayer.getUuid())) continue;
             if (socialPlayer.isSocialSpy())
                 players.add(socialPlayer.getUuid());
@@ -293,7 +293,7 @@ public final class ChatManager {
 
         // Call SocialChatMessageReceiveEvent for each channel member
         for (UUID uuid : players) {
-            SocialPlayer recipient = Social.get().getPlayerManager().get(uuid);
+            SocialUser recipient = Social.get().getPlayerManager().get(uuid);
             SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, recipient, chatChannel, chatMessage, message, replyId, messageId);
             receiveAsync(recipient, messagePrefix, socialChatMessageReceiveEvent);
         }
@@ -302,7 +302,7 @@ public final class ChatManager {
         return context;
     }
 
-    private void receiveAsync(@NonNull SocialPlayer recipient, @NonNull Component messagePrefix, @NonNull SocialChatMessageReceiveEvent event) {
+    private void receiveAsync(@NonNull SocialUser recipient, @NonNull Component messagePrefix, @NonNull SocialChatMessageReceiveEvent event) {
         CompletableFuture.supplyAsync(() -> {
             Bukkit.getPluginManager().callEvent(event);
             
@@ -315,8 +315,8 @@ public final class ChatManager {
         });
     }
 
-    public void sendPrivateMessage(final @NotNull SocialPlayer sender,
-                                   final @NotNull SocialPlayer recipient,
+    public void sendPrivateMessage(final @NotNull SocialUser sender,
+                                   final @NotNull SocialUser recipient,
                                    final @NotNull String message) {
 
         Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
@@ -356,7 +356,7 @@ public final class ChatManager {
                 .append(text(": ").color(NamedTextColor.GRAY))
                 .append(filteredMessage);
 
-        Collection<SocialPlayer> members = new ArrayList<>();
+        Collection<SocialUser> members = new ArrayList<>();
         members.add(sender);
         members.add(recipient);
 
@@ -381,10 +381,10 @@ public final class ChatManager {
         return component;
     }
 
-    private Component parse(SocialPlayer socialPlayer, ChatChannel channel, Component message) {
+    private Component parse(SocialUser socialPlayer, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder()
-            .socialPlayer(socialPlayer)
-            .playerChannel(channel)
+            .user(socialPlayer)
+            .channel(channel)
             .message(message)
             .messageChannelType(channel.getType())
             .build();
@@ -392,14 +392,14 @@ public final class ChatManager {
         return Social.get().getTextProcessor().parse(context);
     }
 
-    private Component parse(SocialPlayer socialPlayer, ChatChannel channel, String message) {
+    private Component parse(SocialUser socialPlayer, ChatChannel channel, String message) {
         return parse(socialPlayer, channel, text(message));
     }
 
-    private Component parsePlayerInput(SocialPlayer socialPlayer, ChatChannel channel, String message) {
+    private Component parsePlayerInput(SocialUser socialPlayer, ChatChannel channel, String message) {
         SocialParserContext context = SocialParserContext.builder()
-            .socialPlayer(socialPlayer)
-            .playerChannel(channel)
+            .user(socialPlayer)
+            .channel(channel)
             .message(text(message))
             .messageChannelType(channel.getType())
             .build();

@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Getter
 public final class PlaceholderAPIHook implements SocialContextualParser, Listener {
@@ -33,7 +33,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
             if (socialPlayer == null)
                 return null;
 
@@ -120,7 +120,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
     @Override
     public Component parse(SocialParserContext context) {
         String serialized = LegacyComponentSerializer.legacyAmpersand().serialize(context.message());
-        String parsedMessage = PlaceholderAPI.setPlaceholders(context.socialPlayer().getPlayer(), serialized);
+        String parsedMessage = PlaceholderAPI.setPlaceholders(context.user().getPlayer(), serialized);
         return LegacyComponentSerializer.legacyAmpersand().deserialize(parsedMessage);
     }
 

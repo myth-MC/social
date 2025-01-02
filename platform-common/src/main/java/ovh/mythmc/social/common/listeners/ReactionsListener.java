@@ -10,9 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.util.PluginUtil;
 
 import java.util.regex.Pattern;
@@ -24,7 +24,7 @@ public final class ReactionsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        SocialPlayer player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
         if (player == null)
             return;
 

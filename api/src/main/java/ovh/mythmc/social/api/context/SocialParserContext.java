@@ -2,6 +2,7 @@ package ovh.mythmc.social.api.context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
@@ -14,8 +15,8 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
+import ovh.mythmc.social.api.users.SocialUser;
 
 @Data
 @Builder
@@ -24,9 +25,9 @@ import ovh.mythmc.social.api.text.group.SocialParserGroup;
 @With
 public class SocialParserContext implements SocialContext {
 
-    private final SocialPlayer socialPlayer;
+    private final SocialUser user;
 
-    private final ChatChannel playerChannel;
+    private final ChatChannel channel;
 
     private final Component message;
 
@@ -37,11 +38,13 @@ public class SocialParserContext implements SocialContext {
 
     @Experimental private final SocialParserGroup group;
 
-    public ChatChannel playerChannel() {
-        if (playerChannel != null)
-            return playerChannel;
+    public ChatChannel channel() {
+        return Optional.ofNullable(channel).orElse(user.getMainChannel());
+    }
 
-        return socialPlayer.getMainChannel();
+    public static class SocialParserContextBuilder {
+        @SuppressWarnings("unused")
+        private SocialParserContextBuilder group(SocialParserGroup group) { return this; }
     }
     
 }

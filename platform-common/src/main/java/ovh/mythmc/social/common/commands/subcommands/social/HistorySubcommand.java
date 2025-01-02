@@ -12,7 +12,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.SubCommand;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext.HeaderType;
@@ -33,7 +33,7 @@ public final class HistorySubcommand implements SubCommand {
             return;
         }
 
-        SocialPlayer sender = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
+        SocialUser sender = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
         if (sender == null)
             return;
 
@@ -126,7 +126,7 @@ public final class HistorySubcommand implements SubCommand {
         if (!(commandSender instanceof Player))
             return List.of();
 
-        SocialPlayer socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
+        SocialUser socialPlayer = Social.get().getPlayerManager().get(((Player) commandSender).getUniqueId());
         if (socialPlayer == null)
             return List.of();
 

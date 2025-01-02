@@ -5,7 +5,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.SubCommand;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class AnnouncementSubcommand implements SubCommand {
         } else {
             for (ChatChannel channel : announcement.channels()) {
                 channel.getMembers().forEach(uuid -> {
-                    SocialPlayer s = Social.get().getPlayerManager().get(uuid);
+                    SocialUser s = Social.get().getPlayerManager().get(uuid);
                     Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), channel.getType());
                 });
             }

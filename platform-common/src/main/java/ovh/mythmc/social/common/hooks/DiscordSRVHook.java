@@ -22,7 +22,7 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.UUID;
 
@@ -61,13 +61,13 @@ public final class DiscordSRVHook implements ChatHook {
             return;
 
         // Workaround for placeholders
-        SocialPlayer fakePlayer = new SocialPlayer(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
+        SocialUser fakePlayer = new SocialUser(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
 
         String miniMessage = MessageUtil.toMiniMessage(message);
         
         SocialParserContext context = SocialParserContext.builder()
-            .socialPlayer(fakePlayer)
-            .playerChannel(chatChannel)
+            .user(fakePlayer)
+            .channel(chatChannel)
             .build();
 
         TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getContextualPlaceholder("channel_icon").get(context);
@@ -76,7 +76,7 @@ public final class DiscordSRVHook implements ChatHook {
 
         String finalMiniMessage = miniMessage;
         chatChannel.getMembers().forEach(uuid -> {
-            SocialPlayer socialPlayer = Social.get().getPlayerManager().get(uuid);
+            SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
             if (socialPlayer == null)
                 return;
 
