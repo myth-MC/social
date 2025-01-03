@@ -18,7 +18,7 @@ public final class ServerLinksListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)
             return;
 

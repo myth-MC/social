@@ -4,12 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -194,32 +190,12 @@ public final class GlobalTextProcessor {
         parseAndSend(socialPlayer, chatChannel, text(message));
     }
 
-    public void parseAndSend(CommandSender commandSender, Component message, ChannelType type) {
-        SocialUser socialPlayer = null;
-
-        if (commandSender instanceof Player player)
-            socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
-
-        if (socialPlayer == null) {
-            sendToConsole(commandSender, message);
-            return;
-        }
-
-        parseAndSend(socialPlayer, socialPlayer.getMainChannel(), message, type);
+    public void parseAndSend(SocialUser user, Component message, ChannelType type) {
+        parseAndSend(user, user.getMainChannel(), message, type);
     }
 
-    public void parseAndSend(CommandSender commandSender, String message, ChannelType type) {
-        parseAndSend(commandSender, Component.text(message), type);
-    }
-
-    @ApiStatus.Experimental
-    public void sendToConsole(final @NotNull CommandSender commandSender, @NotNull Component message) {
-        // Todo: parse?
-        SocialAdventureProvider.get().sender(commandSender).sendMessage(message);
-    }
-
-    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {
-        send(List.of(recipient), message, type);
+    public void parseAndSend(SocialUser user, String message, ChannelType type) {
+        parseAndSend(user, text(message), type);
     }
 
     public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type) {
@@ -227,6 +203,10 @@ public final class GlobalTextProcessor {
             return;
 
         members.forEach(socialPlayer -> SocialAdventureProvider.get().sendMessage(socialPlayer, message, type));
+    }
+
+    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {
+        send(List.of(recipient), message, type);
     }
 
 }

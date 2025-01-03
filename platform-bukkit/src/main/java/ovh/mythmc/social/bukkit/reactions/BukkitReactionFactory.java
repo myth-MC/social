@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.reactions;
+package ovh.mythmc.social.bukkit.reactions;
 
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
@@ -13,8 +13,10 @@ import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
-import org.jetbrains.annotations.NotNull;
+
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -25,6 +27,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public final class BukkitReactionFactory extends ReactionFactory {
 
     private final JavaPlugin plugin;
@@ -34,14 +37,9 @@ public final class BukkitReactionFactory extends ReactionFactory {
 
     private final float scale = 0.7f;
 
-    public BukkitReactionFactory(final @NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
-        ReactionFactory.set(this);
-    }
-
     @Override
     public void displayReaction(SocialUser player, Reaction emoji) {
-        if (player.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+        if (player.getPlayer() == null || player.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getPlayer().getGameMode() == GameMode.SPECTATOR) {
             return;
         }
 
@@ -68,7 +66,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
 
         itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
         if (reaction.sound() != null)
-            itemDisplay.getWorld().playSound(itemDisplay.getLocation(), reaction.sound(), 0.75F, 1.5F);
+            SocialAdventureProvider.get().player(player).playSound(reaction.sound());
 
         ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();

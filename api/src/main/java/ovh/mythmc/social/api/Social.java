@@ -16,7 +16,7 @@ public interface Social {
     @NotNull static Social get() { return SocialSupplier.get(); }
 
     @ApiStatus.Internal
-    void reload();
+    void reload(ReloadType type);
 
     String version();
 
@@ -27,7 +27,9 @@ public interface Social {
 
     @NotNull default AnnouncementManager getAnnouncementManager() { return AnnouncementManager.instance; }
 
-    @NotNull default SocialUserManager getPlayerManager() { return SocialUserManager.instance; }
+    @NotNull default SocialUserManager getUserManager() { return SocialUserManager.instance; }
+
+    @NotNull @Deprecated(forRemoval = true, since = "0.4") default SocialUserManager getPlayerManager() { return SocialUserManager.instance; }
 
     @NotNull default ChatManager getChatManager() { return ChatManager.instance; }
 
@@ -36,5 +38,13 @@ public interface Social {
     @NotNull default ReactionManager getReactionManager() { return ReactionManager.instance; }
 
     @NotNull default EmojiManager getEmojiManager() { return EmojiManager.instance; }
+
+    public enum ReloadType {
+        ALL,
+        ADDONS,
+        SETTINGS,
+        MESSAGES,
+        MENUS
+    }
 
 }

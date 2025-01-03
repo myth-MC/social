@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
+
+import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -12,12 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class ChatChannel {
+
+    public static @Nullable ChatChannel Default = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
     private final String name;
 

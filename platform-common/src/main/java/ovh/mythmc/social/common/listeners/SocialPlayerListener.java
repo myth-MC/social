@@ -23,15 +23,15 @@ public final class SocialPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
+        SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
 
         if (socialPlayer == null)
-            Social.get().getPlayerManager().registerSocialPlayer(uuid);
+            Social.get().getUserManager().registerSocialPlayer(uuid);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
 
         // Temporary workaround for nicknames
         PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();

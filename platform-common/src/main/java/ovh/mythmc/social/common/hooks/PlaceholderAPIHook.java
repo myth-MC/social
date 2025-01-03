@@ -33,7 +33,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
-            SocialUser socialPlayer = Social.get().getPlayerManager().get(player.getUniqueId());
+            SocialUser socialPlayer = Social.get().getUserManager().get(player.getUniqueId());
             if (socialPlayer == null)
                 return null;
 
@@ -72,10 +72,10 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.getName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid()).getNickname();
+                    return Social.get().getUserManager().get(groupChatChannel.getLeaderUuid()).getNickname();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
-                    return Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid()).getPlayer().getName();
+                    return Social.get().getUserManager().get(groupChatChannel.getLeaderUuid()).getPlayer().getName();
                 }
                 if (params.equalsIgnoreCase("group_leader_uuid")) {
                     return groupChatChannel.getLeaderUuid().toString();
@@ -99,7 +99,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getPlayerManager().get(uuid).getPlayer().getName();
+                    return Social.get().getUserManager().get(uuid).getPlayer().getName();
                 }
                 if (params.startsWith("group_player_")) {
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
@@ -109,7 +109,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getPlayerManager().get(uuid).getNickname();
+                    return Social.get().getUserManager().get(uuid).getNickname();
                 }
             }
 

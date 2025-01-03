@@ -39,6 +39,7 @@ public final class BootstrapFeature {
             AnvilFeature.class,
             BooksFeature.class,
             ChatFeature.class,
+            CommandsFeature.class,
             GroupsFeature.class,
             MentionsFeature.class,
             MOTDFeature.class,

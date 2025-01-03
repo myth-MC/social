@@ -3,12 +3,15 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import lombok.Getter;
-import org.bukkit.Sound;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.emojis.Emoji;
+import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.text.filters.SocialFilterLiteral;
 import ovh.mythmc.social.api.text.filters.SocialFilterRegex;
@@ -27,6 +30,23 @@ public final class SocialConfigProvider {
 
     private SocialMenus menus;
 
+    static final LoggerWrapper logger = new LoggerWrapper() {
+        @Override
+        public void info(String message, Object... args) {
+            Social.get().getLogger().info("[config-provider] " + message, args);
+        }
+
+        @Override
+        public void warn(String message, Object... args) {
+            Social.get().getLogger().warn("[config-provider] " + message, args);
+        }
+
+        @Override
+        public void error(String message, Object... args) {
+            Social.get().getLogger().error("[config-provider] " + message, args);
+        }
+    };
+
     public SocialConfigProvider(final @NotNull File pluginFolder) {
         this.pluginFolder = pluginFolder;
 
@@ -35,24 +55,34 @@ public final class SocialConfigProvider {
         menus = new SocialMenus();
     }
 
-    public void load() {
-        this.settings = YamlConfigurations.update(
+    public void loadSettings() {
+        settings = YamlConfigurations.update(
                 new File(pluginFolder, "settings.yml").toPath(),
                 SocialSettings.class,
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
+    }
 
-        this.messages = YamlConfigurations.update(
+    public void loadMessages() {
+        messages = YamlConfigurations.update(
                 new File(pluginFolder, "messages.yml").toPath(),
                 SocialMessages.class,
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
+    }
 
-        this.menus = YamlConfigurations.update(
-                new File(pluginFolder, "menus.yml").toPath(),
-                SocialMenus.class,
-                YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+    public void loadMenus() {
+        menus = YamlConfigurations.update(
+            new File(pluginFolder, "menus.yml").toPath(),
+            SocialMenus.class,
+            YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
+    }
+
+    public void load() {
+        loadSettings();
+        loadMessages();
+        loadMenus();
 
         // Register emojis
         settings.getEmojis().getEmojis().forEach(emojiField -> {
@@ -81,7 +111,7 @@ public final class SocialConfigProvider {
         settings.getReactions().getReactions().forEach(reactionField -> {
             Reaction reaction;
             if (reactionField.sound() != null) {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), findByName(reactionField.sound()), reactionField.triggerWords());
+                reaction = new Reaction(reactionField.name(), reactionField.texture(), getSoundByKey(reactionField.sound()), reactionField.triggerWords());
             } else {
                 reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
             }
@@ -102,15 +132,13 @@ public final class SocialConfigProvider {
         YamlConfigurations.save(new File(pluginFolder, "settings.yml").toPath(), SocialSettings.class, settings);
     }
 
-    private Sound findByName(String name) {
-        Sound result = null;
-        for (Sound sound : Sound.values()) {
-            if (sound.name().equalsIgnoreCase(name)) {
-                result = sound;
-                break;
-            }
+    private Sound getSoundByKey(String key) {
+        if (!Key.parseable(key)) {
+            logger.warn("settings.yml contains an invalid key: " + key);
+            return null;
         }
-        return result;
+
+        return Sound.sound(Key.key(key), Sound.Source.PLAYER, 0.75f, 1.5f);
     }
 
 }

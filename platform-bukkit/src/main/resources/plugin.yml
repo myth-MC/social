@@ -7,87 +7,18 @@ main: ovh.mythmc.social.bukkit.SocialBukkitPlugin
 softdepend: [ PlaceholderAPI, DiscordSRV, packetevents, gestalt ]
 
 libraries:
-  - net.kyori:adventure-api:4.12.0
+  - net.kyori:adventure-api:4.18.0
   - net.kyori:adventure-platform-bukkit:4.3.4
-  - net.kyori:adventure-text-minimessage:4.12.0
-  - net.kyori:adventure-text-serializer-plain:4.12.0
-
-commands:
-  social:
-    permission: social.user
-  pm:
-    permission: social.command.pm
-    aliases:
-      - message
-      - msg
-      - whisper
-      - w
-      - tell
-  reaction:
-    permission: social.command.reaction
-    aliases:
-      - emote
-      - e
-  group:
-    permission: social.command.group
-    aliases:
-      - g
+  - net.kyori:adventure-text-minimessage:4.18.0
+  - net.kyori:adventure-text-serializer-plain:4.18.0
 
 permissions:
-  social.user:
-    default: true
-  social.admin:
+  social.use.nickname.others:
+    description: Allows players to change other player's nicknames
     default: op
-    children:
-      - social.command.*
-      - social.filter.bypass
-      - social.mentions
-  social.command.*:
-    default: op
-    children:
-      - social.command.announcement
-      - social.command.channel
-      - social.command.dictionary
-      - social.command.history
-      - social.command.info
-      - social.command.nickname
-      - social.command.reload
-      - social.command.reaction
-      - social.command.socialspy
-      - social.command.group
-  social.command.announcement:
-    default: false
-  social.command.channel:
-    default: true
-  social.command.dictionary:
-    default: true
-  social.command.history:
-    default: false
-  social.command.info:
-    default: false
-  social.command.nickname:
-    default: false
-  social.command.reload:
-    default: false
-  social.command.pm:
-    default: true
-  social.command.reaction:
-    default: true
-  social.command.socialspy:
-    default: false
-  social.command.group:
-    default: true
-    children:
-      - social.command.group.alias
-      - social.command.group.create
-      - social.command.group.chat
-      - social.command.group.join
-      - social.command.group.kick
-      - social.command.group.leader
-      - social.command.group.leave
-      - social.command.group.disband
-      - social.command.group.code
   social.filter.bypass:
-    default: false
+    description: Allows players to bypass filter settings
+    default: op
   social.mentions:
+    description: Allows players to mention other players
     default: true

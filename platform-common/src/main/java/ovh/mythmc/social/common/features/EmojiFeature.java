@@ -21,12 +21,12 @@ public final class EmojiFeature {
 
     @FeatureEnable
     public void enable() {
-        Social.get().getTextProcessor().registerParser(emojiParser, rawEmojiParser);
+        Social.get().getTextProcessor().LATE_PARSERS.add(emojiParser, rawEmojiParser);
     }
 
     @FeatureDisable
     public void disable() {
-        Social.get().getTextProcessor().unregisterParser(emojiParser, rawEmojiParser);
+        Social.get().getTextProcessor().LATE_PARSERS.remove(emojiParser, rawEmojiParser);
         Social.get().getEmojiManager().unregisterAll();
     }
 

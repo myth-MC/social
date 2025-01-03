@@ -1,8 +1,8 @@
 package ovh.mythmc.social.api.reactions;
 
-import org.bukkit.Sound;
-
 import java.util.List;
+
+import net.kyori.adventure.sound.Sound;
 
 public record Reaction(String name,
                        String texture,

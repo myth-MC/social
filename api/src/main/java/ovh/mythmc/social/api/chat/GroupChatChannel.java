@@ -52,14 +52,14 @@ public class GroupChatChannel extends ChatChannel {
 
         super.addMember(uuid);
 
-        SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(this, Social.get().getPlayerManager().get(uuid));
+        SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(this, Social.get().getUserManager().get(uuid));
         Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
 
         return true;
     }
 
     public boolean removeMember(UUID uuid) {
-        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(this, Social.get().getPlayerManager().get(uuid));
+        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(this, Social.get().getUserManager().get(uuid));
         Bukkit.getPluginManager().callEvent(socialGroupLeaveEvent);
 
         return super.removeMember(uuid);

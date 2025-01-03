@@ -1,36 +1,35 @@
-package ovh.mythmc.social.bukkit;
+package ovh.mythmc.social.paper;
 
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
+import io.github.retrooper.packetevents.bstats.bukkit.Metrics;
+import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
-import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
-import ovh.mythmc.social.bukkit.reactions.BukkitReactionFactory;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listeners.*;
+import ovh.mythmc.social.common.listeners.SocialPlayerListener;
+import ovh.mythmc.social.paper.adventure.PaperAdventureProvider;
+import ovh.mythmc.social.paper.reactions.PaperReactionFactory;
 
-public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
+public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
+    
+    public static SocialPaper instance;
 
-    public static SocialBukkit instance;
+    private PaperGestaltLoader gestalt;
 
-    private BukkitGestaltLoader gestalt;
-
-    public SocialBukkit(final @NotNull SocialBukkitPlugin plugin) {
+    public SocialPaper(final @NotNull SocialPaperPlugin plugin) {
         super(plugin, plugin.getDataFolder());
 
-        // Platform implementations
-        SocialAdventureProvider.set(new BukkitAdventureProvider(plugin));
-        ReactionFactory.set(new BukkitReactionFactory(plugin));
+        ReactionFactory.set(new PaperReactionFactory(plugin));
+        SocialAdventureProvider.set(new PaperAdventureProvider());
         instance = this;
     }
 
     @Override
     public void initializeGestalt() {
-        gestalt = BukkitGestaltLoader.builder()
+        gestalt = PaperGestaltLoader.builder()
             .initializer(getPlugin())
             .build();
 
@@ -51,7 +50,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     @Override
     public String version() {
-        return getPlugin().getDescription().getVersion();
+        return getPlugin().getPluginMeta().getVersion();
     }
 
     @Override

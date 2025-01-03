@@ -12,7 +12,7 @@ public final class MOTDListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser player = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
         if (player == null)
             return;
 

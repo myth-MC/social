@@ -24,7 +24,7 @@ public final class ReactionsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        SocialUser player = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser player = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
         if (player == null)
             return;
 

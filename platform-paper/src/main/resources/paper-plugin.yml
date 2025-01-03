@@ -1,0 +1,39 @@
+name: social
+authors:
+  - myth-MC
+  - U8092
+version: '${project.version}'
+api-version: '1.19'
+
+main: ovh.mythmc.social.paper.SocialPaperPlugin
+folia-supported: true
+
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    DiscordSRV:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    packetevents:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    gestalt:
+      load: OMIT
+      required: false
+      join-classpath: true
+
+permissions:
+  social.use.nickname.others:
+    description: Allows players to change other player's nicknames
+    default: op
+  social.filter.bypass:
+    description: Allows players to bypass filter settings
+    default: op
+  social.mentions:
+    description: Allows players to mention other players
+    default: true

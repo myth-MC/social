@@ -37,9 +37,9 @@ public final class ChatFeature {
         // Assign channels to every SocialPlayer
         ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
         if (defaultChannel != null) {
-            Social.get().getPlayerManager().get().forEach(socialPlayer -> {
+            Social.get().getUserManager().get().forEach(socialPlayer -> {
                 Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
-                Social.get().getPlayerManager().setMainChannel(socialPlayer, defaultChannel);
+                Social.get().getUserManager().setMainChannel(socialPlayer, defaultChannel);
             });
         }
     }

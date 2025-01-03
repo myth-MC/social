@@ -76,8 +76,8 @@ public final class ChatManager {
 
     public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
                                       final @NotNull UUID leaderUuid) {
-        SocialUser previousLeader = Social.get().getPlayerManager().get(groupChatChannel.getLeaderUuid());
-        SocialUser leader = Social.get().getPlayerManager().get(leaderUuid);
+        SocialUser previousLeader = Social.get().getUserManager().get(groupChatChannel.getLeaderUuid());
+        SocialUser leader = Social.get().getUserManager().get(leaderUuid);
 
         SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
         Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
@@ -152,9 +152,7 @@ public final class ChatManager {
         return hasGroup(socialPlayer.getUuid());
     }
 
-    public boolean hasPermission(final @NotNull SocialUser socialPlayer,
-                              final @NotNull ChatChannel chatChannel) {
-
+    public boolean hasPermission(final @NotNull SocialUser socialPlayer, final @NotNull ChatChannel chatChannel) {
         if (chatChannel.getPermission() == null)
             return true;
 
@@ -179,7 +177,7 @@ public final class ChatManager {
         List<UUID> players = new ArrayList<>();
 
         // Apply socialspy
-        for (SocialUser socialPlayer : Social.get().getPlayerManager().get()) {
+        for (SocialUser socialPlayer : Social.get().getUserManager().get()) {
             if (chatChannel.getMembers().contains(socialPlayer.getUuid())) continue;
             if (socialPlayer.isSocialSpy())
                 players.add(socialPlayer.getUuid());
@@ -198,7 +196,7 @@ public final class ChatManager {
 
         // Sender's nickname
         Component nickname = parse(sender, chatChannel, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
-                .color(NamedTextColor.GRAY);
+                .colorIfAbsent(NamedTextColor.GRAY);
 
         // Filtered message
         Component filteredMessage = parsePlayerInput(sender, chatChannel, message);
@@ -293,12 +291,12 @@ public final class ChatManager {
 
         // Call SocialChatMessageReceiveEvent for each channel member
         for (UUID uuid : players) {
-            SocialUser recipient = Social.get().getPlayerManager().get(uuid);
+            SocialUser recipient = Social.get().getUserManager().get(uuid);
             SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, recipient, chatChannel, chatMessage, message, replyId, messageId);
             receiveAsync(recipient, messagePrefix, socialChatMessageReceiveEvent);
         }
 
-        Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
+        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
         return context;
     }
 
@@ -360,13 +358,13 @@ public final class ChatManager {
         members.add(sender);
         members.add(recipient);
 
-        Social.get().getPlayerManager().get().forEach(player -> {
+        Social.get().getUserManager().get().forEach(player -> {
             if (player.isSocialSpy() && !members.contains(player))
                 members.add(player);
         });
 
         Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
-        Social.get().getPlayerManager().setLatestMessage(sender, System.currentTimeMillis());
+        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console
         SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getNickname() + " -> " + recipient.getNickname() + ": " + message));

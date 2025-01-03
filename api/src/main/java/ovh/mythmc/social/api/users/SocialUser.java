@@ -5,10 +5,12 @@ import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 import java.util.UUID;
@@ -21,7 +23,9 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public final class SocialUser {
+public final class SocialUser implements SocialUserAudienceWrapper {
+
+    public static final SocialUser Dummy = new SocialUser(UUID.nameUUIDFromBytes("#Dummy".getBytes()), ChatChannel.Default, false, false, 0, "Dummy");
 
     private final UUID uuid;
 
@@ -40,6 +44,17 @@ public final class SocialUser {
         return Bukkit.getPlayer(uuid);
     }
 
+    public @Nullable CommandSender asCommandSender() {
+        if (getPlayer() != null)
+            return getPlayer();
+
+        return Bukkit.getConsoleSender();
+    }
+
+    public @Nullable GroupChatChannel getGroupChatChannel() {
+        return Social.get().getChatManager().getGroupChannelByPlayer(this);
+    }
+
     public String getNickname() {
         if (getPlayer() != null)
             cachedNickname = ChatColor.stripColor(getPlayer().getDisplayName());
@@ -47,24 +62,44 @@ public final class SocialUser {
         return cachedNickname;
     }
 
-    public void sendMessage(@NonNull SocialParserContext context) {
+    public void sendParsableMessage(@NonNull SocialParserContext context, boolean playerInput) {
         if (getPlayer() == null)
             return;
-            
-        Social.get().getTextProcessor().parseAndSend(context);
+        
+        Component parsedMessage = null;
+
+        if (playerInput) {
+            parsedMessage = Social.get().getTextProcessor().parsePlayerInput(context);
+        } else {
+            parsedMessage = Social.get().getTextProcessor().parse(context);
+        }
+
+        Social.get().getTextProcessor().send(this, parsedMessage, context.messageChannelType());
     }
 
-    public void sendMessage(@NonNull Component component) {
+    public void sendParsableMessage(@NonNull SocialParserContext context) {
+        sendParsableMessage(context, false);
+    }
+
+    public void sendParsableMessage(@NonNull Component component, boolean playerInput) {
         SocialParserContext context = SocialParserContext.builder()
             .user(this)
             .message(component)
             .build();
 
-        sendMessage(context);
+        sendParsableMessage(context, playerInput);
     }
 
-    public void sendMessage(@NonNull String message) {
-        sendMessage(Component.text(message));
+    public void sendParsableMessage(@NonNull Component component) {
+        sendParsableMessage(component, false);
+    }
+
+    public void sendParsableMessage(@NonNull String message, boolean playerInput) {
+        sendParsableMessage(Component.text(message), playerInput);
+    }
+
+    public void sendParsableMessage(@NonNull String message) {
+        sendParsableMessage(message, false);
     }
 
 }

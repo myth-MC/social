@@ -13,13 +13,15 @@ public class ErrorsMessages {
 
     private String unexpectedError = "$(error_prefix) <red>An unexpected error has occurred.</red>";
 
-    private String invalidCommand = "$(error_prefix) <red>Invalid command.</red>";
+    private String invalidCommand = "$(error_prefix) <red>Invalid command: <gray>%s</gray>.</red>";
 
-    private String invalidNumber = "$(error_prefix) <red>Invalid number.</red>";
+    private String invalidArgument = "$(error_prefix) <red>Invalid argument <gray>%s</gray> for type <gray>%s</gray>.</red>";
 
     private String notEnoughPermission = "$(error_prefix) <red>You do not have enough permission to do this.</red>";
 
     private String notEnoughArguments = "$(error_prefix) <red>Not enough arguments.</red>";
+
+    private String tooManyArguments = "$(error_prefix) <red>Too many arguments.</red>";
 
     private String nicknameAlreadyInUse = "$(error_prefix) <red>This nickname belongs to another player.</red>";
 

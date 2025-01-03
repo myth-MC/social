@@ -17,9 +17,7 @@ public class CommandsMessages {
 
     private String nicknameResetOthers = "$(success_prefix) <gray><blue>%s</blue>'s name has been reset.</gray>";
 
-    private String pluginReloaded = "$(success_prefix) <green>Plugin has been reloaded.</green>";
-
-    private String pluginReloadedModulesWarning = "$(warning_prefix) <yellow>Modules cannot be enabled/disabled on the fly.</yellow>";
+    private String moduleReloaded = "$(success_prefix) <green>Module <blue>%s</blue> has been reloaded.</green>";
 
     private String socialSpyStatusChanged = "$(info_prefix) <gray>Social spy status has been set to $(socialspy).</gray>";
 
@@ -30,6 +28,8 @@ public class CommandsMessages {
     private String joinedGroup = "$(success_prefix) <green>You've joined group <blue>$(group)</blue>.</green>";
 
     private String leftGroup = "$(success_prefix) <green>You've left group <blue>$(group)</blue>.</green>";
+
+    private String confirmDisbandAction = "$(warning_prefix) <gray>This action cannot be undone! Type <blue>/group disband --confirm</blue> to confirm this action.</gray>";
 
     private String groupDisbanded = "$(success_prefix) <green>Your group has been disbanded.</green>";
 

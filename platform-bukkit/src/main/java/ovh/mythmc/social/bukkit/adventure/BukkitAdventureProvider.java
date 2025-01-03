@@ -16,8 +16,6 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
 
     public BukkitAdventureProvider(final @NotNull JavaPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
-
-        SocialAdventureProvider.set(this);
     }
 
     @Override

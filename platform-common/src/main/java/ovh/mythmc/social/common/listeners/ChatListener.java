@@ -30,7 +30,7 @@ public final class ChatListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
+        SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
         if (socialPlayer == null) {
             // unexpected error;
             return;
@@ -44,7 +44,7 @@ public final class ChatListener implements Listener {
             return;
         }
 
-        Social.get().getPlayerManager().setMainChannel(socialPlayer, defaultChannel);
+        Social.get().getUserManager().setMainChannel(socialPlayer, defaultChannel);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -61,7 +61,7 @@ public final class ChatListener implements Listener {
             return;
 
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(uuid);
+        SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
         if (socialPlayer == null) {
             Social.get().getLogger().error("Unexpected error (missing SocialPlayer)");
             return;
@@ -129,7 +129,7 @@ public final class ChatListener implements Listener {
 
             event.getChatChannel().removeMember(event.getSender());
 
-            PluginUtil.runGlobalTask(plugin, () -> Social.get().getPlayerManager().setMainChannel(event.getSender(), defaultChannel));
+            PluginUtil.runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -148,7 +148,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChatChannel().removeMember(event.getRecipient());
-            PluginUtil.runGlobalTask(plugin, () -> Social.get().getPlayerManager().setMainChannel(event.getRecipient(), defaultChannel));
+            PluginUtil.runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
     }

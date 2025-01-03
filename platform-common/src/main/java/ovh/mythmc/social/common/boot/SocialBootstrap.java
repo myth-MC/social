@@ -2,11 +2,11 @@ package ovh.mythmc.social.common.boot;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.Gestalt;
-import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
@@ -30,26 +30,21 @@ public abstract class SocialBootstrap<T> implements Social {
     private final JavaPlugin plugin;
     private final SocialConfigProvider config;
 
-    private final BukkitGestaltLoader gestalt;
-
     public SocialBootstrap(final @NotNull JavaPlugin plugin,
                            final File dataDirectory) {
         SocialSupplier.set(this);
 
         this.plugin = plugin;
         this.config = new SocialConfigProvider(dataDirectory);
-        this.gestalt = BukkitGestaltLoader.builder().initializer(plugin).build();
     }
 
     public final void initialize() {
         // Initialize gestalt
-        gestalt.initialize();
-
         Gestalt.get().register(BootstrapFeature.class);
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 
         // Load settings
-        reload();
+        reloadAll();
 
         try {
             // Enable plugin
@@ -61,13 +56,33 @@ public abstract class SocialBootstrap<T> implements Social {
         }
     }
 
+    public abstract void initializeGestalt();
+
     public abstract void enable();
 
-    public void shutdown() {
-        gestalt.terminate();
+    public abstract void shutdown();
+
+    @Override
+    public final void reload(ReloadType type) {
+        switch (type) {
+            case ADDONS:
+                Gestalt.get().getByGroupAndIdentifier("social", "ADDON")
+                    .forEach(addon -> Gestalt.get().enableFeature(addon));
+                    
+                break;
+            case SETTINGS:
+                getConfig().loadSettings();
+                break;
+            case MESSAGES:
+                getConfig().loadMessages();
+                break;
+            default:
+                reloadAll();
+                break;
+        }
     }
 
-    public final void reload() {
+    private final void reloadAll() {
         Gestalt.get().disableFeature(BootstrapFeature.class);
 
         // Unregister all parsers
@@ -99,7 +114,7 @@ public abstract class SocialBootstrap<T> implements Social {
         );
 
         // Register parsers that do not necessarily belong to any feature group
-        Social.get().getTextProcessor().registerParser(
+        Social.get().getTextProcessor().LATE_PARSERS.add(
             new MiniMessageParser()
         );
 

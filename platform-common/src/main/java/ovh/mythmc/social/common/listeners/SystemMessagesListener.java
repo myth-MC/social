@@ -20,7 +20,7 @@ public final class SystemMessagesListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)
             return;
 
@@ -37,14 +37,14 @@ public final class SystemMessagesListener implements Listener {
         Component message = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
+        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
 
         event.setJoinMessage("");
     }
 
    @EventHandler
    public void onPlayerQuit(PlayerQuitEvent event) {
-       SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+       SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
        if (socialPlayer == null)
            return;
 
@@ -61,14 +61,14 @@ public final class SystemMessagesListener implements Listener {
        Component message = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-       Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), message, channelType);
+       Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
 
        event.setQuitMessage("");
    }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getEntity().getUniqueId());
+        SocialUser socialPlayer = Social.get().getUserManager().get(event.getEntity().getUniqueId());
         if (socialPlayer == null)
             return;
 
@@ -85,7 +85,7 @@ public final class SystemMessagesListener implements Listener {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (unformattedMessage.contains(player.getName())) {
-                SocialUser s = Social.get().getPlayerManager().get(player.getUniqueId());
+                SocialUser s = Social.get().getUserManager().get(player.getUniqueId());
                 deathMessage = deathMessage.replaceText(TextReplacementConfig
                         .builder()
                         .matchLiteral(player.getName())
@@ -98,7 +98,7 @@ public final class SystemMessagesListener implements Listener {
 
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getPlayerManager().get(), deathMessage, channelType);
+        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), deathMessage, channelType);
 
         // Send message to console
         Social.get().getLogger().info(ChatColor.stripColor(event.getDeathMessage().trim()));

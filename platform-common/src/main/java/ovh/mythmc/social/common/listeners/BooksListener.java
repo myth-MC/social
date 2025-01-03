@@ -16,7 +16,7 @@ public final class BooksListener implements Listener {
 
     @EventHandler
     public void onPlayerEditBook(PlayerEditBookEvent event) {
-        SocialUser socialPlayer = Social.get().getPlayerManager().get(event.getPlayer().getUniqueId());
+        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
         if (socialPlayer == null)
             return;
 

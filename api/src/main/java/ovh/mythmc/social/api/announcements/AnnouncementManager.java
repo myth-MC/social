@@ -46,7 +46,7 @@ public final class AnnouncementManager {
                 SocialAnnouncement announcement = announcements.get(latest);
 
                 if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
-                    Social.get().getPlayerManager().get().forEach(socialPlayer -> {
+                    Social.get().getUserManager().get().forEach(socialPlayer -> {
                         SocialParserContext context = SocialParserContext.builder()
                             .user(socialPlayer)
                             .message(announcement.message())
@@ -59,7 +59,7 @@ public final class AnnouncementManager {
                     for (ChatChannel channel : announcement.channels()) {
                         channel.getMembers().forEach(uuid -> {
                             SocialParserContext context = SocialParserContext.builder()
-                                .user(Social.get().getPlayerManager().get(uuid))
+                                .user(Social.get().getUserManager().get(uuid))
                                 .message(announcement.message())
                                 .messageChannelType(channel.getType())
                                 .build();
