@@ -15,11 +15,11 @@ import ovh.mythmc.social.api.users.SocialUser;
 @RequiredArgsConstructor
 public class SocialChannelPreSwitchEvent extends Event implements Cancellable {
 
-    private final SocialUser socialPlayer;
+    private final SocialUser user;
 
     private final ChatChannel previousChannel;
 
-    private final ChatChannel chatChannel;
+    private final ChatChannel channel;
 
     private boolean cancelled = false;
 

@@ -18,8 +18,8 @@ public final class AnvilListener implements Listener {
 
     @EventHandler
     public void onItemRename(PrepareAnvilEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getInventory().getViewers().get(0).getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getInventory().getViewers().get(0).getUniqueId());
+        if (user == null)
             return;
 
         if (event.getResult() == null || !event.getResult().hasItemMeta() || Objects.equals(event.getView().getRenameText(), ""))
@@ -29,8 +29,8 @@ public final class AnvilListener implements Listener {
 
         String parsedName = PlainTextComponentSerializer.plainText().serialize(
             Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
-                .user(socialPlayer)
-                .channel(socialPlayer.getMainChannel())
+                .user(user)
+                //.channel(socialPlayer.getMainChannel())
                 .message(text(name))
                 .build())
         );

@@ -21,7 +21,7 @@ import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.api.text.parsers.SocialParser;
-import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
+import ovh.mythmc.social.api.text.parsers.SocialUserInputParser;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Builder
@@ -65,7 +65,7 @@ public class CustomTextProcessor {
             if (parser instanceof SocialFilterLike && playerInput == false)
                 continue;
 
-            if (!(parser instanceof SocialPlayerInputParser) && playerInput)
+            if (!(parser instanceof SocialUserInputParser) && playerInput)
                 continue;
 
             List<Class<?>> appliedParsers = context.appliedParsers();

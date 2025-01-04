@@ -14,11 +14,11 @@ import ovh.mythmc.social.api.users.SocialUser;
 @RequiredArgsConstructor
 public class SocialChannelPostSwitchEvent extends Event {
 
-    private final SocialUser socialPlayer;
+    private final SocialUser user;
 
     private final ChatChannel previousChannel;
 
-    private final ChatChannel chatChannel;
+    private final ChatChannel channel;
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 

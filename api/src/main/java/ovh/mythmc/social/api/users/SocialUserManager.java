@@ -17,14 +17,14 @@ import java.util.UUID;
 public final class SocialUserManager {
 
     public static final SocialUserManager instance = new SocialUserManager();
-    private static final List<SocialUser> playerList = new ArrayList<>();
+    private static final List<SocialUser> userList = new ArrayList<>();
 
     public @NotNull List<SocialUser> get() {
-        return List.copyOf(playerList);
+        return List.copyOf(userList);
     }
 
     public SocialUser get(final @NotNull UUID uuid) {
-        for (SocialUser player : playerList) {
+        for (SocialUser player : userList) {
             if (player.getUuid().equals(uuid))
                 return player;
         }
@@ -32,18 +32,18 @@ public final class SocialUserManager {
         return null;
     }
 
-    public void registerSocialPlayer(final @NotNull SocialUser socialPlayer) {
-        playerList.add(socialPlayer);
+    public void register(final @NotNull SocialUser user) {
+        userList.add(user);
     }
 
-    public void registerSocialPlayer(final @NotNull UUID uuid) {
+    public void register(final @NotNull UUID uuid) {
         // Todo: recover data from last session
         String defaultChatChannelName = Social.get().getConfig().getSettings().getChat().getDefaultChannel();
-        ChatChannel defaultChatChannel = Social.get().getChatManager().getChannel(defaultChatChannelName);
+        ChatChannel defaultChatChannel = ChatChannel.Default;
 
-        SocialUser socialPlayer = new SocialUser(uuid);
-        socialPlayer.setMuted(false);
-        socialPlayer.setSocialSpy(false);
+        SocialUser user = new SocialUser(uuid);
+        user.setMuted(false);
+        user.setSocialSpy(false);
 
         if (defaultChatChannel == null) {
             Social.get().getLogger().warn("Default channel '" + defaultChatChannelName + "' is unavailable!");
@@ -51,42 +51,42 @@ public final class SocialUserManager {
             if (!defaultChatChannel.getMembers().contains(uuid))
                 defaultChatChannel.addMember(uuid);
 
-            socialPlayer.setMainChannel(defaultChatChannel);
+            user.setMainChannel(defaultChatChannel);
         }
 
-        registerSocialPlayer(socialPlayer);
+        register(user);
     }
 
-    public void unregisterSocialPlayer(final @NotNull SocialUser socialPlayer) {
-        playerList.remove(socialPlayer);
+    public void unregister(final @NotNull SocialUser user) {
+        userList.remove(user);
     }
 
-    public void setMainChannel(final @NotNull SocialUser socialPlayer,
+    public void setMainChannel(final @NotNull SocialUser user,
                                final @NotNull ChatChannel chatChannel) {
 
-        ChatChannel previousChannel = socialPlayer.getMainChannel();
+        ChatChannel previousChannel = user.getMainChannel();
 
-        SocialChannelPreSwitchEvent socialChannelPreSwitchEvent = new SocialChannelPreSwitchEvent(socialPlayer, previousChannel, chatChannel);
+        SocialChannelPreSwitchEvent socialChannelPreSwitchEvent = new SocialChannelPreSwitchEvent(user, previousChannel, chatChannel);
         Bukkit.getPluginManager().callEvent(socialChannelPreSwitchEvent);
 
         if (socialChannelPreSwitchEvent.isCancelled())
             return;
 
-        socialPlayer.setMainChannel(chatChannel);
-        SocialChannelPostSwitchEvent socialChannelPostSwitchEvent = new SocialChannelPostSwitchEvent(socialPlayer, previousChannel, chatChannel);
+        user.setMainChannel(chatChannel);
+        SocialChannelPostSwitchEvent socialChannelPostSwitchEvent = new SocialChannelPostSwitchEvent(user, previousChannel, chatChannel);
         Bukkit.getPluginManager().callEvent(socialChannelPostSwitchEvent);
     }
 
-    public void setLatestMessage(final @NotNull SocialUser socialPlayer,
+    public void setLatestMessage(final @NotNull SocialUser user,
                                  final long latestMessageInMilliseconds) {
 
-        socialPlayer.setLatestMessageInMilliseconds(latestMessageInMilliseconds);
+        user.setLatestMessageInMilliseconds(latestMessageInMilliseconds);
     }
 
-    public void setSocialSpy(final @NotNull SocialUser socialPlayer,
+    public void setSocialSpy(final @NotNull SocialUser user,
                              final boolean socialSpy) {
 
-        socialPlayer.setSocialSpy(socialSpy);
+        user.setSocialSpy(socialSpy);
     }
 
 }

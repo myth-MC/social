@@ -141,9 +141,9 @@ public final class GlobalTextProcessor {
         return textProcessor.parse(context);
     }
 
-    public Component parse(SocialUser socialPlayer, ChatChannel channel, Component message, ChannelType channelType) {
+    public Component parse(SocialUser user, ChatChannel channel, Component message, ChannelType channelType) {
         return parse(SocialParserContext.builder()
-            .user(socialPlayer)
+            .user(user)
             .channel(channel)
             .message(message)
             .messageChannelType(channelType)
@@ -151,25 +151,25 @@ public final class GlobalTextProcessor {
         );
     }
 
-    public Component parse(SocialUser socialPlayer, ChatChannel channel, String message, ChannelType channelType) {
-        return parse(socialPlayer, channel, text(message), channelType);
+    public Component parse(SocialUser user, ChatChannel channel, String message, ChannelType channelType) {
+        return parse(user, channel, text(message), channelType);
     }
 
-    public Component parse(SocialUser socialPlayer, ChatChannel channel, Component message) {
-        return parse(socialPlayer, channel, message, ChannelType.CHAT);
+    public Component parse(SocialUser user, ChatChannel channel, Component message) {
+        return parse(user, channel, message, ChannelType.CHAT);
     }
 
-    public Component parse(SocialUser socialPlayer, ChatChannel channel, String message) {
-        return parse(socialPlayer, channel, text(message));
+    public Component parse(SocialUser user, ChatChannel channel, String message) {
+        return parse(user, channel, text(message));
     }
 
     public void parseAndSend(SocialParserContext context) {
         send(List.of(context.user()), parse(context), context.messageChannelType());
     }
 
-    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, Component message, ChannelType channelType) {
+    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
         SocialParserContext context = SocialParserContext.builder()
-            .user(socialPlayer)
+            .user(user)
             .channel(chatChannel)
             .message(message)
             .messageChannelType(channelType)
@@ -178,16 +178,16 @@ public final class GlobalTextProcessor {
         parseAndSend(context);
     }
 
-    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, String message, ChannelType channelType) {
-        parseAndSend(socialPlayer, chatChannel, text(message), channelType);
+    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message, ChannelType channelType) {
+        parseAndSend(user, chatChannel, text(message), channelType);
     }
 
-    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, Component message) {
-        parseAndSend(socialPlayer, chatChannel, message, ChannelType.CHAT);
+    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message) {
+        parseAndSend(user, chatChannel, message, ChannelType.CHAT);
     }
 
-    public void parseAndSend(SocialUser socialPlayer, ChatChannel chatChannel, String message) {
-        parseAndSend(socialPlayer, chatChannel, text(message));
+    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message) {
+        parseAndSend(user, chatChannel, text(message));
     }
 
     public void parseAndSend(SocialUser user, Component message, ChannelType type) {
@@ -202,7 +202,7 @@ public final class GlobalTextProcessor {
         if (message == null || message.equals(Component.empty()))
             return;
 
-        members.forEach(socialPlayer -> SocialAdventureProvider.get().sendMessage(socialPlayer, message, type));
+        members.forEach(user -> SocialAdventureProvider.get().sendMessage(user, message, type));
     }
 
     public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {

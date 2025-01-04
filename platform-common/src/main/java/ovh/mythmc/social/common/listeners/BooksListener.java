@@ -16,8 +16,8 @@ public final class BooksListener implements Listener {
 
     @EventHandler
     public void onPlayerEditBook(PlayerEditBookEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
         BookMeta bookMeta = event.getNewBookMeta();
@@ -25,7 +25,7 @@ public final class BooksListener implements Listener {
         for (int i = 1; i <= bookMeta.getPageCount(); i++) {
             String page = bookMeta.getPage(i);
             String parsedPage = LegacyComponentSerializer.legacySection().serialize(
-                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().user(socialPlayer).channel(socialPlayer.getMainChannel()).message(text(page)).build())
+                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().user(user).message(text(page)).build())
             );
 
             bookMeta.setPage(i, parsedPage);

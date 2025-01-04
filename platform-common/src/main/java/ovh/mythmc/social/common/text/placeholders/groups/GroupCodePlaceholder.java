@@ -23,7 +23,7 @@ public final class GroupCodePlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(context.user());
+        GroupChatChannel groupChatChannel = context.user().getGroupChatChannel();
         if (groupChatChannel == null)
             return Component.empty();
 

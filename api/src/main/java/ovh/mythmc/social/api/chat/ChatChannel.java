@@ -59,16 +59,16 @@ public class ChatChannel {
         return true;
     }
 
-    public boolean addMember(SocialUser socialPlayer) {
-        return addMember(socialPlayer.getUuid());
+    public boolean addMember(SocialUser user) {
+        return addMember(user.getUuid());
     }
 
     public boolean removeMember(UUID uuid) {
         return members.remove(uuid);
     }
 
-    public boolean removeMember(SocialUser socialPlayer) {
-        return removeMember(socialPlayer.getUuid());
+    public boolean removeMember(SocialUser user) {
+        return removeMember(user.getUuid());
     }
 
     public static ChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {

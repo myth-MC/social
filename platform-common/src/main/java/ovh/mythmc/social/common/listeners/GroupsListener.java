@@ -16,49 +16,49 @@ public final class GroupsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupJoin(SocialGroupJoinEvent event) {
-        Component joinMessage = Social.get().getTextProcessor().parse(event.getPlayer(), event.getPlayer().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerJoinedGroup());
+        Component joinMessage = Social.get().getTextProcessor().parse(event.getUser(), event.getUser().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerJoinedGroup());
 
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            if (uuid.equals(event.getPlayer().getUuid())) return;
+            if (uuid.equals(event.getUser().getUuid())) return;
 
-            SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-            if (socialPlayer == null) return;
+            SocialUser user = Social.get().getUserManager().get(uuid);
+            if (user == null) return;
 
-            Social.get().getTextProcessor().send(socialPlayer, joinMessage, Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().send(user, joinMessage, Social.get().getConfig().getMessages().getChannelType());
         });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupLeave(SocialGroupLeaveEvent event) {
-        setDefaultChannel(event.getPlayer());
+        setDefaultChannel(event.getUser());
 
-        Component leftMessage = Social.get().getTextProcessor().parse(event.getPlayer(), event.getPlayer().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
+        Component leftMessage = Social.get().getTextProcessor().parse(event.getUser(), event.getUser().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
 
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-            if (socialPlayer == null) return;
+            SocialUser user = Social.get().getUserManager().get(uuid);
+            if (user == null) return;
 
-            Social.get().getTextProcessor().send(socialPlayer, leftMessage, Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().send(user, leftMessage, Social.get().getConfig().getMessages().getChannelType());
         });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupCreate(SocialGroupCreateEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getGroupChatChannel().getLeaderUuid());
-        if (socialPlayer == null) return;
+        SocialUser user = Social.get().getUserManager().get(event.getGroupChatChannel().getLeaderUuid());
+        if (user == null) return;
 
-        Social.get().getUserManager().setMainChannel(socialPlayer, event.getGroupChatChannel());
+        Social.get().getUserManager().setMainChannel(user, event.getGroupChatChannel());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupDisband(SocialGroupDisbandEvent event) {
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-            if (socialPlayer == null) return;
+            SocialUser user = Social.get().getUserManager().get(uuid);
+            if (user == null) return;
 
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
 
-            setDefaultChannel(socialPlayer);
+            setDefaultChannel(user);
         });
     }
 
@@ -67,27 +67,27 @@ public final class GroupsListener implements Listener {
         Component leaderChangeMessage = Social.get().getTextProcessor().parse(event.getLeader(), event.getLeader().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
 
         event.getGroupChatChannel().getMembers().forEach(uuid -> {
-            SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-            if (socialPlayer == null) return;
+            SocialUser user = Social.get().getUserManager().get(uuid);
+            if (user == null) return;
 
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), leaderChangeMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), leaderChangeMessage, ChannelType.CHAT);
         });
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
-        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
+        GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByUser(user);
         if (groupChatChannel == null)
             return;
 
         // Not necessary since ChatListener already takes care of this
-        groupChatChannel.removeMember(socialPlayer);
+        groupChatChannel.removeMember(user);
 
-        if (groupChatChannel.getLeaderUuid().equals(socialPlayer.getUuid())) {
+        if (groupChatChannel.getLeaderUuid().equals(user.getUuid())) {
             if (groupChatChannel.getMembers().size() < 1) {
                 Social.get().getChatManager().unregisterChatChannel(groupChatChannel);
             } else {
@@ -96,11 +96,11 @@ public final class GroupsListener implements Listener {
         }
     }
 
-    private void setDefaultChannel(SocialUser socialPlayer) {
-        ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+    private void setDefaultChannel(SocialUser user) {
+        ChatChannel defaultChannel = ChatChannel.Default;
         if (defaultChannel == null) return;
 
-        Social.get().getUserManager().setMainChannel(socialPlayer, defaultChannel);
+        Social.get().getUserManager().setMainChannel(user, defaultChannel);
     }
 
 }

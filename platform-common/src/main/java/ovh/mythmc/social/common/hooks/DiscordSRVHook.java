@@ -24,8 +24,6 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 public final class DiscordSRVHook implements ChatHook {
 
@@ -33,8 +31,8 @@ public final class DiscordSRVHook implements ChatHook {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMessage(SocialChatMessagePrepareEvent event) {
-        if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChatChannel().getName()) == null) {
-            DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + event.getChatChannel().getName() + " but none found");
+        if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChannel().getName()) == null) {
+            DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + event.getChannel().getName() + " but none found");
             return;
         }
 
@@ -43,7 +41,7 @@ public final class DiscordSRVHook implements ChatHook {
             return;
         }
 
-        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getRawMessage(), event.getChatChannel().getName(), event.isCancelled(), event);
+        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getRawMessage(), event.getChannel().getName(), event.isCancelled(), event);
     }
 
     @Subscribe
@@ -61,12 +59,12 @@ public final class DiscordSRVHook implements ChatHook {
             return;
 
         // Workaround for placeholders
-        SocialUser fakePlayer = new SocialUser(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
+        //SocialUser fakePlayer = new SocialUser(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
 
         String miniMessage = MessageUtil.toMiniMessage(message);
         
         SocialParserContext context = SocialParserContext.builder()
-            .user(fakePlayer)
+            .user(SocialUser.dummy(chatChannel))
             .channel(chatChannel)
             .build();
 
@@ -76,15 +74,15 @@ public final class DiscordSRVHook implements ChatHook {
 
         String finalMiniMessage = miniMessage;
         chatChannel.getMembers().forEach(uuid -> {
-            SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-            if (socialPlayer == null)
+            SocialUser user = Social.get().getUserManager().get(uuid);
+            if (user == null)
                 return;
 
-            if (!Social.get().getChatManager().hasPermission(socialPlayer, chatChannel))
+            if (!Social.get().getChatManager().hasPermission(user, chatChannel))
                 return;
 
             // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, socialPlayer.getMainChannel(), finalMiniMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), finalMiniMessage, ChannelType.CHAT);
         });
     }
 

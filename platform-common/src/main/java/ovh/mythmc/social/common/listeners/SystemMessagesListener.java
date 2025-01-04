@@ -20,8 +20,8 @@ public final class SystemMessagesListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
         if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeJoinMessage())
@@ -34,7 +34,7 @@ public final class SystemMessagesListener implements Listener {
         if (unformattedMessage == null || unformattedMessage.isEmpty())
             return;
 
-        Component message = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
+        Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
         Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
@@ -44,8 +44,8 @@ public final class SystemMessagesListener implements Listener {
 
    @EventHandler
    public void onPlayerQuit(PlayerQuitEvent event) {
-       SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-       if (socialPlayer == null)
+       SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+       if (user == null)
            return;
 
        if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeQuitMessage())
@@ -58,7 +58,7 @@ public final class SystemMessagesListener implements Listener {
        if (unformattedMessage == null || unformattedMessage.isEmpty())
            return;
 
-       Component message = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
+       Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
@@ -68,8 +68,8 @@ public final class SystemMessagesListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getEntity().getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getEntity().getUniqueId());
+        if (user == null)
             return;
 
         if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage())
@@ -81,7 +81,7 @@ public final class SystemMessagesListener implements Listener {
 
         unformattedMessage = String.format(unformattedMessage, event.getDeathMessage());
 
-        Component deathMessage = parse(socialPlayer, socialPlayer.getMainChannel(), Component.text(unformattedMessage));
+        Component deathMessage = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (unformattedMessage.contains(player.getName())) {
@@ -106,9 +106,9 @@ public final class SystemMessagesListener implements Listener {
         event.setDeathMessage("");
    }
 
-    private Component parse(SocialUser socialPlayer, ChatChannel channel, Component message) {
+    private Component parse(SocialUser user, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder()
-            .user(socialPlayer)
+            .user(user)
             .channel(channel)
             .message(message)
             .messageChannelType(channel.getType())

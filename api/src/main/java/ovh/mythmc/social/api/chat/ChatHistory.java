@@ -38,9 +38,9 @@ public final class ChatHistory {
                 .toList();
     }
 
-    public List<SocialMessageContext> getByPlayer(final @NotNull SocialUser socialPlayer) {
+    public List<SocialMessageContext> getByUser(final @NotNull SocialUser user) {
         return messages.values().stream()
-                .filter(message -> message.sender().equals(socialPlayer))
+                .filter(message -> message.sender().equals(user))
                 .toList();
     }
 

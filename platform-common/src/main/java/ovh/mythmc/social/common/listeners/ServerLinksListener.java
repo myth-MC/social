@@ -18,8 +18,8 @@ public final class ServerLinksListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
         List<WrapperCommonServerServerLinks.ServerLink> serverLinks = new ArrayList<>();
@@ -29,8 +29,7 @@ public final class ServerLinksListener implements Listener {
                 serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(knownType, serverLink.url()));
             } else {
                 SocialParserContext context = SocialParserContext.builder()
-                    .user(socialPlayer)
-                    .channel(socialPlayer.getMainChannel())
+                    .user(user)
                     .message(Component.text(serverLink.displayName()))
                     .build();
 

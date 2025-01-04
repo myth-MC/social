@@ -33,13 +33,13 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
-            SocialUser socialPlayer = Social.get().getUserManager().get(player.getUniqueId());
-            if (socialPlayer == null)
+            SocialUser user = Social.get().getUserManager().get(player.getUniqueId());
+            if (user == null)
                 return null;
 
             if (params.startsWith("player_")) {
                 if (params.equalsIgnoreCase("player_is_in_group")) {
-                    if (Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer) == null)
+                    if (Social.get().getChatManager().getGroupChannelByUser(user) == null)
                         return "false";
                     return "true";
                 }
@@ -48,7 +48,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     Player target = Bukkit.getPlayerExact(username);
                     if (target == null) 
                         return "false";
-                    GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(player.getUniqueId());
+                    GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByUser(player.getUniqueId());
                     if (groupChatChannel == null)
                         return "false";
                     return "true";
@@ -56,7 +56,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
             }
 
             if (params.startsWith("group_")) {
-                GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByPlayer(socialPlayer);
+                GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByUser(user);
                 if (groupChatChannel == null) return null;
 
                 if (params.equalsIgnoreCase("group_name")) {

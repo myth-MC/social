@@ -12,11 +12,11 @@ public final class MOTDListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser player = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (player == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
-        Social.get().getConfig().getSettings().getMotd().getMessage().forEach(line -> Social.get().getTextProcessor().parseAndSend(player, player.getMainChannel(), line, ChannelType.CHAT));
+        Social.get().getConfig().getSettings().getMotd().getMessage().forEach(line -> Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), line, ChannelType.CHAT));
     }
 
 }

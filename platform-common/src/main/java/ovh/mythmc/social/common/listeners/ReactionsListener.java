@@ -24,11 +24,11 @@ public final class ReactionsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        SocialUser player = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (player == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
-        if (!player.getPlayer().hasPermission("social.command.reaction"))
+        if (!user.getPlayer().hasPermission("social.command.reaction"))
             return;
 
         Reaction reaction = null;
@@ -44,7 +44,7 @@ public final class ReactionsListener implements Listener {
         }
 
         if (reaction != null) {
-            SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(player, reaction);
+            SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(user, reaction);
             PluginUtil.runGlobalTask(plugin, () -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
         }
     }
@@ -52,7 +52,7 @@ public final class ReactionsListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onReactionCall(SocialReactionCallEvent event) {
         if (!event.isCancelled())
-            ReactionFactory.get().displayReaction(event.getSocialPlayer(), event.getReaction());
+            ReactionFactory.get().displayReaction(event.getUser(), event.getReaction());
     }
 
 }

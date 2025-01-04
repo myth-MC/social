@@ -30,21 +30,21 @@ public final class ChatListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
-        SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-        if (socialPlayer == null) {
+        SocialUser user = Social.get().getUserManager().get(uuid);
+        if (user == null) {
             // unexpected error;
             return;
         }
 
-        Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);
+        Social.get().getChatManager().assignChannelsToPlayer(user);
 
-        ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+        ChatChannel defaultChannel = ChatChannel.Default;
         if (defaultChannel == null) {
             Social.get().getLogger().error("Default channel is unavailable!");
             return;
         }
 
-        Social.get().getUserManager().setMainChannel(socialPlayer, defaultChannel);
+        Social.get().getUserManager().setMainChannel(user, defaultChannel);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -61,20 +61,20 @@ public final class ChatListener implements Listener {
             return;
 
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
-        if (socialPlayer == null) {
+        SocialUser user = Social.get().getUserManager().get(uuid);
+        if (user == null) {
             Social.get().getLogger().error("Unexpected error (missing SocialPlayer)");
             return;
         }
 
-        if (socialPlayer.isMuted()) {
+        if (user.isMuted()) {
             event.setCancelled(true);
             return;
         }
 
-        ChatChannel mainChannel = socialPlayer.getMainChannel();
+        ChatChannel mainChannel = user.getMainChannel();
         if (mainChannel == null) {
-            Social.get().getTextProcessor().parseAndSend(socialPlayer, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
             event.setCancelled(true);
             return;
         }
@@ -86,10 +86,10 @@ public final class ChatListener implements Listener {
         if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
             int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
-            if (System.currentTimeMillis() - socialPlayer.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
-                    !socialPlayer.getPlayer().hasPermission("social.filter.bypass")) {
+            if (System.currentTimeMillis() - user.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
+                    !user.getPlayer().hasPermission("social.filter.bypass")) {
 
-                Social.get().getTextProcessor().parseAndSend(socialPlayer, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
                 event.setCancelled(true);
                 return;
             }
@@ -110,7 +110,7 @@ public final class ChatListener implements Listener {
         }
 
         // Send chat message
-        SocialMessageContext context = Social.get().getChatManager().sendChatMessage(socialPlayer, mainChannel, event.getMessage(), replyId);
+        SocialMessageContext context = Social.get().getChatManager().sendChatMessage(user, mainChannel, event.getMessage(), replyId);
         if (context == null) {
             event.setCancelled(true);
             return;
@@ -124,10 +124,10 @@ public final class ChatListener implements Listener {
     @EventHandler
     public void onSocialChatMessageSend(SocialChatMessagePrepareEvent event) {
         // Check if player still has permission to chat in their selected channel
-        if (!Social.get().getChatManager().hasPermission(event.getSender(), event.getChatChannel())) {
+        if (!Social.get().getChatManager().hasPermission(event.getSender(), event.getChannel())) {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
-            event.getChatChannel().removeMember(event.getSender());
+            event.getChannel().removeMember(event.getSender());
 
             PluginUtil.runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
@@ -140,14 +140,14 @@ public final class ChatListener implements Listener {
         if (event.isReply())
             event.getSender().getPlayer().playSound(event.getSender().getPlayer(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F);
 
-        if (event.getChatChannel().getPermission() == null)
+        if (event.getChannel().getPermission() == null)
             return;
 
         // We'll remove the player from this channel if they no longer have the required permission
-        if (!Social.get().getChatManager().hasPermission(event.getRecipient(), event.getChatChannel())) {
+        if (!Social.get().getChatManager().hasPermission(event.getRecipient(), event.getChannel())) {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
-            event.getChatChannel().removeMember(event.getRecipient());
+            event.getChannel().removeMember(event.getRecipient());
             PluginUtil.runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
@@ -155,15 +155,15 @@ public final class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPreSwitch(SocialChannelPreSwitchEvent event) {
-        if (!event.getChatChannel().getMembers().contains(event.getSocialPlayer().getUuid()))
-            event.getChatChannel().addMember(event.getSocialPlayer().getUuid());
+        if (!event.getChannel().getMembers().contains(event.getUser().getUuid()))
+            event.getChannel().addMember(event.getUser().getUuid());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
         SocialParserContext context = SocialParserContext.builder()
-            .user(event.getSocialPlayer())
-            .channel(event.getChatChannel())
+            .user(event.getUser())
+            .channel(event.getChannel())
             .message(Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
             .build();
 

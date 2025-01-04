@@ -22,10 +22,10 @@ public abstract class SocialAdventureProvider {
                                      final @NotNull ComponentLike message,
                                      final @NotNull ChannelType type);
 
-    public void sendMessage(final @NotNull SocialUser socialPlayer,
+    public void sendMessage(final @NotNull SocialUser user,
                             final @NotNull ComponentLike message,
                             final @NotNull ChannelType type) {
-        sendMessage(socialPlayer.getPlayer(), message, type);
+        sendMessage(user.getPlayer(), message, type);
     }
 
     public abstract Audience player(final @NotNull Player player);

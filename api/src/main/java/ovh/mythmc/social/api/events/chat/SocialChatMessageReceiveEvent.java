@@ -22,8 +22,8 @@ public class SocialChatMessageReceiveEvent extends SocialChatMessagePrepareEvent
 
     private boolean cancelled = false;
 
-    public SocialChatMessageReceiveEvent(SocialUser sender, SocialUser recipient, ChatChannel chatChannel, Component message, String rawMessage, Integer replyId, int messageId) {
-        super(sender, chatChannel, rawMessage, replyId);
+    public SocialChatMessageReceiveEvent(SocialUser sender, SocialUser recipient, ChatChannel channel, Component message, String rawMessage, Integer replyId, int messageId) {
+        super(sender, channel, rawMessage, replyId);
         this.recipient = recipient;
         this.message = message;
         this.messageId = messageId;

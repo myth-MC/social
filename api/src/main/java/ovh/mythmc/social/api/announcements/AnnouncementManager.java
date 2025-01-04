@@ -46,9 +46,9 @@ public final class AnnouncementManager {
                 SocialAnnouncement announcement = announcements.get(latest);
 
                 if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
-                    Social.get().getUserManager().get().forEach(socialPlayer -> {
+                    Social.get().getUserManager().get().forEach(user -> {
                         SocialParserContext context = SocialParserContext.builder()
-                            .user(socialPlayer)
+                            .user(user)
                             .message(announcement.message())
                             .messageChannelType(ChannelType.ACTION_BAR)
                             .build();

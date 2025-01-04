@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listeners.SocialPlayerListener;
+import ovh.mythmc.social.common.listeners.SocialUserListener;
 import ovh.mythmc.social.paper.adventure.PaperAdventureProvider;
 import ovh.mythmc.social.paper.reactions.PaperReactionFactory;
 
@@ -74,7 +74,7 @@ public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new SocialUserListener(), getPlugin());
     }
 
 }

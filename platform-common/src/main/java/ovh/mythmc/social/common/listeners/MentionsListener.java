@@ -31,7 +31,7 @@ public final class MentionsListener implements Listener {
         Arrays.asList(event.getRawMessage().split("\\s+")).forEach(word -> {
             // Replace player's name and nickname
             if (pattern.matcher(word).find()) {
-                Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), event.getChatChannel(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
+                Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), event.getChannel(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
 
                 List<Component> children = new ArrayList<>(List.copyOf(event.getMessage().children()));
 
@@ -41,14 +41,14 @@ public final class MentionsListener implements Listener {
                     // Nickname
                     replaced = replaced.replaceText(TextReplacementConfig.builder()
                         .matchLiteral("@" + event.getRecipient().getNickname())
-                        .replacement(Component.text("@" + event.getRecipient().getNickname(), event.getChatChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
+                        .replacement(Component.text("@" + event.getRecipient().getNickname(), event.getChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
                         .build()
                     );
                 } else if (word.substring(1).equalsIgnoreCase(event.getRecipient().getPlayer().getName())) {
                     // Username
                     replaced = replaced.replaceText(TextReplacementConfig.builder()
                             .matchLiteral("@" + event.getRecipient().getPlayer().getName())
-                            .replacement(Component.text("@" + event.getRecipient().getPlayer().getName(), event.getChatChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
+                            .replacement(Component.text("@" + event.getRecipient().getPlayer().getName(), event.getChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
                             .build()
                     );
                 }
@@ -64,16 +64,16 @@ public final class MentionsListener implements Listener {
     @EventHandler
     public void onReply(SocialChatMessageReceiveEvent event) {
         if (event.isReply()) {
-            Component replyFormat = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChatChannel(), Social.get().getConfig().getSettings().getChat().getReplyFormat());
+            Component replyFormat = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getSettings().getChat().getReplyFormat());
             String replyFormatStripped = MiniMessage.miniMessage().stripTags(MiniMessage.miniMessage().serialize(replyFormat));
 
             SocialMessageContext context = Social.get().getChatManager().getHistory().getById(event.getReplyId());
 
             if (context.sender().equals(event.getRecipient())) {
-                Component replacement = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChatChannel(), replyFormat);
+                Component replacement = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), replyFormat);
                 Component message = event.getMessage().replaceText(TextReplacementConfig.builder()
                         .matchLiteral(replyFormatStripped)
-                        .replacement(replacement.color(event.getChatChannel().getColor()))
+                        .replacement(replacement.color(event.getChannel().getColor()))
                         .once()
                         .build()
                 );

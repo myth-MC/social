@@ -15,14 +15,14 @@ public final class SignsListener implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-        if (socialPlayer == null)
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
             return;
 
         for (int i = 0; i < event.getLines().length; i++) {
             String line = event.getLine(i);
             String parsedLine = LegacyComponentSerializer.legacySection().serialize(
-                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().user(socialPlayer).channel(socialPlayer.getMainChannel()).message(text(line)).build())
+                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().user(user).message(text(line)).build())
             );
 
             event.setLine(i, parsedLine);

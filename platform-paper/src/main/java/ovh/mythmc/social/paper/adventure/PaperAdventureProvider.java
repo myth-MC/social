@@ -18,7 +18,6 @@ public final class PaperAdventureProvider extends SocialAdventureProvider {
             case CHAT -> player.sendMessage(message);
             case ACTION_BAR -> player.sendActionBar(message);
         }
-
     }
 
     @Override

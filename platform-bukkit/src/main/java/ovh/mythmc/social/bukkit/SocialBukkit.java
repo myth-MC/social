@@ -75,7 +75,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new SocialUserListener(), getPlugin());
     }
 
 }

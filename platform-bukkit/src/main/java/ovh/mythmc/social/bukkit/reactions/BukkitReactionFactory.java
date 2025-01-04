@@ -38,19 +38,19 @@ public final class BukkitReactionFactory extends ReactionFactory {
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(SocialUser player, Reaction emoji) {
-        if (player.getPlayer() == null || player.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+    public void displayReaction(SocialUser user, Reaction emoji) {
+        if (user.getPlayer() == null || user.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY) || user.getPlayer().getGameMode() == GameMode.SPECTATOR) {
             return;
         }
 
-        ItemDisplay itemDisplay = playerReaction.get(player.getUuid());
+        ItemDisplay itemDisplay = playerReaction.get(user.getUuid());
         if (itemDisplay != null)
             return;
 
-        itemDisplay = spawnItemDisplay(player.getPlayer(), emoji);
-        playerReaction.put(player.getUuid(), itemDisplay);
+        itemDisplay = spawnItemDisplay(user.getPlayer(), emoji);
+        playerReaction.put(user.getUuid(), itemDisplay);
 
-        scheduleItemDisplayUpdate(player.getPlayer(), itemDisplay);
+        scheduleItemDisplayUpdate(user.getPlayer(), itemDisplay);
     }
 
     private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {

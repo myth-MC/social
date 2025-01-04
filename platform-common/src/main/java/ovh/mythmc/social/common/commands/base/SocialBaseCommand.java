@@ -165,7 +165,7 @@ public final class SocialBaseCommand {
         public void player(SocialUser user, SocialUser target) {
             SocialHistoryMenuContext context = SocialHistoryMenuContext.builder()
                 .headerType(HeaderType.PLAYER)
-                .messages(Social.get().getChatManager().getHistory().getByPlayer(target))
+                .messages(Social.get().getChatManager().getHistory().getByUser(target))
                 .viewer(user)
                 .target(target)
                 .build();

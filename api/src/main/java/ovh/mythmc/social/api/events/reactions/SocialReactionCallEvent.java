@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.users.SocialUser;
 @Setter
 public class SocialReactionCallEvent extends Event implements Cancellable {
 
-    private final SocialUser socialPlayer;
+    private final SocialUser user;
 
     private final Reaction reaction;
 

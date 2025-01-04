@@ -60,7 +60,7 @@ public final class ChatManager {
         return null;
     }
 
-    public GroupChatChannel getGroupChannelByPlayer(final @NotNull UUID uuid) {
+    public GroupChatChannel getGroupChannelByUser(final @NotNull UUID uuid) {
         for (ChatChannel channel : getChannels()) {
             if (channel instanceof GroupChatChannel && channel.getMembers().contains(uuid)) {
                 return (GroupChatChannel) channel;
@@ -70,8 +70,8 @@ public final class ChatManager {
         return null;
     }
 
-    public GroupChatChannel getGroupChannelByPlayer(final @NotNull SocialUser socialPlayer) {
-        return getGroupChannelByPlayer(socialPlayer.getUuid());
+    public GroupChatChannel getGroupChannelByUser(final @NotNull SocialUser user) {
+        return getGroupChannelByUser(user.getUuid());
     }
 
     public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
@@ -129,34 +129,34 @@ public final class ChatManager {
         return channels.remove(chatChannel);
     }
 
-    public List<ChatChannel> getVisibleChannels(final @NotNull SocialUser socialPlayer) {
+    public List<ChatChannel> getVisibleChannels(final @NotNull SocialUser user) {
         return channels.stream()
-            .filter(channel -> hasPermission(socialPlayer, channel))
+            .filter(channel -> hasPermission(user, channel))
             .collect(Collectors.toList());
     }
 
-    public void assignChannelsToPlayer(final @NotNull SocialUser socialPlayer) {
+    public void assignChannelsToPlayer(final @NotNull SocialUser user) {
         for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
             if (channel.isJoinByDefault()) {
-                if (channel.getPermission() == null || socialPlayer.getPlayer().hasPermission(channel.getPermission()))
-                    channel.addMember(socialPlayer.getUuid());
+                if (channel.getPermission() == null || user.getPlayer().hasPermission(channel.getPermission()))
+                    channel.addMember(user.getUuid());
             }
         }
     }
 
     public boolean hasGroup(final @NotNull UUID uuid) {
-        return getGroupChannelByPlayer(uuid) != null;
+        return getGroupChannelByUser(uuid) != null;
     }
 
-    public boolean hasGroup(final @NotNull SocialUser socialPlayer) {
-        return hasGroup(socialPlayer.getUuid());
+    public boolean hasGroup(final @NotNull SocialUser user) {
+        return hasGroup(user.getUuid());
     }
 
-    public boolean hasPermission(final @NotNull SocialUser socialPlayer, final @NotNull ChatChannel chatChannel) {
+    public boolean hasPermission(final @NotNull SocialUser user, final @NotNull ChatChannel chatChannel) {
         if (chatChannel.getPermission() == null)
             return true;
 
-        if (socialPlayer.getPlayer().hasPermission(chatChannel.getPermission()))
+        if (user.getPlayer().hasPermission(chatChannel.getPermission()))
             return true;
 
         return false;
@@ -171,16 +171,16 @@ public final class ChatManager {
 
         // Update values in case they've been changed
         message = socialChatMessagePrepareEvent.getRawMessage();
-        chatChannel = socialChatMessagePrepareEvent.getChatChannel();
+        chatChannel = socialChatMessagePrepareEvent.getChannel();
 
         // List of players who will receive this message (channel + socialspy)
         List<UUID> players = new ArrayList<>();
 
         // Apply socialspy
-        for (SocialUser socialPlayer : Social.get().getUserManager().get()) {
-            if (chatChannel.getMembers().contains(socialPlayer.getUuid())) continue;
-            if (socialPlayer.isSocialSpy())
-                players.add(socialPlayer.getUuid());
+        for (SocialUser user : Social.get().getUserManager().get()) {
+            if (chatChannel.getMembers().contains(user.getUuid())) continue;
+            if (user.isSocialSpy())
+                players.add(user.getUuid());
         }
 
         // Channel icon hover text
@@ -208,7 +208,7 @@ public final class ChatManager {
         int messageId = 0;
 
         // Apply reply text
-        if (socialChatMessagePrepareEvent.isReply() && Social.get().getChatManager().hasPermission(sender, socialChatMessagePrepareEvent.getChatChannel())) {
+        if (socialChatMessagePrepareEvent.isReply() && Social.get().getChatManager().hasPermission(sender, socialChatMessagePrepareEvent.getChannel())) {
             SocialMessageContext reply = Social.get().getChatManager().getHistory().getById(replyId);
             if (reply.isReply())
                 replyId = reply.replyId();
@@ -309,7 +309,7 @@ public final class ChatManager {
             if (receivedMessage.isCancelled())
                 return;
 
-            Social.get().getTextProcessor().send(receivedMessage.getRecipient(), messagePrefix.append(receivedMessage.getMessage()), receivedMessage.getChatChannel().getType());
+            Social.get().getTextProcessor().send(receivedMessage.getRecipient(), messagePrefix.append(receivedMessage.getMessage()), receivedMessage.getChannel().getType());
         });
     }
 
@@ -379,9 +379,9 @@ public final class ChatManager {
         return component;
     }
 
-    private Component parse(SocialUser socialPlayer, ChatChannel channel, Component message) {
+    private Component parse(SocialUser user, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder()
-            .user(socialPlayer)
+            .user(user)
             .channel(channel)
             .message(message)
             .messageChannelType(channel.getType())
@@ -390,13 +390,13 @@ public final class ChatManager {
         return Social.get().getTextProcessor().parse(context);
     }
 
-    private Component parse(SocialUser socialPlayer, ChatChannel channel, String message) {
-        return parse(socialPlayer, channel, text(message));
+    private Component parse(SocialUser user, ChatChannel channel, String message) {
+        return parse(user, channel, text(message));
     }
 
-    private Component parsePlayerInput(SocialUser socialPlayer, ChatChannel channel, String message) {
+    private Component parsePlayerInput(SocialUser user, ChatChannel channel, String message) {
         SocialParserContext context = SocialParserContext.builder()
-            .user(socialPlayer)
+            .user(user)
             .channel(channel)
             .message(text(message))
             .messageChannelType(channel.getType())

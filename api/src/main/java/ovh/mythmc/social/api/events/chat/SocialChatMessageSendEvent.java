@@ -2,7 +2,6 @@ package ovh.mythmc.social.api.events.chat;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
 
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +18,13 @@ public class SocialChatMessageSendEvent extends SocialChatMessagePrepareEvent {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
-    public SocialChatMessageSendEvent(SocialUser sender, ChatChannel chatChannel, String message, Integer replyId) {
-        super(sender, chatChannel, message, replyId);
+    public SocialChatMessageSendEvent(SocialUser sender, ChatChannel channel, String message, Integer replyId) {
+        super(sender, channel, message, replyId);
     }
 
     // TODO: delete this!!
     // make ChatHistory store contexts instead of events?
+    /*
     @Deprecated
     @ScheduledForRemoval
     public Component getParsedRawMessage() {
@@ -35,8 +35,8 @@ public class SocialChatMessageSendEvent extends SocialChatMessagePrepareEvent {
             .message(Component.text(getRawMessage()))
             .build();
 
-        return Social.get().getTextProcessor().parsePlayerInput(context); */
-    }
+        return Social.get().getTextProcessor().parsePlayerInput(context); 
+    } */
 
     @NotNull
     @Override

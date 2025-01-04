@@ -16,7 +16,7 @@ public class SocialGroupJoinEvent extends Event {
 
     private final GroupChatChannel groupChatChannel;
 
-    private final SocialUser player;
+    private final SocialUser user;
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 

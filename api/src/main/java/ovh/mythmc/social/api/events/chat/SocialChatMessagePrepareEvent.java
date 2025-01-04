@@ -18,7 +18,7 @@ public class SocialChatMessagePrepareEvent extends Event implements Cancellable 
 
     private final SocialUser sender;
 
-    private ChatChannel chatChannel;
+    private ChatChannel channel;
 
     private String rawMessage;
 
@@ -28,10 +28,10 @@ public class SocialChatMessagePrepareEvent extends Event implements Cancellable 
 
     private boolean cancelled = false;
 
-    public SocialChatMessagePrepareEvent(SocialUser sender, ChatChannel chatChannel, String message, Integer replyId) {
+    public SocialChatMessagePrepareEvent(SocialUser sender, ChatChannel channel, String message, Integer replyId) {
         super(true);
         this.sender = sender;
-        this.chatChannel = chatChannel;
+        this.channel = channel;
         this.rawMessage = message;
         this.replyId = replyId;
     }

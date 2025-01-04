@@ -25,7 +25,11 @@ import javax.annotation.Nullable;
 @EqualsAndHashCode
 public final class SocialUser implements SocialUserAudienceWrapper {
 
-    public static final SocialUser Dummy = new SocialUser(UUID.nameUUIDFromBytes("#Dummy".getBytes()), ChatChannel.Default, false, false, 0, "Dummy");
+    public static final SocialUser Dummy = dummy(ChatChannel.Default);
+
+    public static final SocialUser dummy(@NonNull ChatChannel channel) {
+        return new SocialUser(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, false, 0, "Dummy");
+    }
 
     private final UUID uuid;
 
@@ -52,7 +56,7 @@ public final class SocialUser implements SocialUserAudienceWrapper {
     }
 
     public @Nullable GroupChatChannel getGroupChatChannel() {
-        return Social.get().getChatManager().getGroupChannelByPlayer(this);
+        return Social.get().getChatManager().getGroupChannelByUser(this);
     }
 
     public String getNickname() {

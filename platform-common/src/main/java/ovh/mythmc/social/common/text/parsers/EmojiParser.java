@@ -7,11 +7,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.emojis.Emoji;
-import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
+import ovh.mythmc.social.api.text.parsers.SocialUserInputParser;
 
 import java.util.regex.Pattern;
 
-public final class EmojiParser implements SocialPlayerInputParser {
+public final class EmojiParser implements SocialUserInputParser {
 
     @Override
     public Component parse(SocialParserContext context) {

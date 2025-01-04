@@ -15,7 +15,7 @@ import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.UUID;
 
-public final class SocialPlayerListener implements Listener {
+public final class SocialUserListener implements Listener {
 
     // Temporary workaround for nicknames
     NamespacedKey key = new NamespacedKey("social", "nickname");
@@ -23,22 +23,22 @@ public final class SocialPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialUser socialPlayer = Social.get().getUserManager().get(uuid);
+        SocialUser user = Social.get().getUserManager().get(uuid);
 
-        if (socialPlayer == null)
-            Social.get().getUserManager().registerSocialPlayer(uuid);
+        if (user == null)
+            Social.get().getUserManager().register(uuid);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser socialPlayer = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
 
         // Temporary workaround for nicknames
-        PersistentDataContainer container = socialPlayer.getPlayer().getPersistentDataContainer();
+        PersistentDataContainer container = user.getPlayer().getPersistentDataContainer();
         if (container.has(key, PersistentDataType.STRING)) {
             String nickname = container.get(key, PersistentDataType.STRING);
-            socialPlayer.getPlayer().setDisplayName(nickname);
-            socialPlayer.getNickname(); // Updates cached nickname
+            user.getPlayer().setDisplayName(nickname);
+            user.getNickname(); // Updates cached nickname
         }
     }
 

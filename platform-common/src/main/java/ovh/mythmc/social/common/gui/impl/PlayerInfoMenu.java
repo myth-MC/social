@@ -40,7 +40,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component messageCount = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMessageCount()), 
-            Component.text(Social.get().getChatManager().getHistory().getByPlayer(context.target()).size())
+            Component.text(Social.get().getChatManager().getHistory().getByUser(context.target()).size())
         );
 
         Component mainChannel = getField(
