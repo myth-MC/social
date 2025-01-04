@@ -119,7 +119,7 @@ public class HistoryMenu implements HistoryBookMenu {
 
                 if (message.isReply() && context.headerType() != HeaderType.THREAD) {
                     SocialMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
-                    toAppend = toAppend.clickEvent(ClickEvent.runCommand("/social:social history #" + message.id()));
+                    toAppend = toAppend.clickEvent(ClickEvent.runCommand("/social:social history thread " + message.id()));
 
                     Component replyMessage = Component.text("#" + reply.id())
                         .appendSpace()

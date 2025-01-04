@@ -76,7 +76,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
             .appendNewline()
             .append(messageCount
                 .hoverEvent(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getClickToSeeMessageHistory()).asHoverEvent())
-                .clickEvent(ClickEvent.runCommand("/social:social history " + context.target().getPlayer().getName()))
+                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().getPlayer().getName()))
             )
             .appendNewline()
             .append(visibleChannels

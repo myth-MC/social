@@ -253,9 +253,8 @@ public final class SocialBaseCommand {
 
     @Command("reload")
     @Permission("social.use.reload")
-    @Flag(flag = "s", longFlag = "scope", argument = ReloadType.class)
-    public void reload(SocialUser user, Flags flags) {
-        ReloadType type = flags.getFlagValue("s", ReloadType.class).orElse(ReloadType.ALL);
+    public void reload(SocialUser user, @Optional ReloadType type) {
+        type = java.util.Optional.ofNullable(type).orElse(ReloadType.ALL);
 
         Social.get().reload(type);
         Social.get().getTextProcessor().parseAndSend(
