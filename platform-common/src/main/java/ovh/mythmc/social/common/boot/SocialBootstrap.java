@@ -40,6 +40,8 @@ public abstract class SocialBootstrap<T> implements Social {
 
     public final void initialize() {
         // Initialize gestalt
+        initializeGestalt();
+        
         Gestalt.get().register(BootstrapFeature.class);
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 

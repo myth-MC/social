@@ -30,6 +30,7 @@ public final class BootstrapFeature {
             AnnouncementsFeature.class,
             EmojiFeature.class,
             IPFilterFeature.class,
+            TextFormattersFeature.class,
             UpdateCheckerFeature.class,
             URLFilterFeature.class
         );

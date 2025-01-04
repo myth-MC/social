@@ -37,3 +37,6 @@ permissions:
   social.mentions:
     description: Allows players to mention other players
     default: true
+  social.text-formatting:
+    description: Allows players to format text
+    default: true
