@@ -41,7 +41,7 @@ public abstract class SocialBootstrap<T> implements Social {
     public final void initialize() {
         // Initialize gestalt
         initializeGestalt();
-        
+
         Gestalt.get().register(BootstrapFeature.class);
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 
@@ -100,14 +100,14 @@ public abstract class SocialBootstrap<T> implements Social {
             new ClickableNicknamePlaceholder()
         );
 
-        Social.get().getTextProcessor().registerParser(
+        Social.get().getTextProcessor().registerContextualParser(
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
                 new SocialSpyPlaceholder()
         );
 
         // Register internal non-contextual placeholders
-        Social.get().getTextProcessor().registerParser(
+        Social.get().getTextProcessor().registerContextualParser(
                 new ErrorPlaceholder(),
                 new InfoPlaceholder(),
                 new PrivateMessagePlaceholder(),

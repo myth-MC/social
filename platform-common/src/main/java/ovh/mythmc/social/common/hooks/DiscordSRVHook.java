@@ -68,7 +68,7 @@ public final class DiscordSRVHook implements ChatHook {
             .channel(chatChannel)
             .build();
 
-        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getContextualPlaceholder("channel_icon").get(context);
+        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getContextualPlaceholder("channel_icon").get().get(context);
 
         miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 

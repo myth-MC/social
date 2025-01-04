@@ -30,7 +30,7 @@ public final class PlaceholderAPIFeature {
         this.hook = new PlaceholderAPIHook();
         
         // Register parser and events
-        Social.get().getTextProcessor().registerParser(hook);
+        Social.get().getTextProcessor().registerContextualParser(hook);
         Bukkit.getPluginManager().registerEvents(hook, plugin);
 
         // Register PlaceholderAPI expansion
@@ -39,7 +39,7 @@ public final class PlaceholderAPIFeature {
 
     @FeatureDisable
     public void disable() {
-        Social.get().getTextProcessor().unregisterParser(hook);
+        Social.get().getTextProcessor().unregisterContextualParser(hook);
         HandlerList.unregisterAll(hook);
 
         hook.getExpansion().unregister();

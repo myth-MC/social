@@ -92,14 +92,14 @@ public final class SocialConfigProvider {
 
         // Register custom placeholders
         if (settings.getChat().getFilter().isEnabled()) {
-            settings.getChat().getFilter().getLiteralFilter().forEach(literal -> Social.get().getTextProcessor().registerParser(new SocialFilterLiteral() {
+            settings.getChat().getFilter().getLiteralFilter().forEach(literal -> Social.get().getTextProcessor().registerContextualParser(new SocialFilterLiteral() {
                 @Override
                 public String literal() {
                     return literal;
                 }
             }));
 
-            settings.getChat().getFilter().getCustomRegexFilter().forEach(regex -> Social.get().getTextProcessor().registerParser(new SocialFilterRegex() {
+            settings.getChat().getFilter().getCustomRegexFilter().forEach(regex -> Social.get().getTextProcessor().registerContextualParser(new SocialFilterRegex() {
                 @Override
                 public String regex() {
                     return regex;

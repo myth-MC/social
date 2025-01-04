@@ -20,12 +20,12 @@ public final class IPFilterFeature {
 
     @FeatureEnable
     public void enable() {
-        Social.get().getTextProcessor().registerParser(ipFilter);
+        Social.get().getTextProcessor().registerContextualParser(ipFilter);
     }
 
     @FeatureDisable
     public void disable() {
-        Social.get().getTextProcessor().unregisterParser(ipFilter);
+        Social.get().getTextProcessor().unregisterContextualParser(ipFilter);
     }
 
 }

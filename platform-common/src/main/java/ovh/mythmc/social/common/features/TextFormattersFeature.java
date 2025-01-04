@@ -34,12 +34,12 @@ public final class TextFormattersFeature {
 
     @FeatureEnable
     public void enable() {
-        formatters.forEach(formatter -> Social.get().getTextProcessor().registerParser(formatter));
+        formatters.forEach(formatter -> Social.get().getTextProcessor().registerContextualParser(formatter));
     }
 
     @FeatureDisable
     public void disable() {
-        formatters.forEach(formatter -> Social.get().getTextProcessor().unregisterParser(formatter));
+        formatters.forEach(formatter -> Social.get().getTextProcessor().unregisterContextualParser(formatter));
     }
     
 }

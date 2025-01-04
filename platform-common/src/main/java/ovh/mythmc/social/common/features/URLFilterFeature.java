@@ -20,12 +20,12 @@ public final class URLFilterFeature {
 
     @FeatureEnable
     public void enable() {
-        Social.get().getTextProcessor().registerParser(urlFilter);
+        Social.get().getTextProcessor().registerContextualParser(urlFilter);
     }
 
     @FeatureDisable
     public void disable() {
-        Social.get().getTextProcessor().unregisterParser(urlFilter);
+        Social.get().getTextProcessor().unregisterContextualParser(urlFilter);
     }
 
 }

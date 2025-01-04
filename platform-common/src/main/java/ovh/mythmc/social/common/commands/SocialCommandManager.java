@@ -20,7 +20,7 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.emojis.Emoji;
 import ovh.mythmc.social.api.reactions.Reaction;
-import ovh.mythmc.social.api.text.keywords.SocialContextualKeyword;
+import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.base.GroupBaseCommand;
@@ -105,7 +105,7 @@ public final class SocialCommandManager {
                 .map(Emoji::name)
                 .forEach(emojiName -> formattingOptions.add(":" + emojiName + ":"));
 
-            Social.get().getTextProcessor().getParsers().stream()
+            Social.get().getTextProcessor().getContextualParsers().stream()
                 .filter(parser -> parser instanceof SocialContextualKeyword)
                 .map(keyword -> ((SocialContextualKeyword) keyword).keyword())
                 .forEach(keywordName -> formattingOptions.add("[" + keywordName + "]"));

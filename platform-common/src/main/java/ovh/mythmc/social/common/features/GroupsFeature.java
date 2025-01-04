@@ -51,13 +51,13 @@ public final class GroupsFeature {
     @FeatureEnable
     public void enable() {
         Bukkit.getPluginManager().registerEvents(groupsListener, plugin);
-        this.parsers.forEach(parser -> Social.get().getTextProcessor().registerParser(parser));
+        this.parsers.forEach(parser -> Social.get().getTextProcessor().registerContextualParser(parser));
     }
 
     @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(groupsListener);
-        this.parsers.forEach(parser -> Social.get().getTextProcessor().unregisterParser(parser));
+        this.parsers.forEach(parser -> Social.get().getTextProcessor().unregisterContextualParser(parser));
     }
 
 }

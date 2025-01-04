@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +15,8 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
 import ovh.mythmc.social.api.text.parsers.SocialUserInputParser;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
@@ -29,11 +25,10 @@ import ovh.mythmc.social.api.text.parsers.SocialUserInputParser;
 @With
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
-@SuppressWarnings("deprecation")
 public class CustomTextProcessor {
 
     @Builder.Default
-    private Collection<SocialParser> parsers = new ArrayList<>();
+    private Collection<SocialContextualParser> parsers = new ArrayList<>();
 
     @Builder.Default
     private Collection<Class<?>> exclusions = new ArrayList<>();
@@ -42,26 +37,13 @@ public class CustomTextProcessor {
     private boolean playerInput = false;
 
     public static CustomTextProcessor defaultProcessor() {
-        List<SocialParser> parserList = new ArrayList<>();
-        Social.get().getTextProcessor().getParsers().forEach(parser -> {
-            parserList.add(parser);
-        });
-
         return CustomTextProcessor.builder()
-            .parsers(parserList)
+            .parsers(Social.get().getTextProcessor().getContextualParsers())
             .build();
     }
 
     public Component parse(SocialParserContext context) {
-        for (SocialParserProperties.ParserPriority priority : SocialParserProperties.ParserPriority.values()) {
-            context = parseByPriority(context, priority);
-        }
-
-        return context.message();
-    }
-
-    private SocialParserContext parseByPriority(SocialParserContext context, SocialParserProperties.ParserPriority priority) {
-        for (SocialParser parser : getByPriority(priority)) {
+        for (SocialContextualParser parser : getWithExclusions()) {
             if (parser instanceof SocialFilterLike && playerInput == false)
                 continue;
 
@@ -75,33 +57,15 @@ public class CustomTextProcessor {
             }
 
             appliedParsers.add(parser.getClass());
-            context = context.withAppliedParsers(appliedParsers);
-
-            if (parser instanceof SocialContextualParser contextualParser) {
-                context = context.withMessage(contextualParser.parse(context));
-            } else {
-                context = context.withMessage(parser.parse(context.user(), context.message()));
-            }
+            context = context
+                .withAppliedParsers(appliedParsers)
+                .withMessage(parser.parse(context));
         }
 
-        return context;
+        return context.message();
     }
 
-    private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {
-        List<SocialParser> socialParserList = new ArrayList<>();
-        for (SocialParser parser : getWithExclusions()) {
-            SocialParserProperties.ParserPriority parserPriority = SocialParserProperties.ParserPriority.NORMAL;
-            if (parser.getClass().isAnnotationPresent(SocialParserProperties.class))
-                parserPriority = parser.getClass().getAnnotation(SocialParserProperties.class).priority();
-
-            if (parserPriority.equals(priority))
-                socialParserList.add(parser);
-        }
-
-        return socialParserList;
-    }
-
-    private List<SocialParser> getWithExclusions() {
+    private List<SocialContextualParser> getWithExclusions() {
         return parsers.stream()
             .filter(parser -> !exclusions.contains(parser.getClass()))
             .toList();

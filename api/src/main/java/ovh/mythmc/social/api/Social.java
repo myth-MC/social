@@ -22,14 +22,11 @@ public interface Social {
 
     @NotNull LoggerWrapper getLogger();
 
-    @NotNull
-    SocialConfigProvider getConfig();
+    @NotNull SocialConfigProvider getConfig();
 
     @NotNull default AnnouncementManager getAnnouncementManager() { return AnnouncementManager.instance; }
 
     @NotNull default SocialUserManager getUserManager() { return SocialUserManager.instance; }
-
-    @NotNull @Deprecated(forRemoval = true, since = "0.4") default SocialUserManager getPlayerManager() { return SocialUserManager.instance; }
 
     @NotNull default ChatManager getChatManager() { return ChatManager.instance; }
 

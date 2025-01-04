@@ -8,10 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.users.SocialUser;
 
-@SuppressWarnings("deprecation") // Extending SocialParser is necessary to assure legacy compatibility
-public interface SocialContextualParser extends SocialParser {
+public interface SocialContextualParser {
     
     Component parse(SocialParserContext context);
 
@@ -28,11 +26,6 @@ public interface SocialContextualParser extends SocialParser {
 
     default Component request(@NotNull SocialParserContext context, final @NotNull Class<?>... requestedParsers) {
         return request(context, Arrays.stream(requestedParsers).map(clazz -> Social.get().getTextProcessor().getContextualParserByClass(clazz)).toList());
-    }
-
-    @Override
-    default Component parse(SocialUser socialPlayer, Component message) {
-        return Component.empty();
     }
 
 }
