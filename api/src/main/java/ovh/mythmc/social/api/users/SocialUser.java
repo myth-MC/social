@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.context.SocialHandlerContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 import java.util.UUID;
@@ -23,7 +24,7 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public final class SocialUser implements SocialUserAudienceWrapper {
+public class SocialUser implements SocialUserAudienceWrapper {
 
     public static final SocialUser Dummy = dummy(ChatChannel.Default);
 
@@ -78,7 +79,8 @@ public final class SocialUser implements SocialUserAudienceWrapper {
             parsedMessage = Social.get().getTextProcessor().parse(context);
         }
 
-        Social.get().getTextProcessor().send(this, parsedMessage, context.messageChannelType());
+        SocialHandlerContext handler = SocialHandlerContext.builderFromParser(context.withMessage(parsedMessage)).build();
+        handler.handle();
     }
 
     public void sendParsableMessage(@NonNull SocialParserContext context) {

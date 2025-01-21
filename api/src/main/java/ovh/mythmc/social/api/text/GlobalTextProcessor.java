@@ -5,10 +5,10 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.handlers.RegisteredMessageHandler;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
@@ -117,22 +117,13 @@ public final class GlobalTextProcessor {
         return textProcessor.parse(context);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, Component message, ChannelType channelType) {
+    public Component parse(SocialUser user, ChatChannel channel, Component message) {
         return parse(SocialParserContext.builder()
             .user(user)
             .channel(channel)
             .message(message)
-            .messageChannelType(channelType)
             .build()
         );
-    }
-
-    public Component parse(SocialUser user, ChatChannel channel, String message, ChannelType channelType) {
-        return parse(user, channel, text(message), channelType);
-    }
-
-    public Component parse(SocialUser user, ChatChannel channel, Component message) {
-        return parse(user, channel, message, ChannelType.CHAT);
     }
 
     public Component parse(SocialUser user, ChatChannel channel, String message) {
@@ -140,49 +131,53 @@ public final class GlobalTextProcessor {
     }
 
     public void parseAndSend(SocialParserContext context) {
-        send(List.of(context.user()), parse(context), context.messageChannelType());
+        send(List.of(context.user()), context);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
+    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message) {
         SocialParserContext context = SocialParserContext.builder()
             .user(user)
             .channel(chatChannel)
             .message(message)
-            .messageChannelType(channelType)
             .build();
 
         parseAndSend(context);
-    }
-
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message, ChannelType channelType) {
-        parseAndSend(user, chatChannel, text(message), channelType);
-    }
-
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message) {
-        parseAndSend(user, chatChannel, message, ChannelType.CHAT);
     }
 
     public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message) {
         parseAndSend(user, chatChannel, text(message));
     }
 
-    public void parseAndSend(SocialUser user, Component message, ChannelType type) {
-        parseAndSend(user, user.getMainChannel(), message, type);
+    public void parseAndSend(SocialUser user, Component message) {
+        parseAndSend(user, user.getMainChannel(), message);
     }
 
-    public void parseAndSend(SocialUser user, String message, ChannelType type) {
-        parseAndSend(user, text(message), type);
+    public void parseAndSend(SocialUser user, String message) {
+        parseAndSend(user, text(message));
     }
 
-    public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type) {
-        if (message == null || message.equals(Component.empty()))
-            return;
+    public void parseAndSendAsSystemMessage(SocialUser recipient, ChatChannel channel, Component message) {
+        SocialParserContext context = SocialParserContext.builder()
+            .user(recipient)
+            .channel(channel)
+            .handler(RegisteredMessageHandler.Default.SYSTEM)
+            .build();
 
-        members.forEach(user -> SocialAdventureProvider.get().sendMessage(user, message, type));
+        send(recipient, context);
     }
 
-    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {
-        send(List.of(recipient), message, type);
+    public void parseAndSendAsSystemMessage(SocialUser recipient, ChatChannel channel, String message) {
+        parseAndSendAsSystemMessage(recipient, channel, text(message));
+    }
+
+    @Deprecated(forRemoval = true)
+    public void send(final @NotNull Collection<SocialUser> members, @NotNull SocialParserContext context) {
+        members.forEach(member -> send(member, context));
+    }
+
+    @Deprecated(forRemoval = true)
+    public void send(final @NotNull SocialUser recipient, @NotNull SocialParserContext context) {
+        Social.get().getMessageHandlerRegistry().handle(recipient, context);
     }
 
 }

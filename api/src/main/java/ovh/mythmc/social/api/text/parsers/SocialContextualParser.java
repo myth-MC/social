@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
+@FunctionalInterface
 public interface SocialContextualParser {
     
     Component parse(SocialParserContext context);

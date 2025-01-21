@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.chat.ChatChannel.Type;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.events.groups.*;
@@ -70,7 +70,7 @@ public final class GroupsListener implements Listener {
             SocialUser user = Social.get().getUserManager().get(uuid);
             if (user == null) return;
 
-            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), leaderChangeMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), leaderChangeMessage, ChatChannel.Type.CHAT);
         });
     }
 

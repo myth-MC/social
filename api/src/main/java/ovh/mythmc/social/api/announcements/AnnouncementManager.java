@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialHandlerContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.handlers.RegisteredMessageHandler;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -50,9 +51,16 @@ public final class AnnouncementManager {
                         SocialParserContext context = SocialParserContext.builder()
                             .user(user)
                             .message(announcement.message())
-                            .messageChannelType(ChannelType.ACTION_BAR)
+                            .handlers(List.of(RegisteredMessageHandler.Default.ACTION_BAR))
                             .build();
 
+                        SocialHandlerContext handler = SocialHandlerContext.builder()
+                            .recipient(user)
+                            .message(null)
+                            .handler("ACTION_BAR")
+                            .build();
+
+                        handler.handle();
                         Social.get().getTextProcessor().parseAndSend(context);
                     });
                 } else {
@@ -61,7 +69,6 @@ public final class AnnouncementManager {
                             SocialParserContext context = SocialParserContext.builder()
                                 .user(Social.get().getUserManager().get(uuid))
                                 .message(announcement.message())
-                                .messageChannelType(channel.getType())
                                 .build();
 
                             Social.get().getTextProcessor().parseAndSend(context);

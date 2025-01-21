@@ -11,7 +11,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -35,9 +34,8 @@ public final class SystemMessagesListener implements Listener {
             return;
 
         Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
-        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
+        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message);
 
         event.setJoinMessage("");
     }
@@ -59,7 +57,7 @@ public final class SystemMessagesListener implements Listener {
            return;
 
        Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
-       ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+       ChatChannel.Type channelType = ChatChannel.Type.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
 
@@ -96,7 +94,7 @@ public final class SystemMessagesListener implements Listener {
             }
         }
 
-        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+        ChatChannel.Type channelType = ChatChannel.Type.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
         Social.get().getTextProcessor().send(Social.get().getUserManager().get(), deathMessage, channelType);
 

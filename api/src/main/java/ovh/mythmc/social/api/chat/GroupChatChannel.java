@@ -28,7 +28,6 @@ public class GroupChatChannel extends ChatChannel {
         super(
                 "G-" + code,
                 TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getColor()),
-                ChannelType.CHAT,
                 Social.get().getConfig().getSettings().getChat().getGroups().getIcon(),
                 Social.get().getConfig().getSettings().getChat().getGroups().isShowHoverText(),
                 getHoverTextAsComponent(Social.get().getConfig().getSettings().getChat().getGroups().getHoverText()),

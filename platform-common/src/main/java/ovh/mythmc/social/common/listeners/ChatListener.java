@@ -74,7 +74,7 @@ public final class ChatListener implements Listener {
 
         ChatChannel mainChannel = user.getMainChannel();
         if (mainChannel == null) {
-            Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSendAsSystemMessage(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError());
             event.setCancelled(true);
             return;
         }
@@ -89,7 +89,7 @@ public final class ChatListener implements Listener {
             if (System.currentTimeMillis() - user.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
                     !user.getPlayer().hasPermission("social.filter.bypass")) {
 
-                Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSendAsSystemMessage(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast());
                 event.setCancelled(true);
                 return;
             }

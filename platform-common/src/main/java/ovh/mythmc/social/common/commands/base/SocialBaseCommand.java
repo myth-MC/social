@@ -14,7 +14,6 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.Social.ReloadType;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
-import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialMessageContext;
@@ -39,14 +38,14 @@ public final class SocialBaseCommand {
 
         if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
             if (flags.hasFlag("s")) {
-                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), announcement.message(), ChannelType.ACTION_BAR);
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), announcement.message(), ChatChannel.Type.ACTION_BAR);
                 return;
             }
 
-            Social.get().getUserManager().get().forEach(s -> Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), ChannelType.ACTION_BAR));
+            Social.get().getUserManager().get().forEach(s -> Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), ChatChannel.Type.ACTION_BAR));
         } else {
             if (flags.hasFlag("s")) {
-                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), announcement.message(), ChannelType.CHAT);
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), announcement.message(), ChatChannel.Type.CHAT);
                 return;
             }
 
@@ -236,7 +235,7 @@ public final class SocialBaseCommand {
     @Permission("social.use.parse")
     @Flag(flag = "u", longFlag = "user", argument = SocialUser.class)
     @Flag(flag = "c", longFlag = "channel", argument = ChatChannel.class)
-    @Flag(flag = "t", longFlag = "channelType", argument = ChannelType.class)
+    @Flag(flag = "t", longFlag = "channelType", argument = ChatChannel.Type.class)
     @Flag(flag = "p", longFlag = "playerInput", argument = boolean.class)
     public void parse(SocialUser user, @Suggestion("placeholders") Flags flags) {
         String message = flags.getText();
@@ -244,7 +243,7 @@ public final class SocialBaseCommand {
         SocialParserContext context = SocialParserContext.builder()
             .user(flags.getFlagValue("u", SocialUser.class).orElse(user))
             .channel(flags.getFlagValue("c", ChatChannel.class).orElse(user.getMainChannel()))
-            .messageChannelType(flags.getFlagValue("t", ChannelType.class).orElse(ChannelType.CHAT))
+            .messageChannelType(flags.getFlagValue("t", ChatChannel.Type.class).orElse(ChatChannel.Type.CHAT))
             .message(Component.text(message))
             .build();
 

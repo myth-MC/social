@@ -20,12 +20,20 @@ public final class ChatHistory {
 
     public int register(final @NotNull SocialMessageContext messageContext) {
         int id = messages.size() + 1;
-        messages.put(id, messageContext.withId(id).withDate(new Date()));
+        messages.put(id, messageContext.withDate(new Date()));
         return id;
     }
 
     public SocialMessageContext getById(final @NotNull Integer id) {
         return messages.get(id);
+    }
+
+    public Integer getIdByContext(final @NotNull SocialMessageContext context) {
+        return messages.entrySet().stream()
+            .filter(entry -> entry.getValue().equals(context))
+            .map(entry -> entry.getKey())
+            .findFirst()
+            .orElse(null);
     }
 
     public List<SocialMessageContext> get() {
@@ -51,6 +59,18 @@ public final class ChatHistory {
     }
 
     public List<SocialMessageContext> getThread(final @NotNull SocialMessageContext messageContext, int limit) {
+        return messages.entrySet().stream()
+            .filter(entry ->
+                (entry.getValue().isReply() && entry.getValue().replyId().equals(messageContext.id())) ||
+                (entry.getValue().isReply() && entry.getValue().replyId().equals(messageContext.replyId())) ||
+                entry.getKey().equals(messageContext.id()) ||
+                entry.getKey().equals(messageContext.replyId())
+            )
+            .limit(limit)
+            .map(entry -> entry.getValue())
+            .toList();
+
+        /*
         return messages.values().stream()
                 .filter(value ->
                         (value.isReply() && value.replyId().equals(messageContext.id())) ||
@@ -60,6 +80,7 @@ public final class ChatHistory {
                 )
                 .limit(limit)
                 .toList();
+                 */
     }
 
     @Deprecated

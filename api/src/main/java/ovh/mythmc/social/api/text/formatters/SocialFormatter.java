@@ -1,6 +1,7 @@
 package ovh.mythmc.social.api.text.formatters;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import net.kyori.adventure.text.Component;
@@ -18,7 +19,7 @@ public abstract class SocialFormatter implements SocialFilterLike {
     
     @Override
     public Component parse(SocialParserContext context) {
-        if (context.user().getPlayer() != null && !context.user().getPlayer().hasPermission("social.text-formatting"))
+        if (!Objects.isNull(context.user().getPlayer()) && !context.user().getPlayer().hasPermission("social.text-formatting"))
             return context.message();
 
         Component formattedMessage = replace(context);

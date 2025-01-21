@@ -216,12 +216,7 @@ public final class ChatManager {
             if (!reply.chatChannel().equals(chatChannel) && Social.get().getChatManager().hasPermission(sender, reply.chatChannel()))
                 chatChannel = reply.chatChannel();
 
-            context = SocialMessageContext.builder()
-                .sender(sender)
-                .chatChannel(chatChannel)
-                .rawMessage(message)
-                .replyId(replyId)
-                .build();
+            context = new SocialMessageContext(sender, chatChannel, message, filteredMessage, replyId);
 
             messageId = Social.get().getChatManager().getHistory().register(context);
 
@@ -258,12 +253,7 @@ public final class ChatManager {
         }
 
         if (context == null) {
-            context = SocialMessageContext.builder()
-                .sender(sender)
-                .chatChannel(chatChannel)
-                .rawMessage(message)
-                .replyId(replyId)
-                .build();
+            context = new SocialMessageContext(sender, chatChannel, message, filteredMessage, replyId);
 
             messageId = Social.get().getChatManager().getHistory().register(context);
         }
@@ -300,6 +290,134 @@ public final class ChatManager {
         return context;
     }
 
+    public SocialMessageContext chatMessage(final @NotNull SocialUser sender, @NotNull ChatChannel channel, @NotNull String message, Integer replyId) {
+        // SocialChatMessagePrepareEvent
+        SocialChatMessagePrepareEvent socialChatMessagePrepareEvent = new SocialChatMessagePrepareEvent(sender, channel, message, replyId);
+        Bukkit.getPluginManager().callEvent(socialChatMessagePrepareEvent);
+        if (socialChatMessagePrepareEvent.isCancelled())
+            return null;
+
+        // Update values
+        message = socialChatMessagePrepareEvent.getRawMessage();
+        channel = socialChatMessagePrepareEvent.getChannel();
+
+        // Filtered message (already parsed)
+        Component filteredMessage = parsePlayerInput(sender, channel, message);
+
+        // This message's context
+        SocialMessageContext context = null;
+
+        // This message's ID
+        int messageId = 0;
+
+        // Reply icon
+        Component replyIcon = Component.empty();
+        if (socialChatMessagePrepareEvent.isReply() && hasPermission(sender, socialChatMessagePrepareEvent.getChannel())) {
+            SocialMessageContext reply = getHistory().getById(replyId);
+            if (reply.isReply()) // Set the original message's ID to the replied message ID to keep the thread
+                replyId = reply.replyId();
+
+            if (!reply.chatChannel().equals(channel) && hasPermission(sender, reply.chatChannel()))
+                channel = reply.chatChannel(); // Switch to the replied message's channel
+
+            // ???
+            context = new SocialMessageContext(sender, channel, message, replyIcon, replyId);
+            messageId = getHistory().register(context);
+
+            // Check that the original message's sender is still online
+            if (reply.sender().getPlayer() != null) {
+                // Reply icon hover text
+                Component replyIconHoverText = Component.empty();
+                for (SocialMessageContext threadReply : getHistory().getThread(reply, 8)) {
+                    replyIconHoverText = replyIconHoverText
+                        .append(text(threadReply.sender().getNickname(), NamedTextColor.GRAY))
+                        .appendSpace()
+                        .append(text(":", NamedTextColor.DARK_GRAY))
+                        .appendSpace()
+                        .append(threadReply.component().color(NamedTextColor.WHITE))
+                        .appendNewline();
+                }
+
+                // Append "..." if thread is longer
+                if (getHistory().getThread(reply, 9).size() >= 8) {
+                    replyIconHoverText = replyIconHoverText
+                        .append(text("...", NamedTextColor.BLUE))
+                        .appendNewline();
+                }
+
+                replyIcon = text(Social.get().getConfig().getSettings().getChat().getReplyFormat())
+                    .appendSpace()
+                    .append(text("(#" + reply.id() + ")", NamedTextColor.DARK_GRAY))
+                    .appendSpace()
+                    .hoverEvent(replyIconHoverText)
+                    .clickEvent(ClickEvent.suggestCommand("(re:#" + reply.id() + ") "));
+            }
+        }
+
+        // Channel icon hover text
+        Component channelHoverText = Component.empty();
+        if (channel.isShowHoverText())
+            channelHoverText = text(Social.get().getConfig().getSettings().getChat().getChannelHoverText())
+                .appendNewline()
+                .append(channel.getHoverText());
+
+        // List of recipients for this message
+        List<UUID> recipients = new ArrayList<>(channel.getMembers());
+
+        // SocialSpy
+        Social.get().getUserManager().get().forEach(user -> {
+            if (channel.getMembers().contains(user.getUuid()))
+                continue;
+
+            if (user.isSocialSpy())
+                recipients.add(user.getUuid());
+        });
+
+        /*
+        Component cha = Component.empty()
+            .append(text("$(channel_icon)"))
+            .appendSpace()
+            .append(replyIcon)
+            .append(text(Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat()))
+            .appendSpace()
+            .append(text(channel.getTextDivider()))
+            .appendSpace()
+            .append(filteredMessage); */
+
+        if (context == null) { // Message has not been registered yet
+            context = new SocialMessageContext(sender, channel, message, filteredMessage, replyId);
+            messageId = getHistory().register(context);
+        }
+
+        Component messagePrefix = Component.empty()
+            .append(text(channel.getIcon())
+                .hoverEvent(channelHoverText)
+                .clickEvent(ClickEvent.runCommand("/social:social channel " + channel.getName())))
+            .append(text(Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat()))
+            .append(text(channel.getTextDivider()));
+
+        messagePrefix = Social.get().getTextProcessor().parse(sender, channel, messagePrefix);
+
+        Component component = Component.empty()
+            .append(filteredMessage
+                .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + messageId + ") "))))
+            .colorIfAbsent(channel.getTextColor());
+
+        component = Social.get().getTextProcessor().parse(sender, channel, component);
+
+        recipients.forEach(uuid -> {
+            SocialUser recipient = Social.get().getUserManager().get(uuid);
+            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, recipient, channel, component, message, replyId, messageId);
+            receiveAsync(recipient, messagePrefix, socialChatMessageReceiveEvent);
+        });
+
+        // Update latest message for sender
+        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
+        
+        // Return this message's context
+        return context;
+    }
+
     private void receiveAsync(@NonNull SocialUser recipient, @NonNull Component messagePrefix, @NonNull SocialChatMessageReceiveEvent event) {
         CompletableFuture.supplyAsync(() -> {
             Bukkit.getPluginManager().callEvent(event);
@@ -309,10 +427,23 @@ public final class ChatManager {
             if (receivedMessage.isCancelled())
                 return;
 
-            Social.get().getTextProcessor().send(receivedMessage.getRecipient(), messagePrefix.append(receivedMessage.getMessage()), receivedMessage.getChannel().getType());
+            Social.get().getMessageHandlerRegistry().handle(receivedMessage.getRecipient(), receivedMessage);
         });
     }
 
+    private void receiveAsync(@NotNull SocialUser recipient, @NotNull SocialMessageContext context, @NotNull SocialChatMessageReceiveEvent event) {
+        CompletableFuture.supplyAsync(() -> {
+            Bukkit.getPluginManager().callEvent(event);
+            return event;
+        }).thenAccept(receivedMessageEvent -> {
+            if (receivedMessageEvent.isCancelled())
+                return;
+
+            
+        })
+    }
+
+    @Deprecated(forRemoval = true)
     public void sendPrivateMessage(final @NotNull SocialUser sender,
                                    final @NotNull SocialUser recipient,
                                    final @NotNull String message) {
@@ -363,7 +494,46 @@ public final class ChatManager {
                 members.add(player);
         });
 
-        Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
+        Social.get().getTextProcessor().send(members, chatMessage);
+        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
+
+        // Send message to console
+        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getNickname() + " -> " + recipient.getNickname() + ": " + message));
+    }
+
+    public void newPrivateMessage(SocialUser sender, SocialUser recipient, String message) {
+        Component senderNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+        Component recipientNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
+
+        Component filteredMessage = parsePlayerInput(sender, sender.getMainChannel(), message);
+
+        Component component = Component.empty()
+            .append(text(Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix())
+                .hoverEvent(text(Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText())))
+            .appendSpace()
+            .append(senderNickname)
+            .appendSpace()
+            .append(text(Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow()))
+            .appendSpace()
+            .append(recipientNickname)
+            .append(text(":", NamedTextColor.GRAY))
+            .appendSpace()
+            .append(filteredMessage);
+
+        Collection<SocialUser> members = new ArrayList<>();
+        members.addAll(List.of(sender, recipient));
+        
+        Social.get().getUserManager().get().forEach(user -> {
+            if (user.isSocialSpy() && !members.contains(user))
+                members.add(recipient);
+        });
+
+        SocialParserContext context = SocialParserContext.builder()
+            // User is not necessary since the handler will provide it itself
+            .message(filteredMessage)
+            .build();
+
+        Social.get().getMessageHandlerRegistry().handle(members, context);
         Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console
@@ -384,7 +554,6 @@ public final class ChatManager {
             .user(user)
             .channel(channel)
             .message(message)
-            .messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parse(context);
@@ -399,7 +568,6 @@ public final class ChatManager {
             .user(user)
             .channel(channel)
             .message(text(message))
-            .messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parsePlayerInput(context);

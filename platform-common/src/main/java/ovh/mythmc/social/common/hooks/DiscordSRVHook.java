@@ -18,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
@@ -82,7 +81,7 @@ public final class DiscordSRVHook implements ChatHook {
                 return;
 
             // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
-            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), finalMiniMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), finalMiniMessage);
         });
     }
 

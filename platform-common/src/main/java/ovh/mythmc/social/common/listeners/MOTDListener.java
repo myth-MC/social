@@ -5,7 +5,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.users.SocialUser;
 
 public final class MOTDListener implements Listener {
@@ -16,7 +15,9 @@ public final class MOTDListener implements Listener {
         if (user == null)
             return;
 
-        Social.get().getConfig().getSettings().getMotd().getMessage().forEach(line -> Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), line, ChannelType.CHAT));
+        Social.get().getConfig().getSettings().getMotd().getMessage().forEach(line -> 
+            Social.get().getTextProcessor().parseAndSendAsSystemMessage(user, user.getMainChannel(), line)
+        );
     }
 
 }

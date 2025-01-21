@@ -29,7 +29,7 @@ public class ChatChannel {
 
     private final TextColor color;
 
-    private final ChannelType type;
+    //private final Type type;
 
     private final String icon;
 
@@ -75,7 +75,7 @@ public class ChatChannel {
         return new ChatChannel(
                 channelField.name(),
                 TextColor.fromHexString(channelField.color()),
-                ChannelType.CHAT,
+                //Type.CHAT,
                 channelField.icon(),
                 channelField.showHoverText(),
                 getHoverTextAsComponent(channelField.hoverText()),

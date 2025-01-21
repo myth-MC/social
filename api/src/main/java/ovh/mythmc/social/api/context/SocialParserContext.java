@@ -13,7 +13,6 @@ import lombok.Setter;
 import lombok.With;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -31,8 +30,6 @@ public class SocialParserContext implements SocialContext {
 
     private final Component message;
 
-    @Builder.Default private final ChannelType messageChannelType = ChannelType.CHAT;
-
     @Builder.Default private final List<Class<?>> appliedParsers = new ArrayList<>();
 
     @Experimental private final SocialParserGroup group;
@@ -42,8 +39,10 @@ public class SocialParserContext implements SocialContext {
     }
 
     public static class SocialParserContextBuilder {
+
         @SuppressWarnings("unused")
         private SocialParserContextBuilder group(SocialParserGroup group) { return this; }
+
     }
     
 }

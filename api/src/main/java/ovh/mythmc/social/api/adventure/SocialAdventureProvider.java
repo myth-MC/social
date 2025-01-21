@@ -1,12 +1,9 @@
 package ovh.mythmc.social.api.adventure;
 
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.users.SocialUser;
 
 public abstract class SocialAdventureProvider {
 
@@ -18,15 +15,18 @@ public abstract class SocialAdventureProvider {
 
     public static @NotNull SocialAdventureProvider get() { return socialAdventureProvider; }
 
+    /*
+    @Deprecated(forRemoval = true)
     public abstract void sendMessage(final @NotNull Player player,
                                      final @NotNull ComponentLike message,
-                                     final @NotNull ChannelType type);
+                                     final @NotNull ChatChannel.Type type);
 
+    @Deprecated(forRemoval = true)
     public void sendMessage(final @NotNull SocialUser user,
                             final @NotNull ComponentLike message,
-                            final @NotNull ChannelType type) {
+                            final @NotNull ChatChannel.Type type) {
         sendMessage(user.getPlayer(), message, type);
-    }
+    } */
 
     public abstract Audience player(final @NotNull Player player);
 
