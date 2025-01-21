@@ -180,7 +180,7 @@ public final class SocialBaseCommand {
     public void self(SocialUser user, @Optional SocialUser target) {
         SocialMenuContext context = SocialMenuContext.builder()
             .viewer(user)
-            .target(java.util.Optional.of(target).orElse(user))
+            .target(java.util.Optional.ofNullable(target).orElse(user))
             .build();
 
         PlayerInfoMenu playerInfo = new PlayerInfoMenu();

@@ -52,6 +52,10 @@ public final class ChatManager {
         return null;
     }
 
+    public @Nullable ChatChannel getDefaultChannel() {
+        return getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+    }
+
     public GroupChatChannel getGroupChannelByCode(final int code) {
         ChatChannel chatChannel = getChannel("G-" + code);
         if (chatChannel instanceof GroupChatChannel)

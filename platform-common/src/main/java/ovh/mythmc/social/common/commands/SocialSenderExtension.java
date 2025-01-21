@@ -26,7 +26,7 @@ public final class SocialSenderExtension implements SenderExtension<CommandSende
     @Override
     public @NotNull ValidationResult<@NotNull MessageKey<@NotNull MessageContext>> validate(@NotNull CommandMeta meta,
             @NotNull Class<?> allowedSender, @NotNull SocialUser sender) {
-        if (sender == null || sender == SocialUser.Dummy)
+        if (sender == null || sender instanceof SocialUser.Dummy)
             return invalid(BukkitMessageKey.PLAYER_ONLY);
 
         return valid();
@@ -37,7 +37,7 @@ public final class SocialSenderExtension implements SenderExtension<CommandSende
         if (sender instanceof Player player && player != null)
             return Social.get().getUserManager().get(player.getUniqueId());
 
-        return SocialUser.Dummy;
+        return new SocialUser.Dummy();
     }
 
     @Override

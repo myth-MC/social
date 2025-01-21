@@ -39,7 +39,7 @@ public final class SocialUserManager {
     public void register(final @NotNull UUID uuid) {
         // Todo: recover data from last session
         String defaultChatChannelName = Social.get().getConfig().getSettings().getChat().getDefaultChannel();
-        ChatChannel defaultChatChannel = ChatChannel.Default;
+        ChatChannel defaultChatChannel = Social.get().getChatManager().getDefaultChannel();
 
         SocialUser user = new SocialUser(uuid);
         user.setMuted(false);

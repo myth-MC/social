@@ -23,12 +23,18 @@ import javax.annotation.Nullable;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
-public final class SocialUser implements SocialUserAudienceWrapper {
+public class SocialUser implements SocialUserAudienceWrapper {
 
-    public static final SocialUser Dummy = dummy(ChatChannel.Default);
+    public static class Dummy extends SocialUser {
 
-    public static final SocialUser dummy(@NonNull ChatChannel channel) {
-        return new SocialUser(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, false, 0, "Dummy");
+        public Dummy(ChatChannel channel) {
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, false, 0, "Dummy");
+        }
+
+        public Dummy() {
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, false, 0, "Dummy");
+        }
+
     }
 
     private final UUID uuid;

@@ -97,7 +97,7 @@ public final class GroupsListener implements Listener {
     }
 
     private void setDefaultChannel(SocialUser user) {
-        ChatChannel defaultChannel = ChatChannel.Default;
+        ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
         if (defaultChannel == null) return;
 
         Social.get().getUserManager().setMainChannel(user, defaultChannel);

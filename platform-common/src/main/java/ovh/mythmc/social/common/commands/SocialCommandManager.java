@@ -41,12 +41,7 @@ public final class SocialCommandManager {
 
     private final BukkitCommandManager<SocialUser> manager;
 
-    private final List<Object> commands = List.of(
-        new GroupBaseCommand(),
-        new PMBaseCommand(),
-        new ReactionBaseCommand(),
-        new SocialBaseCommand()
-    );
+    private final List<Object> registeredCommands = new ArrayList<>();
 
     public SocialCommandManager(@NonNull Plugin plugin) {
         manager = BukkitCommandManager.create(
@@ -189,11 +184,23 @@ public final class SocialCommandManager {
     }
 
     public void registerCommands() {
-        commands.forEach(manager::registerCommand);
+        registeredCommands.add(new SocialBaseCommand());
+
+        if (Social.get().getConfig().getSettings().getChat().getGroups().isEnabled())
+            registeredCommands.add(new GroupBaseCommand());
+
+        if (Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled())
+            registeredCommands.add(new PMBaseCommand());
+
+        if (Social.get().getConfig().getSettings().getCommands().getReaction().enabled() && Social.get().getConfig().getSettings().getReactions().isEnabled())
+            registeredCommands.add(new ReactionBaseCommand());
+
+        registeredCommands.forEach(manager::registerCommand);
     }
 
     public void unregisterCommands() {
-        commands.forEach(manager::unregisterCommand);
+        registeredCommands.forEach(manager::unregisterCommand);
+        registeredCommands.clear();
     }
     
 }

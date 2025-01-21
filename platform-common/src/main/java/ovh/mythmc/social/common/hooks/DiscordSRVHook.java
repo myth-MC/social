@@ -58,13 +58,10 @@ public final class DiscordSRVHook implements ChatHook {
         if (chatChannel == null)
             return;
 
-        // Workaround for placeholders
-        //SocialUser fakePlayer = new SocialUser(UUID.randomUUID(), chatChannel, false, false, 0L, "NPC");
-
         String miniMessage = MessageUtil.toMiniMessage(message);
         
         SocialParserContext context = SocialParserContext.builder()
-            .user(SocialUser.dummy(chatChannel))
+            .user(new SocialUser.Dummy(chatChannel)) // Workaround for placeholders
             .channel(chatChannel)
             .build();
 

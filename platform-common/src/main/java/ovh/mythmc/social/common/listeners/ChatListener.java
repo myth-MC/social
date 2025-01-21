@@ -38,7 +38,7 @@ public final class ChatListener implements Listener {
 
         Social.get().getChatManager().assignChannelsToPlayer(user);
 
-        ChatChannel defaultChannel = ChatChannel.Default;
+        ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
         if (defaultChannel == null) {
             Social.get().getLogger().error("Default channel is unavailable!");
             return;
