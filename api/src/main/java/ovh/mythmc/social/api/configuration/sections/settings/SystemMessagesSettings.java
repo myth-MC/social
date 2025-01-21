@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class SystemMessagesSettings {
 
-    @Comment("Whether customized system messages should be enabled or disabled")
+    @Comment("Whether customized system messages should be enabled")
     private boolean enabled = true;
 
     @Comment({"Channel type", "Can be CHAT or ACTION_BAR"})

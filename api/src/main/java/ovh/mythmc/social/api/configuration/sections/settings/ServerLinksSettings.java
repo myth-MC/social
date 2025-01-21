@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class ServerLinksSettings {
 
-    @Comment({"Whether custom server links should be enabled or not", "Server links are a feature introduced in snapshot 24w21a that adds custom links to the pause menu"})
+    @Comment({"Whether custom server links should be enabled", "Server links are a feature introduced in snapshot 24w21a that adds custom links to the pause menu"})
     private boolean enabled = true;
 
     @Comment({"Use 'displayName' if you want the button to have custom text with colors, emojis...", "Use 'type' if you want the button to be translated depending on player's language", "List of types: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/ServerLinks.Type.html"})

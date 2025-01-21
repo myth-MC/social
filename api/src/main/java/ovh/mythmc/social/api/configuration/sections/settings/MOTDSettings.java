@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class MOTDSettings {
 
-    @Comment("Whether the MOTD module should be enabled or disabled")
+    @Comment("Whether the MOTD module should be enabled")
     private boolean enabled = true;
 
     @Comment("Message that will be sent to player when they join")

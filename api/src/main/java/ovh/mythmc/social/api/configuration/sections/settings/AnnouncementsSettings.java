@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class AnnouncementsSettings {
 
-    @Comment("Whether announcements should be enabled or disabled")
+    @Comment("Whether announcements should be enabled")
     private boolean enabled = true;
 
     @Comment("Announcement frequency in seconds (300 seconds = 5 minutes)")

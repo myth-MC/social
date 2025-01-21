@@ -11,7 +11,7 @@ public final class UpdateCheckerFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().isUpdateChecker();
+        return Social.get().getConfig().getGeneral().isUpdateChecker();
     }
 
     @FeatureEnable

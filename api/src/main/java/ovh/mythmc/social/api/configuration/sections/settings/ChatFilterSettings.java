@@ -10,16 +10,16 @@ import java.util.List;
 @Getter
 public class ChatFilterSettings {
 
-    @Comment("Whether the filter module should be enabled or disabled")
+    @Comment("Whether the filter module should be enabled")
     private boolean enabled = true;
 
-    @Comment("Whether the built-in IP filter should be enabled or disabled")
+    @Comment("Whether the built-in IP filter should be enabled")
     private boolean ipFilter = true;
 
-    @Comment("Whether the built-in URL filter should be enabled or disabled")
+    @Comment("Whether the built-in URL filter should be enabled")
     private boolean urlFilter = true;
 
-    @Comment("Whether the built-in flood/spam filter should be enabled or disabled")
+    @Comment("Whether the built-in flood/spam filter should be enabled")
     private boolean floodFilter = true;
 
     @Comment("Time in milliseconds that a player has to wait before sending another message")

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class PacketsSettings {
 
-    @Comment({"Whether packet-based features should be enabled or not", "Requires PacketEvents to work: https://github.com/retrooper/packetevents/"})
+    @Comment({"Whether packet-based features should be enabled", "Requires PacketEvents to work: https://github.com/retrooper/packetevents/"})
     private boolean enabled = true;
 
     @Comment("Emoji tab completion in chat")

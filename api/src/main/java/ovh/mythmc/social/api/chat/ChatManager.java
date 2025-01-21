@@ -101,7 +101,7 @@ public final class ChatManager {
     }
 
     public boolean registerChatChannel(final @NotNull ChatChannel chatChannel) {
-        if (Social.get().getConfig().getSettings().isDebug())
+        if (Social.get().getConfig().getGeneral().isDebug())
             Social.get().getLogger().info("Registered channel '" + chatChannel.getName() + "'");
 
         return channels.add(chatChannel);
@@ -127,7 +127,7 @@ public final class ChatManager {
             Bukkit.getPluginManager().callEvent(socialGroupDisbandEvent);
         }
 
-        if (Social.get().getConfig().getSettings().isDebug())
+        if (Social.get().getConfig().getGeneral().isDebug())
             Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
 
         return channels.remove(chatChannel);

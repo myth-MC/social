@@ -1,9 +1,9 @@
 package ovh.mythmc.social.paper;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import io.github.retrooper.packetevents.bstats.bukkit.Metrics;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;

@@ -35,7 +35,7 @@ public class SocialMessageContext implements SocialContext {
     private final Integer replyId;
 
     public String date() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Social.get().getConfig().getSettings().getDateFormat());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Social.get().getConfig().getGeneral().getDateFormat());
         return dateFormat.format(date);
     }
 

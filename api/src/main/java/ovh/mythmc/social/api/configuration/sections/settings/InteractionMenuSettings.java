@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class InteractionMenuSettings {
 
-    @Comment("Whether the interaction menu should be enabled or disabled")
+    @Comment("Whether the interaction menu should be enabled")
     private boolean enabled = true;
 
 }

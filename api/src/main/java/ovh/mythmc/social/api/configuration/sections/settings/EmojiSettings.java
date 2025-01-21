@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class EmojiSettings {
 
-    @Comment("Whether the emoji module should be enabled or disabled")
+    @Comment("Whether the emoji module should be enabled")
     private boolean enabled = true;
 
     @Comment("Text that appears when hovering over an emoji to indicate its aliases")

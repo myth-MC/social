@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class TextReplacementSettings {
 
-    @Comment({"Whether the text replacement module should be enabled or disabled", "This allows filters, emojis and keywords to be used in signs, books, anvils..."})
+    @Comment({"Whether the text replacement module should be enabled", "This allows filters, emojis and keywords to be used in signs, books, anvils..."})
     private boolean enabled = true;
 
     @Comment("Whether to replace text in anvils or not")

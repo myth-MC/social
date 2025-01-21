@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class ChatSettings {
 
-    @Comment("Whether the chat module should be enabled or disabled")
+    @Comment("Whether the chat module should be enabled")
     private boolean enabled = true;
 
     @Comment("Default channel that every player should have access to when they join")
@@ -52,7 +52,7 @@ public class ChatSettings {
     @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
     private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$(nickname)</blue> has mentioned you!</gray>";
 
-    @Comment("Whether player text formatting options should be enabled or disabled")
+    @Comment("Whether markdown-style text formatting options for players should be enabled or disabled")
     private boolean playerFormatOptions = true;
 
     @Comment("Groups module")

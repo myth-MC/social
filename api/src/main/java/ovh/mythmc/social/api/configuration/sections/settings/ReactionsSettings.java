@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class ReactionsSettings {
 
-    @Comment("Whether reactions should be enabled or disabled")
+    @Comment("Whether reactions should be enabled")
     private boolean enabled = true;
 
     @Comment("Disable this if you don't want reactions to be triggered by trigger words")
