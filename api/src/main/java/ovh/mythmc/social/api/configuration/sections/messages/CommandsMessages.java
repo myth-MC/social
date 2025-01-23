@@ -35,4 +35,16 @@ public class CommandsMessages {
 
     private String groupAliasChanged = "$(info_prefix) <gray>This group's alias has been set to <blue>$(group)</blue>,</gray>";
 
+    private String userIgnored = "$(success_prefix) <gray>User <blue>%s</blue> has been ignored.</gray>";
+
+    private String userUnignored = "$(success_prefix) <gray>User <blue>%s</blue> has been unignored.</gray>";
+
+    private String userMuted = "$(success_prefix) <gray>User <blue>%s</blue> has been muted in channel <yellow>$(channel)</yellow>.</gray>";
+
+    private String userUnmuted = "$(success_prefix) <gray>User <blue>%s</blue> has been unmuted in channel <yellow>$(channel)</yellow>.</gray>";
+
+    private String userMutedGlobally = "$(success_prefix) <gray>User <blue>%s</blue> has been muted globally.</gray>";
+
+    private String userUnmutedGlobally = "$(success_prefix) <gray>User <blue>%s</blue> has been unmuted globally.</gray>";
+
 }

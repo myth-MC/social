@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
@@ -178,7 +177,10 @@ public final class GlobalTextProcessor {
         if (message == null || message.equals(Component.empty()))
             return;
 
-        members.forEach(user -> SocialAdventureProvider.get().sendMessage(user, message, type));
+        switch (type) {
+            case ACTION_BAR -> members.forEach(user -> user.sendActionBar(message));
+            case CHAT -> members.forEach(user -> user.sendMessage(message));
+        }
     }
 
     public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {

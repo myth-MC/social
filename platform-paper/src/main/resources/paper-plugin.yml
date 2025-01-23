@@ -29,14 +29,17 @@ dependencies:
 
 permissions:
   social.use.nickname.others:
-    description: Allows players to change other player's nicknames
+    description: Allows users to change other player's nicknames
     default: op
   social.filter.bypass:
-    description: Allows players to bypass filter settings
+    description: Allows users to bypass filter settings
+    default: op
+  social.mute.excempt:
+    description: Allows users to bypass mute status
     default: op
   social.mentions:
-    description: Allows players to mention other players
+    description: Allows users to mention other users
     default: true
   social.text-formatting:
-    description: Allows players to format text
+    description: Allows users to format text
     default: true

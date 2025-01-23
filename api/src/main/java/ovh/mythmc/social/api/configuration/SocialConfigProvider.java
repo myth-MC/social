@@ -188,7 +188,7 @@ public final class SocialConfigProvider {
 
     private Sound getSoundByKey(String key) {
         if (!Key.parseable(key)) {
-            logger.warn("settings.yml contains an invalid key: " + key);
+            logger.warn("reactions.yml contains an invalid key: " + key);
             return null;
         }
 

@@ -28,9 +28,6 @@ public final class ReactionsListener implements Listener {
         if (user == null)
             return;
 
-        if (!user.getPlayer().hasPermission("social.command.reaction"))
-            return;
-
         Reaction reaction = null;
         for (Reaction r : Social.get().getReactionManager().getReactionsMap().keySet()) {
             if (r.triggerWords() == null || r.triggerWords().isEmpty())

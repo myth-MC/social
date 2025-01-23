@@ -187,6 +187,84 @@ public final class SocialBaseCommand {
         playerInfo.open(context);
     }
 
+    @Command("mute")
+    @Permission(value = "social.use.mute", def = PermissionDefault.OP)
+    public void mute(SocialUser user, SocialUser target, @Optional ChatChannel channel) {
+        if (target.equals(user)) {
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getCannotMuteYourself(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
+
+        if (target.getPlayer() != null && target.getPlayer().hasPermission("social.mute.excempt")) {
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserExcemptFromMute(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
+
+        if (channel != null) { // mute
+            if (Social.get().getUserManager().isMuted(target, channel)) {
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsAlreadyMuted(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+
+            Social.get().getUserManager().mute(target, channel);
+
+            // Command sender
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMuted(), target.getNickname());
+            Social.get().getTextProcessor().parseAndSend(user, channel, successMessage, Social.get().getConfig().getMessages().getChannelType());
+
+            // Target
+            Social.get().getTextProcessor().parseAndSend(target, channel, Social.get().getConfig().getMessages().getInfo().getUserMuted(), Social.get().getConfig().getMessages().getChannelType());
+        } else { // global mute
+            if (Social.get().getUserManager().isGloballyMuted(target)) {
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsAlreadyMuted(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+
+            Social.get().getChatManager().getChannels().forEach(registeredChannel -> Social.get().getUserManager().mute(target, registeredChannel));
+
+            // Command sender
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMutedGlobally(), target.getNickname());
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), successMessage, Social.get().getConfig().getMessages().getChannelType());
+
+            // Target
+            Social.get().getTextProcessor().parseAndSend(target, target.getMainChannel(), Social.get().getConfig().getMessages().getInfo().getUserMutedGlobally());
+        }
+    }
+
+    @Command("unmute")
+    @Permission(value = "social.use.unmute", def = PermissionDefault.OP)
+    public void unmute(SocialUser user, SocialUser target, @Optional ChatChannel channel) {
+        if (channel != null) { // unmute in channel
+            if (!Social.get().getUserManager().isMuted(target, channel)) {
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsNotMuted(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+
+            Social.get().getUserManager().unmute(target, channel);
+
+            // Command sender
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmuted(), target.getNickname());
+            Social.get().getTextProcessor().parseAndSend(user, channel, successMessage, Social.get().getConfig().getMessages().getChannelType());
+
+            // Target
+            Social.get().getTextProcessor().parseAndSend(target, channel, Social.get().getConfig().getMessages().getInfo().getUserUnmuted(), Social.get().getConfig().getMessages().getChannelType());
+        } else { // unmute globally
+            if (!Social.get().getUserManager().isGloballyMuted(target)) {
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsNotMuted(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+
+            Social.get().getChatManager().getChannels().forEach(registeredChannel -> Social.get().getUserManager().unmute(target, registeredChannel));
+
+            // Command sender
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmutedGlobally(), target.getNickname());
+            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), successMessage, Social.get().getConfig().getMessages().getChannelType());
+
+            // Target
+            Social.get().getTextProcessor().parseAndSend(target, target.getMainChannel(), Social.get().getConfig().getMessages().getInfo().getUserUnmutedGlobally(), Social.get().getConfig().getMessages().getChannelType());
+        }
+    }
+
     @Command("nickname")
     @Permission(value = "social.use.nickname", def = PermissionDefault.TRUE)
     public class Nickname {

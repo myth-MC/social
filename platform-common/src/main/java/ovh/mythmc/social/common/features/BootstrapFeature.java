@@ -42,6 +42,7 @@ public final class BootstrapFeature {
             ChatFeature.class,
             CommandsFeature.class,
             GroupsFeature.class,
+            IgnoreFeature.class,
             MentionsFeature.class,
             MOTDFeature.class,
             PacketsFeature.class,

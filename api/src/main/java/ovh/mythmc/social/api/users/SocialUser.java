@@ -13,14 +13,18 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
-@AllArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @EqualsAndHashCode
 public class SocialUser implements SocialUserAudienceWrapper {
@@ -28,11 +32,11 @@ public class SocialUser implements SocialUserAudienceWrapper {
     public static class Dummy extends SocialUser {
 
         public Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, false, 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, new HashMap<>(), new ArrayList<>(), 0, "Dummy");
         }
 
         public Dummy() {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, false, 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, new HashMap<>(), new ArrayList<>(), 0, "Dummy");
         }
 
     }
@@ -41,9 +45,13 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     private ChatChannel mainChannel;
 
-    private boolean muted;
-
     private boolean socialSpy;
+
+    @Getter(AccessLevel.PROTECTED)
+    private Map<UUID, IgnoreScope> ignoredUsers = new HashMap<>();
+
+    @Getter(AccessLevel.PROTECTED)
+    private Collection<String> blockedChannels = new ArrayList<>();
 
     private long latestMessageInMilliseconds = 0L;
 
@@ -72,6 +80,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
         return cachedNickname;
     }
 
+    // Send social messages
     public void sendParsableMessage(@NonNull SocialParserContext context, boolean playerInput) {
         if (getPlayer() == null)
             return;
@@ -110,6 +119,12 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     public void sendParsableMessage(@NonNull String message) {
         sendParsableMessage(message, false);
+    }
+
+    public enum IgnoreScope {
+        ALL,
+        CHAT,
+        PRIVATE_MESSAGES
     }
 
 }

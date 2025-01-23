@@ -6,7 +6,6 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.profile.PlayerTextures;
@@ -33,7 +32,7 @@ public final class PaperReactionFactory extends ReactionFactory {
     private final JavaPlugin plugin;
 
     private final HashMap<UUID, ItemDisplay> playerReaction = new HashMap<>();
-    private final String itemDisplayMetadataKey = "socialReaction";
+    //private final String itemDisplayMetadataKey = "socialReaction";
 
     private final float scale = 0.7f;
 
@@ -74,7 +73,7 @@ public final class PaperReactionFactory extends ReactionFactory {
         skullMeta.setPlayerProfile(getProfile(reaction.texture()));
         itemStack.setItemMeta(skullMeta);
 
-        itemDisplay.setMetadata(itemDisplayMetadataKey, new FixedMetadataValue(plugin, true));
+        //itemDisplay.setMetadata(itemDisplayMetadataKey, new FixedMetadataValue(plugin, true));
         itemDisplay.setItemStack(itemStack);
 
         itemDisplay.setPersistent(false);

@@ -67,11 +67,6 @@ public final class ChatListener implements Listener {
             return;
         }
 
-        if (user.isMuted()) {
-            event.setCancelled(true);
-            return;
-        }
-
         ChatChannel mainChannel = user.getMainChannel();
         if (mainChannel == null) {
             Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());

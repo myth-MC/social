@@ -2,13 +2,11 @@ package ovh.mythmc.social.bukkit.adventure;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.ChannelType;
 
 public class BukkitAdventureProvider extends SocialAdventureProvider {
 
@@ -16,20 +14,6 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
 
     public BukkitAdventureProvider(final @NotNull JavaPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
-    }
-
-    @Override
-    public void sendMessage(final @NotNull Player player, final @NotNull ComponentLike message, final @NotNull ChannelType type) {
-        if (adventure == null)
-            return;
-
-        if (player == null)
-            return;
-
-        switch (type) {
-            case CHAT -> adventure.player(player).sendMessage(message);
-            case ACTION_BAR -> adventure.player(player).sendActionBar(message);
-        }
     }
 
     @Override

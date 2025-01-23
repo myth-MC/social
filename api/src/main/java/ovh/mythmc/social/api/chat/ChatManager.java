@@ -167,6 +167,12 @@ public final class ChatManager {
     }
 
     public SocialMessageContext sendChatMessage(final @NotNull SocialUser sender, @NotNull ChatChannel chatChannel, @NotNull String message, Integer replyId) {
+        // Do not send message if sender is muted
+        if (Social.get().getUserManager().isMuted(sender, chatChannel)) {
+            Social.get().getTextProcessor().parseAndSend(sender, chatChannel, Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(), Social.get().getConfig().getMessages().getChannelType());
+            return null;
+        }
+        
         // Prepare and send MessagePrepare event
         SocialChatMessagePrepareEvent socialChatMessagePrepareEvent = new SocialChatMessagePrepareEvent(sender, chatChannel, message, replyId);
         Bukkit.getPluginManager().callEvent(socialChatMessagePrepareEvent);
@@ -200,7 +206,7 @@ public final class ChatManager {
 
         // Sender's nickname
         Component nickname = parse(sender, chatChannel, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
-                .colorIfAbsent(NamedTextColor.GRAY);
+                .colorIfAbsent(chatChannel.getNicknameColor());
 
         // Filtered message
         Component filteredMessage = parsePlayerInput(sender, chatChannel, message);

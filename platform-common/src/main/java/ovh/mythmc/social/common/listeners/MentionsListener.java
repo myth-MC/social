@@ -1,10 +1,11 @@
 package ovh.mythmc.social.common.listeners;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import ovh.mythmc.social.api.Social;
@@ -56,7 +57,7 @@ public final class MentionsListener implements Listener {
                 children.set(children.size() - 1, replaced);
                 event.setMessage(event.getMessage().children(children));
 
-                event.getRecipient().getPlayer().playSound(event.getRecipient().getPlayer(), Sound.valueOf(Social.get().getConfig().getSettings().getChat().getMentionSound()), 0.75F, 1.75F);
+                event.getRecipient().playSound(getSoundByKey(Social.get().getConfig().getChat().getMentionSound()));
             }
         });
     }
@@ -81,6 +82,13 @@ public final class MentionsListener implements Listener {
                 event.setMessage(message);
             }
         }
+    }
+
+    private Sound getSoundByKey(String key) {
+        if (!Key.parseable(key))
+            return null;
+
+        return Sound.sound(Key.key(key), net.kyori.adventure.sound.Sound.Source.PLAYER, 0.75f, 1.75f);
     }
 
 }

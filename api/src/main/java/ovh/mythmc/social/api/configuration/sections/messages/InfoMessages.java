@@ -15,4 +15,12 @@ public class InfoMessages {
 
     private String groupDisbanded = "$(group_icon) <gray>This group has been disbanded.</gray>";
 
+    private String userMuted = "$(info_prefix) <gray>You have been muted in channel <yellow>$(channel)</yellow>.</gray>";
+
+    private String userUnmuted = "$(info_prefix) <gray>You have been unmuted in channel <yellow>$(channel)</yellow>.</gray>";
+
+    private String userMutedGlobally = "$(info_prefix) <gray>You have been muted globally.</gray>";
+
+    private String userUnmutedGlobally = "$(info_prefix) <gray>You have been unmuted globally.</gray>";
+
 }

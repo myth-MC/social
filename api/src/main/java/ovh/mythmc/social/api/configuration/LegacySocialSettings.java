@@ -9,6 +9,8 @@ import ovh.mythmc.social.api.configuration.sections.settings.*;
 @Getter
 public final class LegacySocialSettings implements SocialSettings {
 
+    public boolean annoyAdmins = true;
+
     @Comment({"", "General settings"})
     private GeneralSettings general = new GeneralSettings();
 

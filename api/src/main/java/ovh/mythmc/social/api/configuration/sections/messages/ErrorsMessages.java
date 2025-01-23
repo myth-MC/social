@@ -47,4 +47,22 @@ public class ErrorsMessages {
 
     private String groupAliasTooLong = "$(error_prefix) <red>Aliases cannot exceed 16 characters.</red>";
 
+    private String userIsAlreadyIgnored = "$(error_prefix) <red>That user is already ignored.</red>";
+
+    private String userIsNotIgnored = "$(error_prefix) <red>You are not ignoring that user.</red>";
+
+    private String cannotIgnoreYourself = "$(error_prefix) <red>You cannot ignore yourself.</red>";
+
+    private String userHasIgnoredYou = "$(error_prefix) <red>Your message has not been delivered since the recipient is ignoring you.</red>";
+
+    private String userIsAlreadyMuted = "$(error_prefix) <red>That user is already muted.</red>";
+
+    private String cannotMuteYourself = "$(error_prefix) <red>You cannot mute yourself.</red>";
+
+    private String userExcemptFromMute = "$(error_prefix) <red>That user is excempt from being muted.</red> <gray>(social.mute.excempt)</gray>";    
+
+    private String userIsNotMuted = "$(error_prefix) <red>That user is not muted.</red>";
+
+    private String cannotSendMessageWhileMuted = "$(error_prefix) <red>You cannot send messages in <yellow>$(channel)</yellow> since you have been muted.</red>";
+
 }

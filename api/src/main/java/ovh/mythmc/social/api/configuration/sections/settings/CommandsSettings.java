@@ -14,6 +14,9 @@ public class CommandsSettings {
     @Comment("/reaction")
     private SimpleCommand reaction = new SimpleCommand(true);
 
+    @Comment("/ignore and /unignore")
+    private SimpleCommand ignore = new SimpleCommand(true);
+
     public record PrivateMessageCommand(boolean enabled,
                                         String prefix,
                                         String arrow,

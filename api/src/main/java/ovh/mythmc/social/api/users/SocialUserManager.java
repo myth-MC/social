@@ -8,6 +8,10 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
 import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
+import ovh.mythmc.social.api.events.users.SocialUserIgnoreEvent;
+import ovh.mythmc.social.api.events.users.SocialUserMuteStatusChangeEvent;
+import ovh.mythmc.social.api.events.users.SocialUserUnignoreEvent;
+import ovh.mythmc.social.api.users.SocialUser.IgnoreScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +46,6 @@ public final class SocialUserManager {
         ChatChannel defaultChatChannel = Social.get().getChatManager().getDefaultChannel();
 
         SocialUser user = new SocialUser(uuid);
-        user.setMuted(false);
         user.setSocialSpy(false);
 
         if (defaultChatChannel == null) {
@@ -87,6 +90,62 @@ public final class SocialUserManager {
                              final boolean socialSpy) {
 
         user.setSocialSpy(socialSpy);
+    }
+
+    public boolean isGloballyMuted(final @NotNull SocialUser user) {
+        return user.getBlockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(channel -> channel.getName()).toList());
+    }
+
+    public boolean isMuted(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
+        return user.getBlockedChannels().contains(channel.getName());
+    }
+
+    public void mute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
+        SocialUserMuteStatusChangeEvent event = new SocialUserMuteStatusChangeEvent(user, channel, true);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled())
+            return;
+
+        user.getBlockedChannels().add(channel.getName());
+    }
+
+    public void unmute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
+        SocialUserMuteStatusChangeEvent event = new SocialUserMuteStatusChangeEvent(user, channel, false);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled())
+            return;
+
+        user.getBlockedChannels().remove(channel.getName());
+    }
+
+    public boolean isIgnored(final @NotNull SocialUser user, final @NotNull SocialUser target) {
+        return user.getIgnoredUsers().containsKey(target.getUuid());
+    }
+
+    public IgnoreScope getIgnoreScope(final @NotNull SocialUser user, final @NotNull SocialUser target) {
+        return user.getIgnoredUsers().get(target.getUuid());
+    } 
+
+    public void ignore(final @NotNull SocialUser user, final @NotNull SocialUser target, final @NotNull IgnoreScope scope) {
+        SocialUserIgnoreEvent socialUserIgnoreEvent = new SocialUserIgnoreEvent(user, target, scope);
+        Bukkit.getPluginManager().callEvent(socialUserIgnoreEvent);
+
+        if (socialUserIgnoreEvent.isCancelled())
+            return;
+
+        user.getIgnoredUsers().put(target.getUuid(), scope);
+    }
+
+    public void unignore(final @NotNull SocialUser user, final @NotNull SocialUser target) {
+        SocialUserUnignoreEvent socialUserUnignoreEvent = new SocialUserUnignoreEvent(user, target);
+        Bukkit.getPluginManager().callEvent(socialUserUnignoreEvent);
+
+        if (socialUserUnignoreEvent.isCancelled())
+            return;
+
+        user.getIgnoredUsers().remove(target.getUuid());
     }
 
 }

@@ -24,9 +24,11 @@ import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.commands.base.GroupBaseCommand;
+import ovh.mythmc.social.common.commands.base.IgnoreBaseCommand;
 import ovh.mythmc.social.common.commands.base.PMBaseCommand;
 import ovh.mythmc.social.common.commands.base.ReactionBaseCommand;
 import ovh.mythmc.social.common.commands.base.SocialBaseCommand;
+import ovh.mythmc.social.common.commands.base.UnignoreBaseCommand;
 
 public final class SocialCommandManager {
 
@@ -47,7 +49,9 @@ public final class SocialCommandManager {
         manager = BukkitCommandManager.create(
             plugin,
             new SocialSenderExtension(),
-            builder -> { }
+            builder -> { 
+                builder.suggestLowercaseEnum();
+            }
         );
     }
 
@@ -184,16 +188,27 @@ public final class SocialCommandManager {
     }
 
     public void registerCommands() {
+        // /social
         registeredCommands.add(new SocialBaseCommand());
 
+        // /group
         if (Social.get().getConfig().getSettings().getChat().getGroups().isEnabled())
             registeredCommands.add(new GroupBaseCommand());
 
+        // /pm
         if (Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled())
             registeredCommands.add(new PMBaseCommand());
 
+        // /reaction
         if (Social.get().getConfig().getSettings().getCommands().getReaction().enabled() && Social.get().getConfig().getSettings().getReactions().isEnabled())
             registeredCommands.add(new ReactionBaseCommand());
+
+        // /ignore
+        // /unignore
+        if (Social.get().getConfig().getSettings().getCommands().getIgnore().enabled()) {
+            registeredCommands.add(new IgnoreBaseCommand());
+            registeredCommands.add(new UnignoreBaseCommand());
+        }
 
         registeredCommands.forEach(manager::registerCommand);
     }

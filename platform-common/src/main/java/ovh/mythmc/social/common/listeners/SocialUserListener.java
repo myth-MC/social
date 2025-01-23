@@ -9,7 +9,10 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.configuration.LegacySocialSettings;
+import ovh.mythmc.social.api.configuration.SocialSettings;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -39,6 +42,22 @@ public final class SocialUserListener implements Listener {
             String nickname = container.get(key, PersistentDataType.STRING);
             user.getPlayer().setDisplayName(nickname);
             user.getNickname(); // Updates cached nickname
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onAdminJoin(PlayerJoinEvent event) {
+        if (!event.getPlayer().hasPermission("social.use.reload"))
+            return;
+
+        SocialSettings settings = Social.get().getConfig().getSettings();
+        if (settings instanceof LegacySocialSettings legacySettings) {
+            if (!legacySettings.isAnnoyAdmins())
+                return;
+
+            SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+            user.sendParsableMessage("$(info_prefix) <yellow>[social] This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");   
+            user.sendParsableMessage("$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'annoyAdmins' to false.</gray>");
         }
     }
 
