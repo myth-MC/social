@@ -10,6 +10,7 @@ import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
+import ovh.mythmc.social.api.database.SocialDatabase;
 import ovh.mythmc.social.common.features.BootstrapFeature;
 import ovh.mythmc.social.common.listeners.InternalFeatureListener;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
@@ -22,6 +23,7 @@ import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.prefix.*;
 
 import java.io.File;
+import java.sql.SQLException;
 
 @Getter
 @RequiredArgsConstructor
@@ -30,12 +32,16 @@ public abstract class SocialBootstrap<T> implements Social {
     private final JavaPlugin plugin;
     private final SocialConfigProvider config;
 
+    private final File dataDirectory;
+
     public SocialBootstrap(final @NotNull JavaPlugin plugin,
                            final File dataDirectory) {
         SocialSupplier.set(this);
 
         this.plugin = plugin;
         this.config = new SocialConfigProvider(dataDirectory);
+        
+        this.dataDirectory = dataDirectory;
     }
 
     public final void initialize() {
@@ -44,6 +50,13 @@ public abstract class SocialBootstrap<T> implements Social {
 
         Gestalt.get().register(BootstrapFeature.class);
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
+
+        // Initialize database
+        try {
+            SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
+        } catch (SQLException e) {
+            getLogger().error("An error has occured while initializing the database: {}", e);
+        }
 
         // Load settings
         reloadAll();

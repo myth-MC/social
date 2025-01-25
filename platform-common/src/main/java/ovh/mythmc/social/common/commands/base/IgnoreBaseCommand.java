@@ -6,8 +6,8 @@ import dev.triumphteam.cmd.bukkit.annotation.Permission;
 import dev.triumphteam.cmd.core.annotations.Command;
 import dev.triumphteam.cmd.core.annotations.Optional;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.database.model.IgnoredUser.IgnoreScope;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.api.users.SocialUser.IgnoreScope;
 
 @Command("ignore")
 @Permission(value = "social.use.ignore", def = PermissionDefault.TRUE)

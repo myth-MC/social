@@ -54,6 +54,10 @@
                             <pattern>dev.triumphteam</pattern>
                             <shadedPattern>ovh.mythmc.social.libs.dev.triumphteam</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.j256</pattern>
+                            <shadedPattern>ovh.mythmc.social.libs.com.j256</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 

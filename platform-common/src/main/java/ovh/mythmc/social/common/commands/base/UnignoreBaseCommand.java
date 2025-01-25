@@ -14,7 +14,7 @@ public final class UnignoreBaseCommand {
     @Command
     public void execute(SocialUser sender, SocialUser target) {
         if (!Social.get().getUserManager().isIgnored(sender, target)) {
-            Social.get().getTextProcessor().parseAndSend(target, target.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsNotIgnored(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(sender, target.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsNotIgnored(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
 

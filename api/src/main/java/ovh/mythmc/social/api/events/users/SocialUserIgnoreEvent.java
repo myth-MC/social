@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import ovh.mythmc.social.api.database.model.IgnoredUser.IgnoreScope;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.api.users.SocialUser.IgnoreScope;
 
 @RequiredArgsConstructor
 @Getter

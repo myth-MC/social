@@ -7,16 +7,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.database.model.IgnoredUser;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -25,36 +30,41 @@ import javax.annotation.Nullable;
 @Setter(AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @ToString
 @EqualsAndHashCode
+@DatabaseTable(tableName = "users")
 public class SocialUser implements SocialUserAudienceWrapper {
 
     public static class Dummy extends SocialUser {
 
         public Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, new HashMap<>(), new ArrayList<>(), 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, new ArrayList<>(), 0, "Dummy");
         }
 
         public Dummy() {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, new HashMap<>(), new ArrayList<>(), 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, new ArrayList<>(), 0, "Dummy");
         }
 
     }
 
-    private final UUID uuid;
+    @DatabaseField(id = true)
+    private @NotNull UUID uuid;
 
-    private ChatChannel mainChannel;
+    private ChatChannel mainChannel = Social.get().getChatManager().getDefaultChannel();
 
-    private boolean socialSpy;
+    private boolean socialSpy = false;
 
     @Getter(AccessLevel.PROTECTED)
-    private Map<UUID, IgnoreScope> ignoredUsers = new HashMap<>();
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<IgnoredUser> ignoredUsers;
 
     @Getter(AccessLevel.PROTECTED)
     private Collection<String> blockedChannels = new ArrayList<>();
 
     private long latestMessageInMilliseconds = 0L;
 
+    @DatabaseField
     @Getter(AccessLevel.PRIVATE)
     private String cachedNickname = null;
 
@@ -119,12 +129,6 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     public void sendParsableMessage(@NonNull String message) {
         sendParsableMessage(message, false);
-    }
-
-    public enum IgnoreScope {
-        ALL,
-        CHAT,
-        PRIVATE_MESSAGES
     }
 
 }

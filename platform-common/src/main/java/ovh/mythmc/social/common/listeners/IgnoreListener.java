@@ -5,9 +5,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.database.model.IgnoredUser.IgnoreScope;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
-import ovh.mythmc.social.api.users.SocialUser.IgnoreScope;
 
 public final class IgnoreListener implements Listener {
      
