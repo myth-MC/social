@@ -5,14 +5,16 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.context.SocialMessageContext;
+import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -76,7 +78,7 @@ public class SocialChatRendererUtil {
             return replyIcon;
 
         // Get the reply context
-        SocialMessageContext reply = Social.get().getChatManager().getHistory().getById(message.getReplyId());
+        SocialHistoryMessageContext reply = Social.get().getChatManager().getHistory().getById(message.getReplyId());
 
         // Chain of replies (thread)
         if (reply.isReply())
@@ -88,7 +90,7 @@ public class SocialChatRendererUtil {
 
         // Icon hover text
         Component hoverText = Component.empty();
-        for (SocialMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply, 8)) {
+        for (SocialHistoryMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply, 8)) {
             hoverText = hoverText
                 .append(Component.text(threadReply.sender().getNickname() + ": ", NamedTextColor.GRAY))
                 .append(Component.text(threadReply.rawMessage()).color(NamedTextColor.WHITE))
@@ -116,6 +118,15 @@ public class SocialChatRendererUtil {
             .appendSpace();
 
         return replyIcon;
+    }
+
+    public Component trim(final @NotNull Component component) {
+        if (component instanceof TextComponent textComponent) {
+            textComponent.content(textComponent.content().trim());
+            return textComponent;
+        }
+
+        return component;
     }
 
 }

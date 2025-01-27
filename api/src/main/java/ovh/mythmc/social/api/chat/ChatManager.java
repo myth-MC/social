@@ -3,14 +3,10 @@ package ovh.mythmc.social.api.chat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -18,10 +14,8 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.renderer.BaseChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
-import ovh.mythmc.social.api.context.SocialMessageContext;
+import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
-import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupAliasChangeEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
@@ -29,7 +23,6 @@ import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -44,7 +37,7 @@ public final class ChatManager {
 
     private final ChatHistory history = new ChatHistory();
 
-    private final List<ChatChannel> channels = new ArrayList<>();
+    private final Collection<ChatChannel> channels = new ArrayList<>();
 
     @Setter private SocialChatRenderer renderer = new BaseChatRenderer();
 
@@ -171,163 +164,6 @@ public final class ChatManager {
         return false;
     }
 
-    public SocialMessageContext sendChatMessage(final @NotNull SocialUser sender, @NotNull ChatChannel chatChannel, @NotNull String message, Integer replyId) {
-        // Do not send message if sender is muted
-        if (Social.get().getUserManager().isMuted(sender, chatChannel)) {
-            Social.get().getTextProcessor().parseAndSend(sender, chatChannel, Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(), Social.get().getConfig().getMessages().getChannelType());
-            return null;
-        }
-        
-        // Prepare and send MessagePrepare event
-        SocialChatMessagePrepareEvent socialChatMessagePrepareEvent = new SocialChatMessagePrepareEvent(sender, chatChannel, message, replyId);
-        Bukkit.getPluginManager().callEvent(socialChatMessagePrepareEvent);
-        if (socialChatMessagePrepareEvent.isCancelled())
-            return null;
-
-        // Update values in case they've been changed
-        message = socialChatMessagePrepareEvent.getRawMessage();
-        chatChannel = socialChatMessagePrepareEvent.getChannel();
-
-        // List of players who will receive this message (channel + socialspy)
-        List<UUID> players = new ArrayList<>();
-
-        // Apply socialspy
-        for (SocialUser user : Social.get().getUserManager().get()) {
-            if (chatChannel.getMembers().contains(user.getUuid())) continue;
-            if (user.isSocialSpy())
-                players.add(user.getUuid());
-        }
-
-        // Channel icon hover text
-        Component channelHoverText = text("");
-        if (chatChannel.isShowHoverText()) {
-            channelHoverText = parse(sender, chatChannel, Social.get().getConfig().getSettings().getChat().getChannelHoverText())
-                    .appendNewline()
-                    .append(parse(sender, chatChannel, chatChannel.getHoverText()));
-        }
-
-        // Text divider
-        Component textDivider = parse(sender, chatChannel, " " + chatChannel.getTextDivider() + " ");
-
-        // Sender's nickname
-        Component nickname = parse(sender, chatChannel, Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat())
-                .colorIfAbsent(chatChannel.getNicknameColor());
-
-        // Filtered message
-        Component filteredMessage = parsePlayerInput(sender, chatChannel, message);
-
-        // This message's context
-        SocialMessageContext context = null;
-        
-        // This message's ID
-        int messageId = 0;
-
-        // Apply reply text
-        if (socialChatMessagePrepareEvent.isReply() && Social.get().getChatManager().hasPermission(sender, socialChatMessagePrepareEvent.getChannel())) {
-            SocialMessageContext reply = Social.get().getChatManager().getHistory().getById(replyId);
-            if (reply.isReply())
-                replyId = reply.replyId();
-
-            if (!reply.chatChannel().equals(chatChannel) && Social.get().getChatManager().hasPermission(sender, reply.chatChannel()))
-                chatChannel = reply.chatChannel();
-
-            context = SocialMessageContext.builder()
-                .sender(sender)
-                .chatChannel(chatChannel)
-                .rawMessage(message)
-                .replyId(replyId)
-                .build();
-
-            messageId = Social.get().getChatManager().getHistory().register(context);
-
-            if (reply.sender().getPlayer() != null) {
-                Component nicknameHoverText = Component.empty();
-
-                for (SocialMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply, 8)) {
-                    nicknameHoverText = nicknameHoverText
-                            .append(text(threadReply.sender().getNickname() + ": ", NamedTextColor.GRAY))
-                            .append(text(threadReply.rawMessage()).color(NamedTextColor.WHITE))
-                            .appendNewline();
-                }
-
-                if (Social.get().getChatManager().getHistory().getThread(reply, 9).size() >= 8) {
-                    nicknameHoverText = nicknameHoverText
-                            .append(text("...", NamedTextColor.BLUE))
-                            .appendNewline();
-                }
-
-                String formatString = Social.get().getConfig().getSettings().getChat().getReplyFormat();
-
-                nicknameHoverText = nicknameHoverText
-                        .appendNewline()
-                        .append(parse(reply.sender(), reply.chatChannel(), Social.get().getConfig().getSettings().getChat().getReplyHoverText()));
-
-                nickname = parse(reply.sender(), reply.chatChannel(), formatString)
-                        .hoverEvent(HoverEvent.showText(nicknameHoverText))
-                        .clickEvent(ClickEvent.suggestCommand("(re:#" + reply.id() + ") "))
-                        .appendSpace()
-                        .append(Component.text("(#" + reply.id() + ")", NamedTextColor.DARK_GRAY))
-                        .appendSpace()
-                        .append(nickname);
-            }
-        }
-
-        if (context == null) {
-            context = SocialMessageContext.builder()
-                .sender(sender)
-                .chatChannel(chatChannel)
-                .rawMessage(message)
-                .replyId(replyId)
-                .build();
-
-            messageId = Social.get().getChatManager().getHistory().register(context);
-        }
-
-        int idToReply = messageId;
-        if (replyId != null)
-            idToReply = Integer.min(messageId, replyId);
-
-        Component messagePrefix = Component.empty()
-            .append(parse(sender, chatChannel, chatChannel.getIcon() + " ")
-                    .hoverEvent(HoverEvent.showText(channelHoverText))
-                    .clickEvent(ClickEvent.runCommand("/social:social channel " + chatChannel.getName()))
-            )
-            .append(trim(nickname))
-            .append(textDivider);
-
-        Component chatMessage = Component.empty()
-            .append(filteredMessage
-                    .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") ")))
-            )
-            .colorIfAbsent(chatChannel.getTextColor());
-
-        // Add channel members
-        players.addAll(chatChannel.getMembers());
-
-        // Call SocialChatMessageReceiveEvent for each channel member
-        for (UUID uuid : players) {
-            SocialUser recipient = Social.get().getUserManager().get(uuid);
-            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(sender, recipient, chatChannel, chatMessage, message, replyId, messageId);
-            receiveAsync(recipient, messagePrefix, socialChatMessageReceiveEvent);
-        }
-
-        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
-        return context;
-    }
-
-    private void receiveAsync(@NonNull SocialUser recipient, @NonNull Component messagePrefix, @NonNull SocialChatMessageReceiveEvent event) {
-        CompletableFuture.supplyAsync(() -> {
-            Bukkit.getPluginManager().callEvent(event);
-            
-            return event;
-        }).thenAccept(receivedMessage -> {
-            if (receivedMessage.isCancelled())
-                return;
-
-            Social.get().getTextProcessor().send(receivedMessage.getRecipient(), messagePrefix.append(receivedMessage.getMessage()), receivedMessage.getChannel().getType());
-        });
-    }
-
     public void sendPrivateMessage(final @NotNull SocialUser sender,
                                    final @NotNull SocialUser recipient,
                                    final @NotNull String message) {
@@ -359,11 +195,11 @@ public final class ChatManager {
                 .append(prefix
                         .hoverEvent(HoverEvent.showText(prefixHoverText))
                 )
-                .append(trim(senderNickname)
+                .append(SocialChatRendererUtil.trim(senderNickname)
                         .hoverEvent(HoverEvent.showText(senderHoverText))
                 )
                 .append(arrow)
-                .append(trim(recipientNickname)
+                .append(SocialChatRendererUtil.trim(recipientNickname)
                         .hoverEvent(HoverEvent.showText(recipientHoverText))
                 )
                 .append(text(": ").color(NamedTextColor.GRAY))
@@ -385,21 +221,11 @@ public final class ChatManager {
         SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getNickname() + " -> " + recipient.getNickname() + ": " + message));
     }
 
-    private Component trim(final @NotNull Component component) {
-        if (component instanceof TextComponent textComponent) {
-            textComponent.content(textComponent.content().trim());
-            return textComponent;
-        }
-
-        return component;
-    }
-
     private Component parse(SocialUser user, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder()
             .user(user)
             .channel(channel)
             .message(message)
-            .messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parse(context);
@@ -414,7 +240,6 @@ public final class ChatManager {
             .user(user)
             .channel(channel)
             .message(text(message))
-            .messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parsePlayerInput(context);

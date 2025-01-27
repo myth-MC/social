@@ -113,7 +113,6 @@ public final class SystemMessagesListener implements Listener {
             .user(user)
             .channel(channel)
             .message(message)
-            .messageChannelType(channel.getType())
             .build();
 
         return Social.get().getTextProcessor().parse(context);

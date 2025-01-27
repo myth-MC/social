@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.context.SocialMessageContext;
+import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
 import lombok.Setter;
 
 @Getter
@@ -17,7 +17,7 @@ import lombok.Setter;
 @Accessors(fluent = true)
 public class SocialHistoryMenuContext extends SocialMenuContext {
 
-    private final List<SocialMessageContext> messages;
+    private final List<SocialHistoryMessageContext> messages;
 
     @Builder.Default
     private final HeaderType headerType = HeaderType.GLOBAL;

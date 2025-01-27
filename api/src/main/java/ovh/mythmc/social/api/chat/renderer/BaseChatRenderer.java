@@ -21,7 +21,7 @@ import ovh.mythmc.social.api.users.SocialUser;
 public class BaseChatRenderer implements SocialChatRenderer {
 
     @Override
-    public SocialRendererContext process(SocialMessageContext context) {
+    public SocialRendererContext render(SocialMessageContext context) {
         // Set variables
         SocialUser sender = context.sender();
         ChatChannel channel = sender.getMainChannel();
@@ -36,13 +36,14 @@ public class BaseChatRenderer implements SocialChatRenderer {
             rawMessage = rawMessage.replace("(re:#" + replyId + ")", "").trim();
         }
 
+        // Cancel if message is empty
         if (rawMessage.isBlank())
-            return null;
+            return null; // Returning null will cancel the event
 
         // Prepare message event
         SocialChatMessagePrepareEvent chatMessagePrepareEvent = SocialChatRendererUtil.messagePrepareEvent(sender, channel, rawMessage, replyId);
         if (chatMessagePrepareEvent.isCancelled())
-            return null; // CANCEL
+            return null;
 
         // Reply icon
         Component replyIcon = SocialChatRendererUtil.getReplyIcon(sender, chatMessagePrepareEvent);
@@ -70,19 +71,16 @@ public class BaseChatRenderer implements SocialChatRenderer {
         // Get channel divider
         Component textDivider = Component.text(channel.getTextDivider());
 
-        // Register message in history and get ID
-        Integer messageId = Social.get().getChatManager().getHistory().register(SocialMessageContext.builder()
-            .sender(sender)
-            .rawMessage(rawMessage)
-            .chatChannel(channel)
-            .replyId(replyId)
-            .build());
-
         // Get filtered message
         Component filteredMessage = Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
             .user(sender)
             .message(Component.text(rawMessage))
             .build());
+
+        // Register message in history and get its ID
+        Integer messageId = Social.get().getChatManager().getHistory().register(
+            new SocialMessageContext(sender, channel, rawMessage, replyId, context.signedMessage()),
+            filteredMessage);
 
         // Render message prefix (channel icon, reply icon, display name, text divider...)
         Component renderedPrefix = Social.get().getTextProcessor().parse(SocialParserContext.builder()
@@ -124,5 +122,5 @@ public class BaseChatRenderer implements SocialChatRenderer {
             return 0;
         }
     }
-    
+
 }

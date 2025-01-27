@@ -1,10 +1,8 @@
 package ovh.mythmc.social.api.database;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -23,6 +21,7 @@ import com.j256.ormlite.table.TableUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.database.model.BlockedChannel;
 import ovh.mythmc.social.api.database.model.IgnoredUser;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -57,9 +56,9 @@ public final class SocialDatabase {
 
     private Dao<SocialUser, UUID> usersDao;
     private Dao<IgnoredUser, Integer> ignoredUsersDao;
+    private Dao<BlockedChannel, Integer> blockedChannelsDao;
 
     private Map<UUID, SocialUser> usersCache = new HashMap<>();
-    private Collection<IgnoredUser> ignoredUsersCache = new ArrayList<>();
 
     public void initialize(@NotNull String path) throws SQLException {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
@@ -70,9 +69,13 @@ public final class SocialDatabase {
         // Ignored users table
         TableUtils.createTableIfNotExists(connectionSource, IgnoredUser.class);
 
+        // Blocked channels table
+        TableUtils.createTableIfNotExists(connectionSource, BlockedChannel.class);
+
         // Define DAOs
         usersDao = DaoManager.createDao(connectionSource, SocialUser.class);
         ignoredUsersDao = DaoManager.createDao(connectionSource, IgnoredUser.class);
+        blockedChannelsDao = DaoManager.createDao(connectionSource, BlockedChannel.class);
 
         // Schedule auto-saver
         scheduleAutoSaver();
@@ -128,6 +131,7 @@ public final class SocialDatabase {
         }
     }
 
+    /*
     public void update(final @NotNull IgnoredUser ignoredUser) {
         try {
             if (ignoredUsersCache.contains(ignoredUser)) {
@@ -140,6 +144,7 @@ public final class SocialDatabase {
             logger.error("Exception while updating ignored user {}", e);
         }
     }
+         */
 
     private void scheduleAutoSaver() {
         asyncScheduler.schedule(new TimerTask() {
@@ -156,7 +161,7 @@ public final class SocialDatabase {
 
     private void updateAllEntries() {
         Map.copyOf(usersCache).values().forEach(this::updateEntry);
-        List.copyOf(ignoredUsersCache).forEach(this::updateEntry);
+        //List.copyOf(ignoredUsersCache).forEach(this::updateEntry);
     }
 
     private void updateEntry(final @NotNull SocialUser user) {
@@ -170,6 +175,7 @@ public final class SocialDatabase {
         }
     }
 
+    /*
     private void updateEntry(final @NotNull IgnoredUser ignoredUser) {
         try {
             ignoredUsersDao.update(ignoredUser);
@@ -180,6 +186,7 @@ public final class SocialDatabase {
             logger.error("Exception while updating entry {}", e);
         }
     }
+         */
 
     public Collection<SocialUser> getUsers() {
         try {

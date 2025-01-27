@@ -13,6 +13,8 @@ import lombok.Setter;
 import lombok.With;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEvent.Action;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.filters.SocialFilterLike;
@@ -60,6 +62,18 @@ public class CustomTextProcessor {
             context = context
                 .withAppliedParsers(appliedParsers)
                 .withMessage(parser.parse(context));
+
+            // Workaround to parse the HoverEvent
+            if (context.message().hoverEvent() != null && context.message().hoverEvent().action().equals(Action.SHOW_TEXT)) {
+                @SuppressWarnings("unchecked")
+                Component hoverText = ((HoverEvent<Component>) context.message().hoverEvent()).value();
+
+                Component messageWithHoverText = context.message()
+                    .hoverEvent(parser.parse(context.withMessage(hoverText)));
+
+                context = context
+                    .withMessage(messageWithHoverText);
+            }
         }
 
         return context.message();

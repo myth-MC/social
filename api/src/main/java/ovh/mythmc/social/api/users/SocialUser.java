@@ -18,10 +18,9 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.database.model.BlockedChannel;
 import ovh.mythmc.social.api.database.model.IgnoredUser;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -39,11 +38,11 @@ public class SocialUser implements SocialUserAudienceWrapper {
     public static class Dummy extends SocialUser {
 
         public Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, new ArrayList<>(), 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, null, 0, "Dummy");
         }
 
         public Dummy() {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, new ArrayList<>(), 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, null, 0, "Dummy");
         }
 
     }
@@ -60,9 +59,10 @@ public class SocialUser implements SocialUserAudienceWrapper {
     private ForeignCollection<IgnoredUser> ignoredUsers;
 
     @Getter(AccessLevel.PROTECTED)
-    private Collection<String> blockedChannels = new ArrayList<>();
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<BlockedChannel> blockedChannels;
 
-    private long latestMessageInMilliseconds = 0L;
+    private long latestMessageInMilliseconds;
 
     @DatabaseField
     @Getter(AccessLevel.PRIVATE)

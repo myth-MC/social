@@ -86,7 +86,6 @@ public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
 
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new SocialUserListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PaperChatEventWrapper(), getPlugin());
     }
 
 }

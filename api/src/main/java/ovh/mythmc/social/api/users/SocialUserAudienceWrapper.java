@@ -9,6 +9,8 @@ import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.chat.SignedMessage;
+import net.kyori.adventure.chat.SignedMessage.Signature;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.inventory.Book;
@@ -43,6 +45,16 @@ public interface SocialUserAudienceWrapper extends Audience, Identified { // 4.1
     @Override
     default void sendMessage(final @NonNull Identity identity, final @NonNull Component message, final @NonNull MessageType type) {
         playerAudience().sendMessage(identity, message, type);
+    }
+
+    @Override
+    default void deleteMessage(@NotNull Signature signature) {
+        playerAudience().deleteMessage(signature);
+    }
+
+    @Override
+    default void deleteMessage(@NotNull SignedMessage signedMessage) {
+        playerAudience().deleteMessage(signedMessage);
     }
 
     @Override

@@ -9,6 +9,6 @@ import ovh.mythmc.social.api.context.SocialRendererContext;
 
 public interface SocialChatRenderer {
 
-    @Nullable SocialRendererContext process(@NotNull SocialMessageContext context);
+    @Nullable SocialRendererContext render(@NotNull SocialMessageContext context);
 
 }

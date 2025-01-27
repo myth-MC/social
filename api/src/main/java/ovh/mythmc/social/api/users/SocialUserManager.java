@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
+import ovh.mythmc.social.api.database.model.BlockedChannel;
 import ovh.mythmc.social.api.database.model.IgnoredUser;
 import ovh.mythmc.social.api.database.model.IgnoredUser.IgnoreScope;
 import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
@@ -63,10 +64,6 @@ public final class SocialUserManager {
         register(user);
     }
 
-    //public void unregister(final @NotNull SocialUser user) {
-
-    //}
-
     public void setMainChannel(final @NotNull SocialUser user,
                                final @NotNull ChatChannel chatChannel) {
 
@@ -116,7 +113,10 @@ public final class SocialUserManager {
         if (event.isCancelled())
             return;
 
-        user.getBlockedChannels().add(channel.getName());
+        BlockedChannel blockedChannel = new BlockedChannel(user, channel.getName());
+        user.getBlockedChannels().add(blockedChannel);
+
+        SocialDatabase.get().update(user);
     }
 
     public void unmute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
@@ -126,7 +126,14 @@ public final class SocialUserManager {
         if (event.isCancelled())
             return;
 
-        user.getBlockedChannels().remove(channel.getName());
+        BlockedChannel blockedChannel = SocialDatabase.get().getUserByUuid(user.getUuid()).getBlockedChannels().stream()
+            .filter(u -> u.getChannelName().equals(channel.getName()))
+            .findFirst().orElse(null);
+
+        if (blockedChannel != null)
+            user.getBlockedChannels().remove(blockedChannel);
+
+        SocialDatabase.get().update(user);
     }
 
     public boolean isIgnored(final @NotNull SocialUser user, final @NotNull SocialUser target) {

@@ -55,6 +55,12 @@ public class ChatSettings {
     @Comment("Whether markdown-style text formatting options for players should be enabled or disabled")
     private boolean playerFormatOptions = true;
 
+    @Comment("Delete button icon")
+    private String deleteButtonIcon = "<dark_gray>[<red>:raw_x:</red>]</dark_gray>";
+
+    @Comment("Text that appears when hovering over the button")
+    private String deleteButtonHoverText = "$(info_prefix) <gray>Click here to delete this message</gray>";
+
     @Comment("Groups module")
     private ChatGroupSettings groups = new ChatGroupSettings();
 

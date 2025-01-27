@@ -43,3 +43,9 @@ permissions:
   social.text-formatting:
     description: Allows users to format text
     default: true
+  social.delete-messages.self:
+    description: Allows users to delete their own messages
+    default: true
+  social.delete-messages.others:
+    description: Allows users to delete other users' messages
+    default: op

@@ -61,7 +61,6 @@ public final class AnnouncementManager {
                             SocialParserContext context = SocialParserContext.builder()
                                 .user(Social.get().getUserManager().get(uuid))
                                 .message(announcement.message())
-                                .messageChannelType(channel.getType())
                                 .build();
 
                             Social.get().getTextProcessor().parseAndSend(context);

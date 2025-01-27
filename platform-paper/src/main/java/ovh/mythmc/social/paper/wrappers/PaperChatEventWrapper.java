@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -28,6 +29,11 @@ public final class PaperChatEventWrapper extends ChatEventWrapper<AsyncChatEvent
     }
 
     @Override
+    public SignedMessage signedMessage(AsyncChatEvent event) {
+        return event.signedMessage();
+    }
+
+    @Override
     public void viewers(AsyncChatEvent event, Set<Audience> viewers) {
         event.viewers().removeIf(viewer -> {
             if (viewer.get(Identity.UUID).isEmpty())
@@ -43,7 +49,6 @@ public final class PaperChatEventWrapper extends ChatEventWrapper<AsyncChatEvent
                 return false;
 
             return true;
-
         });
     }
 
@@ -71,7 +76,7 @@ public final class PaperChatEventWrapper extends ChatEventWrapper<AsyncChatEvent
     
             Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
             if (socialChatMessageReceiveEvent.isCancelled())
-                return Component.empty();
+                return null;
     
             return Component.empty()
                 .append(context.prefix())
@@ -80,7 +85,6 @@ public final class PaperChatEventWrapper extends ChatEventWrapper<AsyncChatEvent
         });
     }
 
-    @Override
     @EventHandler
     public void on(AsyncChatEvent event) {
         super.on(event);

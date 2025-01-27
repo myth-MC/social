@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import ovh.mythmc.social.api.Social;
@@ -22,11 +23,11 @@ public abstract class ChatEventWrapper<E extends PlayerEvent & Cancellable> impl
 
     public static ChatEventWrapper<? extends PlayerEvent> get() { return instance; }
 
-    public static void set(@NotNull ChatEventWrapper<? extends PlayerEvent> c) {
-        instance = c;
-    }
+    public static void set(@NotNull ChatEventWrapper<? extends PlayerEvent> c) { instance = c; }
 
     public abstract Component message(E event);
+
+    public abstract SignedMessage signedMessage(E event);
 
     public abstract void viewers(E event, Set<Audience> viewers);
 
@@ -41,18 +42,11 @@ public abstract class ChatEventWrapper<E extends PlayerEvent & Cancellable> impl
         ChatChannel channel = sender.getMainChannel();
         String plainMessage = PlainTextComponentSerializer.plainText().serialize(message(event));
 
-        // Cancel and show error message if sender is muted
-        if (Social.get().getUserManager().isMuted(sender, channel)) {
-            Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(), Social.get().getConfig().getMessages().getChannelType());
-            event.setCancelled(true);
-            return;
-        }
-
         // Flood filter
         if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
-            int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
-            if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
+            if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
                     !sender.getPlayer().hasPermission("social.filter.bypass")) {
 
                 Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
@@ -61,15 +55,19 @@ public abstract class ChatEventWrapper<E extends PlayerEvent & Cancellable> impl
             }
         }
 
+        // Cancel and show error message if sender is muted
+        if (Social.get().getUserManager().isMuted(sender, channel)) {
+            Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(), Social.get().getConfig().getMessages().getChannelType());
+            event.setCancelled(true);
+            return;
+        }
+
         // Get rendered message
-        SocialRendererContext context = Social.get().getChatManager().getRenderer().process(
-            SocialMessageContext.builder()
-                .sender(sender)
-                .rawMessage(plainMessage)
-                .chatChannel(channel)
-                .build()
+        SocialRendererContext context = Social.get().getChatManager().getRenderer().render(
+            new SocialMessageContext(sender, channel, plainMessage, null, signedMessage(event))
         );
 
+        // A null context means that the event should be cancelled
         if (context == null) {
             event.setCancelled(true);
             return;

@@ -26,8 +26,6 @@ public class ChatChannel {
 
     private final TextColor color;
 
-    private final ChannelType type;
-
     private final String icon;
 
     private final boolean showHoverText;
@@ -43,8 +41,6 @@ public class ChatChannel {
     private final String permission;
 
     private final boolean joinByDefault;
-
-    private final boolean passthrough;
 
     private List<UUID> members = new ArrayList<>();
 
@@ -124,7 +120,6 @@ public class ChatChannel {
         return new ChatChannel(
             name, 
             color, 
-            ChannelType.CHAT, 
             icon, 
             showHoverText, 
             hoverText, 
@@ -132,25 +127,8 @@ public class ChatChannel {
             textDivider, 
             textColor, 
             permission, 
-            joinByDefault, 
-            false
+            joinByDefault
         );
-
-        /*
-        return new ChatChannel(
-                channelField.name(),
-                TextColor.fromHexString(channelField.color()),
-                ChannelType.CHAT,
-                channelField.icon(),
-                channelField.showHoverText(),
-                getHoverTextAsComponent(channelField.hoverText()),
-                TextColor.fromHexString(channelField.nicknameColor()),
-                channelField.textDivider(),
-                TextColor.fromHexString(channelField.textColor()),
-                channelField.permission(),
-                channelField.joinByDefault(),
-                false
-        ); */
     }
 
     protected static Component getHoverTextAsComponent(List<String> hoverTextList) {

@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -24,6 +25,11 @@ public final class BukkitChatEventWrapper extends ChatEventWrapper<AsyncPlayerCh
     @Override
     public Component message(AsyncPlayerChatEvent event) {
         return Component.text(event.getMessage());
+    }
+
+    @Override
+    public SignedMessage signedMessage(AsyncPlayerChatEvent event) {
+        return null;
     }
 
     @Override

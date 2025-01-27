@@ -1,30 +1,22 @@
 package ovh.mythmc.social.api.context;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
-import lombok.With;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.chat.SignedMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.users.SocialUser;
 
 @Data
-@Builder
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
-@With
 public class SocialMessageContext implements SocialContext {
-
-    @Builder.Default
-    private final Integer id = 0;
-
-    private final Date date;
 
     private final SocialUser sender;
 
@@ -34,10 +26,7 @@ public class SocialMessageContext implements SocialContext {
 
     private final Integer replyId;
 
-    public String date() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Social.get().getConfig().getGeneral().getDateFormat());
-        return dateFormat.format(date);
-    }
+    private final @Nullable SignedMessage signedMessage;
 
     public boolean isReply() {
         if (Objects.equals(replyId, null))

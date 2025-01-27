@@ -17,7 +17,7 @@ import ovh.mythmc.social.api.announcements.SocialAnnouncement;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.context.SocialMessageContext;
+import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext;
@@ -53,7 +53,7 @@ public final class SocialBaseCommand {
             for (ChatChannel channel : announcement.channels()) {
                 channel.getMembers().forEach(uuid -> {
                     SocialUser s = Social.get().getUserManager().get(uuid);
-                    Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), channel.getType());
+                    Social.get().getTextProcessor().parseAndSend(s, s.getMainChannel(), announcement.message(), ChannelType.CHAT);
                 });
             }
         }
@@ -144,7 +144,7 @@ public final class SocialBaseCommand {
 
         @Command("thread")
         public void thread(SocialUser user, int threadId) {
-            SocialMessageContext message = Social.get().getChatManager().getHistory().getById(threadId);
+            SocialHistoryMessageContext message = Social.get().getChatManager().getHistory().getById(threadId);
             if (message == null) {
                 // message does not exist
                 return;

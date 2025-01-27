@@ -9,9 +9,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
+import net.kyori.adventure.text.event.ClickEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -53,58 +57,8 @@ public final class ChatListener implements Listener {
         }
     }
 
-    //@EventHandler(priority = EventPriority.HIGHEST)
-    /*
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (event.isCancelled())
-            return;
-
-        UUID uuid = event.getPlayer().getUniqueId();
-        SocialUser user = Social.get().getUserManager().get(uuid);
-        if (user == null) {
-            Social.get().getLogger().error("Unexpected error (missing SocialPlayer)");
-            return;
-        }
-
-        ChatChannel mainChannel = user.getMainChannel();
-        if (mainChannel == null) {
-            Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getUnexpectedError(), Social.get().getConfig().getMessages().getChannelType());
-            event.setCancelled(true);
-            return;
-        }
-
-        if (mainChannel.isPassthrough())
-            return;
-
-        // Check if message is a reply
-        Integer replyId = null;
-        if (event.getMessage().startsWith("(re:#") && event.getMessage().contains(")")) {
-            String replyIdString = event.getMessage().substring(5, event.getMessage().indexOf(")"));
-            replyId = tryParse(replyIdString);
-            event.setMessage(event.getMessage().replace("(re:#" + replyId + ")", "").trim());
-        }
-
-        // Cancel event if message is empty
-        if (event.getMessage().isEmpty() || event.getMessage().isBlank()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        // Send chat message
-        SocialMessageContext context = Social.get().getChatManager().sendChatMessage(user, mainChannel, event.getMessage(), replyId);
-        if (context == null) {
-            event.setCancelled(true);
-            return;
-        }
-
-        // This allows the message to be logged in console and sent to plugins such as DiscordSRV
-        event.getRecipients().clear();
-        event.setFormat("(" + context.chatChannel().getName() + ") %s: %s");
-    }
-         */
-
     @EventHandler
-    public void onSocialChatMessageSend(SocialChatMessagePrepareEvent event) {
+    public void onSocialChatMessagePrepare(SocialChatMessagePrepareEvent event) {
         // Check if player still has permission to chat in their selected channel
         if (!Social.get().getChatManager().hasPermission(event.getSender(), event.getChannel())) {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
@@ -135,6 +89,28 @@ public final class ChatListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void deleteButton(SocialChatMessageReceiveEvent event) {
+        if (event.getRecipient().equals(event.getSender()) && 
+            event.getRecipient().getPlayer().hasPermission("social.delete-messages.self")
+            || event.getRecipient().getPlayer().hasPermission("social.delete-messages.others")) {
+
+            Component button = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getChat().getDeleteButtonIcon());
+            Component hoverText = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getChat().getDeleteButtonHoverText());
+            
+            event.setMessage(event.getMessage()
+                .appendSpace()
+                .append(button
+                    .hoverEvent(hoverText)
+                    .clickEvent(ClickEvent.callback(ClickCallback.widen((audience) -> {
+                        SocialHistoryMessageContext message = Social.get().getChatManager().getHistory().getById(event.getMessageId());
+                        Social.get().getChatManager().getHistory().delete(message);
+                    }, Audience.class)))
+                )
+            );
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPreSwitch(SocialChannelPreSwitchEvent event) {
         if (!event.getChannel().getMembers().contains(event.getUser().getUuid()))
@@ -150,14 +126,6 @@ public final class ChatListener implements Listener {
             .build();
 
         Social.get().getTextProcessor().parseAndSend(context);
-    }
-
-    private Integer tryParse(String text) {
-        try {
-            return Integer.parseInt(text);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
     }
 
 }
