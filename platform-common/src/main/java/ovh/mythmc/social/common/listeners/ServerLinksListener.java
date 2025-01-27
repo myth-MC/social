@@ -1,45 +1,43 @@
 package ovh.mythmc.social.common.listeners;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.common.server.WrapperCommonServerServerLinks;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerServerLinks;
 import net.kyori.adventure.text.Component;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ServerLinks;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.common.wrappers.PlatformWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
 
 public final class ServerLinksListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        ServerLinks serverLinks = Bukkit.getServerLinks().copy();
+
         SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
         if (user == null)
             return;
 
-        List<WrapperCommonServerServerLinks.ServerLink> serverLinks = new ArrayList<>();
-        Social.get().getConfig().getSettings().getPackets().getServerLinks().getLinks().forEach(serverLink -> {
-            if (serverLink.type() != null) {
-                WrapperCommonServerServerLinks.KnownType knownType = WrapperCommonServerServerLinks.KnownType.valueOf(serverLink.type());
-                serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(knownType, serverLink.url()));
-            } else {
-                SocialParserContext context = SocialParserContext.builder()
-                    .user(user)
-                    .message(Component.text(serverLink.displayName()))
-                    .build();
+        Social.get().getConfig().getServerLinks().getLinks().forEach(serverLink -> {
+            URI uri = URI.create(serverLink.url());
 
-                Component customType = Social.get().getTextProcessor().parse(context);
-                serverLinks.add(new WrapperCommonServerServerLinks.ServerLink(customType, serverLink.url()));
+            if (serverLink.type() == null) {
+                Component displayName = Social.get().getTextProcessor().parse(user, user.getMainChannel(), Component.text(serverLink.displayName()));
+
+                PlatformWrapper.get().sendLink(serverLinks, displayName, uri);
+                return;
             }
-        });
 
-        WrapperPlayServerServerLinks packet = new WrapperPlayServerServerLinks(serverLinks);
-        PacketEvents.getAPI().getPlayerManager().sendPacket(event.getPlayer(), packet);
+            ServerLinks.Type type = ServerLinks.Type.valueOf(serverLink.type());
+            serverLinks.addLink(type, uri);
+
+            event.getPlayer().sendLinks(serverLinks);
+        });
     }
 
 }

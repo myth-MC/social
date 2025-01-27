@@ -45,7 +45,6 @@ public final class BootstrapFeature {
             IgnoreFeature.class,
             MentionsFeature.class,
             MOTDFeature.class,
-            PacketsFeature.class,
             ReactionsFeature.class,
             ServerLinksFeature.class,
             SignsFeature.class,

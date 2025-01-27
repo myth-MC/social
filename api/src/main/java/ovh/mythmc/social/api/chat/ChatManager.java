@@ -168,6 +168,18 @@ public final class ChatManager {
                                    final @NotNull SocialUser recipient,
                                    final @NotNull String message) {
 
+        // Flood filter
+        if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
+            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+
+            if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
+                    !sender.getPlayer().hasPermission("social.filter.bypass")) {
+
+                Social.get().getTextProcessor().parseAndSend(sender, sender.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+        }
+
         Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
         Component prefixHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
 

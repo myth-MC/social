@@ -32,8 +32,8 @@ public final class LegacySocialSettings implements SocialSettings {
     @Comment({"", "System messages module"})
     private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
 
-    @Comment({"", "Packets module"})
-    private PacketsSettings packets = new PacketsSettings();
+    @Comment({"", "Server links module"})
+    private ServerLinksSettings serverLinks = new ServerLinksSettings();
 
     @Comment({"", "Text replacement module"})
     private TextReplacementSettings textReplacement = new TextReplacementSettings();

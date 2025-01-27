@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
@@ -44,6 +45,9 @@ public final class ChatHistory {
     }
 
     public boolean canDelete(SocialMessageContext context) {
+        if (!Bukkit.getOnlineMode()) // Offline servers don't support message deletion
+            return false;
+
         if (context.signedMessage() == null)
             return false;
 

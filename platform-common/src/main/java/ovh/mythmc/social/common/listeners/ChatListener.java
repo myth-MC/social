@@ -94,18 +94,19 @@ public final class ChatListener implements Listener {
         if (event.getRecipient().equals(event.getSender()) && 
             event.getRecipient().getPlayer().hasPermission("social.delete-messages.self")
             || event.getRecipient().getPlayer().hasPermission("social.delete-messages.others")) {
+            
+            SocialHistoryMessageContext message = Social.get().getChatManager().getHistory().getById(event.getMessageId());
+            if (!Social.get().getChatManager().getHistory().canDelete(message))
+                return;
 
             Component button = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getChat().getDeleteButtonIcon());
             Component hoverText = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getChat().getDeleteButtonHoverText());
-            
+
             event.setMessage(event.getMessage()
                 .appendSpace()
                 .append(button
                     .hoverEvent(hoverText)
-                    .clickEvent(ClickEvent.callback(ClickCallback.widen((audience) -> {
-                        SocialHistoryMessageContext message = Social.get().getChatManager().getHistory().getById(event.getMessageId());
-                        Social.get().getChatManager().getHistory().delete(message);
-                    }, Audience.class)))
+                    .clickEvent(ClickEvent.callback(ClickCallback.widen((audience) -> Social.get().getChatManager().getHistory().delete(message), Audience.class)))
                 )
             );
         }

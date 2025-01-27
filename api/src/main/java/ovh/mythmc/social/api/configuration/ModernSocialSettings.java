@@ -8,8 +8,8 @@ import ovh.mythmc.social.api.configuration.sections.settings.CommandsSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.EmojiSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.GeneralSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.MOTDSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.PacketsSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.ReactionsSettings;
+import ovh.mythmc.social.api.configuration.sections.settings.ServerLinksSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.SystemMessagesSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.TextReplacementSettings;
 
@@ -30,7 +30,7 @@ public final class ModernSocialSettings implements SocialSettings {
 
     private SystemMessagesSettings systemMessages = Social.get().getConfig().getSystemMessages();
 
-    private PacketsSettings packets = Social.get().getConfig().getPackets();
+    private ServerLinksSettings serverLinks = Social.get().getConfig().getServerLinks();
 
     private TextReplacementSettings textReplacement = Social.get().getConfig().getTextReplacement();
 

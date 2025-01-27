@@ -20,6 +20,12 @@ public class GeneralSettings {
 
     @Comment("Date format to use in menus and other text fields (mainly chat history)")
     private String dateFormat = "MM-dd hh:mm";
+
+    @Comment("Emoji tab completion in chat")
+    private boolean chatEmojiTabCompletion = true;
+
+    @Comment("Keyword tab completion in chat")
+    private boolean chatKeywordTabCompletion = true;
     
     @Setter
     private int migrationVersion = 1;

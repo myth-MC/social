@@ -16,8 +16,8 @@ import ovh.mythmc.social.api.configuration.sections.settings.CommandsSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.EmojiSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.GeneralSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.MOTDSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.PacketsSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.ReactionsSettings;
+import ovh.mythmc.social.api.configuration.sections.settings.ServerLinksSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.SystemMessagesSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.TextReplacementSettings;
 import ovh.mythmc.social.api.emojis.Emoji;
@@ -56,7 +56,7 @@ public final class SocialConfigProvider {
 
     private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
 
-    private PacketsSettings packets = new PacketsSettings();
+    private ServerLinksSettings serverLinks = new ServerLinksSettings();
 
     private TextReplacementSettings textReplacement = new TextReplacementSettings();
 
@@ -112,7 +112,7 @@ public final class SocialConfigProvider {
         motd = updateSettingsFile("motd.yml", MOTDSettings.class);
         announcements = updateSettingsFile("announcements.yml", AnnouncementsSettings.class);
         systemMessages = updateSettingsFile("system-messages.yml", SystemMessagesSettings.class);
-        packets = updateSettingsFile("packets.yml", PacketsSettings.class);
+        serverLinks = updateSettingsFile("server-links.yml", ServerLinksSettings.class);
         textReplacement = updateSettingsFile("text-replacement.yml", TextReplacementSettings.class);
         commands = updateSettingsFile("commands.yml", CommandsSettings.class);
 
@@ -128,12 +128,6 @@ public final class SocialConfigProvider {
     }
 
     public void loadMenus() {
-        /*
-        menus = YamlConfigurations.update(
-            new File(pluginFolder, "menus.yml").toPath(),
-            SocialMenus.class,
-            YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
-        ); */
         menus = updateSettingsFile("menus.yml", SocialMenus.class);
     }
 

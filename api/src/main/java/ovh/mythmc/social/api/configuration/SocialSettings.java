@@ -6,8 +6,8 @@ import ovh.mythmc.social.api.configuration.sections.settings.CommandsSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.EmojiSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.GeneralSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.MOTDSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.PacketsSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.ReactionsSettings;
+import ovh.mythmc.social.api.configuration.sections.settings.ServerLinksSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.SystemMessagesSettings;
 import ovh.mythmc.social.api.configuration.sections.settings.TextReplacementSettings;
 
@@ -27,7 +27,7 @@ public interface SocialSettings {
 
     SystemMessagesSettings getSystemMessages();
 
-    PacketsSettings getPackets();
+    ServerLinksSettings getServerLinks();
 
     TextReplacementSettings getTextReplacement();
 

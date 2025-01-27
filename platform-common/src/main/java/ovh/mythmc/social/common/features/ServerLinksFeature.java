@@ -5,7 +5,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionVersion;
@@ -28,9 +27,7 @@ public final class ServerLinksFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getPackets().isEnabled() &&
-                Social.get().getConfig().getSettings().getPackets().getServerLinks().isEnabled() &&
-                Gestalt.get().isEnabled(PacketsFeature.class);
+        return Social.get().getConfig().getServerLinks().isEnabled();
     }
 
     @FeatureEnable
