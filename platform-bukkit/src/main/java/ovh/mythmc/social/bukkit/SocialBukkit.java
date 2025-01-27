@@ -10,8 +10,12 @@ import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
 import ovh.mythmc.social.bukkit.reactions.BukkitReactionFactory;
+import ovh.mythmc.social.bukkit.wrappers.BukkitChatEventWrapper;
+import ovh.mythmc.social.bukkit.wrappers.BukkitPlatformWrapper;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.*;
+import ovh.mythmc.social.common.wrappers.ChatEventWrapper;
+import ovh.mythmc.social.common.wrappers.PlatformWrapper;
 
 public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
@@ -25,6 +29,13 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         // Platform implementations
         SocialAdventureProvider.set(new BukkitAdventureProvider(plugin));
         ReactionFactory.set(new BukkitReactionFactory(plugin));
+
+        // Set platform wrapper
+        PlatformWrapper.set(new BukkitPlatformWrapper());
+
+        // Set chat wrapper
+        ChatEventWrapper.set(new BukkitChatEventWrapper());
+
         instance = this;
     }
 

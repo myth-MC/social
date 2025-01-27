@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
+
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
@@ -53,6 +56,7 @@ public abstract class SocialBootstrap<T> implements Social {
 
         // Initialize database
         try {
+            Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary verbose
             SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
         } catch (SQLException e) {
             getLogger().error("An error has occured while initializing the database: {}", e);

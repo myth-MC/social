@@ -10,8 +10,12 @@ import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.listeners.SocialUserListener;
+import ovh.mythmc.social.common.wrappers.ChatEventWrapper;
+import ovh.mythmc.social.common.wrappers.PlatformWrapper;
 import ovh.mythmc.social.paper.adventure.PaperAdventureProvider;
 import ovh.mythmc.social.paper.reactions.PaperReactionFactory;
+import ovh.mythmc.social.paper.wrappers.PaperChatEventWrapper;
+import ovh.mythmc.social.paper.wrappers.PaperPlatformWrapper;
 
 public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
     
@@ -24,6 +28,13 @@ public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
 
         ReactionFactory.set(new PaperReactionFactory(plugin));
         SocialAdventureProvider.set(new PaperAdventureProvider());
+
+        // Set platform wrapper
+        PlatformWrapper.set(new PaperPlatformWrapper());
+
+        // Set chat wrapper
+        ChatEventWrapper.set(new PaperChatEventWrapper());
+        
         instance = this;
     }
 
@@ -75,6 +86,7 @@ public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
 
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new SocialUserListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PaperChatEventWrapper(), getPlugin());
     }
 
 }

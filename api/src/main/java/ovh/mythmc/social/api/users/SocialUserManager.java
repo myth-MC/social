@@ -22,14 +22,21 @@ import java.util.UUID;
 public final class SocialUserManager {
 
     public static final SocialUserManager instance = new SocialUserManager();
-    //private static final List<SocialUser> userList = new ArrayList<>();
 
+    // Gets ONLINE users
     public @NotNull Collection<SocialUser> get() {
-        return SocialDatabase.get().getUsers();
+        return Bukkit.getOnlinePlayers().stream()
+            .map(player -> get(player.getUniqueId()))
+            .filter(user -> user != null)
+            .toList();
     }
 
     public SocialUser get(final @NotNull UUID uuid) {
-        return SocialDatabase.get().getUserByUuid(uuid);
+        SocialUser user = SocialDatabase.get().getUserByUuid(uuid);
+        if (user != null && user.getMainChannel() == null)
+            user.setMainChannel(Social.get().getChatManager().getDefaultChannel());
+        
+        return user;
     }
 
     public void register(final @NotNull SocialUser user) {

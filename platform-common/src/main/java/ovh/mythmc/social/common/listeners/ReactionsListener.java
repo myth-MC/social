@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.common.util.PluginUtil;
+import ovh.mythmc.social.common.wrappers.PlatformWrapper;
 
 import java.util.regex.Pattern;
 
@@ -42,7 +42,7 @@ public final class ReactionsListener implements Listener {
 
         if (reaction != null) {
             SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(user, reaction);
-            PluginUtil.runGlobalTask(plugin, () -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
+            PlatformWrapper.get().runGlobalTask(plugin, () -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
         }
     }
 

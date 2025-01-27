@@ -79,6 +79,7 @@ public final class SocialDatabase {
     }
 
     public void shutdown() {
+        // Update all entries before shutting down
         updateAllEntries();
     }
 
@@ -116,6 +117,11 @@ public final class SocialDatabase {
 
     public void update(final @NotNull SocialUser user) {
         try {
+            if (usersCache.containsKey(user.getUuid())) {
+                usersCache.put(user.getUuid(), user);
+                return;
+            }
+
             usersDao.update(user);
         } catch (SQLException e) {
             logger.error("Exception while updating user {}", e);
@@ -124,6 +130,11 @@ public final class SocialDatabase {
 
     public void update(final @NotNull IgnoredUser ignoredUser) {
         try {
+            if (ignoredUsersCache.contains(ignoredUser)) {
+
+                return;
+            }
+
             ignoredUsersDao.update(ignoredUser);
         } catch (SQLException e) {
             logger.error("Exception while updating ignored user {}", e);

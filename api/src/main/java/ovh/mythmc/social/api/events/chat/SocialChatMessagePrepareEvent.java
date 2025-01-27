@@ -22,7 +22,7 @@ public class SocialChatMessagePrepareEvent extends Event implements Cancellable 
 
     private String rawMessage;
 
-    private final Integer replyId;
+    private Integer replyId;
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 

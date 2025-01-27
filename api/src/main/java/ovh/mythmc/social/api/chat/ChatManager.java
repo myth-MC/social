@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -15,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.chat.renderer.BaseChatRenderer;
+import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
@@ -42,6 +45,8 @@ public final class ChatManager {
     private final ChatHistory history = new ChatHistory();
 
     private final List<ChatChannel> channels = new ArrayList<>();
+
+    @Setter private SocialChatRenderer renderer = new BaseChatRenderer();
 
     public ChatChannel getChannel(final @NotNull String channelName) {
         for (ChatChannel chatChannel : channels) {

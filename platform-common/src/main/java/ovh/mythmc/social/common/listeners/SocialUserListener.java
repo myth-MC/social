@@ -52,12 +52,12 @@ public final class SocialUserListener implements Listener {
 
         SocialSettings settings = Social.get().getConfig().getSettings();
         if (settings instanceof LegacySocialSettings legacySettings) {
-            if (!legacySettings.isAnnoyAdmins())
+            if (!legacySettings.isNagAdmins())
                 return;
 
             SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
             user.sendParsableMessage("$(info_prefix) <yellow>[social] This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");   
-            user.sendParsableMessage("$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'annoyAdmins' to false.</gray>");
+            user.sendParsableMessage("$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'nagAdmins' to false.</gray>");
         }
     }
 

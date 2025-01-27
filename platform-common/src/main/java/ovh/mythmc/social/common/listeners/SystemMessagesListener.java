@@ -28,7 +28,8 @@ public final class SystemMessagesListener implements Listener {
             return;
 
         // Send message to console
-        Social.get().getLogger().info(ChatColor.stripColor(event.getJoinMessage().trim()));
+        if (event.getJoinMessage() != null)
+            Social.get().getLogger().info(ChatColor.stripColor(event.getJoinMessage().trim()));
 
         String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getJoinMessage();
         if (unformattedMessage == null || unformattedMessage.isEmpty())
@@ -42,29 +43,30 @@ public final class SystemMessagesListener implements Listener {
         event.setJoinMessage("");
     }
 
-   @EventHandler
-   public void onPlayerQuit(PlayerQuitEvent event) {
-       SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
-       if (user == null)
-           return;
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        if (user == null)
+            return;
 
-       if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeQuitMessage())
-           return;
+        if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeQuitMessage())
+            return;
 
-       // Send message to console
-       Social.get().getLogger().info(ChatColor.stripColor(event.getQuitMessage().trim()));
+        // Send message to console
+        if (event.getQuitMessage() != null)
+            Social.get().getLogger().info(ChatColor.stripColor(event.getQuitMessage().trim()));
 
-       String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
-       if (unformattedMessage == null || unformattedMessage.isEmpty())
-           return;
+        String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
+        if (unformattedMessage == null || unformattedMessage.isEmpty())
+            return;
 
-       Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
-       ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+        Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
+        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-       Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
+        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
 
-       event.setQuitMessage("");
-   }
+        event.setQuitMessage("");
+    }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {

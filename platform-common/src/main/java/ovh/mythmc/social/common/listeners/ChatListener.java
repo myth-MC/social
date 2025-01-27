@@ -4,7 +4,6 @@ import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,11 +12,10 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.common.util.PluginUtil;
+import ovh.mythmc.social.common.wrappers.PlatformWrapper;
 
 import java.util.UUID;
 
@@ -55,7 +53,8 @@ public final class ChatListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    //@EventHandler(priority = EventPriority.HIGHEST)
+    /*
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled())
             return;
@@ -76,19 +75,6 @@ public final class ChatListener implements Listener {
 
         if (mainChannel.isPassthrough())
             return;
-
-        // Flood filter
-        if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
-            int floodFilterCooldownInSeconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
-
-            if (System.currentTimeMillis() - user.getLatestMessageInMilliseconds() < floodFilterCooldownInSeconds &&
-                    !user.getPlayer().hasPermission("social.filter.bypass")) {
-
-                Social.get().getTextProcessor().parseAndSend(user, mainChannel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
-                event.setCancelled(true);
-                return;
-            }
-        }
 
         // Check if message is a reply
         Integer replyId = null;
@@ -115,6 +101,7 @@ public final class ChatListener implements Listener {
         event.getRecipients().clear();
         event.setFormat("(" + context.chatChannel().getName() + ") %s: %s");
     }
+         */
 
     @EventHandler
     public void onSocialChatMessageSend(SocialChatMessagePrepareEvent event) {
@@ -124,7 +111,7 @@ public final class ChatListener implements Listener {
 
             event.getChannel().removeMember(event.getSender());
 
-            PluginUtil.runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
+            PlatformWrapper.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
         }
     }
@@ -143,7 +130,7 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChannel().removeMember(event.getRecipient());
-            PluginUtil.runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
+            PlatformWrapper.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
         }
     }

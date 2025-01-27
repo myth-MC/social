@@ -9,8 +9,10 @@ import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.inventory.Book;
+import net.kyori.adventure.pointer.Pointers;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.SoundStop;
@@ -20,12 +22,22 @@ import net.kyori.adventure.title.TitlePart;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 
 @SuppressWarnings("deprecation")
-public interface SocialUserAudienceWrapper extends Audience { // 4.18.0
+public interface SocialUserAudienceWrapper extends Audience, Identified { // 4.18.0
 
     Player getPlayer();
 
     private Audience playerAudience() {
         return SocialAdventureProvider.get().player(getPlayer());
+    }
+
+    @Override
+    default @NotNull Pointers pointers() {
+        return playerAudience().pointers();
+    }
+
+    @Override
+    default @NotNull Identity identity() {
+        return Identity.identity(getPlayer().getUniqueId());
     }
 
     @Override

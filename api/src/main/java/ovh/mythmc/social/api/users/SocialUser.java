@@ -51,7 +51,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
     @DatabaseField(id = true)
     private @NotNull UUID uuid;
 
-    private ChatChannel mainChannel = Social.get().getChatManager().getDefaultChannel();
+    private ChatChannel mainChannel;
 
     private boolean socialSpy = false;
 

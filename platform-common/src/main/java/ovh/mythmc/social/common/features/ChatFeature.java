@@ -12,6 +12,7 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.common.listeners.ChatListener;
+import ovh.mythmc.social.common.wrappers.ChatEventWrapper;
 
 @Feature(group = "social", identifier = "CHAT")
 public final class ChatFeature {
@@ -33,6 +34,7 @@ public final class ChatFeature {
     @FeatureEnable
     public void enable() {
         Bukkit.getPluginManager().registerEvents(chatListener, plugin);
+        Bukkit.getPluginManager().registerEvents(ChatEventWrapper.get(), plugin);
 
         // Assign channels to every SocialPlayer
         ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
@@ -47,6 +49,8 @@ public final class ChatFeature {
     @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(chatListener);
+        HandlerList.unregisterAll(ChatEventWrapper.get());
+        
         Social.get().getChatManager().getChannels().clear();
     }
 
