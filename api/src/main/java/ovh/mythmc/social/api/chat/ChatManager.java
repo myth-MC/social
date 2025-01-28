@@ -10,6 +10,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.Internal;
+
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.renderer.BaseChatRenderer;
@@ -164,6 +166,7 @@ public final class ChatManager {
         return false;
     }
 
+    @Internal
     public void sendPrivateMessage(final @NotNull SocialUser sender,
                                    final @NotNull SocialUser recipient,
                                    final @NotNull String message) {

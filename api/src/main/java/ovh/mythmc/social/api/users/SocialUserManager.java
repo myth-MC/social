@@ -7,14 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
-import ovh.mythmc.social.api.database.model.BlockedChannel;
-import ovh.mythmc.social.api.database.model.IgnoredUser;
-import ovh.mythmc.social.api.database.model.IgnoredUser.IgnoreScope;
 import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
 import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
-import ovh.mythmc.social.api.events.users.SocialUserIgnoreEvent;
 import ovh.mythmc.social.api.events.users.SocialUserMuteStatusChangeEvent;
-import ovh.mythmc.social.api.events.users.SocialUserUnignoreEvent;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -113,9 +108,7 @@ public final class SocialUserManager {
         if (event.isCancelled())
             return;
 
-        BlockedChannel blockedChannel = new BlockedChannel(user, channel.getName());
-        user.getBlockedChannels().add(blockedChannel);
-
+        user.getBlockedChannels().add(channel.getName());
         SocialDatabase.get().update(user);
     }
 
@@ -126,54 +119,8 @@ public final class SocialUserManager {
         if (event.isCancelled())
             return;
 
-        BlockedChannel blockedChannel = SocialDatabase.get().getUserByUuid(user.getUuid()).getBlockedChannels().stream()
-            .filter(u -> u.getChannelName().equals(channel.getName()))
-            .findFirst().orElse(null);
-
-        if (blockedChannel != null)
-            user.getBlockedChannels().remove(blockedChannel);
-
+        user.getBlockedChannels().remove(channel.getName());
         SocialDatabase.get().update(user);
-    }
-
-    public boolean isIgnored(final @NotNull SocialUser user, final @NotNull SocialUser target) {
-        return user.getIgnoredUsers().stream()
-            .map(ignoredUser -> ignoredUser.getTarget())
-            .toList().contains(target.getUuid());
-    }
-
-    public IgnoreScope getIgnoreScope(final @NotNull SocialUser user, final @NotNull SocialUser target) {
-        return user.getIgnoredUsers().stream()
-            .filter(ignoredUser -> ignoredUser.getTarget().equals(target.getUuid()))
-            .map(IgnoredUser::getScope)
-            .findFirst().orElse(null);
-    } 
-
-    public void ignore(final @NotNull SocialUser user, final @NotNull SocialUser target, final @NotNull IgnoreScope scope) {
-        SocialUserIgnoreEvent socialUserIgnoreEvent = new SocialUserIgnoreEvent(user, target, scope);
-        Bukkit.getPluginManager().callEvent(socialUserIgnoreEvent);
-
-        if (socialUserIgnoreEvent.isCancelled())
-            return;
-
-        SocialDatabase.get().create(new IgnoredUser(user, target.getUuid(), scope));
-    }
-
-    public void unignore(final @NotNull SocialUser user, final @NotNull SocialUser target) {
-        SocialUserUnignoreEvent socialUserUnignoreEvent = new SocialUserUnignoreEvent(user, target);
-        Bukkit.getPluginManager().callEvent(socialUserUnignoreEvent);
-
-        if (socialUserUnignoreEvent.isCancelled())
-            return;
-
-        IgnoredUser ignoredUser = SocialDatabase.get().getUserByUuid(user.getUuid()).getIgnoredUsers().stream()
-            .filter(u -> u.getTarget().equals(target.getUuid()))
-            .findFirst().orElse(null);
-        
-        if (ignoredUser == null)
-            return;
-
-        SocialDatabase.get().delete(ignoredUser);
     }
 
 }

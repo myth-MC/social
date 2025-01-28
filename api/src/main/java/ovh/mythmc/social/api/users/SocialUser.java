@@ -9,18 +9,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.database.model.BlockedChannel;
-import ovh.mythmc.social.api.database.model.IgnoredUser;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -38,11 +36,11 @@ public class SocialUser implements SocialUserAudienceWrapper {
     public static class Dummy extends SocialUser {
 
         public Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, null, 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, 0, "Dummy");
         }
 
         public Dummy() {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, null, 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, 0, "Dummy");
         }
 
     }
@@ -55,12 +53,8 @@ public class SocialUser implements SocialUserAudienceWrapper {
     private boolean socialSpy = false;
 
     @Getter(AccessLevel.PROTECTED)
-    @ForeignCollectionField(eager = true)
-    private ForeignCollection<IgnoredUser> ignoredUsers;
-
-    @Getter(AccessLevel.PROTECTED)
-    @ForeignCollectionField(eager = true)
-    private ForeignCollection<BlockedChannel> blockedChannels;
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
+    private ArrayList<String> blockedChannels = new ArrayList<>();
 
     private long latestMessageInMilliseconds;
 

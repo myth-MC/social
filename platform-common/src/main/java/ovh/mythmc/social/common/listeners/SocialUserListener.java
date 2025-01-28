@@ -13,7 +13,6 @@ import org.bukkit.persistence.PersistentDataType;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.LegacySocialSettings;
 import ovh.mythmc.social.api.configuration.SocialSettings;
-import ovh.mythmc.social.api.emojis.Emoji;
 import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
 import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -49,13 +48,15 @@ public final class SocialUserListener implements Listener {
 
         // Emoji chat completions
         if (Social.get().getConfig().getSettings().getEmojis().isEnabled() && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
-            event.getPlayer().addCustomChatCompletions(Social.get().getEmojiManager().getEmojis().stream().map(Emoji::name).toList());
+            event.getPlayer().addCustomChatCompletions(Social.get().getEmojiManager().getEmojis().stream()
+                .map(emoji -> ":" +emoji.name() + ":")
+                .toList());
 
         // Keyword chat completions
         if (Social.get().getConfig().getGeneral().isChatKeywordTabCompletion()) {
             Collection<String> keywords = Social.get().getTextProcessor().getContextualParsers().stream()
                 .filter(parser -> parser instanceof SocialContextualKeyword)
-                .map(parser -> ((SocialContextualKeyword) parser).keyword())
+                .map(parser -> "[" + ((SocialContextualKeyword) parser).keyword() + "]")
                 .toList();
 
             event.getPlayer().addCustomChatCompletions(keywords);
