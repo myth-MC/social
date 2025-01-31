@@ -56,7 +56,7 @@ public class ChatSettings {
     private boolean playerFormatOptions = true;
 
     @Comment("Delete button icon")
-    private String deleteButtonIcon = "<dark_gray>[<red>:raw_x:</red>]</dark_gray>";
+    private String deleteButtonIcon = "<gray>[<red>:raw_x:</red>]</gray>";
 
     @Comment("Text that appears when hovering over the button")
     private String deleteButtonHoverText = "$(info_prefix) <gray>Click here to delete this message</gray>";
