@@ -12,6 +12,11 @@ import java.util.regex.Pattern;
 public final class RawEmojiParser implements SocialContextualParser {
 
     @Override
+    public boolean supportsOfflinePlayers() {
+        return true;
+    }
+
+    @Override
     public Component parse(SocialParserContext context) {
         Component message = context.message();
 

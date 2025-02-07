@@ -10,17 +10,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
+@RequiredArgsConstructor
 public final class SystemMessagesListener implements Listener {
+
+    private final JavaPlugin plugin;
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
         if (user == null)
             return;
 
@@ -38,14 +45,17 @@ public final class SystemMessagesListener implements Listener {
         Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
+        PlatformAdapter.get().runAsyncTaskLater(plugin, () -> {
+            Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType, null);
+        }, Social.get().getConfig().getSystemMessages().getJoinMessageDelayInTicks());
+
 
         event.setJoinMessage("");
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
         if (user == null)
             return;
 
@@ -63,14 +73,16 @@ public final class SystemMessagesListener implements Listener {
         Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType);
+        PlatformAdapter.get().runAsyncTaskLater(plugin, () -> {
+            Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType, null);
+        }, Social.get().getConfig().getSystemMessages().getQuitMessageDelayInTicks());
 
         event.setQuitMessage("");
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getEntity().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getEntity().getUniqueId());
         if (user == null)
             return;
 
@@ -87,7 +99,7 @@ public final class SystemMessagesListener implements Listener {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (unformattedMessage.contains(player.getName())) {
-                SocialUser s = Social.get().getUserManager().get(player.getUniqueId());
+                SocialUser s = Social.get().getUserManager().getByUuid(player.getUniqueId());
                 deathMessage = deathMessage.replaceText(TextReplacementConfig
                         .builder()
                         .matchLiteral(player.getName())
@@ -100,7 +112,7 @@ public final class SystemMessagesListener implements Listener {
 
         ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), deathMessage, channelType);
+        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), deathMessage, channelType, null);
 
         // Send message to console
         Social.get().getLogger().info(ChatColor.stripColor(event.getDeathMessage().trim()));

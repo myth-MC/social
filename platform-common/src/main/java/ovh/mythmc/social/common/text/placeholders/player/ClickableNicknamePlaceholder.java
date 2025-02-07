@@ -7,7 +7,6 @@ import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 
 public final class ClickableNicknamePlaceholder extends SocialContextualPlaceholder {
 
@@ -35,6 +34,7 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
         commandAsString = commandAsString.replace("$username", context.user().getPlayer().getName());
         commandAsString = commandAsString.replace("$(username)", context.user().getPlayer().getName());
 
+        
         Component hoverText = request(context.withMessage(Component.text(hoverTextAsString)),
             NicknamePlaceholder.class,
             UsernamePlaceholder.class,
@@ -43,11 +43,11 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
 
         if (commandAsString.isEmpty())
             return Component.text(player.getNickname())
-                .hoverEvent(HoverEvent.showText(hoverText));
+                .hoverEvent(hoverText);
 
         return Component.text(player.getNickname())
             .clickEvent(ClickEvent.suggestCommand("/" + commandAsString))
-            .hoverEvent(HoverEvent.showText(hoverText));
+            .hoverEvent(hoverText);
     }
 
 }

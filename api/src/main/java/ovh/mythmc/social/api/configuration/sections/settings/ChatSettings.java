@@ -49,17 +49,8 @@ public class ChatSettings {
     @Comment("Sound that will be played to the mentioned player")
     private String mentionSound = "block.chain.place";
 
-    @Comment("Message that the player who has been mentioned will see when hovering over his own nickname")
-    private String mentionHoverText = "<dark_gray>[<green>:raw_music:</green>]</dark_gray> <gray><blue>$(nickname)</blue> has mentioned you!</gray>";
-
     @Comment("Whether markdown-style text formatting options for players should be enabled or disabled")
     private boolean playerFormatOptions = true;
-
-    @Comment("Delete button icon")
-    private String deleteButtonIcon = "<gray>[<red>:raw_x:</red>]</gray>";
-
-    @Comment("Text that appears when hovering over the button")
-    private String deleteButtonHoverText = "$(info_prefix) <gray>Click here to delete this message</gray>";
 
     @Comment("Groups module")
     private ChatGroupSettings groups = new ChatGroupSettings();

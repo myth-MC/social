@@ -52,6 +52,9 @@ public class CustomTextProcessor {
             if (!(parser instanceof SocialUserInputParser) && playerInput)
                 continue;
 
+            if (!parser.supportsOfflinePlayers() && context.user().getPlayer() == null)
+                continue;
+
             List<Class<?>> appliedParsers = context.appliedParsers();
             if (Collections.frequency(appliedParsers, parser.getClass()) > 3) {
                 Social.get().getLogger().warn("Parser " + parser.getClass().getName() + " has been called too many times. This can potentially degrade performance. Please, inform the author(s) of " + parser.getClass().getName() + " about this.");

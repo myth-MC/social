@@ -27,12 +27,29 @@ public final class SocialUserManager {
             .toList();
     }
 
+    @Deprecated(forRemoval = true)
     public SocialUser get(final @NotNull UUID uuid) {
+        return getByUuid(uuid);
+    }
+
+    public SocialUser getByUuid(final @NotNull UUID uuid) {
         SocialUser user = SocialDatabase.get().getUserByUuid(uuid);
         if (user != null && user.getMainChannel() == null)
             user.setMainChannel(Social.get().getChatManager().getDefaultChannel());
         
         return user;
+    }
+
+    public Collection<SocialUser> getSocialSpyUsers() {
+        return get().stream()
+            .filter(SocialUser::isSocialSpy)
+            .toList();
+    }
+
+    public Collection<SocialUser> getSocialSpyUsersInChannel(ChatChannel channel) {
+        return get().stream()
+            .filter(user -> user.isSocialSpy() && user.getMainChannel().equals(channel))
+            .toList();
     }
 
     public void register(final @NotNull SocialUser user) {
@@ -50,7 +67,7 @@ public final class SocialUserManager {
         if (defaultChatChannel == null) {
             Social.get().getLogger().warn("Default channel '" + defaultChatChannelName + "' is unavailable!");
         } else {
-            if (!defaultChatChannel.getMembers().contains(uuid))
+            if (!defaultChatChannel.getMemberUuids().contains(uuid))
                 defaultChatChannel.addMember(uuid);
 
             user.setMainChannel(defaultChatChannel);
@@ -120,6 +137,18 @@ public final class SocialUserManager {
             return;
 
         user.getBlockedChannels().remove(channel.getName());
+        SocialDatabase.get().update(user);
+    }
+
+    public void enableCompanion(final @NotNull SocialUser user) {
+        user.setCompanion(new SocialUserCompanion(user));
+
+        SocialDatabase.get().update(user);
+    }
+
+    public void disableCompanion(final @NotNull SocialUser user) {
+        user.setCompanion(null);
+
         SocialDatabase.get().update(user);
     }
 

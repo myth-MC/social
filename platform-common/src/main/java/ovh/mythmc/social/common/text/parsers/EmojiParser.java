@@ -14,6 +14,11 @@ import java.util.regex.Pattern;
 public final class EmojiParser implements SocialUserInputParser {
 
     @Override
+    public boolean supportsOfflinePlayers() {
+        return true;
+    }
+
+    @Override
     public Component parse(SocialParserContext context) {
         Component message = context.message();
 

@@ -3,6 +3,8 @@ package ovh.mythmc.social.api.announcements;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.text.Component;
+
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
@@ -57,18 +59,19 @@ public final class AnnouncementManager {
                     });
                 } else {
                     for (ChatChannel channel : announcement.channels()) {
-                        channel.getMembers().forEach(uuid -> {
+                        channel.getMembers().forEach(user -> {
                             SocialParserContext context = SocialParserContext.builder()
-                                .user(Social.get().getUserManager().get(uuid))
+                                .user(user)
                                 .message(announcement.message())
                                 .build();
 
-                            Social.get().getTextProcessor().parseAndSend(context);
+                            Component component = Social.get().getTextProcessor().parse(context);
+                            Social.get().getTextProcessor().send(user, component, ChannelType.CHAT, channel);
                         });
                     }
                 }
 
-                latest = latest + 1;
+                latest++;
                 if (latest >= announcements.size())
                     latest = 0;
 

@@ -2,9 +2,11 @@ package ovh.mythmc.social.api.context;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
@@ -13,7 +15,7 @@ import ovh.mythmc.social.api.users.SocialUser;
 
 @Getter
 @Accessors(fluent = true)
-public class SocialHistoryMessageContext extends SocialMessageContext {
+public class SocialRegisteredMessageContext extends SocialMessageContext {
 
     private final Integer id;
 
@@ -21,17 +23,18 @@ public class SocialHistoryMessageContext extends SocialMessageContext {
 
     private final long timestamp;
 
-    public SocialHistoryMessageContext(
+    public SocialRegisteredMessageContext(
         int id,
         long timestamp,
         SocialUser sender,
         ChatChannel channel,
+        Set<Audience> viewers,
         Component message,
         String rawMessage,
         Integer replyId,
         SignedMessage signedMessage) {
 
-        super(sender, channel, rawMessage, replyId, signedMessage);
+        super(sender, channel, viewers, rawMessage, replyId, signedMessage);
 
         this.timestamp = timestamp;
         this.id = id;

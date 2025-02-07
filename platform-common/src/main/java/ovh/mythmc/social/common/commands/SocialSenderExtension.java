@@ -35,7 +35,7 @@ public final class SocialSenderExtension implements SenderExtension<CommandSende
     @Override
     public @NotNull SocialUser map(@NotNull CommandSender sender) {
         if (sender instanceof Player player && player != null)
-            return Social.get().getUserManager().get(player.getUniqueId());
+            return Social.get().getUserManager().getByUuid(player.getUniqueId());
 
         return new SocialUser.Dummy();
     }

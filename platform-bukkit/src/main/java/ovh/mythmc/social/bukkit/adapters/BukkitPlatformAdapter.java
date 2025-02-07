@@ -1,4 +1,4 @@
-package ovh.mythmc.social.bukkit.wrappers;
+package ovh.mythmc.social.bukkit.adapters;
 
 import java.net.URI;
 
@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import ovh.mythmc.social.common.wrappers.PlatformWrapper;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
-public final class BukkitPlatformWrapper extends PlatformWrapper {
+public final class BukkitPlatformAdapter extends PlatformAdapter {
 
     @Override
     public void runGlobalTask(@NotNull JavaPlugin plugin, @NotNull Runnable runnable) {
@@ -38,6 +38,11 @@ public final class BukkitPlatformWrapper extends PlatformWrapper {
     @Override
     public void sendLink(@NotNull ServerLinks serverLinks, @NotNull Component displayName, @NotNull URI uri) {
         serverLinks.addLink(LegacyComponentSerializer.legacySection().serialize(displayName), uri);
+    }
+
+    @Override
+    public void runAsyncTaskLater(@NotNull JavaPlugin plugin, @NotNull Runnable runnable, int ticks) {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, ticks);
     }
     
 }

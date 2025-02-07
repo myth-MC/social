@@ -11,6 +11,11 @@ import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 public final class MiniMessageParser implements SocialContextualParser {
 
     @Override
+    public boolean supportsOfflinePlayers() {
+        return true;
+    }
+
+    @Override
     public Component parse(SocialParserContext context) {
         Component message = miniMessage(context.message());
 

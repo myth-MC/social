@@ -1,6 +1,7 @@
 package ovh.mythmc.social.api.context;
 
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -8,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -21,6 +23,8 @@ public class SocialMessageContext implements SocialContext {
     private final SocialUser sender;
 
     private final ChatChannel chatChannel;
+
+    private final Set<Audience> viewers;
 
     private final String rawMessage;
 

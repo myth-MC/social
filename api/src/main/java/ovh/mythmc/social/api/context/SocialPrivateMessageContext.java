@@ -4,6 +4,7 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -16,10 +17,11 @@ public class SocialPrivateMessageContext extends SocialMessageContext {
     public SocialPrivateMessageContext(
         SocialUser sender,
         Set<SocialUser> recipients,
+        Set<Audience> viewers,
         String rawMessage,
         SignedMessage signedMessage) {
 
-        super(sender, sender.getMainChannel(), rawMessage, null, signedMessage);
+        super(sender, sender.getMainChannel(), viewers, rawMessage, null, signedMessage);
 
         this.recipients = recipients;
     }

@@ -1,4 +1,4 @@
-package ovh.mythmc.social.common.wrappers;
+package ovh.mythmc.social.common.adapters;
 
 import java.net.URI;
 
@@ -10,18 +10,20 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
 
-// This class acts as an utility for different platform implementations
-public abstract class PlatformWrapper { 
+// This class adapts methods for different platform implementations
+public abstract class PlatformAdapter { 
 
-    private static PlatformWrapper instance;
+    private static PlatformAdapter instance;
 
-    public static @NotNull PlatformWrapper get() { return instance; }
+    public static @NotNull PlatformAdapter get() { return instance; }
 
-    public static void set(@NotNull PlatformWrapper p) {
+    public static void set(@NotNull PlatformAdapter p) {
         instance = p;
     }
 
     public abstract void runGlobalTask(@NotNull JavaPlugin plugin, @NotNull Runnable runnable);
+
+    public abstract void runAsyncTaskLater(@NotNull JavaPlugin plugin, @NotNull Runnable runnable, int ticks);
 
     public abstract void runRegionTask(@NotNull JavaPlugin plugin, @NotNull Location location, @NotNull Runnable runnable);
 

@@ -1,10 +1,5 @@
 package ovh.mythmc.social.api.chat.renderer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.experimental.UtilityClass;
@@ -14,30 +9,12 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
-import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.users.SocialUser;
 
 @UtilityClass
 public class SocialChatRendererUtil {
-    
-    public SocialChatMessagePrepareEvent messagePrepareEvent(SocialUser user, ChatChannel channel, String rawMessage, Integer replyId) {
-        SocialChatMessagePrepareEvent socialChatMessagePrepareEvent = new SocialChatMessagePrepareEvent(user, channel, rawMessage, replyId);
-        Bukkit.getPluginManager().callEvent(socialChatMessagePrepareEvent);
-
-        return socialChatMessagePrepareEvent;
-    }
-
-    public Collection<UUID> channelMembersWithSocialSpy(ChatChannel channel) {
-        Collection<UUID> members = new ArrayList<>(channel.getMembers());
-
-        Social.get().getUserManager().get().stream()
-            .filter(user -> !members.contains(user.getUuid()) && user.isSocialSpy())
-            .map(SocialUser::getUuid)
-            .forEach(members::add);
-
-        return members;
-    }
 
     public Component getClickableChannelIcon(SocialUser user, ChatChannel channel) {
         Component channelIcon = Component.text(channel.getIcon())
@@ -53,9 +30,9 @@ public class SocialChatRendererUtil {
             channelHoverText = channelHoverText
                 .append(Component.text(Social.get().getConfig().getSettings().getChat().getChannelHoverText()))
                 .appendNewline()
-                .append(channelHoverText);
+                .append(channel.getHoverText());
 
-        return channelHoverText;
+        return Social.get().getTextProcessor().parse(SocialParserContext.builder().user(user).channel(channel).message(channelHoverText).build());
     }
 
     public Component getNicknameWithColor(SocialUser user, ChatChannel channel) {
@@ -66,7 +43,7 @@ public class SocialChatRendererUtil {
         return nickname;
     }
 
-    public Component getReplyIcon(SocialUser sender, SocialChatMessagePrepareEvent message) {
+    public Component getReplyIcon(SocialUser sender, SocialRegisteredMessageContext message) {
         Component replyIcon = Component.empty();
         
         // Check that message is a reply
@@ -74,23 +51,15 @@ public class SocialChatRendererUtil {
             return replyIcon;
 
         // Check that sender has permission to send messages on this channel
-        if (!Social.get().getChatManager().hasPermission(sender, message.getChannel()))
+        if (!Social.get().getChatManager().hasPermission(sender, message.chatChannel()))
             return replyIcon;
 
         // Get the reply context
-        SocialHistoryMessageContext reply = Social.get().getChatManager().getHistory().getById(message.getReplyId());
-
-        // Chain of replies (thread)
-        if (reply.isReply())
-            message.setReplyId(reply.replyId());
-
-        // Switch channel if necessary
-        if (!reply.chatChannel().equals(message.getChannel()) && Social.get().getChatManager().hasPermission(sender, reply.chatChannel()))
-            message.setChannel(reply.chatChannel());
+        SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
 
         // Icon hover text
         Component hoverText = Component.empty();
-        for (SocialHistoryMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply, 8)) {
+        for (SocialRegisteredMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply, 8)) {
             hoverText = hoverText
                 .append(Component.text(threadReply.sender().getNickname() + ": ", NamedTextColor.GRAY))
                 .append(Component.text(threadReply.rawMessage()).color(NamedTextColor.WHITE))
@@ -107,7 +76,13 @@ public class SocialChatRendererUtil {
         // Show 'click to reply' text
         hoverText = hoverText
             .appendNewline()
-            .append(Component.text(Social.get().getConfig().getSettings().getChat().getReplyHoverText()));
+            .append(
+                Social.get().getTextProcessor().parse(SocialParserContext.builder()
+                    .user(sender)
+                    .channel(reply.chatChannel())
+                    .message(Component.text(Social.get().getConfig().getSettings().getChat().getReplyHoverText()))
+                    .build())
+            );
 
         // Set icon
         replyIcon = Component.text(Social.get().getConfig().getSettings().getChat().getReplyFormat())

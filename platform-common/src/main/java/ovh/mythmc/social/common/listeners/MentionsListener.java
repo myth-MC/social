@@ -4,7 +4,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,54 +11,40 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public final class MentionsListener implements Listener {
 
     @EventHandler
-    public void onMention(SocialChatMessageReceiveEvent event) {
+    public void mention(SocialChatMessageReceiveEvent event) {
         if (event.getRecipient().equals(event.getSender()))
             return;
 
         if (!event.getSender().getPlayer().hasPermission("social.mentions"))
             return;
 
-        Pattern pattern = Pattern.compile("(^" + Pattern.quote("@" + event.getRecipient().getNickname()) + "$)|(^" + "@" + Pattern.quote(event.getRecipient().getPlayer().getName()) + "$)");
+        var wrapper = new Object() { boolean mentioned = false; };
+    
+        Component message = event.getMessage();
 
-        Arrays.asList(event.getRawMessage().split("\\s+")).forEach(word -> {
-            // Replace player's name and nickname
-            if (pattern.matcher(word).find()) {
-                Component hoverText = Social.get().getTextProcessor().parse(event.getSender(), event.getChannel(), Social.get().getConfig().getSettings().getChat().getMentionHoverText());
-
-                List<Component> children = new ArrayList<>(List.copyOf(event.getMessage().children()));
-
-                Component replaced = children.get(children.size() - 1);
-
-                if (word.substring(1).equalsIgnoreCase(event.getRecipient().getNickname())) {
-                    // Nickname
-                    replaced = replaced.replaceText(TextReplacementConfig.builder()
-                        .matchLiteral("@" + event.getRecipient().getNickname())
-                        .replacement(Component.text("@" + event.getRecipient().getNickname(), event.getChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
-                        .build()
-                    );
-                } else if (word.substring(1).equalsIgnoreCase(event.getRecipient().getPlayer().getName())) {
-                    // Username
-                    replaced = replaced.replaceText(TextReplacementConfig.builder()
-                            .matchLiteral("@" + event.getRecipient().getPlayer().getName())
-                            .replacement(Component.text("@" + event.getRecipient().getPlayer().getName(), event.getChannel().getColor()).hoverEvent(HoverEvent.showText(hoverText)))
-                            .build()
-                    );
-                }
-
-                children.set(children.size() - 1, replaced);
-                event.setMessage(event.getMessage().children(children));
-
-                event.getRecipient().playSound(getSoundByKey(Social.get().getConfig().getChat().getMentionSound()));
-            }
+        // Username
+        message = message.replaceText((builder) -> {
+            builder
+                .match(Pattern.quote("@" + event.getRecipient().getPlayer().getName()) + "|" + Pattern.quote("@" + event.getRecipient().getNickname()))
+                .replacement((match, textBuilder) -> {
+                    wrapper.mentioned = true;
+                    return Component.text(match.group()).color(event.getChannel().getColor());
+                });
         });
+
+        if (wrapper.mentioned) {
+            event.getRecipient().playSound(getSoundByKey(Social.get().getConfig().getChat().getMentionSound()));
+            
+            if (event.getRecipient().isCompanion())
+                event.getRecipient().getCompanion().mention(event.getChannel(), event.getSender());
+        }
+
+        event.setMessage(message);
     }
 
     @EventHandler

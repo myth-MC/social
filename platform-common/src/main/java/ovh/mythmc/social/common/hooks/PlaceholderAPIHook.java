@@ -33,7 +33,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
-            SocialUser user = Social.get().getUserManager().get(player.getUniqueId());
+            SocialUser user = Social.get().getUserManager().getByUuid(player.getUniqueId());
             if (user == null)
                 return null;
 
@@ -72,10 +72,10 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.getName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return Social.get().getUserManager().get(groupChatChannel.getLeaderUuid()).getNickname();
+                    return Social.get().getUserManager().getByUuid(groupChatChannel.getLeaderUuid()).getNickname();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
-                    return Social.get().getUserManager().get(groupChatChannel.getLeaderUuid()).getPlayer().getName();
+                    return Social.get().getUserManager().getByUuid(groupChatChannel.getLeaderUuid()).getPlayer().getName();
                 }
                 if (params.equalsIgnoreCase("group_leader_uuid")) {
                     return groupChatChannel.getLeaderUuid().toString();
@@ -85,7 +85,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.getMembers().size())
                         return null;
-                    UUID uuid = groupChatChannel.getMembers().get(integer);
+                    UUID uuid = groupChatChannel.getMemberUuids().get(integer);
                     if (uuid == null)
                         return null;
 
@@ -95,21 +95,21 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.getMembers().size())
                         return null;
-                    UUID uuid = groupChatChannel.getMembers().get(integer);
+                    UUID uuid = groupChatChannel.getMemberUuids().get(integer);
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserManager().get(uuid).getPlayer().getName();
+                    return Social.get().getUserManager().getByUuid(uuid).getPlayer().getName();
                 }
                 if (params.startsWith("group_player_")) {
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.getMembers().size())
                         return null;
-                    UUID uuid = groupChatChannel.getMembers().get(integer);
+                    UUID uuid = groupChatChannel.getMemberUuids().get(integer);
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserManager().get(uuid).getNickname();
+                    return Social.get().getUserManager().getByUuid(uuid).getNickname();
                 }
             }
 
@@ -121,7 +121,8 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
     public Component parse(SocialParserContext context) {
         String serialized = LegacyComponentSerializer.legacyAmpersand().serialize(context.message());
         String parsedMessage = PlaceholderAPI.setPlaceholders(context.user().getPlayer(), serialized);
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(parsedMessage.replace("§", "&"));
+        return LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().hexCharacter("&".charAt(0)).build()
+            .deserialize(parsedMessage.replace("§", "&"));
     }
 
     private Integer tryParse(String text) {

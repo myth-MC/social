@@ -10,6 +10,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -43,6 +44,11 @@ public class GroupChatChannel extends ChatChannel {
         this.code = code;
     }
 
+    public String getAliasOrName() {
+        return Optional.ofNullable(alias)
+            .orElse(this.getName());
+    }
+
     @Override
     public boolean addMember(UUID uuid) {
         if (getMembers().size() >= Social.get().getConfig().getSettings().getChat().getGroups().getPlayerLimit())
@@ -50,14 +56,14 @@ public class GroupChatChannel extends ChatChannel {
 
         super.addMember(uuid);
 
-        SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(this, Social.get().getUserManager().get(uuid));
+        SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(this, Social.get().getUserManager().getByUuid(uuid));
         Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
 
         return true;
     }
 
     public boolean removeMember(UUID uuid) {
-        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(this, Social.get().getUserManager().get(uuid));
+        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(this, Social.get().getUserManager().getByUuid(uuid));
         Bukkit.getPluginManager().callEvent(socialGroupLeaveEvent);
 
         return super.removeMember(uuid);

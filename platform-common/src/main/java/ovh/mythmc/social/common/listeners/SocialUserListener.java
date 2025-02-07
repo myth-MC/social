@@ -28,7 +28,7 @@ public final class SocialUserListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-        SocialUser user = Social.get().getUserManager().get(uuid);
+        SocialUser user = Social.get().getUserManager().getByUuid(uuid);
 
         if (user == null)
             Social.get().getUserManager().register(uuid);
@@ -36,7 +36,7 @@ public final class SocialUserListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
 
         // Temporary workaround for nicknames
         PersistentDataContainer container = user.getPlayer().getPersistentDataContainer();
@@ -73,7 +73,7 @@ public final class SocialUserListener implements Listener {
             if (!legacySettings.isNagAdmins())
                 return;
 
-            SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+            SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
             user.sendParsableMessage("$(info_prefix) <yellow>[social] This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");   
             user.sendParsableMessage("$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'nagAdmins' to false.</gray>");
         }

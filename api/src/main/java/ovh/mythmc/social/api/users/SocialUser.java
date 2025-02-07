@@ -36,11 +36,11 @@ public class SocialUser implements SocialUserAudienceWrapper {
     public static class Dummy extends SocialUser {
 
         public Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, 0, "Dummy", null);
         }
 
         public Dummy() {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, 0, "Dummy");
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, 0, "Dummy", null);
         }
 
     }
@@ -62,8 +62,14 @@ public class SocialUser implements SocialUserAudienceWrapper {
     @Getter(AccessLevel.PRIVATE)
     private String cachedNickname = null;
 
+    private @Nullable SocialUserCompanion companion;
+
     public @Nullable Player getPlayer() {
         return Bukkit.getPlayer(uuid);
+    }
+
+    public boolean isCompanion() {
+        return companion != null;
     }
 
     public @Nullable CommandSender asCommandSender() {
@@ -97,7 +103,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
             parsedMessage = Social.get().getTextProcessor().parse(context);
         }
 
-        Social.get().getTextProcessor().send(this, parsedMessage, context.messageChannelType());
+        Social.get().getTextProcessor().send(this, parsedMessage, context.messageChannelType(), context.channel());
     }
 
     public void sendParsableMessage(@NonNull SocialParserContext context) {

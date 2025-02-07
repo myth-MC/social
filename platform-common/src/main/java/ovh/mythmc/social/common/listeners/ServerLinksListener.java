@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.common.wrappers.PlatformWrapper;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
 import java.net.URI;
 
@@ -19,7 +19,7 @@ public final class ServerLinksListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         ServerLinks serverLinks = Bukkit.getServerLinks().copy();
 
-        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
         if (user == null)
             return;
 
@@ -29,7 +29,7 @@ public final class ServerLinksListener implements Listener {
             if (serverLink.type() == null) {
                 Component displayName = Social.get().getTextProcessor().parse(user, user.getMainChannel(), Component.text(serverLink.displayName()));
 
-                PlatformWrapper.get().sendLink(serverLinks, displayName, uri);
+                PlatformAdapter.get().sendLink(serverLinks, displayName, uri);
                 return;
             }
 

@@ -13,6 +13,8 @@ public interface SocialContextualParser {
     
     Component parse(SocialParserContext context);
 
+    default boolean supportsOfflinePlayers() { return false; }
+
     default Component request(@NotNull SocialParserContext context, @NotNull List<SocialContextualParser> requestedParsers) {
         Component message = context.message();
 

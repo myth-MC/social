@@ -4,7 +4,6 @@ import lombok.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
@@ -12,6 +11,7 @@ import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
 import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,13 +42,13 @@ public class ChatChannel {
 
     private final boolean joinByDefault;
 
-    private List<UUID> members = new ArrayList<>();
+    private List<UUID> memberUuids = new ArrayList<>();
 
     public boolean addMember(UUID uuid) {
-        if (members.contains(uuid))
+        if (memberUuids.contains(uuid))
             return false;
 
-        members.add(uuid);
+        memberUuids.add(uuid);
         return true;
     }
 
@@ -57,11 +57,17 @@ public class ChatChannel {
     }
 
     public boolean removeMember(UUID uuid) {
-        return members.remove(uuid);
+        return memberUuids.remove(uuid);
     }
 
     public boolean removeMember(SocialUser user) {
         return removeMember(user.getUuid());
+    }
+
+    public Collection<SocialUser> getMembers() {
+        return memberUuids.stream()
+            .map(Social.get().getUserManager()::getByUuid)
+            .toList();
     }
 
     public static ChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {
@@ -133,11 +139,14 @@ public class ChatChannel {
 
     protected static Component getHoverTextAsComponent(List<String> hoverTextList) {
         Component hoverText = Component.empty();
-        for (String line : hoverTextList) {
-            Component parsedLine = MiniMessage.miniMessage().deserialize(line);
+
+        for (int i = 0; i < hoverTextList.size(); i++) {
             hoverText = hoverText
-                    .appendNewline()
-                    .append(parsedLine);
+                .append(Component.text(hoverTextList.get(i)));
+
+            if (i < hoverTextList.size() - 1)
+                hoverText = hoverText
+                    .appendNewline();
         }
 
         return hoverText;

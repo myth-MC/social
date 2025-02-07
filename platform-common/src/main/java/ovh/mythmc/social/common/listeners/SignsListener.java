@@ -15,7 +15,7 @@ public final class SignsListener implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
         if (user == null)
             return;
 

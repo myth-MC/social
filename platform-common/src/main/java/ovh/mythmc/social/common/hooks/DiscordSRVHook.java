@@ -70,11 +70,7 @@ public final class DiscordSRVHook implements ChatHook {
         miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 
         String finalMiniMessage = miniMessage;
-        chatChannel.getMembers().forEach(uuid -> {
-            SocialUser user = Social.get().getUserManager().get(uuid);
-            if (user == null)
-                return;
-
+        chatChannel.getMembers().forEach(user -> {
             if (!Social.get().getChatManager().hasPermission(user, chatChannel))
                 return;
 

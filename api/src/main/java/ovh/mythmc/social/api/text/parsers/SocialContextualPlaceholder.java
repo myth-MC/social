@@ -20,11 +20,12 @@ public abstract class SocialContextualPlaceholder implements SocialContextualPar
 
     @Override
     public Component parse(SocialParserContext context) {
-        Component processedText = get(context.withMessage(text(identifier())));
         Component message = context.message();
 
         if (!message.toString().contains(identifier()))
             return message;
+
+        Component processedText = get(context.withMessage(text(identifier())));
 
         // Legacy support (not delimited)
         if (legacySupport()) {

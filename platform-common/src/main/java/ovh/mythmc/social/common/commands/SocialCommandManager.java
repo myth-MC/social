@@ -59,7 +59,7 @@ public final class SocialCommandManager {
             if (player == null)
                 return null;
 
-            return Social.get().getUserManager().get(player.getUniqueId());
+            return Social.get().getUserManager().getByUuid(player.getUniqueId());
         });
         
         manager.registerArgument(ChatChannel.class, (sender, arg) -> Social.get().getChatManager().getChannel(arg));
@@ -127,7 +127,7 @@ public final class SocialCommandManager {
                 return null;
             
             return sender.getGroupChatChannel().getMembers().stream()
-                .map(uuid -> Social.get().getUserManager().get(uuid).getPlayer().getName())
+                .map(user -> user.getPlayer().getName())
                 .toList();
             });
     }

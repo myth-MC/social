@@ -18,7 +18,9 @@ import ovh.mythmc.social.common.features.BootstrapFeature;
 import ovh.mythmc.social.common.listeners.InternalFeatureListener;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelIconPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.chat.ChannelNicknameColorPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelPlaceholder;
+import ovh.mythmc.social.common.text.placeholders.chat.ChannelTextColorPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.ClickableNicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.NicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.SocialSpyPlaceholder;
@@ -26,7 +28,6 @@ import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.prefix.*;
 
 import java.io.File;
-import java.sql.SQLException;
 
 @Getter
 @RequiredArgsConstructor
@@ -54,20 +55,16 @@ public abstract class SocialBootstrap<T> implements Social {
         Gestalt.get().register(BootstrapFeature.class);
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 
-        // Initialize database
-        try {
-            Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary verbose
-            SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
-        } catch (SQLException e) {
-            getLogger().error("An error has occured while initializing the database: {}", e);
-        }
-
         // Load settings
         reloadAll();
 
         try {
             // Enable plugin
             enable();
+
+            // Initialize database
+            Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary verbose
+            SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
         } catch (Throwable throwable) {
             getLogger().error("An error has occurred while initializing social: {}", throwable);
             throwable.printStackTrace(System.err);
@@ -120,6 +117,8 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().registerContextualParser(
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
+                new ChannelNicknameColorPlaceholder(),
+                new ChannelTextColorPlaceholder(),
                 new SocialSpyPlaceholder()
         );
 

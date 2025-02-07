@@ -1,4 +1,4 @@
-package ovh.mythmc.social.bukkit.wrappers;
+package ovh.mythmc.social.bukkit.adapters;
 
 import java.util.Collection;
 import java.util.Set;
@@ -7,20 +7,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.context.SocialRendererContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
-import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.common.wrappers.ChatEventWrapper;
+import ovh.mythmc.social.common.adapters.ChatEventAdapter;
 
-public final class BukkitChatEventWrapper extends ChatEventWrapper<AsyncPlayerChatEvent> {
+public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerChatEvent> {
 
     @Override
     public Component message(AsyncPlayerChatEvent event) {
@@ -44,11 +42,37 @@ public final class BukkitChatEventWrapper extends ChatEventWrapper<AsyncPlayerCh
     }
 
     @Override
-    public void render(AsyncPlayerChatEvent event, SocialRendererContext context) {
-        event.getRecipients().forEach(player -> {
-            SocialUser recipient = Social.get().getUserManager().get(player.getUniqueId());
+    @EventHandler
+    public void on(AsyncPlayerChatEvent event) {
+        super.on(event);
+    }
 
-            SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(
+	@Override
+	public void render(AsyncPlayerChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
+        event.getRecipients().forEach(player -> {
+            var recipient = Social.get().getUserManager().getByUuid(player.getUniqueId());
+            var renderer = Social.get().getChatManager().getRenderer(recipient);
+            if (renderer == null)
+                return;
+
+            var context = renderer.render(recipient, messageContext);
+
+            // A null context means that the event should be cancelled
+            if (context == null) {
+                return;
+            }
+
+            // Cancel event if message is empty
+            if (context.message() == Component.empty()) {
+                return;
+            }
+
+            // Define variables
+            var prefix = context.prefix();
+            var message = context.message();
+
+            // Trigger message receive event
+            var socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(
                 context.sender(), 
                 recipient,
                 context.channel(),
@@ -58,27 +82,20 @@ public final class BukkitChatEventWrapper extends ChatEventWrapper<AsyncPlayerCh
                 context.messageId()
             );
 
+            message = socialChatMessageReceiveEvent.getMessage();
+    
             Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
             if (socialChatMessageReceiveEvent.isCancelled())
                 return;
 
-            Component component = Component.empty()
-                .append(context.prefix())
-                .append(socialChatMessageReceiveEvent.getMessage()
-                    .applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + context.replyId() + ") "))));
+            var component = prefix.append(message);
 
             recipient.sendMessage(component);
         });
 
         // This allows the message to be logged in console and sent to plugins such as DiscordSRV
         event.getRecipients().clear();
-        event.setFormat("(" + context.channel().getName() + ") %s: %s");
-    }
-
-    @Override
-    @EventHandler
-    public void on(AsyncPlayerChatEvent event) {
-        super.on(event);
-    }
+        event.setFormat("(" + messageContext.chatChannel().getName() + ") %s: %s");
+	}
     
 }

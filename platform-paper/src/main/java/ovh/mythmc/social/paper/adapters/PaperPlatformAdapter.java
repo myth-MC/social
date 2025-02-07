@@ -1,6 +1,7 @@
-package ovh.mythmc.social.paper.wrappers;
+package ovh.mythmc.social.paper.adapters;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,9 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.common.wrappers.PlatformWrapper;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
-public final class PaperPlatformWrapper extends PlatformWrapper {
+public final class PaperPlatformAdapter extends PlatformAdapter {
 
     @Override
     public void runGlobalTask(@NotNull JavaPlugin plugin, @NotNull Runnable runnable) {
@@ -45,6 +46,13 @@ public final class PaperPlatformWrapper extends PlatformWrapper {
     @Override
     public void sendLink(@NotNull ServerLinks serverLinks, @NotNull Component displayName, @NotNull URI uri) {
         serverLinks.addLink(displayName, uri);
+    }
+
+    @Override
+    public void runAsyncTaskLater(@NotNull JavaPlugin plugin, @NotNull Runnable runnable, int ticks) {
+        Bukkit.getAsyncScheduler().runDelayed(plugin, scheduledTask -> {
+            runnable.run();
+        }, ticks * 50, TimeUnit.MILLISECONDS );
     }
     
 }

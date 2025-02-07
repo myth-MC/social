@@ -34,6 +34,9 @@ public interface SocialUserAudienceWrapper extends Audience, Identified { // 4.1
 
     @Override
     default @NotNull Pointers pointers() {
+        if (playerAudience() == null)
+            return Pointers.empty();
+
         return playerAudience().pointers();
     }
 

@@ -3,7 +3,7 @@ package ovh.mythmc.social.api.chat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,10 +14,12 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.renderer.BaseChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
+import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer.Registered;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.events.chat.SocialChannelCreateEvent;
+import ovh.mythmc.social.api.events.chat.SocialChannelDeleteEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupAliasChangeEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
@@ -25,6 +27,7 @@ import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -41,15 +44,36 @@ public final class ChatManager {
 
     private final Collection<ChatChannel> channels = new ArrayList<>();
 
-    @Setter private SocialChatRenderer renderer = new BaseChatRenderer();
+    private final Map<Class<?>, SocialChatRenderer.Registered<?>> renderersMap = new HashMap<>();
+
+    public <T> void registerRenderer(final @NotNull Class<T> targetClass, final @NotNull SocialChatRenderer<T> renderer, final @NotNull Function<SocialChatRenderer.Builder<T>, SocialChatRenderer.Builder<T>> options) {
+        var builder = SocialChatRenderer.builder(renderer);
+        builder = options.apply(builder);
+
+        this.renderersMap.put(targetClass, builder.build());
+    }
+
+    public <T> void unregisterRenderer(final @NotNull Class<T> targetClass) {
+        this.renderersMap.remove(targetClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    public @Nullable <T> SocialChatRenderer.Registered<T> getRenderer(final @NotNull Class<T> object) {
+        return (Registered<T>) this.renderersMap.get(object);
+    }
+
+    @SuppressWarnings("unchecked")
+    public @Nullable <T> SocialChatRenderer.Registered<T> getRenderer(final @NotNull Audience audience) {
+        return (Registered<T>) this.renderersMap.entrySet().stream()
+            .filter(entry -> entry.getValue().mapFromAudience(audience).isSuccess())
+            .map(entry -> entry.getValue())
+            .findFirst().orElse(null);
+    }
 
     public ChatChannel getChannel(final @NotNull String channelName) {
-        for (ChatChannel chatChannel : channels) {
-            if (chatChannel.getName().equals(channelName))
-                return chatChannel;
-        }
-
-        return null;
+        return channels.stream()
+            .filter(channel -> channel.getName().equals(channelName))
+            .findFirst().orElse(null);
     }
 
     public @Nullable ChatChannel getDefaultChannel() {
@@ -65,13 +89,10 @@ public final class ChatManager {
     }
 
     public GroupChatChannel getGroupChannelByUser(final @NotNull UUID uuid) {
-        for (ChatChannel channel : getChannels()) {
-            if (channel instanceof GroupChatChannel && channel.getMembers().contains(uuid)) {
-                return (GroupChatChannel) channel;
-            }
-        }
-
-        return null;
+        return channels.stream()
+            .filter(channel -> channel instanceof GroupChatChannel && channel.getMemberUuids().contains(uuid))
+            .map(channel -> (GroupChatChannel) channel)
+            .findFirst().orElse(null);
     }
 
     public GroupChatChannel getGroupChannelByUser(final @NotNull SocialUser user) {
@@ -80,8 +101,8 @@ public final class ChatManager {
 
     public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
                                       final @NotNull UUID leaderUuid) {
-        SocialUser previousLeader = Social.get().getUserManager().get(groupChatChannel.getLeaderUuid());
-        SocialUser leader = Social.get().getUserManager().get(leaderUuid);
+        SocialUser previousLeader = Social.get().getUserManager().getByUuid(groupChatChannel.getLeaderUuid());
+        SocialUser leader = Social.get().getUserManager().getByUuid(leaderUuid);
 
         SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
         Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
@@ -103,6 +124,9 @@ public final class ChatManager {
     public boolean registerChatChannel(final @NotNull ChatChannel chatChannel) {
         if (Social.get().getConfig().getGeneral().isDebug())
             Social.get().getLogger().info("Registered channel '" + chatChannel.getName() + "'");
+
+        SocialChannelCreateEvent event = new SocialChannelCreateEvent(chatChannel);
+        Bukkit.getPluginManager().callEvent(event);
 
         return channels.add(chatChannel);
     }
@@ -129,6 +153,9 @@ public final class ChatManager {
 
         if (Social.get().getConfig().getGeneral().isDebug())
             Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
+
+        SocialChannelDeleteEvent event = new SocialChannelDeleteEvent(chatChannel);
+        Bukkit.getPluginManager().callEvent(event);
 
         return channels.remove(chatChannel);
     }
@@ -229,7 +256,7 @@ public final class ChatManager {
                 members.add(player);
         });
 
-        Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT);
+        Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT, null);
         Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console

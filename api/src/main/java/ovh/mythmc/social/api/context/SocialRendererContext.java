@@ -30,7 +30,7 @@ public class SocialRendererContext implements SocialContext {
 
     private final Component message;
 
-    private final int replyId;
+    private final Integer replyId;
 
     private final int messageId;
     

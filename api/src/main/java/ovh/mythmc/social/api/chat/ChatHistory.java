@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -21,26 +21,27 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ChatHistory {
 
-    private final Map<Integer, SocialHistoryMessageContext> messages = new HashMap<>();
+    private final Map<Integer, SocialRegisteredMessageContext> messages = new HashMap<>();
 
-    public int register(final @NotNull SocialMessageContext messageContext, final @NotNull Component finalMessage) {
+    public SocialRegisteredMessageContext register(final @NotNull SocialMessageContext messageContext, final @NotNull Component finalMessage) {
         int id = messages.size();
         
-        SocialHistoryMessageContext historyContext = new SocialHistoryMessageContext(
+        SocialRegisteredMessageContext historyContext = new SocialRegisteredMessageContext(
             id, 
             System.currentTimeMillis(),
             messageContext.sender(), 
             messageContext.chatChannel(), 
+            messageContext.viewers(),
             finalMessage, 
             messageContext.rawMessage(), 
             messageContext.replyId(),
             messageContext.signedMessage());
 
         messages.put(id, historyContext);
-        return id;
+        return historyContext;
     }
 
-    public SocialHistoryMessageContext getById(final @NotNull Integer id) {
+    public SocialRegisteredMessageContext getById(final @NotNull Integer id) {
         return messages.get(id);
     }
 
@@ -54,14 +55,15 @@ public final class ChatHistory {
         return context.signedMessage().canDelete();
     }
 
-    public void delete(SocialHistoryMessageContext context) {
+    public void delete(SocialRegisteredMessageContext context) {
         Social.get().getUserManager().get().forEach(user -> user.deleteMessage(context.signedMessage()));
 
-        SocialHistoryMessageContext newContext = new SocialHistoryMessageContext(
+        SocialRegisteredMessageContext newContext = new SocialRegisteredMessageContext(
             context.id(), 
             context.timestamp(),
             context.sender(), 
             context.chatChannel(), 
+            context.viewers(),
             Component.text("N/A", NamedTextColor.RED), 
             context.rawMessage(), 
             context.replyId(), 
@@ -70,29 +72,29 @@ public final class ChatHistory {
         messages.put(context.id(), newContext);
     }
 
-    public List<SocialHistoryMessageContext> get() {
+    public List<SocialRegisteredMessageContext> get() {
         return messages.values().stream().toList();
     }
 
-    public List<SocialHistoryMessageContext> getByChannel(final @NotNull ChatChannel chatChannel) {
+    public List<SocialRegisteredMessageContext> getByChannel(final @NotNull ChatChannel chatChannel) {
         return messages.values().stream()
                 .filter(message -> message.chatChannel().equals(chatChannel))
                 .toList();
     }
 
-    public List<SocialHistoryMessageContext> getByUser(final @NotNull SocialUser user) {
+    public List<SocialRegisteredMessageContext> getByUser(final @NotNull SocialUser user) {
         return messages.values().stream()
                 .filter(message -> message.sender().getUuid().equals(user.getUuid()))
                 .toList();
     }
 
-    public List<SocialHistoryMessageContext> getByText(final @NotNull String text) {
+    public List<SocialRegisteredMessageContext> getByText(final @NotNull String text) {
         return messages.values().stream()
                 .filter(message -> message.rawMessage().contains(text))
                 .toList();
     }
 
-    public List<SocialHistoryMessageContext> getThread(final @NotNull SocialHistoryMessageContext messageContext, int limit) {
+    public List<SocialRegisteredMessageContext> getThread(final @NotNull SocialRegisteredMessageContext messageContext, int limit) {
         return messages.values().stream()
                 .filter(value ->
                         (value.isReply() && value.replyId().equals(messageContext.id())) ||
@@ -106,7 +108,7 @@ public final class ChatHistory {
 
     @Deprecated
     @ScheduledForRemoval // replies and threads are the same thing since v0.3
-    public boolean isThread(final @NotNull SocialHistoryMessageContext messageContext) {
+    public boolean isThread(final @NotNull SocialRegisteredMessageContext messageContext) {
         return getThread(messageContext, 3).size() > 2;
     }
 

@@ -18,7 +18,7 @@ public final class AnvilListener implements Listener {
 
     @EventHandler
     public void onItemRename(PrepareAnvilEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getInventory().getViewers().get(0).getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getInventory().getViewers().get(0).getUniqueId());
         if (user == null)
             return;
 

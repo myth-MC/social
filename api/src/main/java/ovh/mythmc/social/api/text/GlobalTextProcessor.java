@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -13,6 +14,7 @@ import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.utils.CompanionModUtils;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -21,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GlobalTextProcessor {
@@ -139,7 +143,7 @@ public final class GlobalTextProcessor {
     }
 
     public void parseAndSend(SocialParserContext context) {
-        send(List.of(context.user()), parse(context), context.messageChannelType());
+        send(List.of(context.user()), parse(context), context.messageChannelType(), context.channel());
     }
 
     public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
@@ -173,18 +177,33 @@ public final class GlobalTextProcessor {
         parseAndSend(user, text(message), type);
     }
 
-    public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type) {
+    @Internal
+    public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
         if (message == null || message.equals(Component.empty()))
             return;
 
         switch (type) {
             case ACTION_BAR -> members.forEach(user -> user.sendActionBar(message));
-            case CHAT -> members.forEach(user -> user.sendMessage(message));
+            case CHAT -> {
+                members.forEach(user -> {
+                    Component userMessage = message;
+
+                    if (user.isCompanion()) {
+                        if (channel == null) {
+                            userMessage = CompanionModUtils.asBroadcast(message);
+                        } else {
+                            userMessage = CompanionModUtils.asChannelable(message, channel);
+                        }
+                    }
+
+                    user.sendMessage(userMessage);
+                });
+            }
         }
     }
 
-    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type) {
-        send(List.of(recipient), message, type);
+    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
+        send(List.of(recipient), message, type, channel);
     }
 
 }

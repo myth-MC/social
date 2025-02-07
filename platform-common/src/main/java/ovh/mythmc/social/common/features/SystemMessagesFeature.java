@@ -17,10 +17,11 @@ public final class SystemMessagesFeature {
 
     private final JavaPlugin plugin;
 
-    private final SystemMessagesListener systemMessagesListener = new SystemMessagesListener();
+    private final SystemMessagesListener systemMessagesListener;
 
     public SystemMessagesFeature(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
+        this.systemMessagesListener = new SystemMessagesListener(plugin);
     }
 
     @FeatureConditionBoolean

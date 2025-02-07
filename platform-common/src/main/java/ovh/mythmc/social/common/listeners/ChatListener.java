@@ -9,17 +9,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickCallback;
-import net.kyori.adventure.text.event.ClickEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.context.SocialHistoryMessageContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.common.wrappers.PlatformWrapper;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
 import java.util.UUID;
 
@@ -32,7 +29,7 @@ public final class ChatListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
-        SocialUser user = Social.get().getUserManager().get(uuid);
+        SocialUser user = Social.get().getUserManager().getByUuid(uuid);
         if (user == null) {
             // unexpected error;
             return;
@@ -65,8 +62,22 @@ public final class ChatListener implements Listener {
 
             event.getChannel().removeMember(event.getSender());
 
-            PlatformWrapper.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
+            PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
             event.setCancelled(true);
+            return;
+        }
+
+        if (event.isReply()) {
+            // Get the reply context
+            SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(event.getReplyId());
+
+            // Chain of replies (thread)
+            if (reply.isReply())
+                event.setReplyId(reply.replyId());
+
+            // Switch channel if necessary
+            if (!reply.chatChannel().equals(event.getChannel()) && Social.get().getChatManager().hasPermission(event.getSender(), reply.chatChannel()))
+                event.setChannel(reply.chatChannel());
         }
     }
 
@@ -84,42 +95,22 @@ public final class ChatListener implements Listener {
             ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
             event.getChannel().removeMember(event.getRecipient());
-            PlatformWrapper.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
+            PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
             event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void deleteButton(SocialChatMessageReceiveEvent event) {
-        if (event.getRecipient().equals(event.getSender()) && 
-            event.getRecipient().getPlayer().hasPermission("social.delete-messages.self")
-            || event.getRecipient().getPlayer().hasPermission("social.delete-messages.others")) {
-            
-            SocialHistoryMessageContext message = Social.get().getChatManager().getHistory().getById(event.getMessageId());
-            if (!Social.get().getChatManager().getHistory().canDelete(message))
-                return;
-
-            Component button = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getChat().getDeleteButtonIcon());
-            Component hoverText = Social.get().getTextProcessor().parse(event.getRecipient(), event.getChannel(), Social.get().getConfig().getChat().getDeleteButtonHoverText());
-
-            event.setMessage(event.getMessage()
-                .appendSpace()
-                .append(button
-                    .hoverEvent(hoverText)
-                    .clickEvent(ClickEvent.callback(ClickCallback.widen((audience) -> Social.get().getChatManager().getHistory().delete(message), Audience.class)))
-                )
-            );
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPreSwitch(SocialChannelPreSwitchEvent event) {
-        if (!event.getChannel().getMembers().contains(event.getUser().getUuid()))
+        if (!event.getChannel().getMemberUuids().contains(event.getUser().getUuid()))
             event.getChannel().addMember(event.getUser().getUuid());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
+        if (event.getUser().isCompanion())
+            return;
+            
         SocialParserContext context = SocialParserContext.builder()
             .user(event.getUser())
             .channel(event.getChannel())

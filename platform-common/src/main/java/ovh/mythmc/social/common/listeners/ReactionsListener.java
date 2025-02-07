@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.common.wrappers.PlatformWrapper;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
 import java.util.regex.Pattern;
 
@@ -24,7 +24,7 @@ public final class ReactionsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        SocialUser user = Social.get().getUserManager().get(event.getPlayer().getUniqueId());
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
         if (user == null)
             return;
 
@@ -42,7 +42,7 @@ public final class ReactionsListener implements Listener {
 
         if (reaction != null) {
             SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(user, reaction);
-            PlatformWrapper.get().runGlobalTask(plugin, () -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
+            PlatformAdapter.get().runGlobalTask(plugin, () -> Bukkit.getPluginManager().callEvent(socialReactionCallEvent));
         }
     }
 

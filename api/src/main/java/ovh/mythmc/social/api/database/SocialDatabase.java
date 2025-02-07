@@ -118,7 +118,6 @@ public final class SocialDatabase {
 
     private void updateAllEntries() {
         Map.copyOf(usersCache).values().forEach(this::updateEntry);
-        //List.copyOf(ignoredUsersCache).forEach(this::updateEntry);
     }
 
     private void updateEntry(final @NotNull SocialUser user) {
@@ -126,7 +125,8 @@ public final class SocialDatabase {
             usersDao.update(user);
 
             // Clear cache value
-            usersCache.remove(user.getUuid());
+            if (user.getPlayer() == null)
+                usersCache.remove(user.getUuid());
         } catch (SQLException e) {
             logger.error("Exception while updating entry {}", e);
         }

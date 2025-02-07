@@ -137,7 +137,7 @@ public final class GroupBaseCommand {
                 return;
             }
 
-            Social.get().getChatManager().setGroupChannelLeader(user.getGroupChatChannel(), user.getGroupChatChannel().getMembers().get(1));
+            Social.get().getChatManager().setGroupChannelLeader(user.getGroupChatChannel(), user.getGroupChatChannel().getMemberUuids().get(1));
         }
 
         Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getCommands().getLeftGroup(), Social.get().getConfig().getMessages().getChannelType());
