@@ -111,10 +111,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
     }
 
     public void sendParsableMessage(@NonNull Component component, boolean playerInput) {
-        SocialParserContext context = SocialParserContext.builder()
-            .user(this)
-            .message(component)
-            .build();
+        SocialParserContext context = SocialParserContext.builder(this, component).build();
 
         sendParsableMessage(context, playerInput);
     }

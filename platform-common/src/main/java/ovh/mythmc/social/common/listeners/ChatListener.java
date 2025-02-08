@@ -111,10 +111,8 @@ public final class ChatListener implements Listener {
         if (event.getUser().isCompanion())
             return;
             
-        SocialParserContext context = SocialParserContext.builder()
-            .user(event.getUser())
+        SocialParserContext context = SocialParserContext.builder(event.getUser(), Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
             .channel(event.getChannel())
-            .message(Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
             .build();
 
         Social.get().getTextProcessor().parseAndSend(context);

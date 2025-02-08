@@ -42,10 +42,9 @@ public class HistoryMenu implements HistoryBookMenu {
                 break;
             case PLAYER:
                 if (context.target() != null) {
-                    scope = Social.get().getTextProcessor().parse(SocialParserContext.builder()
-                        .user(context.target())
-                        .message(Component.text("$(nickname)", NamedTextColor.BLUE))
-                        .build()
+                    scope = Social.get().getTextProcessor().parse(
+                        SocialParserContext.builder(context.target(), Component.text("$(nickname)", NamedTextColor.BLUE))
+                            .build()
                     );
                 }
                 break;

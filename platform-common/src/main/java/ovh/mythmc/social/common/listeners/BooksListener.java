@@ -25,7 +25,7 @@ public final class BooksListener implements Listener {
         for (int i = 1; i <= bookMeta.getPageCount(); i++) {
             String page = bookMeta.getPage(i);
             String parsedPage = LegacyComponentSerializer.legacySection().serialize(
-                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().user(user).message(text(page)).build())
+                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder(user, text(page)).build())
             );
 
             bookMeta.setPage(i, parsedPage);

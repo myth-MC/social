@@ -54,15 +54,15 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
         );
 
         Component visibleChannelsHoverText = MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannelsHoverText());
-        SocialParserContext parserContext = SocialParserContext.builder()
-            .user(context.target())
-            .build();
 
         for (ChatChannel channel : Social.get().getChatManager().getVisibleChannels(context.target())) {
+            SocialParserContext parserContext = SocialParserContext.builder(context.target(), Component.text(channel.getIcon() + " " + channel.getName(), channel.getColor()))
+                .build();
+
             visibleChannelsHoverText = visibleChannelsHoverText
                 .appendNewline()
                 .append(getField(
-                    Social.get().getTextProcessor().parse(parserContext.withMessage(Component.text(channel.getIcon() + " " + channel.getName(), channel.getColor()))), 
+                    Social.get().getTextProcessor().parse(parserContext), 
                     null
                 ));
         }

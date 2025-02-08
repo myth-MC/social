@@ -318,11 +318,9 @@ public final class SocialBaseCommand {
     public void parse(SocialUser user, @Suggestion("placeholders") Flags flags) {
         String message = flags.getText();
         
-        SocialParserContext context = SocialParserContext.builder()
-            .user(flags.getFlagValue("u", SocialUser.class).orElse(user))
+        SocialParserContext context = SocialParserContext.builder(flags.getFlagValue("u", SocialUser.class).orElse(user), Component.text(message))
             .channel(flags.getFlagValue("c", ChatChannel.class).orElse(user.getMainChannel()))
             .messageChannelType(flags.getFlagValue("t", ChannelType.class).orElse(ChannelType.CHAT))
-            .message(Component.text(message))
             .build();
 
         user.sendParsableMessage(context, flags.getFlagValue("p", boolean.class).orElse(false));

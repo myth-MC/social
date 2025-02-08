@@ -33,24 +33,21 @@ public class UserChatRenderer implements SocialChatRenderer<SocialUser> {
         final Component textDivider = Component.text(channel.getTextDivider());
 
         // Render message prefix (channel icon, reply icon, display name, text divider...)
-        var renderedPrefix = Social.get().getTextProcessor().parse(SocialParserContext.builder()
-            .user(sender)
-            .channel(channel)
-            .message(Component.empty()
-                .append(channelIcon)
-                .appendSpace()
-                .append(replyIcon)
-                .append(nickname)
-                .appendSpace()
-                .append(textDivider)
-                .appendSpace())
-            .build()
-        );
+        var prefix = Component.empty()
+            .append(channelIcon)
+            .appendSpace()
+            .append(replyIcon)
+            .append(nickname)
+            .appendSpace()
+            .append(textDivider)
+            .appendSpace();
+
+        var renderedPrefix = Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, prefix).channel(channel).build());
 
         // Send as channelable message to companion mod
         if (target.isCompanion())
             renderedPrefix = CompanionModUtils.asChannelable(renderedPrefix, channel);
-            
+
         return new SocialRendererContext(
             sender, 
             channel,

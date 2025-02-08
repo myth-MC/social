@@ -49,9 +49,7 @@ public final class AnnouncementManager {
 
                 if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
                     Social.get().getUserManager().get().forEach(user -> {
-                        SocialParserContext context = SocialParserContext.builder()
-                            .user(user)
-                            .message(announcement.message())
+                        SocialParserContext context = SocialParserContext.builder(user, announcement.message())
                             .messageChannelType(ChannelType.ACTION_BAR)
                             .build();
 
@@ -60,9 +58,7 @@ public final class AnnouncementManager {
                 } else {
                     for (ChatChannel channel : announcement.channels()) {
                         channel.getMembers().forEach(user -> {
-                            SocialParserContext context = SocialParserContext.builder()
-                                .user(user)
-                                .message(announcement.message())
+                            SocialParserContext context = SocialParserContext.builder(user, announcement.message())
                                 .build();
 
                             Component component = Social.get().getTextProcessor().parse(context);

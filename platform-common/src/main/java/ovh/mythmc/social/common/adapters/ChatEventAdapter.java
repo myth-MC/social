@@ -105,10 +105,9 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.getMembers()), plainMessage, replyId, signedMessage(event));
 
         // Filter message
-        var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
-            .user(sender)
-            .message(Component.text(plainMessage))
-            .build());
+        var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
+            SocialParserContext.builder(sender, Component.text(plainMessage))
+                .build());
 
         // Register message in history
         var registeredMessage = Social.get().getChatManager().getHistory().register(message, filteredMessage);

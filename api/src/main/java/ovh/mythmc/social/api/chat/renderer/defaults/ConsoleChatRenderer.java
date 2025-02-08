@@ -33,20 +33,16 @@ public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
         final Component textDivider = Component.text(channel.getTextDivider());
 
         // Render message prefix (channel icon, reply icon, display name, text divider...)
-        Component renderedPrefix = Social.get().getTextProcessor().parse(SocialParserContext.builder()
-            .user(sender)
-            .message(
-                Component.empty()
-                    .append(channelIcon)
-                    .appendSpace()
-                    .append(replyIcon)
-                    .append(nickname)
-                    .appendSpace()
-                    .append(textDivider)
-                    .appendSpace()
-            )
-            .build()
-        );
+        Component renderedPrefix = Social.get().getTextProcessor().parse(
+            SocialParserContext.builder(sender, Component.empty()
+                .append(channelIcon)
+                .appendSpace()
+                .append(replyIcon)
+                .append(nickname)
+                .appendSpace()
+                .append(textDivider)
+                .appendSpace())
+            .build());
 
         return new SocialRendererContext(
             sender, 

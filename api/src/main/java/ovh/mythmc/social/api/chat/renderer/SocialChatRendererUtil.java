@@ -32,7 +32,7 @@ public class SocialChatRendererUtil {
                 .appendNewline()
                 .append(channel.getHoverText());
 
-        return Social.get().getTextProcessor().parse(SocialParserContext.builder().user(user).channel(channel).message(channelHoverText).build());
+        return Social.get().getTextProcessor().parse(SocialParserContext.builder(user, channelHoverText).channel(channel).build());
     }
 
     public Component getNicknameWithColor(SocialUser user, ChatChannel channel) {
@@ -77,10 +77,8 @@ public class SocialChatRendererUtil {
         hoverText = hoverText
             .appendNewline()
             .append(
-                Social.get().getTextProcessor().parse(SocialParserContext.builder()
-                    .user(sender)
+                Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, Component.text(Social.get().getConfig().getSettings().getChat().getReplyHoverText()))
                     .channel(reply.chatChannel())
-                    .message(Component.text(Social.get().getConfig().getSettings().getChat().getReplyHoverText()))
                     .build())
             );
 

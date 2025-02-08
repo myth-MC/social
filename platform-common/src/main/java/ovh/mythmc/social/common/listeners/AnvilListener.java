@@ -28,10 +28,8 @@ public final class AnvilListener implements Listener {
         String name = event.getView().getRenameText();
 
         String parsedName = PlainTextComponentSerializer.plainText().serialize(
-            Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
-                .user(user)
+            Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder(user, text(name))
                 //.channel(socialPlayer.getMainChannel())
-                .message(text(name))
                 .build())
         );
 

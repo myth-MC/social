@@ -22,7 +22,7 @@ public final class SignsListener implements Listener {
         for (int i = 0; i < event.getLines().length; i++) {
             String line = event.getLine(i);
             String parsedLine = LegacyComponentSerializer.legacySection().serialize(
-                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder().user(user).message(text(line)).build())
+                    Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder(user, text(line)).build())
             );
 
             event.setLine(i, parsedLine);

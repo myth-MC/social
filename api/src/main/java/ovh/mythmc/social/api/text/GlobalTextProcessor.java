@@ -121,10 +121,8 @@ public final class GlobalTextProcessor {
     }
 
     public Component parse(SocialUser user, ChatChannel channel, Component message, ChannelType channelType) {
-        return parse(SocialParserContext.builder()
-            .user(user)
+        return parse(SocialParserContext.builder(user, message)
             .channel(channel)
-            .message(message)
             .messageChannelType(channelType)
             .build()
         );
@@ -147,10 +145,8 @@ public final class GlobalTextProcessor {
     }
 
     public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
-        SocialParserContext context = SocialParserContext.builder()
-            .user(user)
+        SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(chatChannel)
-            .message(message)
             .messageChannelType(channelType)
             .build();
 

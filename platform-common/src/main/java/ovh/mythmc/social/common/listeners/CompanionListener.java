@@ -114,10 +114,9 @@ public final class CompanionListener implements Listener, PluginMessageListener 
                     return;
 
                 PlatformAdapter.get().runAsyncTask(plugin, () -> {
-                    var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(SocialParserContext.builder()
-                        .user(user)
-                        .message(Component.text(new String(message)))
-                        .build());
+                    var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
+                        SocialParserContext.builder(user, Component.text(new String(message)))
+                            .build());
 
                     var context = new SocialRegisteredMessageContext(0, 0, user, user.getMainChannel(), Set.of(user), filteredMessage, "", null, null);
                     var rendered = Social.get().getChatManager().getRenderer(SocialUser.class).render(new SocialUser.Dummy(user.getMainChannel()), context);

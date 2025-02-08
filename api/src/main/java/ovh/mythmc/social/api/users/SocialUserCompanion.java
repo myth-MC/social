@@ -49,11 +49,10 @@ public final class SocialUserCompanion {
         String name = channel.getName();
         String alias = CompanionModUtils.getAliasWithPrefix(channel);
         String icon = CompanionModUtils.getIconWithoutBrackets(channel);
-        String description = GsonComponentSerializer.gson().serialize(Social.get().getTextProcessor().parse(SocialParserContext.builder()
-            .user(user)
-            .channel(channel)
-            .message(channel.getHoverText())
-            .build()));
+        String description = GsonComponentSerializer.gson().serialize(Social.get().getTextProcessor().parse(
+            SocialParserContext.builder(user, channel.getHoverText())
+                .channel(channel)
+                .build()));
 
         var bytes = encode(
             name.getBytes(StandardCharsets.UTF_8),

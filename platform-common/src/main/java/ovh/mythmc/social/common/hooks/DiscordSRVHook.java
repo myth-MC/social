@@ -60,8 +60,8 @@ public final class DiscordSRVHook implements ChatHook {
 
         String miniMessage = MessageUtil.toMiniMessage(message);
         
-        SocialParserContext context = SocialParserContext.builder()
-            .user(new SocialUser.Dummy(chatChannel)) // Workaround for placeholders
+        // Workaround for placeholders
+        SocialParserContext context = SocialParserContext.builder(new SocialUser.Dummy(chatChannel), net.kyori.adventure.text.Component.empty())
             .channel(chatChannel)
             .build();
 

@@ -121,10 +121,8 @@ public final class SystemMessagesListener implements Listener {
    }
 
     private Component parse(SocialUser user, ChatChannel channel, Component message) {
-        SocialParserContext context = SocialParserContext.builder()
-            .user(user)
+        SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(channel)
-            .message(message)
             .build();
 
         return Social.get().getTextProcessor().parse(context);

@@ -64,11 +64,9 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
         private Component asComponent(SocialMenuContext context) {
             Component page = Component.empty();
 
-            SocialParserContext parserContext = SocialParserContext.builder()
-                .user(context.viewer())
-                .build();
-
             for (SocialContextualKeyword keyword : keywords) {
+                SocialParserContext parserContext = SocialParserContext.builder(context.viewer(), Component.text("[" + keyword.keyword() + "]")).build();
+
                 page = page.append(Component.empty()
                     .clickEvent(ClickEvent.copyToClipboard("[" + keyword.keyword() + "] "))
                     .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getKeywordDictionary().getCopyToClipboard())))                
@@ -76,7 +74,7 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
                     .append(Component.text(keyword.keyword(), NamedTextColor.BLUE))
                     .append(Component.text("]", NamedTextColor.DARK_GRAY))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getKeywordDictionary().getResult()), keyword.process(parserContext.withMessage(Component.text("[" + keyword.keyword() + "]")))))
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getKeywordDictionary().getResult()), keyword.process(parserContext)))
                     .appendNewline()
                     .appendNewline()
                 );

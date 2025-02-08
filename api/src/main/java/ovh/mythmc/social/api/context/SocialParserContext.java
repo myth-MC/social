@@ -2,12 +2,12 @@ package ovh.mythmc.social.api.context;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 import lombok.With;
@@ -19,11 +19,15 @@ import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.users.SocialUser;
 
 @Data
-@Builder
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
 @With
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SocialParserContext implements SocialContext {
+    
+    public final static SocialParserContextBuilder builder(@NotNull SocialUser user, @NotNull Component message) {
+        return new SocialParserContextBuilder(user, message);
+    }
 
     private final SocialUser user;
 
@@ -31,19 +35,54 @@ public class SocialParserContext implements SocialContext {
 
     private final Component message;
 
-    @Builder.Default private final ChannelType messageChannelType = ChannelType.CHAT;
+    private final ChannelType messageChannelType;
 
-    @Builder.Default private final List<Class<?>> appliedParsers = new ArrayList<>();
+    private final List<Class<?>> appliedParsers;
 
     @Experimental private final SocialParserGroup group;
 
-    public ChatChannel channel() {
-        return Optional.ofNullable(channel).orElse(user.getMainChannel());
-    }
-
     public static class SocialParserContextBuilder {
-        @SuppressWarnings("unused")
-        private SocialParserContextBuilder group(SocialParserGroup group) { return this; }
+
+        private final SocialUser user;
+
+        private final Component message;
+
+        private ChatChannel channel;
+
+        private ChannelType messageChannelType;
+
+        private List<Class<?>> appliedParsers;
+
+        private SocialParserGroup group;
+
+        private SocialParserContextBuilder(SocialUser user, Component message) {
+            this.user = user;
+            this.message = message;
+            this.channel = user.getMainChannel();
+            this.messageChannelType = ChannelType.CHAT;
+            this.appliedParsers = new ArrayList<>();
+        }
+
+        public SocialParserContext build() {
+            return new SocialParserContext(
+                this.user, 
+                this.channel, 
+                this.message, 
+                this.messageChannelType, 
+                this.appliedParsers, 
+                this.group);
+        }
+
+        public SocialParserContextBuilder channel(@NotNull ChatChannel channel) {
+            this.channel = channel;
+            return this;
+        }
+
+        public SocialParserContextBuilder messageChannelType(@NotNull ChannelType channelType) {
+            this.messageChannelType = channelType;
+            return this;
+        }
+
     }
     
 }

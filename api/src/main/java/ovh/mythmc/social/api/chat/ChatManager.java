@@ -264,10 +264,8 @@ public final class ChatManager {
     }
 
     private Component parse(SocialUser user, ChatChannel channel, Component message) {
-        SocialParserContext context = SocialParserContext.builder()
-            .user(user)
+        SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(channel)
-            .message(message)
             .build();
 
         return Social.get().getTextProcessor().parse(context);
@@ -278,10 +276,8 @@ public final class ChatManager {
     }
 
     private Component parsePlayerInput(SocialUser user, ChatChannel channel, String message) {
-        SocialParserContext context = SocialParserContext.builder()
-            .user(user)
+        SocialParserContext context = SocialParserContext.builder(user, text(message))
             .channel(channel)
-            .message(text(message))
             .build();
 
         return Social.get().getTextProcessor().parsePlayerInput(context);
