@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public final class MentionsListener implements Listener {
 
     @EventHandler
-    public void mention(SocialChatMessageReceiveEvent event) {
+    public void onMention(SocialChatMessageReceiveEvent event) {
         if (event.getRecipient().equals(event.getSender()))
             return;
 

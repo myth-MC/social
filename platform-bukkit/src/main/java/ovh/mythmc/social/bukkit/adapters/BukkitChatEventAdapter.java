@@ -51,6 +51,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 	public void render(AsyncPlayerChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
         event.getRecipients().forEach(player -> {
             var recipient = Social.get().getUserManager().getByUuid(player.getUniqueId());
+            
             var renderer = Social.get().getChatManager().getRenderer(recipient);
             if (renderer == null)
                 return;
@@ -81,12 +82,12 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
                 context.replyId(),
                 context.messageId()
             );
-
-            message = socialChatMessageReceiveEvent.getMessage();
     
             Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
             if (socialChatMessageReceiveEvent.isCancelled())
                 return;
+
+            message = socialChatMessageReceiveEvent.getMessage();
 
             var component = prefix.append(message);
 

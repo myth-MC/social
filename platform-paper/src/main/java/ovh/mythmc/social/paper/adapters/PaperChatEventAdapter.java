@@ -76,7 +76,8 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
             var message = context.message();
 
             // Trigger message receive event if recipient is a SocialUser
-            if (viewer instanceof SocialUser recipient) {
+            var mapResult = renderer.mapFromAudience(viewer);
+            if (mapResult.isSuccess() && mapResult.result() instanceof SocialUser recipient) {
                 SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(
                     context.sender(), 
                     recipient,
@@ -86,12 +87,12 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
                     context.replyId(),
                     context.messageId()
                 );
-
-                message = socialChatMessageReceiveEvent.getMessage();
         
                 Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
                 if (socialChatMessageReceiveEvent.isCancelled())
                     return null;
+
+                message = socialChatMessageReceiveEvent.getMessage();
             }
 
             return Component.empty()

@@ -20,9 +20,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.events.chat.SocialChannelCreateEvent;
 import ovh.mythmc.social.api.events.chat.SocialChannelDeleteEvent;
 import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.api.utils.CompanionModUtils;
 import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
 @RequiredArgsConstructor
@@ -84,12 +82,6 @@ public final class CompanionListener implements Listener, PluginMessageListener 
     public void onChannelSwitch(SocialChannelPostSwitchEvent event) {
         if (event.getUser().isCompanion())
             event.getUser().getCompanion().mainChannel(event.getChannel());
-    }
-
-    @EventHandler
-    public void onMessageReceive(SocialChatMessageReceiveEvent event) {
-        if (event.getRecipient().isCompanion())
-            event.setMessage(CompanionModUtils.asChannelable(event.getMessage(), event.getChannel()));
     }
 
     @Override
