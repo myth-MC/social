@@ -52,7 +52,7 @@ public class CustomTextProcessor {
             if (!(parser instanceof SocialUserInputParser) && playerInput)
                 continue;
 
-            if (!parser.supportsOfflinePlayers() && context.user().getPlayer() == null)
+            if (!parser.supportsOfflinePlayers() && context.user().player().isEmpty())
                 continue;
 
             List<Class<?>> appliedParsers = context.appliedParsers();

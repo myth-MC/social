@@ -15,8 +15,8 @@ public interface SocialContextualParser {
 
     default boolean supportsOfflinePlayers() { return false; }
 
-    default Component request(@NotNull SocialParserContext context, @NotNull List<SocialContextualParser> requestedParsers) {
-        Component message = context.message();
+    static Component request(@NotNull SocialParserContext context, @NotNull List<SocialContextualParser> requestedParsers) {
+        var message = context.message();
 
         List<SocialContextualParser> parsers = Social.get().getTextProcessor().getContextualParsersWithGroupMembers().stream().filter(p -> requestedParsers.contains(p)).toList();
         for (SocialContextualParser parser : parsers) {
@@ -26,7 +26,7 @@ public interface SocialContextualParser {
         return message;
     }
 
-    default Component request(@NotNull SocialParserContext context, final @NotNull Class<?>... requestedParsers) {
+    static Component request(@NotNull SocialParserContext context, final @NotNull Class<?>... requestedParsers) {
         return request(context, Arrays.stream(requestedParsers).map(clazz -> Social.get().getTextProcessor().getContextualParserByClass(clazz)).toList());
     }
 

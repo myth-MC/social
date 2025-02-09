@@ -41,7 +41,7 @@ public final class DiscordSRVHook implements ChatHook {
             return;
         }
 
-        DiscordSRV.getPlugin().processChatMessage(event.getSender().getPlayer(), event.getRawMessage(), event.getChannel().getName(), event.isCancelled(), event);
+        DiscordSRV.getPlugin().processChatMessage(event.getSender().player().get(), event.getRawMessage(), event.getChannel().getName(), event.isCancelled(), event);
     }
 
     @Subscribe
@@ -61,7 +61,7 @@ public final class DiscordSRVHook implements ChatHook {
         String miniMessage = MessageUtil.toMiniMessage(message);
         
         // Workaround for placeholders
-        SocialParserContext context = SocialParserContext.builder(new SocialUser.Dummy(chatChannel), net.kyori.adventure.text.Component.empty())
+        SocialParserContext context = SocialParserContext.builder(SocialUser.dummy(chatChannel), net.kyori.adventure.text.Component.empty())
             .channel(chatChannel)
             .build();
 

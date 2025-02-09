@@ -38,7 +38,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
         Social.get().getUserManager().disableCompanion(user);
 
         PlatformAdapter.get().runAsyncTaskLater(plugin, () -> {
-            if (user.getPlayer() == null || !user.isCompanion())
+            if (user.player().isEmpty() || !user.isCompanion())
                 return;
 
             user.getCompanion().clear();
@@ -119,7 +119,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
                             .build());
 
                     var context = new SocialRegisteredMessageContext(0, 0, user, user.getMainChannel(), Set.of(user), filteredMessage, "", null, null);
-                    var rendered = Social.get().getChatManager().getRenderer(SocialUser.class).render(new SocialUser.Dummy(user.getMainChannel()), context);
+                    var rendered = Social.get().getChatManager().getRenderer(SocialUser.class).render(SocialUser.dummy(user.getMainChannel()), context);
 
                     user.getCompanion().preview(rendered.prefix().append(rendered.message()));
                 });

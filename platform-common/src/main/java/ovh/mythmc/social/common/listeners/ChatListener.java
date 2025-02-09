@@ -49,7 +49,7 @@ public final class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         for (ChatChannel chatChannel : Social.get().getChatManager().getChannels()) {
-            if (chatChannel.getMembers().contains(event.getPlayer().getUniqueId()))
+            if (chatChannel.getMemberUuids().contains(event.getPlayer().getUniqueId()))
                 chatChannel.removeMember(event.getPlayer().getUniqueId());
         }
     }
@@ -85,7 +85,7 @@ public final class ChatListener implements Listener {
     public void onSocialChatMessageReceive(SocialChatMessageReceiveEvent event) {
         // Play reply sound
         if (event.isReply())
-            event.getSender().getPlayer().playSound(event.getSender().getPlayer(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F);
+            event.getSender().player().ifPresent(player -> player.playSound(player, Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F));
 
         if (event.getChannel().getPermission() == null)
             return;

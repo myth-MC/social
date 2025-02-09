@@ -6,6 +6,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
 
@@ -28,7 +29,7 @@ public final class GroupCodePlaceholder extends SocialContextualPlaceholder {
             return Component.empty();
 
         Component hoverText = Component.text(Social.get().getConfig().getSettings().getChat().getGroups().getCodeHoverText());
-        hoverText = request(context.withMessage(hoverText), 
+        hoverText = SocialContextualParser.request(context.withMessage(hoverText), 
             MiniMessageParser.class
         );
         

@@ -19,6 +19,7 @@ import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -33,14 +34,14 @@ import javax.annotation.Nullable;
 @DatabaseTable(tableName = "users")
 public class SocialUser implements SocialUserAudienceWrapper {
 
-    public static class Dummy extends SocialUser {
+    public static Dummy dummy() { return new Dummy(null); }
 
-        public Dummy(ChatChannel channel) {
+    public static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
+
+    public static final class Dummy extends SocialUser {
+
+        private Dummy(ChatChannel channel) {
             super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, 0, "Dummy", null);
-        }
-
-        public Dummy() {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), Social.get().getChatManager().getDefaultChannel(), false, null, 0, "Dummy", null);
         }
 
     }
@@ -64,6 +65,11 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     private @Nullable SocialUserCompanion companion;
 
+    public Optional<Player> player() {
+        return Optional.ofNullable(Bukkit.getPlayer(uuid));
+    }
+
+    @Deprecated(since = "0.4", forRemoval = true)
     public @Nullable Player getPlayer() {
         return Bukkit.getPlayer(uuid);
     }
@@ -83,9 +89,14 @@ public class SocialUser implements SocialUserAudienceWrapper {
         return Social.get().getChatManager().getGroupChannelByUser(this);
     }
 
+    public Component displayName() {
+        player().ifPresent(player -> cachedNickname = ChatColor.stripColor(player.getDisplayName()));
+        return Component.text(cachedNickname);
+    }
+
     public String getNickname() {
-        if (getPlayer() != null)
-            cachedNickname = ChatColor.stripColor(getPlayer().getDisplayName());
+        if (player().isPresent())
+            cachedNickname = ChatColor.stripColor(player().get().getDisplayName());
 
         return cachedNickname;
     }

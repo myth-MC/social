@@ -29,7 +29,7 @@ public abstract class SocialSurroundingFormatter extends SocialFormatter {
     @Override
     protected Component removeFormattingCharacters(Component component) {
         if (component instanceof TextComponent textComponent) {
-            String content = textComponent.content().trim();
+            var content = textComponent.content().trim();
             textComponent = textComponent.content(content.substring(characters().length(), content.length() - characters().length()));
             return textComponent;
         }

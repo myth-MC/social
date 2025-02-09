@@ -37,12 +37,12 @@ public class SocialParserGroup implements SocialContextualParser {
 
     @Experimental
     public Component requestToGroup(@NotNull SocialContextualParser requester, @NotNull SocialParserContext context) {
-        return request(context, content.stream().filter(parser -> !parser.getClass().equals(requester.getClass())).toList());
+        return SocialContextualParser.request(context, content.stream().filter(parser -> !parser.getClass().equals(requester.getClass())).toList());
     }
 
     @Override
     public Component parse(SocialParserContext context) {
-        return request(context.withGroup(this), content);
+        return SocialContextualParser.request(context.withGroup(this), content);
     }
 
 }

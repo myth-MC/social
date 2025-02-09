@@ -69,7 +69,7 @@ public final class SocialBaseCommand {
         if (channel == user.getMainChannel())
             return;
 
-        if (channel.getPermission() != null && !user.getPlayer().hasPermission(channel.getPermission())) {
+        if (channel.getPermission() != null && !user.player().get().hasPermission(channel.getPermission())) {
             Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
@@ -194,7 +194,7 @@ public final class SocialBaseCommand {
             return;
         }
 
-        if (target.getPlayer() != null && target.getPlayer().hasPermission("social.mute.excempt")) {
+        if (target.player().isPresent() && target.player().get().hasPermission("social.mute.excempt")) {
             Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getUserExcemptFromMute(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }
@@ -287,22 +287,22 @@ public final class SocialBaseCommand {
 
             if (target != null) {
                 if (nickname.equalsIgnoreCase("reset"))
-                    nickname = target.getPlayer().getName();
+                    nickname = target.player().get().getName();
 
-                if (!user.getPlayer().hasPermission("social.use.nickname.others")) {
+                if (!user.player().get().hasPermission("social.use.nickname.others")) {
                     Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
 
-                target.getPlayer().setDisplayName(nickname);
-                Social.get().getTextProcessor().parseAndSend(user, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.getPlayer().getName(), nickname), Social.get().getConfig().getMessages().getChannelType());
+                target.player().get().setDisplayName(nickname);
+                Social.get().getTextProcessor().parseAndSend(user, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.player().get().getName(), nickname), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
 
             if (nickname.equalsIgnoreCase("reset"))
-                nickname = user.getPlayer().getName();
+                nickname = user.player().get().getName();
 
-            user.getPlayer().setDisplayName(nickname);
+            user.player().get().setDisplayName(nickname);
             Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
             return;
         }

@@ -12,11 +12,10 @@ public abstract class SocialFilterRegex implements SocialFilterLike {
 
     @Override
     public Component parse(SocialParserContext context) {
-        if (context.user().getPlayer() != null && context.user().getPlayer().hasPermission("social.filter.bypass"))
+        if (context.user().player().isPresent() && context.user().player().get().hasPermission("social.filter.bypass"))
             return context.message();
 
-        return context.message().replaceText(TextReplacementConfig
-                .builder()
+        return context.message().replaceText(TextReplacementConfig.builder()
                 .match(Pattern.compile(regex()))
                 .replacement("***")
                 .build());

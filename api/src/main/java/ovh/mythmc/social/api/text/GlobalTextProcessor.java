@@ -198,6 +198,7 @@ public final class GlobalTextProcessor {
         }
     }
 
+    @Internal
     public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
         send(List.of(recipient), message, type, channel);
     }

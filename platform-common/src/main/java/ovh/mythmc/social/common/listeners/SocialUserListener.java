@@ -39,10 +39,10 @@ public final class SocialUserListener implements Listener {
         SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
 
         // Temporary workaround for nicknames
-        PersistentDataContainer container = user.getPlayer().getPersistentDataContainer();
+        PersistentDataContainer container = user.player().get().getPersistentDataContainer();
         if (container.has(key, PersistentDataType.STRING)) {
             String nickname = container.get(key, PersistentDataType.STRING);
-            user.getPlayer().setDisplayName(nickname);
+            user.player().get().setDisplayName(nickname);
             user.getNickname(); // Updates cached nickname
         }
 

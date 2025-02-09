@@ -127,7 +127,7 @@ public final class SocialCommandManager {
                 return null;
             
             return sender.getGroupChatChannel().getMembers().stream()
-                .map(user -> user.getPlayer().getName())
+                .map(user -> user.player().get().getName())
                 .toList();
             });
     }

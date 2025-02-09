@@ -52,7 +52,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
             int floodFilterCooldownInMilliseconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
             if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
-                    !sender.getPlayer().hasPermission("social.filter.bypass")) {
+                    sender.player().isPresent() && !sender.player().get().hasPermission("social.filter.bypass")) {
 
                 Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
                 event.setCancelled(true);

@@ -27,14 +27,14 @@ public class CompanionModUtils {
         
         if (channel instanceof GroupChatChannel groupChatChannel) {
             alias = groupChatChannel.getAliasOrName();
-            prefix = Social.get().getTextProcessor().parse(new SocialUser.Dummy(channel), groupChatChannel, ":raw_shield:");
+            prefix = Social.get().getTextProcessor().parse(SocialUser.dummy(channel), groupChatChannel, ":raw_shield:");
         }
 
         return PlainTextComponentSerializer.plainText().serialize(prefix) + alias;
     }
 
     public String getIconWithoutBrackets(ChatChannel channel) {
-        Component icon = Social.get().getTextProcessor().parse(new SocialUser.Dummy(channel), channel, channel.getIcon());
+        Component icon = Social.get().getTextProcessor().parse(SocialUser.dummy(channel), channel, channel.getIcon());
         
         return PlainTextComponentSerializer.plainText().serialize(icon)
             .replace("[", "")

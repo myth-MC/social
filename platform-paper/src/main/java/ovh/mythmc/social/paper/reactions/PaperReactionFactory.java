@@ -38,19 +38,19 @@ public final class PaperReactionFactory extends ReactionFactory {
 
     @Override
     public void displayReaction(SocialUser user, Reaction emoji) {
-        if (user.getPlayer() == null || 
-            user.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY) || 
-            user.getPlayer().getGameMode() == GameMode.SPECTATOR)
+        if (user.player().isEmpty() || 
+            user.player().get().hasPotionEffect(PotionEffectType.INVISIBILITY) || 
+            user.player().get().getGameMode() == GameMode.SPECTATOR)
             return;
 
         ItemDisplay itemDisplay = playerReaction.get(user.getUuid());
         if (itemDisplay != null)
             return;
 
-        itemDisplay = spawnItemDisplay(user.getPlayer(), emoji);
+        itemDisplay = spawnItemDisplay(user.player().get(), emoji);
         playerReaction.put(user.getUuid(), itemDisplay);
 
-        scheduleItemDisplayUpdate(user.getPlayer(), itemDisplay);
+        scheduleItemDisplayUpdate(user.player().get(), itemDisplay);
     }
 
     private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {

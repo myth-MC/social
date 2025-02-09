@@ -1,7 +1,5 @@
 package ovh.mythmc.social.api.text.parsers;
 
-import static net.kyori.adventure.text.Component.text;
-
 import java.util.regex.Pattern;
 
 import net.kyori.adventure.text.Component;
@@ -14,35 +12,20 @@ public abstract class SocialContextualPlaceholder implements SocialContextualPar
 
     public abstract Component get(SocialParserContext context);
 
-    // Provides compatibility with legacy format
-    // -> $channel, $username...
+    @Deprecated(since = "0.4")
     public boolean legacySupport() { return false; }
 
     @Override
     public Component parse(SocialParserContext context) {
-        Component message = context.message();
+        var regexString = "\\$\\((?i:" + identifier() + "\\))";
+        if (legacySupport())
+            regexString = regexString + "|\\$(?i:" + identifier() + "\\b)";
 
-        if (!message.toString().contains(identifier()))
-            return message;
-
-        Component processedText = get(context.withMessage(text(identifier())));
-
-        // Legacy support (not delimited)
-        if (legacySupport()) {
-            message = message.replaceText(TextReplacementConfig
-                .builder()
-                .match(Pattern.compile("\\$(?i:" + identifier() + "\\b)"))
-                .replacement(processedText)
-                .build());
-        }
-
-        message = message.replaceText(TextReplacementConfig
-                .builder()
-                .match(Pattern.compile("\\$\\((?i:" + identifier() + "\\))"))
-                .replacement(processedText)
-                .build());
-
-        return message;
+        return context.message().replaceText(TextReplacementConfig.builder()
+            .match(Pattern.compile(regexString))
+            .replacement(get(context.withMessage(Component.empty())))
+            .build()
+        );
     }
     
 }

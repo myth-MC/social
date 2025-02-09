@@ -17,10 +17,13 @@ public final class MentionsListener implements Listener {
 
     @EventHandler
     public void onMention(SocialChatMessageReceiveEvent event) {
+        if (event.getSender().player().isEmpty() || event.getRecipient().player().isEmpty())
+            return;
+
         if (event.getRecipient().equals(event.getSender()))
             return;
 
-        if (!event.getSender().getPlayer().hasPermission("social.mentions"))
+        if (!event.getSender().player().get().hasPermission("social.mentions"))
             return;
 
         var wrapper = new Object() { boolean mentioned = false; };
@@ -30,7 +33,7 @@ public final class MentionsListener implements Listener {
         // Username
         message = message.replaceText((builder) -> {
             builder
-                .match(Pattern.quote("@" + event.getRecipient().getPlayer().getName()) + "|" + Pattern.quote("@" + event.getRecipient().getNickname()))
+                .match(Pattern.quote("@" + event.getRecipient().player().get().getName()) + "|" + Pattern.quote("@" + event.getRecipient().getNickname()))
                 .replacement((match, textBuilder) -> {
                     wrapper.mentioned = true;
                     return Component.text(match.group()).color(event.getChannel().getColor());

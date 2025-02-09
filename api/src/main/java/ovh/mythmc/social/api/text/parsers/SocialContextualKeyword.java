@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 public abstract class SocialContextualKeyword implements SocialContextualParser {
@@ -13,14 +14,11 @@ public abstract class SocialContextualKeyword implements SocialContextualParser 
     public abstract Component process(SocialParserContext context);
 
     @Override
-    public Component parse(SocialParserContext context) {
-        if (!context.message().toString().contains(keyword()))
-            return context.message();
-        
-        return context.message().replaceText(TextReplacementConfig
-                .builder()
+    public Component parse(SocialParserContext context) {      
+        return context.message().replaceText(TextReplacementConfig.builder()
                 .match(Pattern.compile("\\[(?i:" + keyword() + "\\b)\\]"))
-                .replacement(process(context).insertion("[" + keyword() + "] "))
+                .replacement(process(context)
+                    .applyFallbackStyle(Style.style((builder) -> builder.insertion("[" + keyword() + "] "))))
                 .build());
     }
     

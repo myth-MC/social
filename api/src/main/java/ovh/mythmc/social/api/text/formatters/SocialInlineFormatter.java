@@ -17,7 +17,7 @@ public abstract class SocialInlineFormatter extends SocialFormatter {
     @Override
     protected Component removeFormattingCharacters(Component component) {
         if (component instanceof TextComponent textComponent) {
-            String content = textComponent.content().substring(characters().length());
+            var content = textComponent.content().substring(characters().length());
             if (content.endsWith("\\"))
                 content = content.substring(0, content.length() - 1);
 

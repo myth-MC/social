@@ -125,7 +125,7 @@ public final class SocialDatabase {
             usersDao.update(user);
 
             // Clear cache value
-            if (user.getPlayer() == null)
+            if (user.player().isEmpty())
                 usersCache.remove(user.getUuid());
         } catch (SQLException e) {
             logger.error("Exception while updating entry {}", e);
