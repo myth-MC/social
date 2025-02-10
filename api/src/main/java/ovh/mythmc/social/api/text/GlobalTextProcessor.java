@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -36,46 +37,6 @@ public final class GlobalTextProcessor {
     public final SocialParserGroup EARLY_PARSERS = SocialParserGroup.builder().build();
 
     public final SocialParserGroup LATE_PARSERS = SocialParserGroup.builder().build();
-
-    public Optional<SocialContextualPlaceholder> getContextualPlaceholder(final @NotNull String identifier) {
-        return getContextualParsers().stream()
-            .filter(parser -> parser instanceof SocialContextualPlaceholder placeholder && placeholder.identifier().equals(identifier))
-            .map(parser -> (SocialContextualPlaceholder) parser)
-            .findFirst();
-    }
-
-    public Optional<SocialContextualKeyword> getContextualKeyword(final @NotNull String identifier) {
-        return getContextualParsers().stream()
-            .filter(parser -> parser instanceof SocialContextualKeyword keyword && keyword.keyword().equals(identifier))
-            .map(parser -> (SocialContextualKeyword) parser)
-            .findFirst();
-    }
-
-    public boolean isContextualPlaceholder(final @NotNull String identifier) {
-        return getContextualPlaceholder(identifier) != null;
-    }
-
-    public void registerContextualParser(final @NotNull SocialContextualParser... socialParsers) {
-        parsers.addAll(Arrays.asList(socialParsers));
-    }
-
-    public void unregisterContextualParser(final @NotNull SocialContextualParser... socialParsers) {
-        parsers.removeAll(List.of(socialParsers));
-    }
-
-    public void unregisterAllParsers() {
-        EARLY_PARSERS.removeAll();
-        parsers.clear();
-        LATE_PARSERS.removeAll();
-    }
-
-    public void unregisterContextualPlaceholder(final @NotNull String identifier) {
-        getContextualPlaceholder(identifier).ifPresent(placeholder -> unregisterContextualParser(placeholder));
-    }
-
-    public void unregisterContextualKeyword(final @NotNull String identifier) {
-        getContextualKeyword(identifier).ifPresent(keyword -> unregisterContextualParser(keyword));
-    }
 
     public List<SocialContextualParser> getContextualParsers() {
         List<SocialContextualParser> parserList = new ArrayList<>();
@@ -101,6 +62,86 @@ public final class GlobalTextProcessor {
         });
         
         return contextualParsers;
+    }
+
+    public Optional<SocialContextualPlaceholder> getContextualPlaceholder(final @NotNull String identifier) {
+        return getContextualParsers().stream()
+            .filter(parser -> parser instanceof SocialContextualPlaceholder placeholder && placeholder.identifier().equals(identifier))
+            .map(parser -> (SocialContextualPlaceholder) parser)
+            .findFirst();
+    }
+
+    public Optional<SocialContextualKeyword> getContextualKeyword(final @NotNull String identifier) {
+        return getContextualParsers().stream()
+            .filter(parser -> parser instanceof SocialContextualKeyword keyword && keyword.keyword().equals(identifier))
+            .map(parser -> (SocialContextualKeyword) parser)
+            .findFirst();
+    }
+
+    public boolean isContextualPlaceholder(final @NotNull String identifier) {
+        return getContextualPlaceholder(identifier) != null;
+    }
+
+    public boolean isContextualKeyword(final @NotNull String keyword) {
+        return getContextualKeyword(keyword) != null;
+    }
+
+    public void registerContextualParser(final @NotNull SocialContextualParser... socialParsers) {
+        parsers.addAll(Arrays.asList(socialParsers));
+    }
+
+    public void registerContextualPlaceholder(final @NotNull String identifier, final @NotNull Function<SocialParserContext, Component> ctx) {
+        var placeholder = new SocialContextualPlaceholder() {
+
+            @Override
+            public String identifier() {
+                return identifier;
+            }
+
+            @Override
+            public Component get(SocialParserContext context) {
+                return ctx.apply(context);
+            }
+            
+        };
+
+        registerContextualParser(placeholder);
+    }
+
+    public void registerContextualKeyword(final @NotNull String identifier, final @NotNull Function<SocialParserContext, Component> ctx) {
+        var keyword = new SocialContextualKeyword() {
+
+            @Override
+            public String keyword() {
+                return identifier;
+            }
+
+            @Override
+            public Component process(SocialParserContext context) {
+                return ctx.apply(context);
+            }
+            
+        };
+
+        registerContextualParser(keyword);
+    }
+
+    public void unregisterAllParsers() {
+        EARLY_PARSERS.removeAll();
+        parsers.clear();
+        LATE_PARSERS.removeAll();
+    }
+
+    public void unregisterContextualParser(final @NotNull SocialContextualParser... socialParsers) {
+        parsers.removeAll(List.of(socialParsers));
+    }
+
+    public void unregisterContextualPlaceholder(final @NotNull String identifier) {
+        getContextualPlaceholder(identifier).ifPresent(placeholder -> unregisterContextualParser(placeholder));
+    }
+
+    public void unregisterContextualKeyword(final @NotNull String identifier) {
+        getContextualKeyword(identifier).ifPresent(keyword -> unregisterContextualParser(keyword));
     }
 
     public Component parsePlayerInput(@NotNull SocialParserContext context) {

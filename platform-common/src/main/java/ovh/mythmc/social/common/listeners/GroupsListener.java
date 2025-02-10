@@ -38,10 +38,15 @@ public final class GroupsListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGroupCreate(SocialGroupCreateEvent event) {
-        SocialUser user = Social.get().getUserManager().getByUuid(event.getGroupChatChannel().getLeaderUuid());
-        if (user == null) return;
+        var leader = event.getGroupChatChannel().getLeader();
+        
+        // Switch main channel
+        Social.get().getUserManager().setMainChannel(leader, event.getGroupChatChannel());
 
-        Social.get().getUserManager().setMainChannel(user, event.getGroupChatChannel());
+        // Message
+        int groupCode = Social.get().getChatManager().getGroupChannelByUser(leader).getCode();
+        String createdMessage = String.format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
+        Social.get().getTextProcessor().parseAndSend(leader, createdMessage, Social.get().getConfig().getMessages().getChannelType());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

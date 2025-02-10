@@ -60,11 +60,6 @@ public final class GroupBaseCommand {
 
             Social.get().getChatManager().registerGroupChatChannel(user.getUuid(), alias);
         }
-
-
-        int groupCode = Social.get().getChatManager().getGroupChannelByUser(user).getCode();
-        String createdMessage = String.format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
-        Social.get().getTextProcessor().parseAndSend(user, createdMessage, Social.get().getConfig().getMessages().getChannelType());
     }
 
     @Command("disband")

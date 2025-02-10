@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
 import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
+import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -67,6 +68,10 @@ public class GroupChatChannel extends ChatChannel {
         Bukkit.getPluginManager().callEvent(socialGroupLeaveEvent);
 
         return super.removeMember(uuid);
+    }
+
+    public SocialUser getLeader() {
+        return Social.get().getUserManager().getByUuid(leaderUuid);
     }
 
 }

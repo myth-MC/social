@@ -9,7 +9,6 @@ import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
-import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
 import ovh.mythmc.social.common.listeners.GroupsListener;
@@ -18,7 +17,6 @@ import ovh.mythmc.social.common.text.placeholders.groups.GroupLeaderPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupCodePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.groups.GroupPlaceholder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Feature(group = "social", identifier = "GROUPS")
@@ -28,7 +26,12 @@ public final class GroupsFeature {
 
     private final GroupsListener groupsListener = new GroupsListener();
 
-    private final List<SocialContextualParser> parsers = new ArrayList<>();
+    private final List<SocialContextualParser> parsers = List.of(
+        new GroupIconPlaceholder(),
+        new GroupLeaderPlaceholder(),
+        new GroupCodePlaceholder(),
+        new GroupPlaceholder()
+    );
 
     public GroupsFeature(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -40,24 +43,16 @@ public final class GroupsFeature {
                 Social.get().getConfig().getSettings().getChat().getGroups().isEnabled();
     }
 
-    @FeatureInitialize
-    public void initialize() {
-        this.parsers.add(new GroupIconPlaceholder());
-        this.parsers.add(new GroupLeaderPlaceholder());
-        this.parsers.add(new GroupCodePlaceholder());
-        this.parsers.add(new GroupPlaceholder());
-    }
-
     @FeatureEnable
     public void enable() {
         Bukkit.getPluginManager().registerEvents(groupsListener, plugin);
-        this.parsers.forEach(parser -> Social.get().getTextProcessor().registerContextualParser(parser));
+        this.parsers.forEach(Social.get().getTextProcessor()::registerContextualParser);
     }
 
     @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(groupsListener);
-        this.parsers.forEach(parser -> Social.get().getTextProcessor().unregisterContextualParser(parser));
+        this.parsers.forEach(Social.get().getTextProcessor()::unregisterContextualParser);
     }
 
 }

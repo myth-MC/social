@@ -14,6 +14,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.database.SocialDatabase;
+import ovh.mythmc.social.common.features.AddonFeature;
 import ovh.mythmc.social.common.features.BootstrapFeature;
 import ovh.mythmc.social.common.listeners.InternalFeatureListener;
 import ovh.mythmc.social.common.text.parsers.MiniMessageParser;
@@ -52,7 +53,13 @@ public abstract class SocialBootstrap<T> implements Social {
         // Initialize gestalt
         initializeGestalt();
 
+        // Register bootstrap feature
         Gestalt.get().register(BootstrapFeature.class);
+
+        // Register add-on feature (add-ons can listen to this class to sync their state)
+        Gestalt.get().register(AddonFeature.class);
+
+        // Register internal listener
         Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
 
         // Load settings
@@ -82,9 +89,9 @@ public abstract class SocialBootstrap<T> implements Social {
     public final void reload(ReloadType type) {
         switch (type) {
             case ADDONS:
-                Gestalt.get().getByGroupAndIdentifier("social", "ADDON")
-                    .forEach(addon -> Gestalt.get().enableFeature(addon));
-                    
+                Gestalt.get().disableFeature(AddonFeature.class);
+                Gestalt.get().enableFeature(AddonFeature.class);
+
                 break;
             case SETTINGS:
                 getConfig().loadSettings();
@@ -100,6 +107,9 @@ public abstract class SocialBootstrap<T> implements Social {
 
     private final void reloadAll() {
         Gestalt.get().disableFeature(BootstrapFeature.class);
+
+        // Disable add-ons
+        Gestalt.get().disableFeature(AddonFeature.class);
 
         // Unregister all parsers
         Social.get().getTextProcessor().unregisterAllParsers();
@@ -138,6 +148,9 @@ public abstract class SocialBootstrap<T> implements Social {
 
         // Enable Gestalt features
         Gestalt.get().enableFeature(BootstrapFeature.class);;
+
+        // Enable add-ons
+        Gestalt.get().enableFeature(AddonFeature.class);
     }
 
     public abstract String version();
