@@ -5,11 +5,14 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelPostSwitch;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelPostSwitchCallback;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelPreSwitch;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelPreSwitchCallback;
+import ovh.mythmc.social.api.callbacks.user.SocialUserMuteStatusChange;
+import ovh.mythmc.social.api.callbacks.user.SocialUserMuteStatusChangeCallback;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
-import ovh.mythmc.social.api.events.chat.SocialChannelPostSwitchEvent;
-import ovh.mythmc.social.api.events.chat.SocialChannelPreSwitchEvent;
-import ovh.mythmc.social.api.events.users.SocialUserMuteStatusChangeEvent;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -77,19 +80,20 @@ public final class SocialUserManager {
     }
 
     public void setMainChannel(final @NotNull SocialUser user,
-                               final @NotNull ChatChannel chatChannel) {
+                               final @NotNull ChatChannel channel) {
 
         ChatChannel previousChannel = user.getMainChannel();
 
-        SocialChannelPreSwitchEvent socialChannelPreSwitchEvent = new SocialChannelPreSwitchEvent(user, previousChannel, chatChannel);
-        Bukkit.getPluginManager().callEvent(socialChannelPreSwitchEvent);
+        var preSwitchCallback = new SocialChannelPreSwitch(user, channel);
+        SocialChannelPreSwitchCallback.INSTANCE.handle(preSwitchCallback);
 
-        if (socialChannelPreSwitchEvent.isCancelled())
+        if (preSwitchCallback.cancelled())
             return;
 
-        user.setMainChannel(chatChannel);
-        SocialChannelPostSwitchEvent socialChannelPostSwitchEvent = new SocialChannelPostSwitchEvent(user, previousChannel, chatChannel);
-        Bukkit.getPluginManager().callEvent(socialChannelPostSwitchEvent);
+        user.setMainChannel(channel);
+        
+        var postSwitchCallback = new SocialChannelPostSwitch(user, previousChannel, channel);
+        SocialChannelPostSwitchCallback.INSTANCE.handle(postSwitchCallback);
 
         SocialDatabase.get().update(user);
     }
@@ -119,10 +123,10 @@ public final class SocialUserManager {
     }
 
     public void mute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
-        SocialUserMuteStatusChangeEvent event = new SocialUserMuteStatusChangeEvent(user, channel, true);
-        Bukkit.getPluginManager().callEvent(event);
+        var callback = new SocialUserMuteStatusChange(user, channel, true);
+        SocialUserMuteStatusChangeCallback.INSTANCE.handle(callback);
 
-        if (event.isCancelled())
+        if (callback.cancelled())
             return;
 
         user.getBlockedChannels().add(channel.getName());
@@ -130,10 +134,10 @@ public final class SocialUserManager {
     }
 
     public void unmute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
-        SocialUserMuteStatusChangeEvent event = new SocialUserMuteStatusChangeEvent(user, channel, false);
-        Bukkit.getPluginManager().callEvent(event);
+        var callback = new SocialUserMuteStatusChange(user, channel, false);
+        SocialUserMuteStatusChangeCallback.INSTANCE.handle(callback);
 
-        if (event.isCancelled())
+        if (callback.cancelled())
             return;
 
         user.getBlockedChannels().remove(channel.getName());

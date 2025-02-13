@@ -21,7 +21,7 @@ public class SocialPrivateMessageContext extends SocialMessageContext {
         String rawMessage,
         SignedMessage signedMessage) {
 
-        super(sender, sender.getMainChannel(), viewers, rawMessage, null, signedMessage);
+        super(sender, sender.getMainChannel(), viewers, rawMessage, 0, signedMessage);
 
         this.recipients = recipients;
     }

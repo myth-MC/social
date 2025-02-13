@@ -19,11 +19,10 @@ public final class ReactionsFeature {
     
     private final JavaPlugin plugin;
 
-    private final ReactionsListener reactionsListener;
+    private final ReactionsListener reactionsListener = new ReactionsListener();
 
     public ReactionsFeature(final @NotNull JavaPlugin plugin) {
         this.plugin = plugin;
-        this.reactionsListener = new ReactionsListener(plugin);
     }
 
     @FeatureConditionBoolean

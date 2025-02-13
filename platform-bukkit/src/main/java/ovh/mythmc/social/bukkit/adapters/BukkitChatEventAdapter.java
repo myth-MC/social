@@ -14,8 +14,9 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageReceive;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.common.adapters.ChatEventAdapter;
 
 public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerChatEvent> {
@@ -52,7 +53,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
         event.getRecipients().forEach(player -> {
             var recipient = Social.get().getUserManager().getByUuid(player.getUniqueId());
             
-            var renderer = Social.get().getChatManager().getRenderer(recipient);
+            var renderer = Social.get().getChatManager().getRegisteredRenderer(recipient);
             if (renderer == null)
                 return;
 
@@ -73,21 +74,19 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
             var message = context.message();
 
             // Trigger message receive event
-            var socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(
+            var callback = new SocialMessageReceive(
                 context.sender(), 
-                recipient,
-                context.channel(),
+                recipient, 
+                context.channel(), 
                 context.message(), 
-                context.plainMessage(),
-                context.replyId(),
-                context.messageId()
-            );
+                context.messageId(), 
+                context.replyId());
     
-            Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
-            if (socialChatMessageReceiveEvent.isCancelled())
+            SocialMessageReceiveCallback.INSTANCE.handle(callback);
+            if (callback.cancelled())
                 return;
 
-            message = socialChatMessageReceiveEvent.getMessage();
+            message = callback.message();
 
             var component = prefix.append(message);
 

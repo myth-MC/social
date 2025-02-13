@@ -1,13 +1,13 @@
 package ovh.mythmc.social.common.commands.base;
 
-import org.bukkit.Bukkit;
 import org.bukkit.permissions.PermissionDefault;
 
 import dev.triumphteam.cmd.bukkit.annotation.Permission;
 import dev.triumphteam.cmd.core.annotations.Command;
 import dev.triumphteam.cmd.core.annotations.Suggestion;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.events.reactions.SocialReactionCallEvent;
+import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTrigger;
+import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -23,8 +23,8 @@ public final class ReactionBaseCommand {
             return;
         }
 
-        SocialReactionCallEvent socialReactionCallEvent = new SocialReactionCallEvent(user, reaction);
-        Bukkit.getPluginManager().callEvent(socialReactionCallEvent);
+        var callback = new SocialReactionTrigger(user, reaction);
+        SocialReactionTriggerCallback.INSTANCE.handle(callback);
     }
     
 }

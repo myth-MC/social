@@ -1,6 +1,5 @@
 package ovh.mythmc.social.api.context;
 
-import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -32,8 +31,12 @@ public class SocialMessageContext implements SocialContext {
 
     private final @Nullable SignedMessage signedMessage;
 
+    public boolean isSigned() {
+        return signedMessage != null;
+    }
+
     public boolean isReply() {
-        if (Objects.equals(replyId, null))
+        if (replyId == null)
             return false;
 
         return Social.get().getChatManager().getHistory().getById(replyId) != null;

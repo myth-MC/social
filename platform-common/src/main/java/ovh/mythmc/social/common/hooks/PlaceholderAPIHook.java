@@ -72,10 +72,10 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.getName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return Social.get().getUserManager().getByUuid(groupChatChannel.getLeaderUuid()).getNickname();
+                    return groupChatChannel.getLeader().getNickname();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
-                    return Social.get().getUserManager().getByUuid(groupChatChannel.getLeaderUuid()).getPlayer().getName();
+                    return groupChatChannel.getLeader().player().get().getName();
                 }
                 if (params.equalsIgnoreCase("group_leader_uuid")) {
                     return groupChatChannel.getLeaderUuid().toString();
@@ -95,11 +95,12 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.getMembers().size())
                         return null;
+
                     UUID uuid = groupChatChannel.getMemberUuids().get(integer);
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserManager().getByUuid(uuid).getPlayer().getName();
+                    return Social.get().getUserManager().getByUuid(uuid).player().get().getName();
                 }
                 if (params.startsWith("group_player_")) {
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
@@ -120,7 +121,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
     @Override
     public Component parse(SocialParserContext context) {
         String serialized = LegacyComponentSerializer.legacyAmpersand().serialize(context.message());
-        String parsedMessage = PlaceholderAPI.setPlaceholders(context.user().getPlayer(), serialized);
+        String parsedMessage = PlaceholderAPI.setPlaceholders(context.user().player().get(), serialized);
         return LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().hexCharacter("&".charAt(0)).build()
             .deserialize(parsedMessage.replace("§", "&"));
     }

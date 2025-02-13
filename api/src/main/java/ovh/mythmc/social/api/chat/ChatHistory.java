@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
@@ -46,13 +44,7 @@ public final class ChatHistory {
     }
 
     public boolean canDelete(SocialMessageContext context) {
-        if (!Bukkit.getOnlineMode()) // Offline servers don't support message deletion
-            return false;
-
-        if (context.signedMessage() == null)
-            return false;
-
-        return context.signedMessage().canDelete();
+        return context.isSigned() ? context.signedMessage().canDelete() : false;
     }
 
     public void delete(SocialRegisteredMessageContext context) {
@@ -97,8 +89,8 @@ public final class ChatHistory {
     public List<SocialRegisteredMessageContext> getThread(final @NotNull SocialRegisteredMessageContext messageContext, int limit) {
         return messages.values().stream()
                 .filter(value ->
-                        (value.isReply() && value.replyId().equals(messageContext.id())) ||
-                        (value.isReply() && value.replyId().equals(messageContext.replyId())) ||
+                        (value.isReply() && value.replyId() == messageContext.id()) ||
+                        (value.isReply() && value.replyId() == messageContext.replyId()) ||
                         value.id().equals(messageContext.id()) ||
                         value.id().equals(messageContext.replyId())
                 )
@@ -106,8 +98,7 @@ public final class ChatHistory {
                 .toList();
     }
 
-    @Deprecated
-    @ScheduledForRemoval // replies and threads are the same thing since v0.3
+    @Deprecated(forRemoval = true, since = "v0.3")
     public boolean isThread(final @NotNull SocialRegisteredMessageContext messageContext) {
         return getThread(messageContext, 3).size() > 2;
     }

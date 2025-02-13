@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +13,9 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageReceive;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.events.chat.SocialChatMessageReceiveEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.adapters.ChatEventAdapter;
 
@@ -59,7 +59,7 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
     @Override
     public void render(AsyncChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
         event.renderer((source, sourceDisplayName, component, viewer) -> {
-            var renderer = Social.get().getChatManager().getRenderer(viewer);
+            var renderer = Social.get().getChatManager().getRegisteredRenderer(viewer);
             if (renderer == null)
                 return Component.empty();
 
@@ -78,21 +78,21 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
             // Trigger message receive event if recipient is a SocialUser
             var mapResult = renderer.mapFromAudience(viewer);
             if (mapResult.isSuccess() && mapResult.result() instanceof SocialUser recipient) {
-                SocialChatMessageReceiveEvent socialChatMessageReceiveEvent = new SocialChatMessageReceiveEvent(
+                // Trigger message receive event
+                var callback = new SocialMessageReceive(
                     context.sender(), 
-                    recipient,
-                    context.channel(),
+                    recipient, 
+                    context.channel(), 
                     context.message(), 
-                    context.plainMessage(),
-                    context.replyId(),
-                    context.messageId()
-                );
+                    context.messageId(), 
+                    context.replyId());
         
-                Bukkit.getPluginManager().callEvent(socialChatMessageReceiveEvent);
-                if (socialChatMessageReceiveEvent.isCancelled())
+                SocialMessageReceiveCallback.INSTANCE.handle(callback);
+                if (callback.cancelled())
                     return null;
 
-                message = socialChatMessageReceiveEvent.getMessage();
+
+                message = callback.message();
             }
 
             return Component.empty()

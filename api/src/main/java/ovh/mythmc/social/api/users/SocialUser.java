@@ -85,6 +85,10 @@ public class SocialUser implements SocialUserAudienceWrapper {
         return Bukkit.getConsoleSender();
     }
 
+    public boolean hasGroupChatChannel() {
+        return getGroupChatChannel() != null;
+    }
+
     public @Nullable GroupChatChannel getGroupChatChannel() {
         return Social.get().getChatManager().getGroupChannelByUser(this);
     }

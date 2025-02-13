@@ -4,11 +4,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.events.groups.SocialGroupJoinEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupLeaveEvent;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupJoin;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupJoinCallback;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupLeave;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupLeaveCallback;
 import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.Optional;
@@ -57,15 +58,15 @@ public class GroupChatChannel extends ChatChannel {
 
         super.addMember(uuid);
 
-        SocialGroupJoinEvent socialGroupJoinEvent = new SocialGroupJoinEvent(this, Social.get().getUserManager().getByUuid(uuid));
-        Bukkit.getPluginManager().callEvent(socialGroupJoinEvent);
+        var callback = new SocialGroupJoin(this, getLeader());
+        SocialGroupJoinCallback.INSTANCE.handle(callback);
 
         return true;
     }
 
     public boolean removeMember(UUID uuid) {
-        SocialGroupLeaveEvent socialGroupLeaveEvent = new SocialGroupLeaveEvent(this, Social.get().getUserManager().getByUuid(uuid));
-        Bukkit.getPluginManager().callEvent(socialGroupLeaveEvent);
+        var callback = new SocialGroupLeave(this, getLeader());
+        SocialGroupLeaveCallback.INSTANCE.handle(callback);
 
         return super.removeMember(uuid);
     }

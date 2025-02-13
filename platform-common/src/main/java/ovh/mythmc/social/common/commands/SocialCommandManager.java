@@ -123,7 +123,7 @@ public final class SocialCommandManager {
         );
 
         manager.registerSuggestion(SuggestionKey.of("group-members"), (sender, arg) -> {
-            if (sender.getGroupChatChannel() == null)
+            if (!sender.hasGroupChatChannel())
                 return null;
             
             return sender.getGroupChatChannel().getMembers().stream()
@@ -134,11 +134,11 @@ public final class SocialCommandManager {
 
     public void registerRequirements() {
         manager.registerRequirement(RequirementKey.of("group"), (sender, context) ->
-            sender.getGroupChatChannel() != null
+            sender.hasGroupChatChannel()
         );
 
         manager.registerRequirement(RequirementKey.of("group-leader"), (sender, context) ->
-            sender.getGroupChatChannel() != null && sender.getGroupChatChannel().getLeaderUuid().equals(sender.getUuid())
+            sender.hasGroupChatChannel() && sender.getGroupChatChannel().getLeaderUuid().equals(sender.getUuid())
         );
     }
 

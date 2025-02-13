@@ -35,7 +35,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component username = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getUsername()), 
-            Component.text(context.target().getPlayer().getName())
+            Component.text(context.target().player().get().getName())
         );
 
         Component messageCount = getField(
@@ -76,7 +76,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
             .appendNewline()
             .append(messageCount
                 .hoverEvent(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getClickToSeeMessageHistory()).asHoverEvent())
-                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().getPlayer().getName()))
+                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().player().get().getName()))
             )
             .appendNewline()
             .append(visibleChannels

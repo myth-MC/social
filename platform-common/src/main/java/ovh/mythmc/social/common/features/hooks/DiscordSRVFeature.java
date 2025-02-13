@@ -34,8 +34,8 @@ public final class DiscordSRVFeature {
         this.hook = new DiscordSRVHook(plugin);
         this.deathListener = new DiscordSRVDeathListener();
 
-        // Register Bukkit listeners
-        Bukkit.getPluginManager().registerEvents(hook, plugin);
+        // Register callback handler
+        hook.registerMessageCallbackHandler();
 
         // Register hook and subscribe to API events
         DiscordSRV.getPlugin().getPluginHooks().add(hook);
@@ -54,6 +54,9 @@ public final class DiscordSRVFeature {
         // Unregister Bukkit listeners
         HandlerList.unregisterAll(deathListener);
         HandlerList.unregisterAll(hook);
+
+        // Unregister callback handler
+        hook.unregisterMessageCallbackHandler();
 
         // Unregister hook and unsuscribe from API events
         DiscordSRV.getPlugin().getPluginHooks().remove(hook);

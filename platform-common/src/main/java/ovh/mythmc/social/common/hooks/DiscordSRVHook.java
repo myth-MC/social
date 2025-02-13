@@ -11,17 +11,16 @@ import github.scarsz.discordsrv.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.TextComponent;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ovh.mythmc.gestalt.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callbacks.message.SocialMessagePrepareCallback;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
 @RequiredArgsConstructor
@@ -29,19 +28,24 @@ public final class DiscordSRVHook implements ChatHook {
 
     private final JavaPlugin plugin;
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onMessage(SocialChatMessagePrepareEvent event) {
-        if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(event.getChannel().getName()) == null) {
-            DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + event.getChannel().getName() + " but none found");
-            return;
-        }
+    public void registerMessageCallbackHandler() {
+        SocialMessagePrepareCallback.INSTANCE.registerHandler("social:discordsrv", (ctx) -> {
+            if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(ctx.channel().getName()) == null) {
+                DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + ctx.channel().getName() + " but none found");
+                return;
+            }
+    
+            if (StringUtils.isBlank(ctx.plainMessage())) {
+                DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Received blank social message, not processing");
+                return;
+            }
+    
+            DiscordSRV.getPlugin().processChatMessage(ctx.sender().player().get(), ctx.plainMessage(), ctx.channel().getName(), ctx.cancelled(), null);
+        });
+    }
 
-        if (StringUtils.isBlank(event.getRawMessage())) {
-            DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Received blank social message, not processing");
-            return;
-        }
-
-        DiscordSRV.getPlugin().processChatMessage(event.getSender().player().get(), event.getRawMessage(), event.getChannel().getName(), event.isCancelled(), event);
+    public void unregisterMessageCallbackHandler() {
+        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "discordsrv"));
     }
 
     @Subscribe

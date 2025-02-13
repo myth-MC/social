@@ -38,11 +38,15 @@ public final class CompanionFeature {
     @FeatureEnable
     public void enable() {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
+
+        listener.registerCallbackHandlers();
     }
 
     @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(listener);
+
+        listener.unregisterCallbackHandlers();
     }
     
 }

@@ -10,11 +10,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
+import ovh.mythmc.gestalt.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelPostSwitchCallback;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelPreSwitchCallback;
+import ovh.mythmc.social.api.callbacks.message.SocialMessagePrepareCallback;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.events.chat.*;
 import ovh.mythmc.social.api.users.SocialUser;
 import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
@@ -54,68 +58,72 @@ public final class ChatListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onSocialChatMessagePrepare(SocialChatMessagePrepareEvent event) {
-        // Check if player still has permission to chat in their selected channel
-        if (!Social.get().getChatManager().hasPermission(event.getSender(), event.getChannel())) {
-            ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+    public void registerCallbackHandlers() {
+        SocialMessagePrepareCallback.INSTANCE.registerHandler("social:replyChannelSwitcher", (ctx) -> {
+            if (!Social.get().getChatManager().hasPermission(ctx.sender(), ctx.channel())) {
+                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
-            event.getChannel().removeMember(event.getSender());
+                ctx.channel().removeMember(ctx.sender());
 
-            PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getSender(), defaultChannel));
-            event.setCancelled(true);
-            return;
-        }
+                PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(ctx.sender(), defaultChannel));
+                ctx.cancelled(true);
+                return;
+            }
 
-        if (event.isReply()) {
-            // Get the reply context
-            SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(event.getReplyId());
+            if (ctx.isReply()) {
+                // Get the reply context
+                SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(ctx.replyId());
 
-            // Chain of replies (thread)
-            if (reply.isReply())
-                event.setReplyId(reply.replyId());
+                // Chain of replies (thread)
+                if (reply.isReply())
+                    ctx.replyId(reply.replyId());
 
-            // Switch channel if necessary
-            if (!reply.chatChannel().equals(event.getChannel()) && Social.get().getChatManager().hasPermission(event.getSender(), reply.chatChannel()))
-                event.setChannel(reply.chatChannel());
-        }
-    }
+                // Switch channel if necessary
+                if (!reply.chatChannel().equals(ctx.channel()) && Social.get().getChatManager().hasPermission(ctx.sender(), reply.chatChannel()))
+                    ctx.channel(reply.chatChannel());
+            }
+        });
 
-    @EventHandler
-    public void onSocialChatMessageReceive(SocialChatMessageReceiveEvent event) {
-        // Play reply sound
-        if (event.isReply())
-            event.getSender().player().ifPresent(player -> player.playSound(player, Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F));
+        SocialMessageReceiveCallback.INSTANCE.registerHandler("social:chatPermissionChecker", (ctx) -> {
+            // Play reply sound
+            if (ctx.isReply())
+                ctx.sender().player().ifPresent(player -> player.playSound(player, Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F));
 
-        if (event.getChannel().getPermission() == null)
-            return;
+            if (ctx.channel().getPermission() == null)
+                return;
 
-        // We'll remove the player from this channel if they no longer have the required permission
-        if (!Social.get().getChatManager().hasPermission(event.getRecipient(), event.getChannel())) {
-            ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+            // We'll remove the player from this channel if they no longer have the required permission
+            if (!Social.get().getChatManager().hasPermission(ctx.recipient(), ctx.channel())) {
+                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
 
-            event.getChannel().removeMember(event.getRecipient());
-            PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(event.getRecipient(), defaultChannel));
-            event.setCancelled(true);
-        }
-    }
+                ctx.channel().removeMember(ctx.recipient());
+                PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(ctx.recipient(), defaultChannel));
+                ctx.cancelled(true);
+            }
+        });
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onSocialChannelPreSwitch(SocialChannelPreSwitchEvent event) {
-        if (!event.getChannel().getMemberUuids().contains(event.getUser().getUuid()))
-            event.getChannel().addMember(event.getUser().getUuid());
-    }
+        SocialChannelPreSwitchCallback.INSTANCE.registerHandler("social:chatChannelPrepareMember", (ctx) -> {
+            if (!ctx.channel().getMemberUuids().contains(ctx.user().getUuid()))
+                ctx.channel().addMember(ctx.user().getUuid());
+        });
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onSocialChannelPostSwitch(SocialChannelPostSwitchEvent event) {
-        if (event.getUser().isCompanion())
-            return;
+        SocialChannelPostSwitchCallback.INSTANCE.registerHandler("social:chatChannelSwitchMessage", (ctx) -> {
+            if (ctx.user().isCompanion())
+                return;
             
-        SocialParserContext context = SocialParserContext.builder(event.getUser(), Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
-            .channel(event.getChannel())
-            .build();
+            SocialParserContext context = SocialParserContext.builder(ctx.user(), Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
+                .channel(ctx.channel())
+                .build();
 
-        Social.get().getTextProcessor().parseAndSend(context);
+            Social.get().getTextProcessor().parseAndSend(context);
+        });
+    }
+
+    public void unregisterCallbackHandlers() {
+        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "replyChannelSwitcher"));
+        SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatPermissionChecker"));
+        SocialChannelPreSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatChannelPrepareMember"));
+        SocialChannelPostSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatChannelSwtichMessage"));
     }
 
 }

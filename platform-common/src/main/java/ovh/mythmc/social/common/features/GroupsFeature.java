@@ -46,12 +46,16 @@ public final class GroupsFeature {
     @FeatureEnable
     public void enable() {
         Bukkit.getPluginManager().registerEvents(groupsListener, plugin);
+        groupsListener.registerCallbackHandlers();
+
         this.parsers.forEach(Social.get().getTextProcessor()::registerContextualParser);
     }
 
     @FeatureDisable
     public void disable() {
         HandlerList.unregisterAll(groupsListener);
+        groupsListener.unregisterCallbackHandlers();
+        
         this.parsers.forEach(Social.get().getTextProcessor()::unregisterContextualParser);
     }
 

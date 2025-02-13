@@ -3,7 +3,6 @@ package ovh.mythmc.social.common.adapters;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
@@ -17,8 +16,11 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.callbacks.message.SocialMessagePrepare;
+import ovh.mythmc.social.api.callbacks.message.SocialMessagePrepareCallback;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageSend;
+import ovh.mythmc.social.api.callbacks.message.SocialMessageSendCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.events.chat.SocialChatMessagePrepareEvent;
 import ovh.mythmc.social.api.context.SocialMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
@@ -80,14 +82,14 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
             return;
 
         // Prepare message event
-        SocialChatMessagePrepareEvent chatMessagePrepareEvent = new SocialChatMessagePrepareEvent(sender, channel, plainMessage, replyId);
-        Bukkit.getPluginManager().callEvent(chatMessagePrepareEvent);
-        if (chatMessagePrepareEvent.isCancelled())
+        var preCallback = new SocialMessagePrepare(sender, channel, plainMessage, replyId);
+        SocialMessagePrepareCallback.INSTANCE.handle(preCallback);
+        if (preCallback.cancelled())
             return;
 
         // Update variables
-        channel = chatMessagePrepareEvent.getChannel();
-        plainMessage = chatMessagePrepareEvent.getRawMessage();
+        channel = preCallback.channel();
+        plainMessage = preCallback.plainMessage();
 
         // Set viewers
         Set<Audience> viewers = new HashSet<>(channel.getMembers());
@@ -116,6 +118,9 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         Integer idToReply = registeredMessage.id();
         if (replyId != null)
             idToReply = Integer.min(replyId, idToReply);
+
+        var postCallback = new SocialMessageSend(sender, channel, filteredMessage, registeredMessage.id(), idToReply);
+        SocialMessageSendCallback.INSTANCE.handle(postCallback);
 
         // Let the impl handle the rest
         render(

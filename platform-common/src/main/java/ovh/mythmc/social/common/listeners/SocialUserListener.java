@@ -10,10 +10,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import ovh.mythmc.gestalt.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callbacks.message.SocialPrivateMessageSendCallback;
 import ovh.mythmc.social.api.configuration.LegacySocialSettings;
 import ovh.mythmc.social.api.configuration.SocialSettings;
-import ovh.mythmc.social.api.events.chat.SocialPrivateMessageEvent;
 import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -86,10 +87,15 @@ public final class SocialUserListener implements Listener {
         container.set(key, PersistentDataType.STRING, event.getPlayer().getDisplayName());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPrivateMessage(SocialPrivateMessageEvent event) {
-        if (!event.isCancelled())
-            Social.get().getChatManager().sendPrivateMessage(event.getSender(), event.getRecipient(), event.getMessage());
+    public void registerCallbackHandlers() {
+        SocialPrivateMessageSendCallback.INSTANCE.registerHandler("social:userPrivateMessageSender", ctx -> {
+            if (!ctx.cancelled())
+                Social.get().getChatManager().sendPrivateMessage(ctx.sender(), ctx.recipient(), ctx.plainMessage());
+        });
+    }
+
+    public void unregisterCallbackHandlers() {
+        SocialPrivateMessageSendCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "userPrivateMessageSender"));
     }
 
 }

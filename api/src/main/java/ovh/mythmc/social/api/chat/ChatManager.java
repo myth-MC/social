@@ -8,22 +8,27 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelCreate;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelCreateCallback;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelDelete;
+import ovh.mythmc.social.api.callbacks.channel.SocialChannelDeleteCallback;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupAliasChange;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupAliasChangeCallback;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupCreate;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupCreateCallback;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupDisband;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupDisbandCallback;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupLeaderChange;
+import ovh.mythmc.social.api.callbacks.group.SocialGroupLeaderChangeCallback;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer.Registered;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.events.chat.SocialChannelCreateEvent;
-import ovh.mythmc.social.api.events.chat.SocialChannelDeleteEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupAliasChangeEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupCreateEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupDisbandEvent;
-import ovh.mythmc.social.api.events.groups.SocialGroupLeaderChangeEvent;
 import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.*;
@@ -46,24 +51,32 @@ public final class ChatManager {
 
     private final Map<Class<?>, SocialChatRenderer.Registered<?>> renderersMap = new HashMap<>();
 
-    public <T> void registerRenderer(final @NotNull Class<T> targetClass, final @NotNull SocialChatRenderer<T> renderer, final @NotNull Function<SocialChatRenderer.Builder<T>, SocialChatRenderer.Builder<T>> options) {
+    public <T> SocialChatRenderer.Registered<T> registerRenderer(final @NotNull Class<T> targetClass, final @NotNull SocialChatRenderer<T> renderer, final @NotNull Function<SocialChatRenderer.Builder<T>, SocialChatRenderer.Builder<T>> options) {
         var builder = SocialChatRenderer.builder(renderer);
         builder = options.apply(builder);
 
-        this.renderersMap.put(targetClass, builder.build());
+        var registered = builder.build();
+        this.renderersMap.put(targetClass, registered);
+        return registered;
     }
 
-    public <T> void unregisterRenderer(final @NotNull Class<T> targetClass) {
+    public <T> void unregisterRenderer(final @NotNull SocialChatRenderer.Registered<T> registeredRenderer) {
+        Map.copyOf(renderersMap).entrySet().stream()
+            .filter(entry -> entry.getValue().equals(registeredRenderer))
+            .forEach(entry -> this.renderersMap.remove(entry.getKey()));
+    }
+
+    public <T> void unregisterAllRenderers(final @NotNull Class<T> targetClass) {
         this.renderersMap.remove(targetClass);
     }
 
     @SuppressWarnings("unchecked")
-    public @Nullable <T> SocialChatRenderer.Registered<T> getRenderer(final @NotNull Class<T> object) {
+    public @Nullable <T> SocialChatRenderer.Registered<T> getRegisteredRenderer(final @NotNull Class<T> object) {
         return (Registered<T>) this.renderersMap.get(object);
     }
 
     @SuppressWarnings("unchecked")
-    public @Nullable <T> SocialChatRenderer.Registered<T> getRenderer(final @NotNull Audience audience) {
+    public @Nullable <T> SocialChatRenderer.Registered<T> getRegisteredRenderer(final @NotNull Audience audience) {
         return (Registered<T>) this.renderersMap.entrySet().stream()
             .filter(entry -> entry.getValue().mapFromAudience(audience).isSuccess())
             .map(entry -> entry.getValue())
@@ -104,17 +117,17 @@ public final class ChatManager {
         SocialUser previousLeader = Social.get().getUserManager().getByUuid(groupChatChannel.getLeaderUuid());
         SocialUser leader = Social.get().getUserManager().getByUuid(leaderUuid);
 
-        SocialGroupLeaderChangeEvent socialGroupLeaderChangeEvent = new SocialGroupLeaderChangeEvent(groupChatChannel, previousLeader, leader);
-        Bukkit.getPluginManager().callEvent(socialGroupLeaderChangeEvent);
+        SocialGroupLeaderChange socialGroupLeaderChange = new SocialGroupLeaderChange(groupChatChannel, previousLeader, leader);
+        SocialGroupLeaderChangeCallback.INSTANCE.handle(socialGroupLeaderChange);
 
         groupChatChannel.setLeaderUuid(leaderUuid);
     }
 
     public void setGroupChannelAlias(final @NotNull GroupChatChannel groupChatChannel, final @Nullable String alias) {
-        SocialGroupAliasChangeEvent socialGroupAliasChangeEvent = new SocialGroupAliasChangeEvent(groupChatChannel, alias);
-        Bukkit.getPluginManager().callEvent(socialGroupAliasChangeEvent);
+        var callback = new SocialGroupAliasChange(groupChatChannel, alias);
+        SocialGroupAliasChangeCallback.INSTANCE.handle(callback);
         
-        groupChatChannel.setAlias(socialGroupAliasChangeEvent.getAlias());
+        groupChatChannel.setAlias(callback.newAlias());
     }
 
     public boolean exists(final @NotNull String channelName) {
@@ -125,8 +138,8 @@ public final class ChatManager {
         if (Social.get().getConfig().getGeneral().isDebug())
             Social.get().getLogger().info("Registered channel '" + chatChannel.getName() + "'");
 
-        SocialChannelCreateEvent event = new SocialChannelCreateEvent(chatChannel);
-        Bukkit.getPluginManager().callEvent(event);
+        var callback = new SocialChannelCreate(chatChannel);
+        SocialChannelCreateCallback.INSTANCE.handle(callback);
 
         return channels.add(chatChannel);
     }
@@ -136,9 +149,10 @@ public final class ChatManager {
         GroupChatChannel chatChannel = new GroupChatChannel(leaderUuid, alias, code);
         chatChannel.addMember(leaderUuid);
 
-        SocialGroupCreateEvent socialGroupCreateEvent = new SocialGroupCreateEvent(chatChannel);
-        Bukkit.getPluginManager().callEvent(socialGroupCreateEvent);
-        return registerChatChannel(chatChannel);
+        var callback = new SocialGroupCreate(chatChannel);
+        SocialGroupCreateCallback.INSTANCE.handle(callback);
+
+        return registerChatChannel(callback.groupChatChannel());
     }
 
     public boolean registerGroupChatChannel(final @NotNull UUID leaderUuid) {
@@ -146,16 +160,16 @@ public final class ChatManager {
     }
 
     public boolean unregisterChatChannel(final @NotNull ChatChannel chatChannel) {
-        if (chatChannel instanceof GroupChatChannel) {
-            SocialGroupDisbandEvent socialGroupDisbandEvent = new SocialGroupDisbandEvent((GroupChatChannel) chatChannel);
-            Bukkit.getPluginManager().callEvent(socialGroupDisbandEvent);
-        }
-
         if (Social.get().getConfig().getGeneral().isDebug())
             Social.get().getLogger().info("Unregistered channel '" + chatChannel.getName() + "'");
 
-        SocialChannelDeleteEvent event = new SocialChannelDeleteEvent(chatChannel);
-        Bukkit.getPluginManager().callEvent(event);
+        if (chatChannel instanceof GroupChatChannel groupChatChannel) {
+            var callback = new SocialGroupDisband(groupChatChannel);
+            SocialGroupDisbandCallback.INSTANCE.handle(callback);
+        } else {
+            var callback = new SocialChannelDelete(chatChannel);
+            SocialChannelDeleteCallback.INSTANCE.handle(callback);
+        }
 
         return channels.remove(chatChannel);
     }
