@@ -260,7 +260,7 @@
         <dependency>
             <groupId>com.github.myth-MC.gestalt</groupId>
             <artifactId>gestalt-api</artifactId>
-            <version>ebc2941</version>
+            <version>8e41582</version>
             <scope>provided</scope>
         </dependency>
 

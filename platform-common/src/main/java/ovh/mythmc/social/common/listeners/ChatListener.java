@@ -79,8 +79,8 @@ public final class ChatListener implements Listener {
                     ctx.replyId(reply.replyId());
 
                 // Switch channel if necessary
-                if (!reply.chatChannel().equals(ctx.channel()) && Social.get().getChatManager().hasPermission(ctx.sender(), reply.chatChannel()))
-                    ctx.channel(reply.chatChannel());
+                if (!reply.channel().equals(ctx.channel()) && Social.get().getChatManager().hasPermission(ctx.sender(), reply.channel()))
+                    ctx.channel(reply.channel());
             }
         });
 
@@ -102,17 +102,17 @@ public final class ChatListener implements Listener {
             }
         });
 
-        SocialChannelPreSwitchCallback.INSTANCE.registerHandler("social:chatChannelPrepareMember", (ctx) -> {
-            if (!ctx.channel().getMemberUuids().contains(ctx.user().getUuid()))
-                ctx.channel().addMember(ctx.user().getUuid());
+        SocialChannelPreSwitchCallback.INSTANCE.registerListener("social:chatChannelPrepareMember", (user, channel) -> {
+            if (!channel.getMemberUuids().contains(user.getUuid()))
+                channel.addMember(user.getUuid());
         });
 
-        SocialChannelPostSwitchCallback.INSTANCE.registerHandler("social:chatChannelSwitchMessage", (ctx) -> {
-            if (ctx.user().isCompanion())
+        SocialChannelPostSwitchCallback.INSTANCE.registerListener("social:chatChannelSwitchMessage", (user, previousChannel, channel) -> {
+            if (user.isCompanion())
                 return;
             
-            SocialParserContext context = SocialParserContext.builder(ctx.user(), Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
-                .channel(ctx.channel())
+            SocialParserContext context = SocialParserContext.builder(user, Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
+                .channel(channel)
                 .build();
 
             Social.get().getTextProcessor().parseAndSend(context);
@@ -122,8 +122,8 @@ public final class ChatListener implements Listener {
     public void unregisterCallbackHandlers() {
         SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "replyChannelSwitcher"));
         SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatPermissionChecker"));
-        SocialChannelPreSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatChannelPrepareMember"));
-        SocialChannelPostSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatChannelSwtichMessage"));
+        SocialChannelPreSwitchCallback.INSTANCE.unregisterListeners(IdentifierKey.of("social", "chatChannelPrepareMember"));
+        SocialChannelPostSwitchCallback.INSTANCE.unregisterListeners(IdentifierKey.of("social:chatChannelSwitchMessage"));
     }
 
 }

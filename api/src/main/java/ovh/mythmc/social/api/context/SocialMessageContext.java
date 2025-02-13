@@ -21,7 +21,7 @@ public class SocialMessageContext implements SocialContext {
 
     private final SocialUser sender;
 
-    private final ChatChannel chatChannel;
+    private final ChatChannel channel;
 
     private final Set<Audience> viewers;
 

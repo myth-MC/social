@@ -51,7 +51,7 @@ public class SocialChatRendererUtil {
             return replyIcon;
 
         // Check that sender has permission to send messages on this channel
-        if (!Social.get().getChatManager().hasPermission(sender, message.chatChannel()))
+        if (!Social.get().getChatManager().hasPermission(sender, message.channel()))
             return replyIcon;
 
         // Get the reply context
@@ -78,7 +78,7 @@ public class SocialChatRendererUtil {
             .appendNewline()
             .append(
                 Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, Component.text(Social.get().getConfig().getSettings().getChat().getReplyHoverText()))
-                    .channel(reply.chatChannel())
+                    .channel(reply.channel())
                     .build())
             );
 

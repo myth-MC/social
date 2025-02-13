@@ -14,6 +14,8 @@ public abstract class ReactionFactory {
 
     public static @NotNull ReactionFactory get() { return reactionFactory; }
 
-    public abstract void displayReaction(SocialUser user, Reaction emoji);
+    protected abstract void displayReaction(SocialUser user, Reaction reaction);
+
+    public abstract void scheduleReaction(SocialUser user, Reaction reaction);
 
 }

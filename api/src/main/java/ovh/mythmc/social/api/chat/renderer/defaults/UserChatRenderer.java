@@ -17,7 +17,7 @@ public class UserChatRenderer implements SocialChatRenderer<SocialUser> {
     public SocialRendererContext render(SocialUser target, SocialRegisteredMessageContext context) {
         // Set variables
         SocialUser sender = context.sender();
-        ChatChannel channel = sender.getMainChannel();
+        ChatChannel channel = context.channel();
         String rawMessage = context.rawMessage();
 
         // Get channel icon

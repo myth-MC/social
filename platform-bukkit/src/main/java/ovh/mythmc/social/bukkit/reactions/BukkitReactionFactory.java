@@ -16,9 +16,12 @@ import org.bukkit.util.Transformation;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTrigger;
+import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.common.adapters.PlatformAdapter;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -52,7 +55,17 @@ public final class BukkitReactionFactory extends ReactionFactory {
     
             scheduleItemDisplayUpdate(player, itemDisplay);
         });
+    }
 
+    @Override
+    public void scheduleReaction(SocialUser user, Reaction reaction) {
+        var callback = new SocialReactionTrigger(user, reaction);
+        SocialReactionTriggerCallback.INSTANCE.handle(callback, result -> {
+            if (!result.cancelled())
+                    PlatformAdapter.get().runEntityTask((JavaPlugin) Bukkit.getPluginManager().getPlugin("social"), user.player().get(), () -> {
+                        displayReaction(result.user(), result.reaction());
+            });
+        });
     }
 
     private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {

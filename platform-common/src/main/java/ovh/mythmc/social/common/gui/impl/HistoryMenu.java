@@ -108,7 +108,7 @@ public class HistoryMenu implements HistoryBookMenu {
                     .appendNewline()
                     .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext()).colorIfAbsent(NamedTextColor.BLUE))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.chatChannel().getName(), message.chatChannel().getColor())));
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().getName(), message.channel().getColor())));
 
                 Component toAppend = Component.empty()
                     .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))

@@ -18,7 +18,7 @@ import ovh.mythmc.social.common.features.hooks.PlaceholderAPIFeature;
 @Feature(group = "social", identifier = "BOOTSTRAP")
 public final class BootstrapFeature {
 
-    private boolean initialized = false;
+    private static boolean initialized = false;
 
     @FeatureInitialize
     public void initialize() {
@@ -51,6 +51,8 @@ public final class BootstrapFeature {
             SystemMessagesFeature.class,
             DiscordSRVFeature.class,
             PlaceholderAPIFeature.class);
+
+        initialized = true;
     }
 
     @FeatureEnable

@@ -6,9 +6,8 @@ import dev.triumphteam.cmd.bukkit.annotation.Permission;
 import dev.triumphteam.cmd.core.annotations.Command;
 import dev.triumphteam.cmd.core.annotations.Suggestion;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTrigger;
-import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reactions.Reaction;
+import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.api.users.SocialUser;
 
 @Command(value = "reaction", alias = {"e", "emote"})
@@ -23,8 +22,7 @@ public final class ReactionBaseCommand {
             return;
         }
 
-        var callback = new SocialReactionTrigger(user, reaction);
-        SocialReactionTriggerCallback.INSTANCE.handle(callback);
+        ReactionFactory.get().scheduleReaction(user, reaction);
     }
     
 }

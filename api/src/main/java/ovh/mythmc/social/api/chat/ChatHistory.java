@@ -28,7 +28,7 @@ public final class ChatHistory {
             id, 
             System.currentTimeMillis(),
             messageContext.sender(), 
-            messageContext.chatChannel(), 
+            messageContext.channel(), 
             messageContext.viewers(),
             finalMessage, 
             messageContext.rawMessage(), 
@@ -54,7 +54,7 @@ public final class ChatHistory {
             context.id(), 
             context.timestamp(),
             context.sender(), 
-            context.chatChannel(), 
+            context.channel(), 
             context.viewers(),
             Component.text("N/A", NamedTextColor.RED), 
             context.rawMessage(), 
@@ -70,7 +70,7 @@ public final class ChatHistory {
 
     public List<SocialRegisteredMessageContext> getByChannel(final @NotNull ChatChannel chatChannel) {
         return messages.values().stream()
-                .filter(message -> message.chatChannel().equals(chatChannel))
+                .filter(message -> message.channel().equals(chatChannel))
                 .toList();
     }
 

@@ -1,14 +1,13 @@
 package ovh.mythmc.social.common.listeners;
 
 import lombok.RequiredArgsConstructor;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTrigger;
-import ovh.mythmc.social.api.callbacks.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.reactions.ReactionFactory;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -37,11 +36,7 @@ public final class ReactionsListener implements Listener {
         }
 
         if (reaction != null) {
-            var callback = new SocialReactionTrigger(user, reaction);
-            SocialReactionTriggerCallback.INSTANCE.handle(callback, result -> {
-                if (!result.cancelled())
-                    ReactionFactory.get().displayReaction(result.user(), result.reaction());
-            });
+            ReactionFactory.get().scheduleReaction(user, reaction);
         }
     }
 

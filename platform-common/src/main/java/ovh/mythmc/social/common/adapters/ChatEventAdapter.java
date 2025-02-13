@@ -129,7 +129,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
                 registeredMessage.id(), 
                 registeredMessage.timestamp(), 
                 registeredMessage.sender(), 
-                registeredMessage.chatChannel(), 
+                registeredMessage.channel(), 
                 registeredMessage.viewers(), 
                 registeredMessage.message().applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") "))), 
                 registeredMessage.rawMessage(), 

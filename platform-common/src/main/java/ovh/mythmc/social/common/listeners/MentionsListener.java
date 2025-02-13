@@ -78,7 +78,7 @@ public final class MentionsListener {
         );
     }
 
-    private Sound getSoundByKey(String key) {
+    private static Sound getSoundByKey(String key) {
         if (!Key.parseable(key))
             return null;
 
