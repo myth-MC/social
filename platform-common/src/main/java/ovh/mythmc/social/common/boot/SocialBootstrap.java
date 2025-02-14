@@ -23,6 +23,7 @@ import ovh.mythmc.social.common.text.placeholders.chat.ChannelNicknameColorPlace
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.chat.ChannelTextColorPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.ClickableNicknamePlaceholder;
+import ovh.mythmc.social.common.text.placeholders.player.FormattedNicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.NicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.SocialSpyPlaceholder;
 import ovh.mythmc.social.common.text.placeholders.player.UsernamePlaceholder;
@@ -121,7 +122,8 @@ public abstract class SocialBootstrap<T> implements Social {
         Social.get().getTextProcessor().EARLY_PARSERS.add(
             new UsernamePlaceholder(),
             new NicknamePlaceholder(),
-            new ClickableNicknamePlaceholder()
+            new ClickableNicknamePlaceholder(),
+            new FormattedNicknamePlaceholder()
         );
 
         Social.get().getTextProcessor().registerContextualParser(

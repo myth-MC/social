@@ -40,14 +40,14 @@ public final class GlobalTextProcessor {
 
     public List<SocialContextualParser> getContextualParsers() {
         List<SocialContextualParser> parserList = new ArrayList<>();
-        parserList.addAll(EARLY_PARSERS.get());
+        parserList.add(EARLY_PARSERS);
         parserList.addAll(parsers);
-        parserList.addAll(LATE_PARSERS.get());
+        parserList.add(LATE_PARSERS);
         return parserList;
     }
 
     public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
-        return getContextualParsers().stream().filter(parser -> parser.getClass().equals(clazz)).toList().get(0);
+        return getContextualParsers().stream().filter(parser -> parser.getClass().equals(clazz)).findFirst().orElse(null);
     }
 
     public List<SocialContextualParser> getContextualParsersWithGroupMembers() {
