@@ -4,8 +4,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.Callback;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.Callback;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetters;
 import ovh.mythmc.social.api.reactions.Reaction;
 import ovh.mythmc.social.api.users.SocialUser;
 
@@ -14,15 +15,17 @@ import ovh.mythmc.social.api.users.SocialUser;
 @Setter
 @Accessors(fluent = true)
 @Callback
+@CallbackFieldGetters({
+    @CallbackFieldGetter(field = "user", getter = "user()"),
+    @CallbackFieldGetter(field = "reaction", getter = "reaction()"),
+    @CallbackFieldGetter(field = "cancelled", getter = "cancelled()")
+})
 public final class SocialReactionTrigger {
 
-    @CallbackFieldGetter("user")
     private final SocialUser user;
     
-    @CallbackFieldGetter("reaction")
     private final Reaction reaction;
 
-    @CallbackFieldGetter("cancelled")
     private boolean cancelled = false;
     
 }

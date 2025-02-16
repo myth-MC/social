@@ -197,6 +197,11 @@
             <id>codemc-releases</id>
             <url>https://repo.codemc.io/repository/maven-releases/</url>
         </repository>
+
+        <repository>
+            <id>myth-mc-snapshots</id>
+            <url>https://repo.mythmc.ovh/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -248,19 +253,17 @@
             <version>4.18.0</version>
         </dependency>
 
-        <!--
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-api</artifactId>
             <version>0.1.10</version>
             <scope>provided</scope>
         </dependency>
-        -->
 
         <dependency>
-            <groupId>com.github.myth-MC.gestalt</groupId>
-            <artifactId>gestalt-api</artifactId>
-            <version>8e41582</version>
+            <groupId>ovh.mythmc</groupId>
+            <artifactId>callbacks-processor</artifactId>
+            <version>0.1.0</version>
             <scope>provided</scope>
         </dependency>
 

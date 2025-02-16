@@ -6,8 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.Callback;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.Callback;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetters;
 import ovh.mythmc.social.api.users.SocialUser;
 
 @RequiredArgsConstructor
@@ -15,18 +16,20 @@ import ovh.mythmc.social.api.users.SocialUser;
 @Setter
 @Accessors(fluent = true)
 @Callback
+@CallbackFieldGetters({
+    @CallbackFieldGetter(field = "sender", getter = "sender()"),
+    @CallbackFieldGetter(field = "recipient", getter = "recipient()"),
+    @CallbackFieldGetter(field = "plainMessage", getter = "plainMessage()"),
+    @CallbackFieldGetter(field = "cancelled", getter = "cancelled()")
+})
 public final class SocialPrivateMessageSend {
 
-    @CallbackFieldGetter("sender")
     private final SocialUser sender;
 
-    @CallbackFieldGetter("recipient")
     private final SocialUser recipient;
 
-    @CallbackFieldGetter("plainMessage")
     private @NotNull String plainMessage;
 
-    @CallbackFieldGetter("cancelled")
     private boolean cancelled = false;
 
 }

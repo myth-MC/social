@@ -7,8 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.Callback;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.Callback;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetters;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.users.SocialUser;
@@ -18,27 +19,29 @@ import ovh.mythmc.social.api.users.SocialUser;
 @Setter
 @Accessors(fluent = true)
 @Callback
+@CallbackFieldGetters({
+    @CallbackFieldGetter(field = "sender", getter = "sender()"),
+    @CallbackFieldGetter(field = "recipient", getter = "recipient()"),
+    @CallbackFieldGetter(field = "channel", getter = "channel()"),
+    @CallbackFieldGetter(field = "message", getter = "message()"),
+    @CallbackFieldGetter(field = "messageId", getter = "messageId()"),
+    @CallbackFieldGetter(field = "replyId", getter = "replyId()"),
+    @CallbackFieldGetter(field = "cancelled", getter = "cancelled()")
+})
 public class SocialMessageReceive {
 
-    @CallbackFieldGetter("sender")
     private final SocialUser sender;
 
-    @CallbackFieldGetter("recipient")
     private final SocialUser recipient;
 
-    @CallbackFieldGetter("channel")
     private final ChatChannel channel;
 
-    @CallbackFieldGetter("message")
     private @NotNull Component message;
 
-    @CallbackFieldGetter("messageId")
     private final int messageId;
 
-    @CallbackFieldGetter("replyId")
     private final Integer replyId;
 
-    @CallbackFieldGetter("cancelled")
     private boolean cancelled = false;
 
     public boolean isReply() {

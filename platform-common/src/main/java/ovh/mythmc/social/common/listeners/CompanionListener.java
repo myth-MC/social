@@ -12,7 +12,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.gestalt.key.IdentifierKey;
+import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelCreateCallback;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelDeleteCallback;

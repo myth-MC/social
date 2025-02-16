@@ -29,9 +29,6 @@ public class SystemMessagesSettings {
     @Comment("Message that will be sent to everyone when a player quits the server")
     private String quitMessage = "<dark_gray>[<red>-</red>]</dark_gray> <white>$(clickable_nickname)</white>";
 
-    @Comment("Delay in TICKS between the quit event and the quit message")
-    private int quitMessageDelayInTicks = 1;
-
     @Comment("Whether the death message should be customized or not")
     private boolean customizeDeathMessage = true;
 

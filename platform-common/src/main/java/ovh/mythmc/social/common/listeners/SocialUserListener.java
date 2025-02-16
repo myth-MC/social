@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import ovh.mythmc.gestalt.key.IdentifierKey;
+import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.message.SocialPrivateMessageSendCallback;
 import ovh.mythmc.social.api.configuration.LegacySocialSettings;

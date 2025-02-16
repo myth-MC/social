@@ -15,7 +15,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import ovh.mythmc.gestalt.key.IdentifierKey;
+import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.message.SocialMessagePrepareCallback;
 import ovh.mythmc.social.api.chat.ChannelType;

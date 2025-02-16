@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.gestalt.key.IdentifierKey;
+import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelPostSwitchCallback;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelPreSwitchCallback;

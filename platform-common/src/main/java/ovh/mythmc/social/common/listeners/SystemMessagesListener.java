@@ -55,27 +55,25 @@ public final class SystemMessagesListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        PlatformAdapter.get().runAsyncTaskLater(plugin, () -> {
-            SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
-            if (user == null)
-                return;
+        SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
+        if (user == null)
+            return;
 
-            if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeQuitMessage())
-                return;
+        if (!Social.get().getConfig().getSettings().getSystemMessages().isCustomizeQuitMessage())
+            return;
 
-            // Send message to console
-            if (event.getQuitMessage() != null)
-                Social.get().getLogger().info(ChatColor.stripColor(event.getQuitMessage().trim()));
+        // Send message to console
+        if (event.getQuitMessage() != null)
+            Social.get().getLogger().info(ChatColor.stripColor(event.getQuitMessage().trim()));
 
-            String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
-            if (unformattedMessage == null || unformattedMessage.isEmpty())
-                return;
+        String unformattedMessage = Social.get().getConfig().getSettings().getSystemMessages().getQuitMessage();
+        if (unformattedMessage == null || unformattedMessage.isEmpty())
+            return;
 
-            Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
-            ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
+        Component message = parse(user, user.getMainChannel(), Component.text(unformattedMessage));
+        ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSettings().getSystemMessages().getChannelType());
 
-            Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType, null);
-        }, Social.get().getConfig().getSystemMessages().getQuitMessageDelayInTicks());
+        Social.get().getTextProcessor().send(Social.get().getUserManager().get(), message, channelType, null);
 
         event.setQuitMessage("");
     }

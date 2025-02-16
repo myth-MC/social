@@ -6,7 +6,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import ovh.mythmc.gestalt.key.IdentifierKey;
+import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.group.SocialGroupCreateCallback;
 import ovh.mythmc.social.api.callbacks.group.SocialGroupDisbandCallback;
