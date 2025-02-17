@@ -28,13 +28,11 @@ public final class ServerLinksListener implements Listener {
 
             if (serverLink.type() == null) {
                 Component displayName = Social.get().getTextProcessor().parse(user, user.getMainChannel(), Component.text(serverLink.displayName()));
-
                 PlatformAdapter.get().sendLink(serverLinks, displayName, uri);
-                return;
+            } else {
+                ServerLinks.Type type = ServerLinks.Type.valueOf(serverLink.type());
+                serverLinks.addLink(type, uri);
             }
-
-            ServerLinks.Type type = ServerLinks.Type.valueOf(serverLink.type());
-            serverLinks.addLink(type, uri);
 
             event.getPlayer().sendLinks(serverLinks);
         });

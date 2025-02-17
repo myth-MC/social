@@ -50,8 +50,8 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         var plainMessage = PlainTextComponentSerializer.plainText().serialize(message(event));
 
         // Flood filter
-        if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
-            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+        if (Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
+            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
             if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
                     sender.player().isPresent() && !sender.player().get().hasPermission("social.filter.bypass")) {
@@ -83,7 +83,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
 
         // Prepare message event
         var preCallback = new SocialMessagePrepare(sender, channel, plainMessage, replyId);
-        SocialMessagePrepareCallback.INSTANCE.handle(preCallback);
+        SocialMessagePrepareCallback.INSTANCE.invoke(preCallback);
         if (preCallback.cancelled())
             return;
 
@@ -120,7 +120,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
             idToReply = Integer.min(replyId, idToReply);
 
         var postCallback = new SocialMessageSend(sender, channel, filteredMessage, registeredMessage.id(), idToReply);
-        SocialMessageSendCallback.INSTANCE.handle(postCallback);
+        SocialMessageSendCallback.INSTANCE.invoke(postCallback);
 
         // Let the impl handle the rest
         render(

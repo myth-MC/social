@@ -39,7 +39,7 @@ public final class AnnouncementManager {
     }
 
     private void performTask() {
-        if (!Social.get().getConfig().getSettings().getAnnouncements().isEnabled())
+        if (!Social.get().getConfig().getAnnouncements().isEnabled())
             return;
 
         asyncScheduler.schedule(new TimerTask() {
@@ -47,7 +47,7 @@ public final class AnnouncementManager {
             public void run() {
                 SocialAnnouncement announcement = announcements.get(latest);
 
-                if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
+                if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
                     Social.get().getUserManager().get().forEach(user -> {
                         SocialParserContext context = SocialParserContext.builder(user, announcement.message())
                             .messageChannelType(ChannelType.ACTION_BAR)
@@ -73,7 +73,7 @@ public final class AnnouncementManager {
 
                 performTask();
             }
-        }, Social.get().getConfig().getSettings().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
+        }, Social.get().getConfig().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
     }
 
     public void restartTask() {

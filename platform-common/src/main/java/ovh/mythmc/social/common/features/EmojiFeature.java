@@ -16,7 +16,7 @@ public final class EmojiFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getEmojis().isEnabled();
+        return Social.get().getConfig().getEmojis().isEnabled();
     }
 
     @FeatureEnable

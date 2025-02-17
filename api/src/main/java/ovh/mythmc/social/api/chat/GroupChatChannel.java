@@ -30,13 +30,13 @@ public class GroupChatChannel extends ChatChannel {
     public GroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias, final int code) {
         super(
                 "G-" + code,
-                TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getColor()),
-                Social.get().getConfig().getSettings().getChat().getGroups().getIcon(),
-                Social.get().getConfig().getSettings().getChat().getGroups().isShowHoverText(),
-                getHoverTextAsComponent(Social.get().getConfig().getSettings().getChat().getGroups().getHoverText()),
-                TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getNicknameColor()),
-                Social.get().getConfig().getSettings().getChat().getGroups().getTextDivider(),
-                TextColor.fromHexString(Social.get().getConfig().getSettings().getChat().getGroups().getTextColor()),
+                TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getColor()),
+                Social.get().getConfig().getChat().getGroups().getIcon(),
+                Social.get().getConfig().getChat().getGroups().isShowHoverText(),
+                getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),
+                TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getNicknameColor()),
+                Social.get().getConfig().getChat().getGroups().getTextDivider(),
+                TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getTextColor()),
                 null,
                 false
         );
@@ -53,20 +53,20 @@ public class GroupChatChannel extends ChatChannel {
 
     @Override
     public boolean addMember(UUID uuid) {
-        if (getMembers().size() >= Social.get().getConfig().getSettings().getChat().getGroups().getPlayerLimit())
+        if (getMembers().size() >= Social.get().getConfig().getChat().getGroups().getPlayerLimit())
             return false;
 
         super.addMember(uuid);
 
         var callback = new SocialGroupJoin(this, getLeader());
-        SocialGroupJoinCallback.INSTANCE.handle(callback);
+        SocialGroupJoinCallback.INSTANCE.invoke(callback);
 
         return true;
     }
 
     public boolean removeMember(UUID uuid) {
         var callback = new SocialGroupLeave(this, getLeader());
-        SocialGroupLeaveCallback.INSTANCE.handle(callback);
+        SocialGroupLeaveCallback.INSTANCE.invoke(callback);
 
         return super.removeMember(uuid);
     }

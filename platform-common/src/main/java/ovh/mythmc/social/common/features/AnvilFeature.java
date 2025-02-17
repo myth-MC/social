@@ -27,8 +27,8 @@ public final class AnvilFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getTextReplacement().isEnabled() &&
-                Social.get().getConfig().getSettings().getTextReplacement().isAnvil();
+        return Social.get().getConfig().getTextReplacement().isEnabled() &&
+                Social.get().getConfig().getTextReplacement().isAnvil();
     }
 
     @FeatureEnable

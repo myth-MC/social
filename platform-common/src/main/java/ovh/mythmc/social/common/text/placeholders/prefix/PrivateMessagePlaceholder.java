@@ -21,7 +21,7 @@ public final class PrivateMessagePlaceholder extends SocialContextualPlaceholder
 
     @Override
     public Component get(SocialParserContext context) {
-        Component prefix = Component.text(Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix());
+        Component prefix = Component.text(Social.get().getConfig().getCommands().getPrivateMessage().prefix());
         return SocialContextualParser.request(context.withMessage(prefix), MiniMessageParser.class);
     }
 

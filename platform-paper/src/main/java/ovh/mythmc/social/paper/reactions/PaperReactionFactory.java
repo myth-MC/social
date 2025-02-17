@@ -59,7 +59,7 @@ public final class PaperReactionFactory extends ReactionFactory {
     @Override
     public void scheduleReaction(SocialUser user, Reaction reaction) {
         var callback = new SocialReactionTrigger(user, reaction);
-        SocialReactionTriggerCallback.INSTANCE.handle(callback, result -> {
+        SocialReactionTriggerCallback.INSTANCE.invoke(callback, result -> {
             if (!result.cancelled())
                     PlatformAdapter.get().runEntityTask((JavaPlugin) Bukkit.getPluginManager().getPlugin("social"), user.player().get(), () -> {
                         displayReaction(result.user(), result.reaction());
@@ -72,7 +72,7 @@ public final class PaperReactionFactory extends ReactionFactory {
         location.setPitch(0);
         location.setYaw(location.getYaw() - 180);
 
-        double offsetY = Social.get().getConfig().getSettings().getReactions().getOffsetY();
+        double offsetY = Social.get().getConfig().getReactions().getOffsetY();
         ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
                 location,
                 EntityType.ITEM_DISPLAY
@@ -148,8 +148,8 @@ public final class PaperReactionFactory extends ReactionFactory {
     }
 
     private void scheduleItemDisplayUpdate(Player player, ItemDisplay itemDisplay) {
-        int durationInSeconds = Social.get().getConfig().getSettings().getReactions().getDurationInSeconds();
-        int updateIntervalInTicks = Social.get().getConfig().getSettings().getReactions().getUpdateIntervalInTicks();
+        int durationInSeconds = Social.get().getConfig().getReactions().getDurationInSeconds();
+        int updateIntervalInTicks = Social.get().getConfig().getReactions().getUpdateIntervalInTicks();
 
         //int remainingTicks = durationInSeconds * 20;
         var remainingTicks = new Object() { int ticks = durationInSeconds * 20; };

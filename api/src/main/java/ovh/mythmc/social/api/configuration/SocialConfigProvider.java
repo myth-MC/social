@@ -35,6 +35,7 @@ public final class SocialConfigProvider {
 
     private final File pluginFolder;
 
+    @Deprecated(since = "0.4", forRemoval = true) 
     private SocialSettings settings;
 
     private SocialMessages messages = new SocialMessages();
@@ -100,6 +101,17 @@ public final class SocialConfigProvider {
                 LegacySocialSettings.class,
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
             );
+
+            general = settings.getGeneral();
+            chat = settings.getChat();
+            reactions = settings.getReactions();
+            emojis = settings.getEmojis();
+            motd = settings.getMotd();
+            announcements = settings.getAnnouncements();
+            systemMessages = settings.getSystemMessages();
+            serverLinks = settings.getServerLinks();
+            textReplacement = settings.getTextReplacement();
+            commands = settings.getCommands();
 
             logger.warn("This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup");
             return;

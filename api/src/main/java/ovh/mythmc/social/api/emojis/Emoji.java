@@ -16,7 +16,7 @@ public record Emoji(String name, List<String> aliases, String unicodeCharacter) 
 
         if (!aliases.isEmpty()) {
             String aliasesHoverText = String.format(
-                Social.get().getConfig().getSettings().getEmojis().getHoverTextAliases(),
+                Social.get().getConfig().getEmojis().getHoverTextAliases(),
                 aliases.toString().replace("[", "").replace("]", ""));
 
             description = description
@@ -28,7 +28,7 @@ public record Emoji(String name, List<String> aliases, String unicodeCharacter) 
             description = description
                 .appendNewline()
                 .appendNewline()
-                .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getSettings().getEmojis().getHoverTextInsertion()));
+                .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getEmojis().getHoverTextInsertion()));
         }
 
         return description;

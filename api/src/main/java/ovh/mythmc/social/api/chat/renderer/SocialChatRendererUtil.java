@@ -28,7 +28,7 @@ public class SocialChatRendererUtil {
         Component channelHoverText = Component.empty();
         if (channel.isShowHoverText())
             channelHoverText = channelHoverText
-                .append(Component.text(Social.get().getConfig().getSettings().getChat().getChannelHoverText()))
+                .append(Component.text(Social.get().getConfig().getChat().getChannelHoverText()))
                 .appendNewline()
                 .append(channel.getHoverText());
 
@@ -37,7 +37,7 @@ public class SocialChatRendererUtil {
 
     public Component getNicknameWithColor(SocialUser user, ChatChannel channel) {
         Component nickname = Component.empty()
-            .append(Component.text(Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat()))
+            .append(Component.text(Social.get().getConfig().getChat().getPlayerNicknameFormat()))
             .colorIfAbsent(channel.getNicknameColor());
 
         return nickname;
@@ -77,13 +77,13 @@ public class SocialChatRendererUtil {
         hoverText = hoverText
             .appendNewline()
             .append(
-                Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, Component.text(Social.get().getConfig().getSettings().getChat().getReplyHoverText()))
+                Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, Component.text(Social.get().getConfig().getChat().getReplyHoverText()))
                     .channel(reply.channel())
                     .build())
             );
 
         // Set icon
-        replyIcon = Component.text(Social.get().getConfig().getSettings().getChat().getReplyFormat())
+        replyIcon = Component.text(Social.get().getConfig().getChat().getReplyFormat())
             .hoverEvent(hoverText)
             .clickEvent(ClickEvent.suggestCommand("(re:#" + reply.id() + ") "))
             .appendSpace()

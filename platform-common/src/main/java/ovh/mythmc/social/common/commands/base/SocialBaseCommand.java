@@ -37,7 +37,7 @@ public final class SocialBaseCommand {
     public void announce(SocialUser user, @Suggestion("announcements") Integer id, Flags flags) {
         SocialAnnouncement announcement = Social.get().getAnnouncementManager().getAnnouncements().get(id);
 
-        if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
+        if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
             if (flags.hasFlag("s")) {
                 Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), announcement.message(), ChannelType.ACTION_BAR);
                 return;

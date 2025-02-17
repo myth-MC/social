@@ -29,7 +29,7 @@ public final class TextFormattersFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().isPlayerFormatOptions();
+        return Social.get().getConfig().getChat().isPlayerFormatOptions();
     }
 
     @FeatureEnable

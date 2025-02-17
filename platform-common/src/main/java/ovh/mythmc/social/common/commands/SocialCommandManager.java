@@ -190,15 +190,15 @@ public final class SocialCommandManager {
         registeredCommands.add(new SocialBaseCommand());
 
         // /group
-        if (Social.get().getConfig().getSettings().getChat().getGroups().isEnabled())
+        if (Social.get().getConfig().getChat().getGroups().isEnabled())
             registeredCommands.add(new GroupBaseCommand());
 
         // /pm
-        if (Social.get().getConfig().getSettings().getCommands().getPrivateMessage().enabled())
+        if (Social.get().getConfig().getCommands().getPrivateMessage().enabled())
             registeredCommands.add(new PMBaseCommand());
 
         // /reaction
-        if (Social.get().getConfig().getSettings().getCommands().getReaction().enabled() && Social.get().getConfig().getSettings().getReactions().isEnabled())
+        if (Social.get().getConfig().getCommands().getReaction().enabled() && Social.get().getConfig().getReactions().isEnabled())
             registeredCommands.add(new ReactionBaseCommand());
 
         registeredCommands.forEach(manager::registerCommand);

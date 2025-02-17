@@ -61,7 +61,7 @@ public final class ChatListener implements Listener {
     public void registerCallbackHandlers() {
         SocialMessagePrepareCallback.INSTANCE.registerHandler("social:replyChannelSwitcher", (ctx) -> {
             if (!Social.get().getChatManager().hasPermission(ctx.sender(), ctx.channel())) {
-                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getChat().getDefaultChannel());
 
                 ctx.channel().removeMember(ctx.sender());
 
@@ -94,7 +94,7 @@ public final class ChatListener implements Listener {
 
             // We'll remove the player from this channel if they no longer have the required permission
             if (!Social.get().getChatManager().hasPermission(ctx.recipient(), ctx.channel())) {
-                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getChat().getDefaultChannel());
 
                 ctx.channel().removeMember(ctx.recipient());
                 PlatformAdapter.get().runGlobalTask(plugin, () -> Social.get().getUserManager().setMainChannel(ctx.recipient(), defaultChannel));

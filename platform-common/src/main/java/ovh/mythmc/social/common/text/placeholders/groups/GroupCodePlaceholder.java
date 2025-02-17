@@ -28,7 +28,7 @@ public final class GroupCodePlaceholder extends SocialContextualPlaceholder {
         if (groupChatChannel == null)
             return Component.empty();
 
-        Component hoverText = Component.text(Social.get().getConfig().getSettings().getChat().getGroups().getCodeHoverText());
+        Component hoverText = Component.text(Social.get().getConfig().getChat().getGroups().getCodeHoverText());
         hoverText = SocialContextualParser.request(context.withMessage(hoverText), 
             MiniMessageParser.class
         );

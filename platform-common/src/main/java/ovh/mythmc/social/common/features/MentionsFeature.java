@@ -14,7 +14,7 @@ public final class MentionsFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().isMentions();
+        return Social.get().getConfig().getChat().isMentions();
     }
 
     @FeatureEnable

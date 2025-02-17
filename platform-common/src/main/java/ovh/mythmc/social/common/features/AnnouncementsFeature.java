@@ -11,7 +11,7 @@ public final class AnnouncementsFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getAnnouncements().isEnabled();
+        return Social.get().getConfig().getAnnouncements().isEnabled();
     }
 
     @FeatureEnable

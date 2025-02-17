@@ -17,7 +17,7 @@ public final class PMBaseCommand {
     @Command
     public void execute(SocialUser sender, SocialUser recipient, @Suggestion("formatting-options") @Join(" ") String plainMessage) {
         var callback = new SocialPrivateMessageSend(recipient, recipient, plainMessage);
-        SocialPrivateMessageSendCallback.INSTANCE.handle(callback);
+        SocialPrivateMessageSendCallback.INSTANCE.invoke(callback);
     }
 
 }

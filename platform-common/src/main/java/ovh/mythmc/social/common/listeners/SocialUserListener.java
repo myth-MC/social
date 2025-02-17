@@ -48,7 +48,7 @@ public final class SocialUserListener implements Listener {
         }
 
         // Emoji chat completions
-        if (Social.get().getConfig().getSettings().getEmojis().isEnabled() && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
+        if (Social.get().getConfig().getEmojis().isEnabled() && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
             event.getPlayer().addCustomChatCompletions(Social.get().getEmojiManager().getEmojis().stream()
                 .map(emoji -> ":" +emoji.name() + ":")
                 .toList());
@@ -75,7 +75,7 @@ public final class SocialUserListener implements Listener {
                 return;
 
             SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
-            user.sendParsableMessage("$(info_prefix) <yellow>[social] This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");   
+            user.sendParsableMessage("$(info_prefix) <yellow>This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");   
             user.sendParsableMessage("$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'nagAdmins' to false.</gray>");
         }
     }

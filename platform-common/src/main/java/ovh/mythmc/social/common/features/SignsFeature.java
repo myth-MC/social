@@ -25,8 +25,8 @@ public final class SignsFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getTextReplacement().isEnabled() &&
-                Social.get().getConfig().getSettings().getTextReplacement().isSigns();
+        return Social.get().getConfig().getTextReplacement().isEnabled() &&
+                Social.get().getConfig().getTextReplacement().isSigns();
     }
 
     @FeatureEnable

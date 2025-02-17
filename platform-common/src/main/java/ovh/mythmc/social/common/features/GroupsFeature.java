@@ -39,8 +39,8 @@ public final class GroupsFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().isEnabled() &&
-                Social.get().getConfig().getSettings().getChat().getGroups().isEnabled();
+        return Social.get().getConfig().getChat().isEnabled() &&
+                Social.get().getConfig().getChat().getGroups().isEnabled();
     }
 
     @FeatureEnable

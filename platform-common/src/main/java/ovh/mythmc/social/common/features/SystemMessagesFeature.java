@@ -26,7 +26,7 @@ public final class SystemMessagesFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getSystemMessages().isEnabled();
+        return Social.get().getConfig().getSystemMessages().isEnabled();
     }
 
     @FeatureEnable

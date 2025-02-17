@@ -14,8 +14,8 @@ public final class IPFilterFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().getFilter().isEnabled() &&
-                Social.get().getConfig().getSettings().getChat().getFilter().isIpFilter();
+        return Social.get().getConfig().getChat().getFilter().isEnabled() &&
+                Social.get().getConfig().getChat().getFilter().isIpFilter();
     }
 
     @FeatureEnable

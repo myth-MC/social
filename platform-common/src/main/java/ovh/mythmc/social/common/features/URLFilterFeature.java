@@ -14,8 +14,8 @@ public final class URLFilterFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().getFilter().isEnabled() &&
-                Social.get().getConfig().getSettings().getChat().getFilter().isUrlFilter();
+        return Social.get().getConfig().getChat().getFilter().isEnabled() &&
+                Social.get().getConfig().getChat().getFilter().isUrlFilter();
     }
 
     @FeatureEnable

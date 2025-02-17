@@ -28,6 +28,7 @@ public class GeneralSettings {
     private boolean chatKeywordTabCompletion = true;
     
     @Setter
+    @Comment({"", "Modifying this can result in data loss"})
     private int migrationVersion = 1;
 
 }

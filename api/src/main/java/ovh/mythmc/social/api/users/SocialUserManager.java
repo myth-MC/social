@@ -25,7 +25,7 @@ public final class SocialUserManager {
     // Gets ONLINE users
     public @NotNull Collection<SocialUser> get() {
         return Bukkit.getOnlinePlayers().stream()
-            .map(player -> get(player.getUniqueId()))
+            .map(player -> getByUuid(player.getUniqueId()))
             .filter(user -> user != null)
             .toList();
     }
@@ -61,7 +61,7 @@ public final class SocialUserManager {
 
     public void register(final @NotNull UUID uuid) {
         // Todo: recover data from last session
-        String defaultChatChannelName = Social.get().getConfig().getSettings().getChat().getDefaultChannel();
+        String defaultChatChannelName = Social.get().getConfig().getChat().getDefaultChannel();
         ChatChannel defaultChatChannel = Social.get().getChatManager().getDefaultChannel();
 
         SocialUser user = new SocialUser(uuid);
@@ -85,7 +85,7 @@ public final class SocialUserManager {
         ChatChannel previousChannel = user.getMainChannel();
 
         var preSwitchCallback = new SocialChannelPreSwitch(user, channel);
-        SocialChannelPreSwitchCallback.INSTANCE.handle(preSwitchCallback);
+        SocialChannelPreSwitchCallback.INSTANCE.invoke(preSwitchCallback);
 
         if (preSwitchCallback.cancelled())
             return;
@@ -93,7 +93,7 @@ public final class SocialUserManager {
         user.setMainChannel(channel);
         
         var postSwitchCallback = new SocialChannelPostSwitch(user, previousChannel, channel);
-        SocialChannelPostSwitchCallback.INSTANCE.handle(postSwitchCallback);
+        SocialChannelPostSwitchCallback.INSTANCE.invoke(postSwitchCallback);
 
         SocialDatabase.get().update(user);
     }
@@ -124,7 +124,7 @@ public final class SocialUserManager {
 
     public void mute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
         var callback = new SocialUserMuteStatusChange(user, channel, true);
-        SocialUserMuteStatusChangeCallback.INSTANCE.handle(callback);
+        SocialUserMuteStatusChangeCallback.INSTANCE.invoke(callback);
 
         if (callback.cancelled())
             return;
@@ -135,7 +135,7 @@ public final class SocialUserManager {
 
     public void unmute(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
         var callback = new SocialUserMuteStatusChange(user, channel, false);
-        SocialUserMuteStatusChangeCallback.INSTANCE.handle(callback);
+        SocialUserMuteStatusChangeCallback.INSTANCE.invoke(callback);
 
         if (callback.cancelled())
             return;

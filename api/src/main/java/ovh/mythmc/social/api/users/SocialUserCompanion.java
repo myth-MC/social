@@ -22,7 +22,6 @@ import ovh.mythmc.social.api.utils.CompanionModUtils;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Experimental
-@SuppressWarnings("null")
 public final class SocialUserCompanion {
 
     public static final Collection<String> S2C_CHANNELS = List.of(

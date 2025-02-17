@@ -25,8 +25,8 @@ public final class BooksFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getTextReplacement().isEnabled() &&
-                Social.get().getConfig().getSettings().getTextReplacement().isBooks();
+        return Social.get().getConfig().getTextReplacement().isEnabled() &&
+                Social.get().getConfig().getTextReplacement().isBooks();
     }
 
     @FeatureEnable

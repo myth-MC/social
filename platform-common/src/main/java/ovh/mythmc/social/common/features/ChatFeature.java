@@ -40,7 +40,7 @@ public final class ChatFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getChat().isEnabled();
+        return Social.get().getConfig().getChat().isEnabled();
     }
 
     @FeatureEnable
@@ -52,7 +52,7 @@ public final class ChatFeature {
         chatListener.registerCallbackHandlers();
 
         // Assign channels to every SocialPlayer
-        ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+        ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getChat().getDefaultChannel());
         if (defaultChannel != null) {
             Social.get().getUserManager().get().forEach(socialPlayer -> {
                 Social.get().getChatManager().assignChannelsToPlayer(socialPlayer);

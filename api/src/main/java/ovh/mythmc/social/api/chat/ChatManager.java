@@ -90,7 +90,7 @@ public final class ChatManager {
     }
 
     public @Nullable ChatChannel getDefaultChannel() {
-        return getChannel(Social.get().getConfig().getSettings().getChat().getDefaultChannel());
+        return getChannel(Social.get().getConfig().getChat().getDefaultChannel());
     }
 
     public GroupChatChannel getGroupChannelByCode(final int code) {
@@ -118,14 +118,14 @@ public final class ChatManager {
         SocialUser leader = Social.get().getUserManager().getByUuid(leaderUuid);
 
         SocialGroupLeaderChange socialGroupLeaderChange = new SocialGroupLeaderChange(groupChatChannel, previousLeader, leader);
-        SocialGroupLeaderChangeCallback.INSTANCE.handle(socialGroupLeaderChange);
+        SocialGroupLeaderChangeCallback.INSTANCE.invoke(socialGroupLeaderChange);
 
         groupChatChannel.setLeaderUuid(leaderUuid);
     }
 
     public void setGroupChannelAlias(final @NotNull GroupChatChannel groupChatChannel, final @Nullable String alias) {
         var callback = new SocialGroupAliasChange(groupChatChannel, alias);
-        SocialGroupAliasChangeCallback.INSTANCE.handle(callback);
+        SocialGroupAliasChangeCallback.INSTANCE.invoke(callback);
         
         groupChatChannel.setAlias(callback.newAlias());
     }
@@ -139,7 +139,7 @@ public final class ChatManager {
             Social.get().getLogger().info("Registered channel '" + chatChannel.getName() + "'");
 
         var callback = new SocialChannelCreate(chatChannel);
-        SocialChannelCreateCallback.INSTANCE.handle(callback);
+        SocialChannelCreateCallback.INSTANCE.invoke(callback);
 
         return channels.add(chatChannel);
     }
@@ -150,7 +150,7 @@ public final class ChatManager {
         chatChannel.addMember(leaderUuid);
 
         var callback = new SocialGroupCreate(chatChannel);
-        SocialGroupCreateCallback.INSTANCE.handle(callback);
+        SocialGroupCreateCallback.INSTANCE.invoke(callback);
 
         return registerChatChannel(callback.groupChatChannel());
     }
@@ -165,10 +165,10 @@ public final class ChatManager {
 
         if (chatChannel instanceof GroupChatChannel groupChatChannel) {
             var callback = new SocialGroupDisband(groupChatChannel);
-            SocialGroupDisbandCallback.INSTANCE.handle(callback);
+            SocialGroupDisbandCallback.INSTANCE.invoke(callback);
         } else {
             var callback = new SocialChannelDelete(chatChannel);
-            SocialChannelDeleteCallback.INSTANCE.handle(callback);
+            SocialChannelDeleteCallback.INSTANCE.invoke(callback);
         }
 
         return channels.remove(chatChannel);
@@ -217,8 +217,8 @@ public final class ChatManager {
         sender.player().ifPresent(senderPlayer -> {
             recipient.player().ifPresent(recipientPlayer -> {
                 // Flood filter
-                if (Social.get().getConfig().getSettings().getChat().getFilter().isFloodFilter()) {
-                    int floodFilterCooldownInMilliseconds = Social.get().getConfig().getSettings().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+                if (Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
+                    int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
                     if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
                             !senderPlayer.hasPermission("social.filter.bypass")) {
@@ -228,28 +228,28 @@ public final class ChatManager {
                     }
                 }
 
-                Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().prefix() + " ");
-                Component prefixHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getCommands().getPrivateMessage().hoverText());
+                Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().prefix() + " ");
+                Component prefixHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
 
-                Component senderNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
-                Component senderHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+                Component senderNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
+                Component senderHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
 
-                Component recipientNickname = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerNicknameFormat());
-                Component recipientHoverText = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getSettings().getChat().getClickableNicknameHoverText());
+                Component recipientNickname = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
+                Component recipientHoverText = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
 
-                Component arrow = parse(recipient, recipient.getMainChannel(), " " + Social.get().getConfig().getSettings().getCommands().getPrivateMessage().arrow() + " ");
+                Component arrow = parse(recipient, recipient.getMainChannel(), " " + Social.get().getConfig().getCommands().getPrivateMessage().arrow() + " ");
 
                 Component filteredMessage = parsePlayerInput(sender, sender.getMainChannel(), message);
 
                 if (!sender.getNickname().equals(senderPlayer.getName()))
                     senderHoverText = senderHoverText
                             .appendNewline()
-                            .append(parse(sender, sender.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+                            .append(parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
                 if (!recipient.getNickname().equals(recipientPlayer.getName()))
                     recipientHoverText = recipientHoverText
                             .appendNewline()
-                            .append(parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getSettings().getChat().getPlayerAliasWarningHoverText()));
+                            .append(parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
                 Component chatMessage = Component.empty()
                         .append(prefix

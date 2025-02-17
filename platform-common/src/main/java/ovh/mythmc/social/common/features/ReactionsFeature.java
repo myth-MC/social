@@ -27,7 +27,7 @@ public final class ReactionsFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getReactions().isEnabled();
+        return Social.get().getConfig().getReactions().isEnabled();
     }
 
     @FeatureEnable

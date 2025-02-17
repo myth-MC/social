@@ -199,8 +199,8 @@
         </repository>
 
         <repository>
-            <id>myth-mc-snapshots</id>
-            <url>https://repo.mythmc.ovh/repositories/snapshots/</url>
+            <id>myth-mc-releases</id>
+            <url>https://repo.mythmc.ovh/repositories/releases/</url>
         </repository>
     </repositories>
 
@@ -251,6 +251,7 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-gson</artifactId>
             <version>4.18.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -262,9 +263,9 @@
 
         <dependency>
             <groupId>ovh.mythmc</groupId>
-            <artifactId>callbacks-processor</artifactId>
+            <artifactId>callbacks-lib</artifactId>
             <version>0.1.0</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

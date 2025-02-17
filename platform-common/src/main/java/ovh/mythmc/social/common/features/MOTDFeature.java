@@ -25,7 +25,7 @@ public final class MOTDFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getSettings().getMotd().isEnabled();
+        return Social.get().getConfig().getMotd().isEnabled();
     }
 
     @FeatureEnable

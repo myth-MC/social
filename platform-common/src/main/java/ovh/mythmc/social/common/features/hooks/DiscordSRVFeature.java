@@ -42,8 +42,8 @@ public final class DiscordSRVFeature {
         DiscordSRV.api.subscribe(hook);
 
         // Register death listener if custom system messages are enabled
-        if (Social.get().getConfig().getSettings().getSystemMessages().isEnabled() &&
-            Social.get().getConfig().getSettings().getSystemMessages().isCustomizeDeathMessage()) {
+        if (Social.get().getConfig().getSystemMessages().isEnabled() &&
+            Social.get().getConfig().getSystemMessages().isCustomizeDeathMessage()) {
             Bukkit.getPluginManager().registerEvents(deathListener, plugin);
         }
         

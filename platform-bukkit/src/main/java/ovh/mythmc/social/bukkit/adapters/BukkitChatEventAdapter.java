@@ -82,7 +82,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
                 context.messageId(), 
                 context.replyId());
     
-            SocialMessageReceiveCallback.INSTANCE.handle(callback);
+            SocialMessageReceiveCallback.INSTANCE.invoke(callback);
             if (callback.cancelled())
                 return;
 
