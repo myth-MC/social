@@ -6,7 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.group.SocialGroupCreateCallback;
 import ovh.mythmc.social.api.callbacks.group.SocialGroupDisbandCallback;
@@ -20,8 +19,18 @@ import ovh.mythmc.social.api.users.SocialUser;
 
 public final class GroupsListener implements Listener {
 
+    private static class IdentifierKeys {
+
+        static final String GROUP_JOIN_MESSAGE = "social:group-join-message";
+        static final String GROUP_LEAVE_MESSAGE = "social:group-leave-message";
+        static final String GROUP_CREATE_MESSAGE = "social:group-create-message";
+        static final String GROUP_DISBAND_MESSAGE = "social:group-disband-message";
+        static final String GROUP_LEADER_CHANGE_MESSAGE = "social:group-leader-change-message";
+
+    }
+
     public void registerCallbackHandlers() {
-        SocialGroupJoinCallback.INSTANCE.registerHandler("social:groupJoinMessage", (ctx) -> {
+        SocialGroupJoinCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_JOIN_MESSAGE, (ctx) -> {
             Component joinMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerJoinedGroup());
 
             ctx.groupChatChannel().getMembers().forEach(user -> {
@@ -31,7 +40,7 @@ public final class GroupsListener implements Listener {
             });
         });
 
-        SocialGroupLeaveCallback.INSTANCE.registerHandler("social:groupLeaveMessage", (ctx) -> {
+        SocialGroupLeaveCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_LEAVE_MESSAGE, (ctx) -> {
             setDefaultChannel(ctx.user());
 
             Component leftMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
@@ -41,7 +50,7 @@ public final class GroupsListener implements Listener {
             });
         });
 
-        SocialGroupCreateCallback.INSTANCE.registerHandler("social:groupCreateMessage", (ctx) -> {
+        SocialGroupCreateCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_CREATE_MESSAGE, (ctx) -> {
             var leader = ctx.groupChatChannel().getLeader();
         
             // Switch main channel
@@ -53,7 +62,7 @@ public final class GroupsListener implements Listener {
             Social.get().getTextProcessor().parseAndSend(leader, createdMessage, Social.get().getConfig().getMessages().getChannelType());
         });
 
-        SocialGroupDisbandCallback.INSTANCE.registerHandler("social:groupDisbandMessage", (ctx) -> {
+        SocialGroupDisbandCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_DISBAND_MESSAGE, (ctx) -> {
             ctx.groupChatChannel().getMembers().forEach(user -> {
                 Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
     
@@ -61,7 +70,7 @@ public final class GroupsListener implements Listener {
             });
         });
 
-        SocialGroupLeaderChangeCallback.INSTANCE.registerHandler("social:groupLeaderChangeMessage", (ctx) -> {
+        SocialGroupLeaderChangeCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_LEADER_CHANGE_MESSAGE, (ctx) -> {
             Component leaderChangeMessage = Social.get().getTextProcessor().parse(ctx.leader(), ctx.leader().getMainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
 
             ctx.groupChatChannel().getMembers().forEach(user -> {
@@ -71,11 +80,11 @@ public final class GroupsListener implements Listener {
     }
 
     public void unregisterCallbackHandlers() {
-        SocialGroupJoinCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "groupJoinMessage"));
-        SocialGroupLeaveCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "groupLeaveMessage"));
-        SocialGroupCreateCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "groupCreateMessage"));
-        SocialGroupDisbandCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "groupDisbandMessage"));
-        SocialGroupLeaderChangeCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "groupLeaderChangeMessage"));
+        SocialGroupJoinCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_JOIN_MESSAGE);
+        SocialGroupLeaveCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_LEAVE_MESSAGE);
+        SocialGroupCreateCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_CREATE_MESSAGE);
+        SocialGroupDisbandCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_DISBAND_MESSAGE);
+        SocialGroupLeaderChangeCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_LEADER_CHANGE_MESSAGE);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

@@ -12,7 +12,6 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelCreateCallback;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelDeleteCallback;
@@ -29,6 +28,14 @@ import ovh.mythmc.social.common.adapters.PlatformAdapter;
 public final class CompanionListener implements Listener, PluginMessageListener {
 
     private final JavaPlugin plugin;
+
+    private static class IdentifierKeys {
+
+        static final String COMPANION_CHANNEL_CREATE = "social:companion-channel-create";
+        static final String COMPANION_CHANNEL_DELETE = "social:companion-channel-delete";
+        static final String COMPANION_CHANNEL_SWITCH = "social:companion-channel-switch";
+
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -49,7 +56,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
     }
 
     public void registerCallbackHandlers() {
-        SocialChannelCreateCallback.INSTANCE.registerHandler("social:companionChannelCreate", (ctx) -> {
+        SocialChannelCreateCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_CREATE, (ctx) -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 SocialUser user = Social.get().getUserManager().getByUuid(player.getUniqueId());
                 if (user == null || !user.isCompanion())
@@ -64,7 +71,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
             });    
         });
 
-        SocialChannelDeleteCallback.INSTANCE.registerHandler("social:companionChannelDelete", (ctx) -> {
+        SocialChannelDeleteCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_DELETE, (ctx) -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 SocialUser user = Social.get().getUserManager().getByUuid(player.getUniqueId());
                 if (user == null || !user.isCompanion())
@@ -78,16 +85,16 @@ public final class CompanionListener implements Listener, PluginMessageListener 
             });
         });
 
-        SocialChannelPostSwitchCallback.INSTANCE.registerHandler("social:companionMainChannelSetter", (ctx) -> {
+        SocialChannelPostSwitchCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_SWITCH, (ctx) -> {
             if (ctx.user().isCompanion())
                 ctx.user().getCompanion().mainChannel(ctx.channel());
         });
     }
 
     public void unregisterCallbackHandlers() {
-        SocialChannelCreateCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "companionChannelCreate"));
-        SocialChannelDeleteCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "companionChannelDelete"));
-        SocialChannelPostSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "companionMainChannelSetter"));
+        SocialChannelCreateCallback.INSTANCE.unregisterHandlers(IdentifierKeys.COMPANION_CHANNEL_CREATE);
+        SocialChannelDeleteCallback.INSTANCE.unregisterHandlers(IdentifierKeys.COMPANION_CHANNEL_DELETE);
+        SocialChannelPostSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKeys.COMPANION_CHANNEL_SWITCH);
     }
 
     @Override

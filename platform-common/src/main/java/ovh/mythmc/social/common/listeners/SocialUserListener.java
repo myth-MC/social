@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.message.SocialPrivateMessageSendCallback;
 import ovh.mythmc.social.api.configuration.LegacySocialSettings;
@@ -25,6 +24,12 @@ public final class SocialUserListener implements Listener {
 
     // Temporary workaround for nicknames
     NamespacedKey key = new NamespacedKey("social", "nickname");
+
+    private static class IdentifierKeys {
+
+        static final String USER_PRIVATE_MESSAGE_SEND = "social:private-message-send";
+
+    }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLogin(PlayerLoginEvent event) {
@@ -88,14 +93,14 @@ public final class SocialUserListener implements Listener {
     }
 
     public void registerCallbackHandlers() {
-        SocialPrivateMessageSendCallback.INSTANCE.registerHandler("social:userPrivateMessageSender", ctx -> {
+        SocialPrivateMessageSendCallback.INSTANCE.registerHandler(IdentifierKeys.USER_PRIVATE_MESSAGE_SEND, ctx -> {
             if (!ctx.cancelled())
                 Social.get().getChatManager().sendPrivateMessage(ctx.sender(), ctx.recipient(), ctx.plainMessage());
         });
     }
 
     public void unregisterCallbackHandlers() {
-        SocialPrivateMessageSendCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "userPrivateMessageSender"));
+        SocialPrivateMessageSendCallback.INSTANCE.unregisterHandlers(IdentifierKeys.USER_PRIVATE_MESSAGE_SEND);
     }
 
 }

@@ -10,7 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelPostSwitchCallback;
 import ovh.mythmc.social.api.callbacks.channel.SocialChannelPreSwitchCallback;
@@ -28,6 +27,15 @@ import java.util.UUID;
 public final class ChatListener implements Listener {
 
     private final JavaPlugin plugin;
+
+    private static class IdentifierKeys {
+
+        static final String REPLY_CHANNEL_SWITCHER = "social:reply-channel-switcher";
+        static final String CHAT_PERMISSION_CHECKER = "social:chat-permission-checker";
+        static final String CHANNEL_PREPARE_MEMBER = "social:channel-prepare-member";
+        static final String CHANNEL_SWITCH_MESSAGE = "social:channel-switch-message";
+
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -59,7 +67,7 @@ public final class ChatListener implements Listener {
     }
 
     public void registerCallbackHandlers() {
-        SocialMessagePrepareCallback.INSTANCE.registerHandler("social:replyChannelSwitcher", (ctx) -> {
+        SocialMessagePrepareCallback.INSTANCE.registerHandler(IdentifierKeys.REPLY_CHANNEL_SWITCHER, (ctx) -> {
             if (!Social.get().getChatManager().hasPermission(ctx.sender(), ctx.channel())) {
                 ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getChat().getDefaultChannel());
 
@@ -84,7 +92,7 @@ public final class ChatListener implements Listener {
             }
         });
 
-        SocialMessageReceiveCallback.INSTANCE.registerHandler("social:chatPermissionChecker", (ctx) -> {
+        SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.CHAT_PERMISSION_CHECKER, (ctx) -> {
             // Play reply sound
             if (ctx.isReply())
                 ctx.sender().player().ifPresent(player -> player.playSound(player, Sound.BLOCK_STONE_BUTTON_CLICK_ON, 0.7F, 1.7F));
@@ -102,12 +110,12 @@ public final class ChatListener implements Listener {
             }
         });
 
-        SocialChannelPreSwitchCallback.INSTANCE.registerListener("social:chatChannelPrepareMember", (user, channel) -> {
+        SocialChannelPreSwitchCallback.INSTANCE.registerListener(IdentifierKeys.CHANNEL_PREPARE_MEMBER, (user, channel) -> {
             if (!channel.getMemberUuids().contains(user.getUuid()))
                 channel.addMember(user.getUuid());
         });
 
-        SocialChannelPostSwitchCallback.INSTANCE.registerListener("social:chatChannelSwitchMessage", (user, previousChannel, channel) -> {
+        SocialChannelPostSwitchCallback.INSTANCE.registerListener(IdentifierKeys.CHANNEL_SWITCH_MESSAGE, (user, previousChannel, channel) -> {
             if (user.isCompanion())
                 return;
             
@@ -120,10 +128,10 @@ public final class ChatListener implements Listener {
     }
 
     public void unregisterCallbackHandlers() {
-        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "replyChannelSwitcher"));
-        SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(IdentifierKey.of("social", "chatPermissionChecker"));
-        SocialChannelPreSwitchCallback.INSTANCE.unregisterListeners(IdentifierKey.of("social", "chatChannelPrepareMember"));
-        SocialChannelPostSwitchCallback.INSTANCE.unregisterListeners(IdentifierKey.of("social:chatChannelSwitchMessage"));
+        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKeys.REPLY_CHANNEL_SWITCHER);
+        SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(IdentifierKeys.CHAT_PERMISSION_CHECKER);
+        SocialChannelPreSwitchCallback.INSTANCE.unregisterListeners(IdentifierKeys.CHANNEL_PREPARE_MEMBER);
+        SocialChannelPostSwitchCallback.INSTANCE.unregisterListeners(IdentifierKeys.CHANNEL_SWITCH_MESSAGE);
     }
 
 }

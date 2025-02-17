@@ -5,7 +5,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import ovh.mythmc.callbacks.key.IdentifierKey;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callbacks.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialMessageContext;
@@ -14,8 +13,15 @@ import java.util.regex.Pattern;
 
 public final class MentionsListener {
 
+    private static class IdentifierKeys {
+
+        static final String MENTIONS = "social:mentions";
+        static final String MENTIONS_REPLY_FORMATTER = "social:mentions-reply-formatter";
+
+    }
+
     public void registerCallbackHandlers() {
-        SocialMessageReceiveCallback.INSTANCE.registerHandler("social:mentions", (ctx) -> {
+        SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.MENTIONS, (ctx) -> {
             if (ctx.sender().player().isEmpty() || ctx.recipient().player().isEmpty())
                 return;
 
@@ -49,7 +55,7 @@ public final class MentionsListener {
             ctx.message(message);
         });
 
-        SocialMessageReceiveCallback.INSTANCE.registerHandler("social:mentionReplyFormatter", (ctx) -> {
+        SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.MENTIONS_REPLY_FORMATTER, (ctx) -> {
             if (ctx.isReply()) {
                 Component replyFormat = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(), Social.get().getConfig().getChat().getReplyFormat());
                 String replyFormatStripped = MiniMessage.miniMessage().stripTags(MiniMessage.miniMessage().serialize(replyFormat));
@@ -73,8 +79,8 @@ public final class MentionsListener {
 
     public void unregisterCallbackHandlers() {
         SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(
-            IdentifierKey.of("social", "mentions"),
-            IdentifierKey.of("social", "mentionReplyFormatter")
+            IdentifierKeys.MENTIONS,
+            IdentifierKeys.MENTIONS_REPLY_FORMATTER
         );
     }
 
