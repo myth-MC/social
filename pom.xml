@@ -274,7 +274,7 @@
             <groupId>ovh.mythmc</groupId>
             <artifactId>callbacks-lib</artifactId>
             <version>0.1.1</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
