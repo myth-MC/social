@@ -6,11 +6,11 @@ import lombok.Setter;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.callbacks.group.SocialGroupJoin;
-import ovh.mythmc.social.api.callbacks.group.SocialGroupJoinCallback;
-import ovh.mythmc.social.api.callbacks.group.SocialGroupLeave;
-import ovh.mythmc.social.api.callbacks.group.SocialGroupLeaveCallback;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.callback.group.SocialGroupJoin;
+import ovh.mythmc.social.api.callback.group.SocialGroupJoinCallback;
+import ovh.mythmc.social.api.callback.group.SocialGroupLeave;
+import ovh.mythmc.social.api.callback.group.SocialGroupLeaveCallback;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -7,8 +7,8 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.ArrayList;
 import java.util.Collection;

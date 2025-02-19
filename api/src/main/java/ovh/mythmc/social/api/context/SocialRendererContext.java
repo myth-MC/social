@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Data
 @Setter(AccessLevel.PRIVATE)

@@ -10,11 +10,11 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
-import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
-import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
-import ovh.mythmc.social.api.text.parsers.SocialContextualPlaceholder;
-import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.api.utils.CompanionModUtils;
+import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
+import ovh.mythmc.social.api.text.parser.SocialContextualParser;
+import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
+import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.util.CompanionModUtils;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -47,10 +47,10 @@ public final class GlobalTextProcessor {
     }
 
     public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
-        return getContextualParsers().stream().filter(parser -> parser.getClass().equals(clazz)).findFirst().orElse(null);
+        return getContextualParsersWithGroupMembers().stream().filter(parser -> parser.getClass().equals(clazz)).findFirst().orElse(null);
     }
 
-    public List<SocialContextualParser> getContextualParsersWithGroupMembers() {
+    public Collection<SocialContextualParser> getContextualParsersWithGroupMembers() {
         List<SocialContextualParser> contextualParsers = new ArrayList<>();
         getContextualParsers().stream().forEach(contextualParser -> {
             if (contextualParser instanceof SocialParserGroup group) {

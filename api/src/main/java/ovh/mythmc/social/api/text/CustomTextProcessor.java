@@ -17,9 +17,10 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEvent.Action;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.text.filters.SocialFilterLike;
-import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
-import ovh.mythmc.social.api.text.parsers.SocialUserInputParser;
+import ovh.mythmc.social.api.context.SocialProcessorContext;
+import ovh.mythmc.social.api.text.filter.SocialFilterLike;
+import ovh.mythmc.social.api.text.parser.SocialContextualParser;
+import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Builder
@@ -45,6 +46,8 @@ public class CustomTextProcessor {
     }
 
     public Component parse(SocialParserContext context) {
+        SocialProcessorContext processorContext = SocialProcessorContext.from(context, this);
+        
         for (SocialContextualParser parser : getWithExclusions()) {
             if (parser instanceof SocialFilterLike && playerInput == false)
                 continue;
@@ -52,34 +55,30 @@ public class CustomTextProcessor {
             if (!(parser instanceof SocialUserInputParser) && playerInput)
                 continue;
 
-            if (!parser.supportsOfflinePlayers() && context.user().player().isEmpty())
+            if (!parser.supportsOfflinePlayers() && processorContext.user().player().isEmpty())
                 continue;
 
-            List<Class<?>> appliedParsers = context.appliedParsers();
-            if (Collections.frequency(appliedParsers, parser.getClass()) > 3) {
+            if (Collections.frequency(processorContext.appliedParsers(), parser.getClass()) > 3) {
                 Social.get().getLogger().warn("Parser " + parser.getClass().getName() + " has been called too many times. This can potentially degrade performance. Please, inform the author(s) of " + parser.getClass().getName() + " about this.");
                 break;
             }
 
-            appliedParsers.add(parser.getClass());
-            context = context
-                .withAppliedParsers(appliedParsers)
-                .withMessage(parser.parse(context));
+            processorContext.addAppliedParser(parser.getClass());
+            processorContext = SocialProcessorContext.from(processorContext.withMessage(parser.parse(processorContext)), this);
 
             // Workaround to parse the HoverEvent
-            if (context.message().hoverEvent() != null && context.message().hoverEvent().action().equals(Action.SHOW_TEXT)) {
+            if (processorContext.message().hoverEvent() != null && processorContext.message().hoverEvent().action().equals(Action.SHOW_TEXT)) {
                 @SuppressWarnings("unchecked")
-                Component hoverText = ((HoverEvent<Component>) context.message().hoverEvent()).value();
+                Component hoverText = ((HoverEvent<Component>) processorContext.message().hoverEvent()).value();
 
-                Component messageWithHoverText = context.message()
-                    .hoverEvent(parser.parse(context.withMessage(hoverText)));
+                Component messageWithHoverText = processorContext.message()
+                    .hoverEvent(parser.parse(processorContext.withMessage(hoverText)));
 
-                context = context
-                    .withMessage(messageWithHoverText);
+                processorContext = SocialProcessorContext.from(processorContext.withMessage(messageWithHoverText), this);
             }
         }
 
-        return context.message();
+        return processorContext.message();
     }
 
     private List<SocialContextualParser> getWithExclusions() {

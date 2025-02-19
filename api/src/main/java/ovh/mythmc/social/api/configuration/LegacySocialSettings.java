@@ -3,7 +3,7 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import ovh.mythmc.social.api.configuration.sections.settings.*;
+import ovh.mythmc.social.api.configuration.section.settings.*;
 
 @Configuration
 @Getter

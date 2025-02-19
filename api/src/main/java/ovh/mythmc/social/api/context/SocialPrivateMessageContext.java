@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Getter
 @Accessors(fluent = true)

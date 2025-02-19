@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.announcements.AnnouncementManager;
 import ovh.mythmc.social.api.chat.ChatManager;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
-import ovh.mythmc.social.api.emojis.EmojiManager;
+import ovh.mythmc.social.api.emoji.EmojiManager;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
-import ovh.mythmc.social.api.reactions.ReactionManager;
+import ovh.mythmc.social.api.reaction.ReactionManager;
 import ovh.mythmc.social.api.text.GlobalTextProcessor;
-import ovh.mythmc.social.api.users.SocialUserManager;
+import ovh.mythmc.social.api.user.SocialUserManager;
 
 public interface Social {
 

@@ -22,7 +22,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SocialDatabase {

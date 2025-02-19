@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.context.SocialMessageContext;
-import ovh.mythmc.social.api.users.SocialUser;
 
 import java.util.HashMap;
 import java.util.List;

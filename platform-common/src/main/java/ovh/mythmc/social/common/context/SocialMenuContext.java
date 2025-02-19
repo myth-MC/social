@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import ovh.mythmc.social.api.context.SocialContext;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import lombok.Data;
 import lombok.Setter;
 

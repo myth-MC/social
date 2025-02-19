@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRendererContext;
-import ovh.mythmc.social.api.users.SocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
 

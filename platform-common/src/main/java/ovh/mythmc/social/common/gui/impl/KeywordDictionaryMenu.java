@@ -13,7 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.text.parsers.SocialContextualKeyword;
+import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.common.context.SocialMenuContext;
 import ovh.mythmc.social.common.gui.SimpleBookMenu;
 

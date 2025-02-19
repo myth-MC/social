@@ -11,7 +11,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.emojis.Emoji;
+import ovh.mythmc.social.api.emoji.Emoji;
 import ovh.mythmc.social.common.context.SocialMenuContext;
 import ovh.mythmc.social.common.gui.SimpleBookMenu;
 

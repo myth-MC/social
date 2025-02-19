@@ -1,15 +1,15 @@
 package ovh.mythmc.social.api.configuration;
 
-import ovh.mythmc.social.api.configuration.sections.settings.AnnouncementsSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.ChatSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.CommandsSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.EmojiSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.GeneralSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.MOTDSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.ReactionsSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.ServerLinksSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.SystemMessagesSettings;
-import ovh.mythmc.social.api.configuration.sections.settings.TextReplacementSettings;
+import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
+import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
+import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
+import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
+import ovh.mythmc.social.api.configuration.section.settings.ReactionsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings;
+import ovh.mythmc.social.api.configuration.section.settings.SystemMessagesSettings;
+import ovh.mythmc.social.api.configuration.section.settings.TextReplacementSettings;
 
 public interface SocialSettings {
 

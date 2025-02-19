@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
-import ovh.mythmc.social.api.reactions.ReactionFactory;
-import ovh.mythmc.social.common.adapters.ChatEventAdapter;
-import ovh.mythmc.social.common.adapters.PlatformAdapter;
+import ovh.mythmc.social.api.reaction.ReactionFactory;
+import ovh.mythmc.social.common.adapter.ChatEventAdapter;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listeners.SocialUserListener;
-import ovh.mythmc.social.paper.adapters.PaperChatEventAdapter;
-import ovh.mythmc.social.paper.adapters.PaperPlatformAdapter;
+import ovh.mythmc.social.common.listener.SocialUserListener;
+import ovh.mythmc.social.paper.adapter.PaperChatEventAdapter;
+import ovh.mythmc.social.paper.adapter.PaperPlatformAdapter;
 import ovh.mythmc.social.paper.adventure.PaperAdventureProvider;
-import ovh.mythmc.social.paper.reactions.PaperReactionFactory;
+import ovh.mythmc.social.paper.reaction.PaperReactionFactory;
 
 public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
     

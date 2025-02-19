@@ -4,9 +4,9 @@ import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.configuration.sections.messages.CommandsMessages;
-import ovh.mythmc.social.api.configuration.sections.messages.ErrorsMessages;
-import ovh.mythmc.social.api.configuration.sections.messages.InfoMessages;
+import ovh.mythmc.social.api.configuration.section.messages.CommandsMessages;
+import ovh.mythmc.social.api.configuration.section.messages.ErrorsMessages;
+import ovh.mythmc.social.api.configuration.section.messages.InfoMessages;
 
 @Configuration
 @Getter

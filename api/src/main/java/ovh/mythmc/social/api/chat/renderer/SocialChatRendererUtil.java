@@ -10,8 +10,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.users.SocialUser;
 
 @UtilityClass
 public class SocialChatRendererUtil {

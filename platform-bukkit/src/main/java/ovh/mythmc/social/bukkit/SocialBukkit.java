@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
-import ovh.mythmc.social.api.reactions.ReactionFactory;
-import ovh.mythmc.social.bukkit.adapters.BukkitChatEventAdapter;
-import ovh.mythmc.social.bukkit.adapters.BukkitPlatformAdapter;
+import ovh.mythmc.social.api.reaction.ReactionFactory;
+import ovh.mythmc.social.bukkit.adapter.BukkitChatEventAdapter;
+import ovh.mythmc.social.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
-import ovh.mythmc.social.bukkit.reactions.BukkitReactionFactory;
-import ovh.mythmc.social.common.adapters.ChatEventAdapter;
-import ovh.mythmc.social.common.adapters.PlatformAdapter;
+import ovh.mythmc.social.bukkit.reaction.BukkitReactionFactory;
+import ovh.mythmc.social.common.adapter.ChatEventAdapter;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listeners.*;
+import ovh.mythmc.social.common.listener.*;
 
 public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 

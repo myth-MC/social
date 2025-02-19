@@ -8,17 +8,16 @@ import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialRendererContext;
-import ovh.mythmc.social.api.users.SocialUser;
-import ovh.mythmc.social.api.utils.CompanionModUtils;
+import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.util.CompanionModUtils;
 
 public class UserChatRenderer implements SocialChatRenderer<SocialUser> {
 
     @Override
     public SocialRendererContext render(SocialUser target, SocialRegisteredMessageContext context) {
         // Set variables
-        SocialUser sender = context.sender();
-        ChatChannel channel = context.channel();
-        String rawMessage = context.rawMessage();
+        final SocialUser sender = context.sender();
+        final ChatChannel channel = context.channel();
 
         // Get channel icon
         final Component channelIcon = SocialChatRendererUtil.getClickableChannelIcon(sender, channel);
@@ -53,7 +52,7 @@ public class UserChatRenderer implements SocialChatRenderer<SocialUser> {
             channel,
             context.viewers(), 
             renderedPrefix, 
-            rawMessage,
+            context.rawMessage(),
             context.message(),
             context.replyId(),
             context.id()
