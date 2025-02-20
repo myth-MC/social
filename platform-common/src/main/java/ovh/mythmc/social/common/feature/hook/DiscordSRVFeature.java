@@ -31,15 +31,17 @@ public final class DiscordSRVFeature {
 
     @FeatureEnable
     public void enable() {
-        this.hook = new DiscordSRVHook(plugin);
-        this.deathListener = new DiscordSRVDeathListener();
+        if (hook == null) {
+            this.hook = new DiscordSRVHook(plugin);
+            this.deathListener = new DiscordSRVDeathListener();
+
+            // Register hook and subscribe to API events
+            DiscordSRV.getPlugin().getPluginHooks().add(hook);
+            DiscordSRV.api.subscribe(hook);
+        }
 
         // Register callback handler
         hook.registerMessageCallbackHandler();
-
-        // Register hook and subscribe to API events
-        DiscordSRV.getPlugin().getPluginHooks().add(hook);
-        DiscordSRV.api.subscribe(hook);
 
         // Register death listener if custom system messages are enabled
         if (Social.get().getConfig().getSystemMessages().isEnabled() &&
@@ -57,10 +59,6 @@ public final class DiscordSRVFeature {
 
         // Unregister callback handler
         hook.unregisterMessageCallbackHandler();
-
-        // Unregister hook and unsuscribe from API events
-        DiscordSRV.getPlugin().getPluginHooks().remove(hook);
-        DiscordSRV.api.unsubscribe(hook);
     }
     
 }

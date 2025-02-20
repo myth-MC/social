@@ -16,9 +16,9 @@ public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
     @Override
     public SocialRendererContext render(Audience target, SocialRegisteredMessageContext context) {
         // Set variables
-        SocialUser sender = context.sender();
-        ChatChannel channel = context.channel();
-        String rawMessage = context.rawMessage();
+        final SocialUser sender = context.sender();
+        final ChatChannel channel = context.channel();
+        final String rawMessage = context.rawMessage();
 
         // Reply icon
         final Component replyIcon = SocialChatRendererUtil.getReplyIcon(sender, context);
