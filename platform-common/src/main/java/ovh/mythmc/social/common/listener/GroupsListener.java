@@ -57,7 +57,8 @@ public final class GroupsListener implements Listener {
             Social.get().getUserManager().setMainChannel(leader, ctx.groupChatChannel());
     
             // Message
-            int groupCode = Social.get().getChatManager().getGroupChannelByUser(leader).getCode();
+            //int groupCode = Social.get().getChatManager().getGroupChannelByUser(leader).getCode();
+            int groupCode = ctx.groupChatChannel().getCode();
             String createdMessage = String.format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
             Social.get().getTextProcessor().parseAndSend(leader, createdMessage, Social.get().getConfig().getMessages().getChannelType());
         });
