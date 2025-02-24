@@ -52,9 +52,9 @@ public final class DiscordSRVHook implements ChatHook {
 
     @Subscribe // compatibility with Bukkit
     public void onGameChatMessagePostProcess(GameChatMessagePostProcessEvent event) {
-        if(event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent chatEvent) {
-            if (chatEvent.getRecipients().isEmpty())
-                event.setCancelled(true);
+        if (event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent asyncPlayerChatEvent) {
+            //if (chatEvent.getRecipients().isEmpty())
+            event.setCancelled(true);
         }
     }
 

@@ -43,8 +43,10 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
     public void on(E event) {
         // Set variables
         var sender = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
-        if (sender == null)
+        if (sender == null) {
+            event.setCancelled(true);
             return;
+        }
 
         var channel = sender.getMainChannel();
         var plainMessage = PlainTextComponentSerializer.plainText().serialize(message(event));

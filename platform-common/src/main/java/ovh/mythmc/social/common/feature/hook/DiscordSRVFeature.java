@@ -11,6 +11,7 @@ import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.hook.DiscordSRVDeathListener;
 import ovh.mythmc.social.common.hook.DiscordSRVHook;
 
@@ -26,29 +27,30 @@ public final class DiscordSRVFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
+        return Social.get().getConfig().getChat().isEnabled() && 
+            Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
     }
 
     @FeatureEnable
     public void enable() {
-        if (hook == null) {
+        PlatformAdapter.get().runGlobalTask(plugin, () -> {
             this.hook = new DiscordSRVHook(plugin);
             this.deathListener = new DiscordSRVDeathListener();
 
             // Register hook and subscribe to API events
             DiscordSRV.getPlugin().getPluginHooks().add(hook);
             DiscordSRV.api.subscribe(hook);
-        }
-
-        // Register callback handler
-        hook.registerMessageCallbackHandler();
-
-        // Register death listener if custom system messages are enabled
-        if (Social.get().getConfig().getSystemMessages().isEnabled() &&
-            Social.get().getConfig().getSystemMessages().isCustomizeDeathMessage()) {
-            Bukkit.getPluginManager().registerEvents(deathListener, plugin);
-        }
-        
+    
+            // Register callback handler
+            hook.registerMessageCallbackHandler();
+    
+            // Register death listener if custom system messages are enabled
+            if (Social.get().getConfig().getSystemMessages().isEnabled() &&
+                Social.get().getConfig().getSystemMessages().isCustomizeDeathMessage()) {
+                Bukkit.getPluginManager().registerEvents(deathListener, plugin);
+            }
+            
+        });
     }
 
     @FeatureDisable
@@ -56,6 +58,9 @@ public final class DiscordSRVFeature {
         // Unregister Bukkit listeners
         HandlerList.unregisterAll(deathListener);
         HandlerList.unregisterAll(hook);
+
+        DiscordSRV.getPlugin().getPluginHooks().remove(hook);
+        DiscordSRV.api.unsubscribe(hook);
 
         // Unregister callback handler
         hook.unregisterMessageCallbackHandler();
