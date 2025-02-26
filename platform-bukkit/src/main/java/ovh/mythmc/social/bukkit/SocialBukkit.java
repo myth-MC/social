@@ -2,45 +2,62 @@ package ovh.mythmc.social.bukkit;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
 import org.jetbrains.annotations.NotNull;
 
+import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
+import ovh.mythmc.social.api.reaction.ReactionFactory;
+import ovh.mythmc.social.bukkit.adapter.BukkitChatEventAdapter;
+import ovh.mythmc.social.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
-import ovh.mythmc.social.bukkit.commands.impl.GroupCommandImpl;
-import ovh.mythmc.social.bukkit.commands.impl.PrivateMessageCommandImpl;
-import ovh.mythmc.social.bukkit.commands.impl.ReactionCommandImpl;
-import ovh.mythmc.social.bukkit.commands.impl.SocialCommandImpl;
+import ovh.mythmc.social.bukkit.reaction.BukkitReactionFactory;
+import ovh.mythmc.social.common.adapter.ChatEventAdapter;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listeners.*;
-import ovh.mythmc.social.common.reactions.BukkitReactionFactory;
-
-import java.util.Objects;
+import ovh.mythmc.social.common.listener.*;
 
 public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
     public static SocialBukkit instance;
 
+    private BukkitGestaltLoader gestalt;
+
     public SocialBukkit(final @NotNull SocialBukkitPlugin plugin) {
         super(plugin, plugin.getDataFolder());
 
         // Platform implementations
-        new BukkitAdventureProvider(plugin);
-        new BukkitReactionFactory(plugin);
+        SocialAdventureProvider.set(new BukkitAdventureProvider(plugin));
+        ReactionFactory.set(new BukkitReactionFactory(plugin));
+
+        // Set platform wrapper
+        PlatformAdapter.set(new BukkitPlatformAdapter());
+
+        // Set chat wrapper
+        ChatEventAdapter.set(new BukkitChatEventAdapter());
+
         instance = this;
+    }
+
+    @Override
+    public void initializeGestalt() {
+        gestalt = BukkitGestaltLoader.builder()
+            .initializer(getPlugin())
+            .build();
+
+        gestalt.initialize();
     }
 
     @Override
     public void enable() {
         new Metrics(getPlugin(), 23497);
 
-        registerCommands();
         registerListeners();
     }
 
     @Override
     public void shutdown() {
-        super.shutdown();
+        gestalt.terminate();
     }
 
     @Override
@@ -68,20 +85,8 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         };
     }
 
-    private void registerCommands() {
-        PluginCommand social = getPlugin().getCommand("social");
-        PluginCommand privateMessage = getPlugin().getCommand("pm");
-        PluginCommand reaction = getPlugin().getCommand("reaction");
-        PluginCommand group = getPlugin().getCommand("group");
-
-        Objects.requireNonNull(social).setExecutor(new SocialCommandImpl());
-        Objects.requireNonNull(privateMessage).setExecutor(new PrivateMessageCommandImpl());
-        Objects.requireNonNull(reaction).setExecutor(new ReactionCommandImpl());
-        Objects.requireNonNull(group).setExecutor(new GroupCommandImpl());
-    }
-
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new SocialPlayerListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new SocialUserListener(), getPlugin());
     }
 
 }

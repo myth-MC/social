@@ -1,0 +1,51 @@
+name: social
+authors:
+  - myth-MC
+  - U8092
+version: '${project.version}'
+api-version: '1.19'
+
+main: ovh.mythmc.social.paper.SocialPaperPlugin
+folia-supported: true
+
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    DiscordSRV:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    packetevents:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    gestalt:
+      load: OMIT
+      required: false
+      join-classpath: true
+
+permissions:
+  social.use.nickname.others:
+    description: Allows users to change other player's nicknames
+    default: op
+  social.filter.bypass:
+    description: Allows users to bypass filter settings
+    default: op
+  social.mute.excempt:
+    description: Allows users to bypass mute status
+    default: op
+  social.mentions:
+    description: Allows users to mention other users
+    default: true
+  social.text-formatting:
+    description: Allows users to format text
+    default: true
+  social.delete-messages.self:
+    description: Allows users to delete their own messages
+    default: op
+  social.delete-messages.others:
+    description: Allows users to delete other users' messages
+    default: op

@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.text.group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -11,11 +12,14 @@ import lombok.Builder;
 import lombok.Singular;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
+import ovh.mythmc.social.api.context.SocialProcessorContext;
+import ovh.mythmc.social.api.text.CustomTextProcessor;
+import ovh.mythmc.social.api.text.parser.SocialContextualParser;
+import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 
 @Experimental
 @Builder
-public class SocialParserGroup implements SocialContextualParser {
+public class SocialParserGroup implements SocialUserInputParser {
 
     @Singular("parser") private final List<SocialContextualParser> content = new ArrayList<>();
 
@@ -35,14 +39,34 @@ public class SocialParserGroup implements SocialContextualParser {
         get().forEach(content::remove);
     }
 
+    @Override
+    public boolean supportsOfflinePlayers() {
+        return true;
+    }
+
     @Experimental
     public Component requestToGroup(@NotNull SocialContextualParser requester, @NotNull SocialParserContext context) {
-        return request(context, content.stream().filter(parser -> !parser.getClass().equals(requester.getClass())).toList());
+        final CustomTextProcessor processor = CustomTextProcessor.builder()
+            .parsers(content.stream()
+                .filter(parser -> !parser.getClass().equals(requester.getClass()))
+                .toList())
+            .build();
+
+        return processor.parse(context.withGroup(Optional.of(this))); 
     }
 
     @Override
     public Component parse(SocialParserContext context) {
-        return request(context.withGroup(this), content);
+        if (context instanceof SocialProcessorContext processorContext) {
+            final CustomTextProcessor processor = CustomTextProcessor.builder()
+                .parsers(content)
+                .playerInput(processorContext.processor().playerInput())
+                .build();
+
+            return processor.parse(processorContext.withGroup(Optional.of(this))); 
+        }
+
+        return context.message();
     }
 
 }

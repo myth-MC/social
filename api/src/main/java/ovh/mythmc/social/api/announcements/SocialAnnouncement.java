@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.configuration.sections.settings.AnnouncementsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
 
 import java.util.ArrayList;
 import java.util.List;

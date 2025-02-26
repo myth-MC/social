@@ -13,7 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.context.SocialMessageContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext.HeaderType;
@@ -42,10 +42,9 @@ public class HistoryMenu implements HistoryBookMenu {
                 break;
             case PLAYER:
                 if (context.target() != null) {
-                    scope = Social.get().getTextProcessor().parse(SocialParserContext.builder()
-                        .socialPlayer(context.target())
-                        .message(Component.text("$(nickname)", NamedTextColor.BLUE))
-                        .build()
+                    scope = Social.get().getTextProcessor().parse(
+                        SocialParserContext.builder(context.target(), Component.text("$(nickname)", NamedTextColor.BLUE))
+                            .build()
                     );
                 }
                 break;
@@ -77,9 +76,9 @@ public class HistoryMenu implements HistoryBookMenu {
         Component author = Component.text("social (myth-MC)");
 
         List<HistoryPage> pages = new ArrayList<>();
-        List<SocialMessageContext> messages = new ArrayList<>(context.messages());
+        List<SocialRegisteredMessageContext> messages = new ArrayList<>(context.messages());
         Collections.reverse(messages);
-        for (SocialMessageContext message : messages) {
+        for (SocialRegisteredMessageContext message : messages) {
             if (pages.size() > 0 && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
                 pages.get(pages.size() -1).messages.add(message);
                 continue;
@@ -93,23 +92,23 @@ public class HistoryMenu implements HistoryBookMenu {
 
     private class HistoryPage {
 
-        private final Collection<SocialMessageContext> messages = new ArrayList<>();
+        private final Collection<SocialRegisteredMessageContext> messages = new ArrayList<>();
 
-        private HistoryPage(Collection<SocialMessageContext> messages) {
+        private HistoryPage(Collection<SocialRegisteredMessageContext> messages) {
             this.messages.addAll(messages);
         }
 
         private Component asComponent(SocialHistoryMenuContext context) {
             Component page = Component.empty();
 
-            for (SocialMessageContext message : messages) { 
+            for (SocialRegisteredMessageContext message : messages) { 
                 Component hoverText = Component.text(message.sender().getNickname() + ": ", NamedTextColor.GRAY)
-                    .append(Component.text(message.rawMessage(), NamedTextColor.WHITE))
+                    .append(message.message()).color(NamedTextColor.WHITE)
                     .appendNewline()
                     .appendNewline()
                     .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext()).colorIfAbsent(NamedTextColor.BLUE))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.chatChannel().getName(), message.chatChannel().getColor())));
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().getName(), message.channel().getColor())));
 
                 Component toAppend = Component.empty()
                     .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))
@@ -118,8 +117,8 @@ public class HistoryMenu implements HistoryBookMenu {
                     .appendNewline();
 
                 if (message.isReply() && context.headerType() != HeaderType.THREAD) {
-                    SocialMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
-                    toAppend = toAppend.clickEvent(ClickEvent.runCommand("/social:social history #" + message.id()));
+                    SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
+                    toAppend = toAppend.clickEvent(ClickEvent.runCommand("/social:social history thread " + message.id()));
 
                     Component replyMessage = Component.text("#" + reply.id())
                         .appendSpace()

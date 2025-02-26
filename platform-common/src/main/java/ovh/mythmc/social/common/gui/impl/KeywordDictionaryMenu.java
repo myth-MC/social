@@ -13,7 +13,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.text.keywords.SocialContextualKeyword;
+import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.common.context.SocialMenuContext;
 import ovh.mythmc.social.common.gui.SimpleBookMenu;
 
@@ -64,11 +64,9 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
         private Component asComponent(SocialMenuContext context) {
             Component page = Component.empty();
 
-            SocialParserContext parserContext = SocialParserContext.builder()
-                .socialPlayer(context.viewer())
-                .build();
-
             for (SocialContextualKeyword keyword : keywords) {
+                SocialParserContext parserContext = SocialParserContext.builder(context.viewer(), Component.text("[" + keyword.keyword() + "]")).build();
+
                 page = page.append(Component.empty()
                     .clickEvent(ClickEvent.copyToClipboard("[" + keyword.keyword() + "] "))
                     .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getKeywordDictionary().getCopyToClipboard())))                
@@ -76,7 +74,7 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
                     .append(Component.text(keyword.keyword(), NamedTextColor.BLUE))
                     .append(Component.text("]", NamedTextColor.DARK_GRAY))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getKeywordDictionary().getResult()), keyword.process(parserContext.withMessage(Component.text("[" + keyword.keyword() + "]")))))
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getKeywordDictionary().getResult()), keyword.process(parserContext)))
                     .appendNewline()
                     .appendNewline()
                 );

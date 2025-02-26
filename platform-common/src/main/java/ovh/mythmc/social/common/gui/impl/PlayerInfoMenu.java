@@ -30,17 +30,17 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component alias = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getAlias()), 
-            Component.text(context.target().getCachedNickname())
+            Component.text(context.target().getNickname())
         );
 
         Component username = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getUsername()), 
-            Component.text(context.target().getPlayer().getName())
+            Component.text(context.target().player().get().getName())
         );
 
         Component messageCount = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMessageCount()), 
-            Component.text(Social.get().getChatManager().getHistory().getByPlayer(context.target()).size())
+            Component.text(Social.get().getChatManager().getHistory().getByUser(context.target()).size())
         );
 
         Component mainChannel = getField(
@@ -54,15 +54,15 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
         );
 
         Component visibleChannelsHoverText = MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannelsHoverText());
-        SocialParserContext parserContext = SocialParserContext.builder()
-            .socialPlayer(context.target())
-            .build();
 
         for (ChatChannel channel : Social.get().getChatManager().getVisibleChannels(context.target())) {
+            SocialParserContext parserContext = SocialParserContext.builder(context.target(), Component.text(channel.getIcon() + " " + channel.getName(), channel.getColor()))
+                .build();
+
             visibleChannelsHoverText = visibleChannelsHoverText
                 .appendNewline()
                 .append(getField(
-                    Social.get().getTextProcessor().parse(parserContext.withMessage(Component.text(channel.getIcon() + " " + channel.getName(), channel.getColor()))), 
+                    Social.get().getTextProcessor().parse(parserContext), 
                     null
                 ));
         }
@@ -76,7 +76,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
             .appendNewline()
             .append(messageCount
                 .hoverEvent(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getClickToSeeMessageHistory()).asHoverEvent())
-                .clickEvent(ClickEvent.runCommand("/social:social history " + context.target().getPlayer().getName()))
+                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().player().get().getName()))
             )
             .appendNewline()
             .append(visibleChannels

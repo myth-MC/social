@@ -49,7 +49,7 @@ public class UpdateChecker {
     };
 
     private void scheduleTask() {
-        if (!Social.get().getConfig().getSettings().isUpdateChecker())
+        if (!Social.get().getConfig().getGeneral().isUpdateChecker())
             return;
 
         asyncScheduler.schedule(new TimerTask() {
@@ -57,7 +57,7 @@ public class UpdateChecker {
             public void run() {
                 performTask();
             }
-        }, Social.get().getConfig().getSettings().getUpdateCheckerIntervalInHours(), TimeUnit.HOURS);
+        }, Social.get().getConfig().getGeneral().getUpdateCheckerIntervalInHours(), TimeUnit.HOURS);
     }
 
     private void performTask() {
@@ -65,12 +65,12 @@ public class UpdateChecker {
         try {
             connection = URI.create(url).toURL().openConnection();
         } catch (IOException e) {
-            if (Social.get().getConfig().getSettings().isDebug())
+            if (Social.get().getConfig().getGeneral().isDebug())
                 logger.warn(e.getMessage());
         }
 
         try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
-            if (Social.get().getConfig().getSettings().isDebug())
+            if (Social.get().getConfig().getGeneral().isDebug())
                 logger.info("Checking for updates...");
 
             String latest = scanner.next();
@@ -82,10 +82,10 @@ public class UpdateChecker {
                 return;
             }
 
-            if (Social.get().getConfig().getSettings().isDebug())
+            if (Social.get().getConfig().getGeneral().isDebug())
                 logger.info("No updates have been found.");
         } catch (IOException e) {
-            if (Social.get().getConfig().getSettings().isDebug())
+            if (Social.get().getConfig().getGeneral().isDebug())
                 logger.warn(e.getMessage());
         }
 

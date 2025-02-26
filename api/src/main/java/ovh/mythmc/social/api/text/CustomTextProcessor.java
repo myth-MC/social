@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jetbrains.annotations.NotNull;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,13 +13,14 @@ import lombok.Setter;
 import lombok.With;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEvent.Action;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.text.annotations.SocialParserProperties;
-import ovh.mythmc.social.api.text.filters.SocialFilterLike;
-import ovh.mythmc.social.api.text.parsers.SocialContextualParser;
-import ovh.mythmc.social.api.text.parsers.SocialParser;
-import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
+import ovh.mythmc.social.api.context.SocialProcessorContext;
+import ovh.mythmc.social.api.text.filter.SocialFilterLike;
+import ovh.mythmc.social.api.text.parser.SocialContextualParser;
+import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Builder
@@ -29,11 +28,10 @@ import ovh.mythmc.social.api.text.parsers.SocialPlayerInputParser;
 @With
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
-@SuppressWarnings("deprecation")
 public class CustomTextProcessor {
 
     @Builder.Default
-    private Collection<SocialParser> parsers = new ArrayList<>();
+    private Collection<SocialContextualParser> parsers = new ArrayList<>();
 
     @Builder.Default
     private Collection<Class<?>> exclusions = new ArrayList<>();
@@ -42,66 +40,48 @@ public class CustomTextProcessor {
     private boolean playerInput = false;
 
     public static CustomTextProcessor defaultProcessor() {
-        List<SocialParser> parserList = new ArrayList<>();
-        Social.get().getTextProcessor().getParsers().forEach(parser -> {
-            parserList.add(parser);
-        });
-
         return CustomTextProcessor.builder()
-            .parsers(parserList)
+            .parsers(Social.get().getTextProcessor().getContextualParsers())
             .build();
     }
 
     public Component parse(SocialParserContext context) {
-        for (SocialParserProperties.ParserPriority priority : SocialParserProperties.ParserPriority.values()) {
-            context = parseByPriority(context, priority);
-        }
-
-        return context.message();
-    }
-
-    private SocialParserContext parseByPriority(SocialParserContext context, SocialParserProperties.ParserPriority priority) {
-        for (SocialParser parser : getByPriority(priority)) {
+        SocialProcessorContext processorContext = SocialProcessorContext.from(context, this);
+        
+        for (SocialContextualParser parser : getWithExclusions()) {
             if (parser instanceof SocialFilterLike && playerInput == false)
                 continue;
 
-            if (!(parser instanceof SocialPlayerInputParser) && playerInput)
+            if (!(parser instanceof SocialUserInputParser) && playerInput)
                 continue;
 
-            List<Class<?>> appliedParsers = context.appliedParsers();
-            if (Collections.frequency(appliedParsers, parser.getClass()) > 3) {
+            if (!parser.supportsOfflinePlayers() && processorContext.user().player().isEmpty())
+                continue;
+
+            if (Collections.frequency(processorContext.appliedParsers(), parser.getClass()) > 3) {
                 Social.get().getLogger().warn("Parser " + parser.getClass().getName() + " has been called too many times. This can potentially degrade performance. Please, inform the author(s) of " + parser.getClass().getName() + " about this.");
                 break;
             }
 
-            appliedParsers.add(parser.getClass());
-            context = context.withAppliedParsers(appliedParsers);
+            processorContext.addAppliedParser(parser.getClass());
+            processorContext = SocialProcessorContext.from(processorContext.withMessage(parser.parse(processorContext)), this);
 
-            if (parser instanceof SocialContextualParser contextualParser) {
-                context = context.withMessage(contextualParser.parse(context));
-            } else {
-                context = context.withMessage(parser.parse(context.socialPlayer(), context.message()));
+            // Workaround to parse the HoverEvent
+            if (processorContext.message().hoverEvent() != null && processorContext.message().hoverEvent().action().equals(Action.SHOW_TEXT)) {
+                @SuppressWarnings("unchecked")
+                Component hoverText = ((HoverEvent<Component>) processorContext.message().hoverEvent()).value();
+
+                Component messageWithHoverText = processorContext.message()
+                    .hoverEvent(parser.parse(processorContext.withMessage(hoverText)));
+
+                processorContext = SocialProcessorContext.from(processorContext.withMessage(messageWithHoverText), this);
             }
         }
 
-        return context;
+        return processorContext.message();
     }
 
-    private List<SocialParser> getByPriority(final @NotNull SocialParserProperties.ParserPriority priority) {
-        List<SocialParser> socialParserList = new ArrayList<>();
-        for (SocialParser parser : getWithExclusions()) {
-            SocialParserProperties.ParserPriority parserPriority = SocialParserProperties.ParserPriority.NORMAL;
-            if (parser.getClass().isAnnotationPresent(SocialParserProperties.class))
-                parserPriority = parser.getClass().getAnnotation(SocialParserProperties.class).priority();
-
-            if (parserPriority.equals(priority))
-                socialParserList.add(parser);
-        }
-
-        return socialParserList;
-    }
-
-    private List<SocialParser> getWithExclusions() {
+    private List<SocialContextualParser> getWithExclusions() {
         return parsers.stream()
             .filter(parser -> !exclusions.contains(parser.getClass()))
             .toList();

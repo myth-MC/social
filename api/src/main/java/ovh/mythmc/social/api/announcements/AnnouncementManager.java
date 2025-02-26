@@ -3,6 +3,8 @@ package ovh.mythmc.social.api.announcements;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.text.Component;
+
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChannelType;
@@ -37,7 +39,7 @@ public final class AnnouncementManager {
     }
 
     private void performTask() {
-        if (!Social.get().getConfig().getSettings().getAnnouncements().isEnabled())
+        if (!Social.get().getConfig().getAnnouncements().isEnabled())
             return;
 
         asyncScheduler.schedule(new TimerTask() {
@@ -45,11 +47,9 @@ public final class AnnouncementManager {
             public void run() {
                 SocialAnnouncement announcement = announcements.get(latest);
 
-                if (Social.get().getConfig().getSettings().getAnnouncements().isUseActionBar()) {
-                    Social.get().getPlayerManager().get().forEach(socialPlayer -> {
-                        SocialParserContext context = SocialParserContext.builder()
-                            .socialPlayer(socialPlayer)
-                            .message(announcement.message())
+                if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
+                    Social.get().getUserManager().get().forEach(user -> {
+                        SocialParserContext context = SocialParserContext.builder(user, announcement.message())
                             .messageChannelType(ChannelType.ACTION_BAR)
                             .build();
 
@@ -57,25 +57,23 @@ public final class AnnouncementManager {
                     });
                 } else {
                     for (ChatChannel channel : announcement.channels()) {
-                        channel.getMembers().forEach(uuid -> {
-                            SocialParserContext context = SocialParserContext.builder()
-                                .socialPlayer(Social.get().getPlayerManager().get(uuid))
-                                .message(announcement.message())
-                                .messageChannelType(channel.getType())
+                        channel.getMembers().forEach(user -> {
+                            SocialParserContext context = SocialParserContext.builder(user, announcement.message())
                                 .build();
 
-                            Social.get().getTextProcessor().parseAndSend(context);
+                            Component component = Social.get().getTextProcessor().parse(context);
+                            Social.get().getTextProcessor().send(user, component, ChannelType.CHAT, channel);
                         });
                     }
                 }
 
-                latest = latest + 1;
+                latest++;
                 if (latest >= announcements.size())
                     latest = 0;
 
                 performTask();
             }
-        }, Social.get().getConfig().getSettings().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
+        }, Social.get().getConfig().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
     }
 
     public void restartTask() {

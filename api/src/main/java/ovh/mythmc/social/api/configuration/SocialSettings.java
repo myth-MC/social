@@ -1,59 +1,36 @@
 package ovh.mythmc.social.api.configuration;
 
-import de.exlll.configlib.Comment;
-import de.exlll.configlib.Configuration;
-import lombok.Getter;
-import lombok.Setter;
-import ovh.mythmc.social.api.configuration.sections.settings.*;
+import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
+import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
+import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
+import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
+import ovh.mythmc.social.api.configuration.section.settings.ReactionsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings;
+import ovh.mythmc.social.api.configuration.section.settings.SystemMessagesSettings;
+import ovh.mythmc.social.api.configuration.section.settings.TextReplacementSettings;
 
-@Configuration
-@Getter
-public class SocialSettings {
+public interface SocialSettings {
 
-    @Comment("Enabling this will send more logs to console to help debugging")
-    private boolean debug = false;
+    GeneralSettings getGeneral();
+    
+    ChatSettings getChat();
 
-    @Comment("Whether to enable the update checker or not")
-    private boolean updateChecker = true;
+    ReactionsSettings getReactions();
 
-    @Comment("Time interval of the update checker in hours")
-    private int updateCheckerIntervalInHours = 6;
+    EmojiSettings getEmojis();
 
-    @Comment("Date format to use in menus and other text fields (mainly chat history)")
-    private String dateFormat = "MM-dd hh:mm";
+    MOTDSettings getMotd();
 
-    @Comment({"", "Chat module"})
-    private ChatSettings chat = new ChatSettings();
+    AnnouncementsSettings getAnnouncements();
 
-    @Comment({"", "Reactions module"})
-    private ReactionsSettings reactions = new ReactionsSettings();
+    SystemMessagesSettings getSystemMessages();
 
-    @Comment({"", "Emojis module"})
-    private EmojiSettings emojis = new EmojiSettings();
+    ServerLinksSettings getServerLinks();
 
-    @Comment({"", "MOTD module"})
-    private MOTDSettings motd = new MOTDSettings();
+    TextReplacementSettings getTextReplacement();
 
-    @Comment({"", "Announcements module"})
-    private AnnouncementsSettings announcements = new AnnouncementsSettings();
-
-    @Comment({"", "System messages module"})
-    private SystemMessagesSettings systemMessages = new SystemMessagesSettings();
-
-    @Comment({"", "Packets module"})
-    private PacketsSettings packets = new PacketsSettings();
-
-    @Comment({"", "Text replacement module"})
-    private TextReplacementSettings textReplacement = new TextReplacementSettings();
-
-    @Comment({"", "Commands settings"})
-    private CommandsSettings commands = new CommandsSettings();
-
-    @Comment({"", "DO NOT CHANGE THIS PLEASE"})
-    @Setter
-    private int migrationVersion = 1;
-
-    // @Comment({"", "Interaction Menu module"})
-    // private InteractionMenuSettings interactionMenu = new InteractionMenuSettings();
+    CommandsSettings getCommands();
 
 }

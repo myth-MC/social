@@ -48,23 +48,26 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 * 🛡️ **Group chat channels**. Players can create their own group channel with `/group`. Server owners can see group messages with Social Spy.
 * 😎 **Emoji support** in a very similar way as Discord: `:emoji_name:`
 * ‼️ **Mentions** that work with usernames and nicknames.
-* 🔗 **Server links**. Available since Minecraft 1.21, server links are a great way of sharing external resources with your players in the pause menu.
+* 🔗 **Server links**. Available since Minecraft 1.21, server links are a great way of sharing external resources with your players in the pause menu
 * 📢 **Built-in announcements** with a configurable interval. Can broadcast messages through the action bar
 * 🤫 **Private messages** with social spy for staff members
+* 🖌️ **Advanced text formatting** with **bold**, _italics_, <ins>underline</ins> and more options
 * 🤬 **Chat filters** that block IPs, URLs or words. Even in private messages
 * 🌊 **Flood/spam prevention**
-* ☕️ **Developer-friendly API** with countless possibilities. Developers can add custom channels, reactions, emojis, filters, keywords...
+* ☕️ **Developer-friendly API** with countless possibilities. Developers can add custom channels, reactions, emojis, filters, keywords, formatters...
 * 👀 **No dependencies**
 
 ## ⚠️ Compatibility chart
 
 |                                                         | Compatible? | Version | Notes                                        |
 |---------------------------------------------------------|-------------|---------|----------------------------------------------|
-| [PaperMC](https://papermc.io/)                          | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
-| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
-| [Bukkit](https://bukkit.org)                            | ✅          | 1.16+   | Reactions are available from 1.20 onwards    |
-| [Folia](https://papermc.io/software/folia)              | ❌          |         |                                              |
+| [PaperMC](https://papermc.io/)                          | ✅          | 1.19+   | *1                                           |
+| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.19+   | *1                                           |
+| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.19+   | *1                                           |
+| [Bukkit](https://bukkit.org)                            | ✅          | 1.19+   | *1                                           |
+| [Folia](https://papermc.io/software/folia)              | ✅          | 1.19+   | *1                                           |
+
+*1: _Some features require the latest version_
 
 ## 🔌 Integrations
 
@@ -94,24 +97,19 @@ It is developed using modern APIs, providing a **simple but powerful tool** for 
 
 # 🖊️ Usage
 
-## 🔧 First run
-
-When you run social for the very first time it will automatically generate two files:
-* 'settings.yml' contains general settings
-* 'messages.yml' contains configurable messages
-
-You can disable any feature by modifying `settings.yml`
+We have a simple guide on using **social** in our docs website: https://social.mythmc.ovh/docs
 
 ## ✏️ Key concepts
 ### 💬 Parsers
 **social** provides a set of powerful built-in tools in the form of **parsers**. Parsers are rules that modify text accordingly. Here's a list of parser types:
 
-|              | Description                                  | Format         | Triggerable by players? | Example                 |
-|--------------|----------------------------------------------|----------------|-------------------------|-------------------------|
-| Filter       | Replace expressions or words with '***'      | _configurable_ | ✅                      | `192.168.1.1 ➡️ ***`    |
-| Emoji        | Replaces a word with a unicode input (emoji) | :emoji:        | ✅                      | `:smile:     ➡️ 😄`     |
-| Keyword      | Replaces a word with a specific component    | [keyword]      | ✅                      | `[balance]   ➡️ 10.4$`  |
-| Placeholder  | Replaces a word with a specific component    | $placeholder   | ❌                      | `$channel    ➡️ global` |
+|              | Description                                     | Format         | Triggerable by players? | Example                 |
+|--------------|-------------------------------------------------|----------------|-------------------------|-------------------------|
+| Filter       | Replaces a literal with '***'                   | _configurable_ | ✅                      | `192.168.1.1 ➡️ ***`    |
+| Formatter    | Gives a special format to a literal             | _configurable_ | ✅                      | `**hi**      ➡️ `**hi** |
+| Emoji        | Replaces a literal with a unicode input (emoji) | :emoji:        | ✅                      | `:smile:     ➡️ 😄`     |
+| Keyword      | Replaces a literal with a specific component    | [keyword]      | ✅                      | `[balance]   ➡️ 10.4$`  |
+| Placeholder  | Replaces a literal with a specific component    | $placeholder   | ❌                      | `$channel    ➡️ global` |
 
 <div id="credits"></div>
 

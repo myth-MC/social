@@ -1,46 +1,42 @@
 package ovh.mythmc.social.api.context;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
-import lombok.With;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.chat.SignedMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Data
-@Builder
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
-@With
 public class SocialMessageContext implements SocialContext {
 
-    @Builder.Default
-    private final Integer id = 0;
+    private final SocialUser sender;
 
-    private final Date date;
+    private final ChatChannel channel;
 
-    private final SocialPlayer sender;
-
-    private final ChatChannel chatChannel;
+    private final Set<Audience> viewers;
 
     private final String rawMessage;
 
     private final Integer replyId;
 
-    public String date() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(Social.get().getConfig().getSettings().getDateFormat());
-        return dateFormat.format(date);
+    private final @Nullable SignedMessage signedMessage;
+
+    public boolean isSigned() {
+        return signedMessage != null;
     }
 
     public boolean isReply() {
-        if (Objects.equals(replyId, null))
+        if (replyId == null)
             return false;
 
         return Social.get().getChatManager().getHistory().getById(replyId) != null;

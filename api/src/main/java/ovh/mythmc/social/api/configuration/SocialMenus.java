@@ -3,10 +3,10 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import ovh.mythmc.social.api.configuration.sections.menus.EmojiDictionaryMenuSettings;
-import ovh.mythmc.social.api.configuration.sections.menus.HistoryMenuSettings;
-import ovh.mythmc.social.api.configuration.sections.menus.KeywordDictionaryMenuSettings;
-import ovh.mythmc.social.api.configuration.sections.menus.PlayerInfoMenuSettings;
+import ovh.mythmc.social.api.configuration.section.menus.EmojiDictionaryMenuSettings;
+import ovh.mythmc.social.api.configuration.section.menus.HistoryMenuSettings;
+import ovh.mythmc.social.api.configuration.section.menus.KeywordDictionaryMenuSettings;
+import ovh.mythmc.social.api.configuration.section.menus.PlayerInfoMenuSettings;
 
 @Configuration
 @Getter
