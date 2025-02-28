@@ -17,7 +17,7 @@ public final class PMBaseCommand {
 
     @Command
     public void execute(SocialUser sender, SocialUser recipient, @Suggestion("formatting-options") @Join(" ") String plainMessage) {
-        var callback = new SocialPrivateMessageSend(recipient, recipient, plainMessage);
+        var callback = new SocialPrivateMessageSend(sender, recipient, plainMessage);
         SocialPrivateMessageSendCallback.INSTANCE.invoke(callback, result -> {
             if (!result.cancelled())
                 Social.get().getChatManager().sendPrivateMessage(result.sender(), result.recipient(), result.plainMessage());
