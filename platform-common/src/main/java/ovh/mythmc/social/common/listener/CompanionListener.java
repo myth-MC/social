@@ -86,7 +86,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
         });
 
         SocialChannelPostSwitchCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_SWITCH, (ctx) -> {
-            if (ctx.user().companion().isEmpty())
+            if (ctx.user().companion().isPresent())
                 ctx.user().companion().get().mainChannel(ctx.channel());
         });
     }

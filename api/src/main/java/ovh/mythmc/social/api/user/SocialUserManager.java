@@ -117,7 +117,7 @@ public final class SocialUserManager {
     }
 
     public void setDisplayName(final @NotNull SocialUser user, final @NotNull String displayName) {
-        user.setCachedNickname(displayName);
+        user.setCachedDisplayName(displayName);
         user.player().ifPresent(player -> player.setDisplayName(displayName));
 
         SocialDatabase.get().update(user);

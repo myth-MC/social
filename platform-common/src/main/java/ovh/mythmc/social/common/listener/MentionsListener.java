@@ -38,7 +38,7 @@ public final class MentionsListener {
             // Username
             message = message.replaceText((builder) -> {
                 builder
-                    .match(Pattern.quote("@" + ctx.recipient().player().get().getName()) + "|" + Pattern.quote("@" + ctx.recipient().getCachedNickname()))
+                    .match(Pattern.quote("@" + ctx.recipient().player().get().getName()) + "|" + Pattern.quote("@" + ctx.recipient().getCachedDisplayName()))
                     .replacement((match, textBuilder) -> {
                         wrapper.mentioned = true;
                         return Component.text(match.group()).color(ctx.channel().getColor());

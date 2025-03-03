@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.configuration;
 import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
 import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
 import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.DatabaseSettings;
 import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
 import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
 import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
@@ -32,5 +33,7 @@ public interface SocialSettings {
     TextReplacementSettings getTextReplacement();
 
     CommandsSettings getCommands();
+
+    DatabaseSettings getDatabaseSettings();
 
 }

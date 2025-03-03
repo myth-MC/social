@@ -82,7 +82,7 @@ public final class SocialUserCompanion {
         user.player().ifPresent(player -> {
             var bytes = encode(
                 channel.getName().getBytes(StandardCharsets.UTF_8),
-                sender.getCachedNickname().getBytes(StandardCharsets.UTF_8),
+                sender.getCachedDisplayName().getBytes(StandardCharsets.UTF_8),
                 sender.getUuid().toString().getBytes(StandardCharsets.UTF_8)
             );
     

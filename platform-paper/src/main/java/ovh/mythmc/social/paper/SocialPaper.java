@@ -57,6 +57,7 @@ public final class SocialPaper extends SocialBootstrap<SocialPaperPlugin> {
     @Override
     public void shutdown() {
         gestalt.terminate();
+        super.shutdown();
     }
 
     @Override

@@ -5,6 +5,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
 import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
 import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.DatabaseSettings;
 import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
 import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
 import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
@@ -35,5 +36,7 @@ public final class ModernSocialSettings implements SocialSettings {
     private TextReplacementSettings textReplacement = Social.get().getConfig().getTextReplacement();
 
     private CommandsSettings commands = Social.get().getConfig().getCommands();
+
+    private DatabaseSettings databaseSettings = Social.get().getConfig().getDatabaseSettings();
 
 }

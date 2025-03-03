@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +18,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -54,8 +54,9 @@ public class SocialUser implements SocialUserAudienceWrapper {
     private long latestMessageInMilliseconds;
 
     @DatabaseField(columnName = "cachedNickname")
-    private String cachedNickname;
+    private String cachedDisplayName;
 
+    @DatabaseField(persisterClass = AdventureStylePersister.class)
     private Style displayNameStyle;
 
     @Getter(AccessLevel.PRIVATE)
@@ -102,7 +103,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
     }
 
     public Component displayName() {
-        var displayName = Component.text(cachedNickname);
+        var displayName = Component.text(cachedDisplayName);
 
         if (displayNameStyle != null)
             return displayName.style(displayNameStyle);
@@ -112,10 +113,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     @Deprecated(forRemoval = true)
     public String getNickname() {
-        if (player().isPresent())
-            cachedNickname = ChatColor.stripColor(player().get().getDisplayName());
-
-        return cachedNickname;
+        return cachedDisplayName;
     }
 
     // Send social messages

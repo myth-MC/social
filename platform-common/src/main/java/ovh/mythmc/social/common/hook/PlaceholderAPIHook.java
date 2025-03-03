@@ -72,7 +72,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.getName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return groupChatChannel.getLeader().getCachedNickname();
+                    return groupChatChannel.getLeader().getCachedDisplayName();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
                     return groupChatChannel.getLeader().player().get().getName();
@@ -110,7 +110,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserManager().getByUuid(uuid).getCachedNickname();
+                    return Social.get().getUserManager().getByUuid(uuid).getCachedDisplayName();
                 }
             }
 

@@ -41,4 +41,7 @@ public final class LegacySocialSettings implements SocialSettings {
     @Comment({"", "Commands settings"})
     private CommandsSettings commands = new CommandsSettings();
 
+    @Comment({"", "Database settings"})
+    private DatabaseSettings databaseSettings = new DatabaseSettings();
+
 }

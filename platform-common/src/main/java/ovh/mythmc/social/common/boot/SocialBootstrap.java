@@ -84,7 +84,9 @@ public abstract class SocialBootstrap<T> implements Social {
 
     public abstract void enable();
 
-    public abstract void shutdown();
+    public void shutdown() {
+        SocialDatabase.get().shutdown();
+    }
 
     @Override
     public final void reload(ReloadType type) {
