@@ -2,6 +2,10 @@ package ovh.mythmc.social.api.text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -19,7 +23,9 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialProcessorContext;
 import ovh.mythmc.social.api.text.filter.SocialFilterLike;
+import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
+import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
 import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
@@ -34,7 +40,7 @@ public class CustomTextProcessor {
     private Collection<SocialContextualParser> parsers = new ArrayList<>();
 
     @Builder.Default
-    private Collection<Class<?>> exclusions = new ArrayList<>();
+    private Collection<Class<? extends SocialContextualParser>> exclusions = new ArrayList<>();
 
     @Builder.Default
     private boolean playerInput = false;
@@ -79,6 +85,35 @@ public class CustomTextProcessor {
         }
 
         return processorContext.message();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends SocialContextualParser> List<T> getContextualParsersByType(final @NotNull Class<T> type) {
+        final List<T> typeParsers = new ArrayList<>();
+
+        parsers.stream()
+            .filter(parser -> type.isInstance(parser))
+            .map(parser -> (T) parser)
+            .forEach(typeParsers::add);
+
+        parsers.stream()
+            .filter(parser -> parser instanceof SocialParserGroup)
+            .map(parser -> (SocialParserGroup) parser)
+            .forEach(group -> group.getByType(type).forEach(typeParsers::add));
+
+        return typeParsers;
+    }
+
+    public Optional<SocialParserGroup> getGroupByContextualParser(final @NotNull Class<? extends SocialContextualParser> parserClass) {
+        return getContextualParsersByType(SocialParserGroup.class).stream()
+            .filter(group -> !group.getByType(parserClass).isEmpty())
+            .findFirst();
+    }
+
+    public <T extends SocialIdentifiedParser> Optional<T> getIdentifiedContextualParser(final @NotNull Class<T> type, final @NotNull String identifier) {
+        return getContextualParsersByType(type).stream()
+            .filter(parser -> parser.identifier().equals(identifier))
+            .findFirst();
     }
 
     private List<SocialContextualParser> getWithExclusions() {

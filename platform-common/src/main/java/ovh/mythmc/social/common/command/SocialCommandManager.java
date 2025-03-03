@@ -15,6 +15,8 @@ import dev.triumphteam.cmd.core.message.context.MessageContext;
 import dev.triumphteam.cmd.core.requirement.RequirementKey;
 import dev.triumphteam.cmd.core.suggestion.SuggestionKey;
 import lombok.NonNull;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
@@ -63,6 +65,20 @@ public final class SocialCommandManager {
         });
         
         manager.registerArgument(ChatChannel.class, (sender, arg) -> Social.get().getChatManager().getChannel(arg));
+
+        manager.registerArgument(TextColor.class, (sender, arg) -> {
+            TextColor color = NamedTextColor.NAMES.valueOr(arg, null);
+            if (color != null)
+                return color;
+
+            if (arg.equalsIgnoreCase("reset"))
+                return TextColor.fromHexString("#dbdbdb");
+
+            return TextColor.fromHexString(arg);
+        });
+
+        manager.registerArgument(SocialContextualPlaceholder.class, (sender, arg) -> Social.get().getTextProcessor().getIdentifiedParser(SocialContextualPlaceholder.class, arg).orElse(null));
+        manager.registerArgument(SocialContextualKeyword.class, (sender, arg) -> Social.get().getTextProcessor().getIdentifiedParser(SocialContextualKeyword.class, arg).orElse(null));
     }
 
     public void registerSuggestions() {
@@ -79,6 +95,13 @@ public final class SocialCommandManager {
 
         manager.registerSuggestion(boolean.class, (sender, arg) -> List.of("true", "false"));
         
+        manager.registerSuggestion(TextColor.class, (sender, arg) -> {
+            var suggestions = new ArrayList<>(NamedTextColor.NAMES.keys());
+            suggestions.add("reset");
+
+            return suggestions;
+        });
+
         manager.registerSuggestion(SuggestionKey.of("announcements"), (sender, arg) -> {
             List<String> integers = new ArrayList<>();
             for (int i = 0; i < Social.get().getAnnouncementManager().getAnnouncements().size(); i++) {
@@ -88,10 +111,15 @@ public final class SocialCommandManager {
             return integers;
         });
 
-        manager.registerSuggestion(SuggestionKey.of("placeholders"), (sender, arg) -> 
-            Social.get().getTextProcessor().getContextualParsers().stream()
-                .filter(parser -> parser instanceof SocialContextualPlaceholder)
-                .map(parser -> ((SocialContextualPlaceholder) parser).identifier())
+        manager.registerSuggestion(SocialContextualPlaceholder.class, (sender, arg) ->
+            Social.get().getTextProcessor().getContextualParsersByType(SocialContextualPlaceholder.class).stream()
+                .map(placeholder -> placeholder.identifier())
+                .toList()
+        );
+
+        manager.registerSuggestion(SocialContextualKeyword.class, (sender, arg) -> 
+            Social.get().getTextProcessor().getContextualParsersByType(SocialContextualKeyword.class).stream()
+                .map(keyword -> keyword.keyword())
                 .toList()
         );
 
@@ -123,10 +151,10 @@ public final class SocialCommandManager {
         );
 
         manager.registerSuggestion(SuggestionKey.of("group-members"), (sender, arg) -> {
-            if (!sender.hasGroupChatChannel())
+            if (sender.group().isEmpty())
                 return null;
             
-            return sender.getGroupChatChannel().getMembers().stream()
+            return sender.group().get().getMembers().stream()
                 .map(user -> user.player().get().getName())
                 .toList();
             });
@@ -134,11 +162,11 @@ public final class SocialCommandManager {
 
     public void registerRequirements() {
         manager.registerRequirement(RequirementKey.of("group"), (sender, context) ->
-            sender.hasGroupChatChannel()
+            sender.group().isPresent()
         );
 
         manager.registerRequirement(RequirementKey.of("group-leader"), (sender, context) ->
-            sender.hasGroupChatChannel() && sender.getGroupChatChannel().getLeaderUuid().equals(sender.getUuid())
+            sender.group().isPresent() && sender.group().get().getLeaderUuid().equals(sender.getUuid())
         );
     }
 

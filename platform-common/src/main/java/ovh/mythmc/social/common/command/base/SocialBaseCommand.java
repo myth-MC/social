@@ -11,6 +11,10 @@ import dev.triumphteam.cmd.core.annotations.Optional;
 import dev.triumphteam.cmd.core.annotations.Suggestion;
 import dev.triumphteam.cmd.core.argument.keyed.Flags;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.Social.ReloadType;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
@@ -18,6 +22,11 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.text.formatter.SocialFormatter;
+import ovh.mythmc.social.api.text.group.SocialParserGroup;
+import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
+import ovh.mythmc.social.api.text.parser.SocialContextualParser;
+import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext;
@@ -31,11 +40,42 @@ import ovh.mythmc.social.common.gui.impl.PlayerInfoMenu;
 @Command("social")
 public final class SocialBaseCommand {
 
+    @Command("announce")
+    @Permission(value = "social.use.announce", def = PermissionDefault.OP)
+    @Flag(flag = "s", longFlag = "self")
+    @Flag(flag = "t", longFlag = "channelType", argument = ChannelType.class)
+    public void announce(SocialUser user, Flags flags) {
+        final String message = flags.getText();
+        final boolean self = flags.hasFlag("s");
+        final var channelType = flags.getFlagValue("t", ChannelType.class).orElse(ChannelType.CHAT);
+
+        final var context = SocialParserContext.builder(user, Component.text(message))
+            .messageChannelType(channelType)
+            .build();
+
+        if (self) {
+            user.sendParsableMessage(context);
+            return;
+        }
+
+        Social.get().getUserManager().get().forEach(recipient -> recipient.sendParsableMessage(context.withChannel(recipient.getMainChannel())));
+    }
+
     @Command("announcement")
-    @Permission("social.use.announcement")
+    @Permission(value = "social.use.announcement", def = PermissionDefault.OP)
     @Flag(flag = "s", longFlag = "self")
     public void announce(SocialUser user, @Suggestion("announcements") Integer id, Flags flags) {
+        final int announcementsSize = Social.get().getAnnouncementManager().getAnnouncements().size();
+        if (id > announcementsSize || id < 0) {
+            Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getUnknownAnnouncement(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
+
         SocialAnnouncement announcement = Social.get().getAnnouncementManager().getAnnouncements().get(id);
+        if (announcement == null) {
+            Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getUnknownAnnouncement(), Social.get().getConfig().getMessages().getChannelType());
+            return;
+        }
 
         if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
             if (flags.hasFlag("s")) {
@@ -208,7 +248,7 @@ public final class SocialBaseCommand {
             Social.get().getUserManager().mute(target, channel);
 
             // Command sender
-            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMuted(), target.getNickname());
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMuted(), target.getCachedNickname());
             Social.get().getTextProcessor().parseAndSend(user, channel, successMessage, Social.get().getConfig().getMessages().getChannelType());
 
             // Target
@@ -222,7 +262,7 @@ public final class SocialBaseCommand {
             Social.get().getChatManager().getChannels().forEach(registeredChannel -> Social.get().getUserManager().mute(target, registeredChannel));
 
             // Command sender
-            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMutedGlobally(), target.getNickname());
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMutedGlobally(), target.getCachedNickname());
             Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), successMessage, Social.get().getConfig().getMessages().getChannelType());
 
             // Target
@@ -242,7 +282,7 @@ public final class SocialBaseCommand {
             Social.get().getUserManager().unmute(target, channel);
 
             // Command sender
-            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmuted(), target.getNickname());
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmuted(), target.getCachedNickname());
             Social.get().getTextProcessor().parseAndSend(user, channel, successMessage, Social.get().getConfig().getMessages().getChannelType());
 
             // Target
@@ -256,7 +296,7 @@ public final class SocialBaseCommand {
             Social.get().getChatManager().getChannels().forEach(registeredChannel -> Social.get().getUserManager().unmute(target, registeredChannel));
 
             // Command sender
-            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmutedGlobally(), target.getNickname());
+            String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmutedGlobally(), target.displayName());
             Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), successMessage, Social.get().getConfig().getMessages().getChannelType());
 
             // Target
@@ -265,11 +305,11 @@ public final class SocialBaseCommand {
     }
 
     @Command("nickname")
-    @Permission(value = "social.use.nickname", def = PermissionDefault.TRUE)
-    public class Nickname {
+    public final class Nickname {
 
-        @Command
-        public void nickname(SocialUser user, String nickname, @Optional SocialUser target) {
+        @Command("set")
+        @Permission(value = "social.use.nickname.set", def = PermissionDefault.TRUE)
+        public void set(SocialUser user, String nickname, @Optional SocialUser target) {
             if (nickname.length() > 16) {
                 Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getNicknameTooLong(), Social.get().getConfig().getMessages().getChannelType());
                 return;
@@ -278,6 +318,7 @@ public final class SocialBaseCommand {
             // Check no one has this nickname
             for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                 if (offlinePlayer.getName() != null &&
+                        offlinePlayer.getName() != user.player().get().getName() &&
                         offlinePlayer.getName().equalsIgnoreCase(nickname) &&
                         offlinePlayer.hasPlayedBefore()) {
                     Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getNicknameAlreadyInUse(), Social.get().getConfig().getMessages().getChannelType());
@@ -285,45 +326,144 @@ public final class SocialBaseCommand {
                 }
             }
 
-            if (target != null) {
+            if (target != null) { // Other user's nickname
                 if (nickname.equalsIgnoreCase("reset"))
                     nickname = target.player().get().getName();
+    
+                if (!user.player().get().hasPermission("social.use.nickname.set.others")) {
+                    Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
+                    return;
+                }
+    
+                Social.get().getUserManager().setDisplayName(target, nickname);
+                Social.get().getTextProcessor().parseAndSend(user, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.player().get().getName(), nickname), Social.get().getConfig().getMessages().getChannelType());
+            } else { // Sender's nickname
+                if (nickname.equalsIgnoreCase("reset"))
+                    nickname = user.player().get().getName();
 
-                if (!user.player().get().hasPermission("social.use.nickname.others")) {
+                Social.get().getUserManager().setDisplayName(user, nickname);
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
+            }
+        }
+
+        @Command("color")
+        @Permission(value = "social.use.nickname.color", def = PermissionDefault.OP)
+        public void color(SocialUser user, TextColor color, @Optional SocialUser target) {
+            if (color.asHexString().contains("dbdbdb"))
+                color = null;
+
+            if (target != null) { // Other user's nickname color
+                if (!user.player().get().hasPermission("social.use.nickname.color.others")) {
                     Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
 
-                target.player().get().setDisplayName(nickname);
-                Social.get().getTextProcessor().parseAndSend(user, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.player().get().getName(), nickname), Social.get().getConfig().getMessages().getChannelType());
-                return;
+                Social.get().getUserManager().setDisplayNameStyle(target, Style.style(color));
+                Social.get().getTextProcessor().parseAndSend(user, String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.player().get().getName(), target.getCachedNickname()), Social.get().getConfig().getMessages().getChannelType());
+            } else { // Sender's nickname color
+                Social.get().getUserManager().setDisplayNameStyle(user, Style.style(color));
+                Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
             }
-
-            if (nickname.equalsIgnoreCase("reset"))
-                nickname = user.player().get().getName();
-
-            user.player().get().setDisplayName(nickname);
-            Social.get().getTextProcessor().parseAndSend(user, user.getMainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
-            return;
         }
 
     }
 
-    @Command("parse")
-    @Permission("social.use.parse")
-    @Flag(flag = "u", longFlag = "user", argument = SocialUser.class)
-    @Flag(flag = "c", longFlag = "channel", argument = ChatChannel.class)
-    @Flag(flag = "t", longFlag = "channelType", argument = ChannelType.class)
-    @Flag(flag = "p", longFlag = "playerInput", argument = boolean.class)
-    public void parse(SocialUser user, @Suggestion("placeholders") Flags flags) {
-        String message = flags.getText();
-        
-        SocialParserContext context = SocialParserContext.builder(flags.getFlagValue("u", SocialUser.class).orElse(user), Component.text(message))
-            .channel(flags.getFlagValue("c", ChatChannel.class).orElse(user.getMainChannel()))
-            .messageChannelType(flags.getFlagValue("t", ChannelType.class).orElse(ChannelType.CHAT))
-            .build();
+    @Command("processor")
+    @Permission(value = "social.use.processor", def = PermissionDefault.OP)
+    public final class Processor {
 
-        user.sendParsableMessage(context, flags.getFlagValue("p", boolean.class).orElse(false));
+        @Command("info")
+        @Permission("social.use.processor.info")
+        public void info(SocialUser user) {
+            final String registeredParsers = String.format(
+                Social.get().getConfig().getMessages().getCommands().getProcessorInfoParsers(),
+                Social.get().getTextProcessor().getContextualParsers().size(),
+                Social.get().getTextProcessor().getContextualParsersByType(SocialParserGroup.class).size());
+
+            user.sendParsableMessage(registeredParsers);
+            user.sendParsableMessage(getFormattedParserInfo(SocialContextualPlaceholder.class));
+            user.sendParsableMessage(getFormattedParserInfo(SocialContextualKeyword.class));
+            user.sendParsableMessage(getFormattedParserInfo(SocialFormatter.class));
+        }
+
+        @Command("parse")
+        @Permission("social.use.processor.parse")
+        @Flag(flag = "u", longFlag = "user", argument = SocialUser.class)
+        @Flag(flag = "c", longFlag = "channel", argument = ChatChannel.class)
+        @Flag(flag = "t", longFlag = "channelType", argument = ChannelType.class)
+        @Flag(flag = "p", longFlag = "playerInput", argument = boolean.class)
+        public void parse(SocialUser user, Flags flags) {
+            final String input = flags.getText();
+
+            final var context = SocialParserContext.builder(flags.getFlagValue("u", SocialUser.class).orElse(user), Component.text(input))
+                .channel(flags.getFlagValue("c", ChatChannel.class).orElse(user.getMainChannel()))
+                .messageChannelType(flags.getFlagValue("t", ChannelType.class).orElse(ChannelType.CHAT))
+                .build();
+    
+            final var parsedInput = Social.get().getTextProcessor().parse(context);
+            if (context.messageChannelType().equals(ChannelType.ACTION_BAR)) {
+                user.sendParsableMessage(context, flags.getFlagValue("p", boolean.class).orElse(false));
+                return;
+            }
+
+            final var resultMessage = Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorResult())
+                .append(parsedInput)
+                .hoverEvent(Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorClickToAnnounce()))
+                .clickEvent(ClickEvent.callback(audience -> {
+                    Social.get().getUserManager().get().forEach(recipient -> recipient.sendMessage(parsedInput));
+                }));
+
+            user.sendParsableMessage(context.withMessage(resultMessage), flags.getFlagValue("p", boolean.class).orElse(false));
+        }
+
+        @Command("get")
+        @Permission(value = "social.use.processor.get", def = PermissionDefault.OP)
+        public final class Get {
+
+            @Command("placeholder")
+            @Permission(value = "social.use.processor.get.placeholder", def = PermissionDefault.OP)
+            @Flag(flag = "u", longFlag = "user", argument = SocialUser.class)
+            public void placeholder(SocialUser user, SocialContextualPlaceholder placeholder, Flags flags) {
+                final var target = flags.getFlagValue("u", SocialUser.class).orElse(user);
+                var context = SocialParserContext.builder(target, Component.empty()).build();
+                final var optionalGroup = Social.get().getTextProcessor().getGroupByContextualParser(placeholder.getClass());
+
+                if (optionalGroup.isPresent())
+                    context = context.withGroup(java.util.Optional.of(optionalGroup.get()));
+
+                user.sendParsableMessage(
+                    Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorResult())
+                        .append(placeholder.get(context)));
+            }
+
+            @Command("keyword")
+            @Permission(value = "social.use.processor.get.keyword", def = PermissionDefault.OP)
+            @Flag(flag = "u", longFlag = "user", argument = SocialUser.class)
+            public void keyword(SocialUser user, SocialContextualKeyword keyword, Flags flags) {
+                final var target = flags.getFlagValue("u", SocialUser.class).orElse(user);
+                var context = SocialParserContext.builder(target, Component.empty()).build();
+                final var optionalGroup = Social.get().getTextProcessor().getGroupByContextualParser(keyword.getClass());
+
+                if (optionalGroup.isPresent())
+                    context = context.withGroup(java.util.Optional.of(optionalGroup.get()));
+                
+                    user.sendParsableMessage(
+                        Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorResult())
+                            .append(keyword.process(context)));
+            }
+
+        }
+
+        private static Component getFormattedParserInfo(Class<? extends SocialContextualParser> type) {
+            final var typeParsers = Social.get().getTextProcessor().getContextualParsersByType(type);
+            final String message =  String.format(Social.get().getConfig().getMessages().getCommands().getProcessorInfoParsersByType(), 
+                type.getSimpleName(),
+                typeParsers.size());
+
+            return Component.text(message)
+                .hoverEvent(Component.text(typeParsers.stream().map(p -> p.getClass().getSimpleName()).toList().toString(), NamedTextColor.GRAY));
+        }
+
     }
 
     @Command("reload")

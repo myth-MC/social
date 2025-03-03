@@ -33,7 +33,7 @@ public final class ChatHistory {
             finalMessage, 
             messageContext.rawMessage(), 
             messageContext.replyId(),
-            messageContext.signedMessage());
+            messageContext.signedMessage().orElse(null));
 
         messages.put(id, historyContext);
         return historyContext;
@@ -44,11 +44,11 @@ public final class ChatHistory {
     }
 
     public boolean canDelete(SocialMessageContext context) {
-        return context.isSigned() ? context.signedMessage().canDelete() : false;
+        return context.signedMessage().isPresent() ? context.signedMessage().get().canDelete() : false;
     }
 
     public void delete(SocialRegisteredMessageContext context) {
-        Social.get().getUserManager().get().forEach(user -> user.deleteMessage(context.signedMessage()));
+        Social.get().getUserManager().get().forEach(user -> user.deleteMessage(context.signedMessage().get()));
 
         SocialRegisteredMessageContext newContext = new SocialRegisteredMessageContext(
             context.id(), 
@@ -59,7 +59,7 @@ public final class ChatHistory {
             Component.text("N/A", NamedTextColor.RED), 
             context.rawMessage(), 
             context.replyId(), 
-            context.signedMessage());
+            context.signedMessage().orElse(null));
 
         messages.put(context.id(), newContext);
     }

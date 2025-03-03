@@ -15,10 +15,9 @@ public interface SocialContextualParser {
 
     default boolean supportsOfflinePlayers() { return false; }
 
-    static Component request(@NotNull SocialParserContext context, @NotNull List<SocialContextualParser> requestedParsers) {
+    static Component requestList(@NotNull SocialParserContext context, @NotNull List<? extends SocialContextualParser> requestedParsers) {
         var message = context.message();
 
-        //List<SocialContextualParser> parsers = Social.get().getTextProcessor().getContextualParsersWithGroupMembers().stream().filter(p -> requestedParsers.contains(p)).toList();
         for (SocialContextualParser parser : requestedParsers) {
             message = parser.parse(context.withMessage(message));
         }
@@ -26,8 +25,12 @@ public interface SocialContextualParser {
         return message;
     }
 
+    @SuppressWarnings("unchecked")
     static Component request(@NotNull SocialParserContext context, final @NotNull Class<?>... requestedParsers) {
-        return request(context, Arrays.stream(requestedParsers).map(clazz -> Social.get().getTextProcessor().getContextualParserByClass(clazz)).toList());
+        return requestList(context, Arrays.stream(requestedParsers)
+            .filter(clazz -> SocialContextualParser.class.isAssignableFrom(clazz))
+            .map(clazz -> Social.get().getTextProcessor().getContextualParsersByType((Class<SocialContextualParser>) clazz).stream().findFirst().orElse(null))
+            .toList());
     }
 
 }

@@ -47,4 +47,12 @@ public class CommandsMessages {
 
     private String userUnmutedGlobally = "$(success_prefix) <gray>User <blue>%s</blue> has been unmuted globally.</gray>";
 
+    private String processorResult = "$(info_prefix) <blue>Result: </blue>";
+
+    private String processorClickToAnnounce = "$(warning_prefix) <gray>Click here to broadcast this message</gray>";
+
+    private String processorInfoParsers = "$(info_prefix) %s <gray>registered parsers (<white>%s</white> groups)</gray>";
+
+    private String processorInfoParsersByType = "$(info_prefix) :raw_box_up_and_right: <gray>%s</gray>: %s";
+
 }

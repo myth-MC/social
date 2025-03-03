@@ -1,5 +1,6 @@
 package ovh.mythmc.social.api.context;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -31,8 +32,13 @@ public class SocialMessageContext implements SocialContext {
 
     private final @Nullable SignedMessage signedMessage;
 
+    @Deprecated(forRemoval = true)
     public boolean isSigned() {
         return signedMessage != null;
+    }
+
+    public Optional<SignedMessage> signedMessage() {
+        return Optional.ofNullable(signedMessage);
     }
 
     public boolean isReply() {

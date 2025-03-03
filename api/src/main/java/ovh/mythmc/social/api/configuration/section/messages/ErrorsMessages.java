@@ -17,6 +17,8 @@ public class ErrorsMessages {
 
     private String invalidArgument = "$(error_prefix) <red>Invalid argument <gray>%s</gray> for type <gray>%s</gray>.</red>";
 
+    private String unknownAnnouncement = "$(error_prefix) <red>Unknown announcement.</red>";
+
     private String notEnoughPermission = "$(error_prefix) <red>You do not have enough permission to do this.</red>";
 
     private String notEnoughArguments = "$(error_prefix) <red>Not enough arguments.</red>";

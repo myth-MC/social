@@ -38,7 +38,7 @@ public final class MentionsListener {
             // Username
             message = message.replaceText((builder) -> {
                 builder
-                    .match(Pattern.quote("@" + ctx.recipient().player().get().getName()) + "|" + Pattern.quote("@" + ctx.recipient().getNickname()))
+                    .match(Pattern.quote("@" + ctx.recipient().player().get().getName()) + "|" + Pattern.quote("@" + ctx.recipient().getCachedNickname()))
                     .replacement((match, textBuilder) -> {
                         wrapper.mentioned = true;
                         return Component.text(match.group()).color(ctx.channel().getColor());
@@ -48,8 +48,7 @@ public final class MentionsListener {
             if (wrapper.mentioned) {
                 ctx.recipient().playSound(getSoundByKey(Social.get().getConfig().getChat().getMentionSound()));
                 
-                if (ctx.recipient().isCompanion())
-                    ctx.recipient().getCompanion().mention(ctx.channel(), ctx.sender());
+                ctx.recipient().companion().ifPresent(companion -> companion.mention(ctx.channel(), ctx.sender()));
             }
 
             ctx.message(message);

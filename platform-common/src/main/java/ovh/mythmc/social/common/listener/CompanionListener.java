@@ -46,12 +46,12 @@ public final class CompanionListener implements Listener, PluginMessageListener 
         Social.get().getUserManager().disableCompanion(user);
 
         PlatformAdapter.get().runAsyncTaskLater(plugin, () -> {
-            if (user.player().isEmpty() || !user.isCompanion())
+            if (user.player().isEmpty() || user.companion().isEmpty())
                 return;
 
-            user.getCompanion().clear();
-            user.getCompanion().refresh();
-            user.getCompanion().mainChannel(Social.get().getChatManager().getDefaultChannel());
+            user.companion().get().clear();
+            user.companion().get().refresh();
+            user.companion().get().mainChannel(Social.get().getChatManager().getDefaultChannel());
         }, 15);
     }
 
@@ -59,7 +59,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
         SocialChannelCreateCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_CREATE, (ctx) -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 SocialUser user = Social.get().getUserManager().getByUuid(player.getUniqueId());
-                if (user == null || !user.isCompanion())
+                if (user == null || user.companion().isEmpty())
                     return;
     
                 if (ctx.channel() instanceof GroupChatChannel groupChannel &&
@@ -67,27 +67,27 @@ public final class CompanionListener implements Listener, PluginMessageListener 
                     return;
     
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel()))
-                    user.getCompanion().open(ctx.channel());
+                    user.companion().get().open(ctx.channel());
             });    
         });
 
         SocialChannelDeleteCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_DELETE, (ctx) -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 SocialUser user = Social.get().getUserManager().getByUuid(player.getUniqueId());
-                if (user == null || !user.isCompanion())
+                if (user == null || user.companion().isEmpty())
                     return;
     
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel())) {
-                    user.getCompanion().close(ctx.channel());
+                    user.companion().get().close(ctx.channel());
                     if (user.getMainChannel().equals(ctx.channel()))
-                        user.getCompanion().mainChannel(Social.get().getChatManager().getDefaultChannel());
+                        user.companion().get().mainChannel(Social.get().getChatManager().getDefaultChannel());
                 }
             });
         });
 
         SocialChannelPostSwitchCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_SWITCH, (ctx) -> {
-            if (ctx.user().isCompanion())
-                ctx.user().getCompanion().mainChannel(ctx.channel());
+            if (ctx.user().companion().isEmpty())
+                ctx.user().companion().get().mainChannel(ctx.channel());
         });
     }
 
@@ -105,8 +105,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
 
         switch (pluginMessageChannel) {
             case "social:refresh" -> {
-                if (user.isCompanion())
-                    user.getCompanion().refresh();
+                user.companion().ifPresent(companion -> companion.refresh());
             }
             case "social:bonjour" -> {
                 if (Social.get().getConfig().getGeneral().isDebug())
@@ -115,7 +114,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
                 Social.get().getUserManager().enableCompanion(user);
             }
             case "social:switch" -> {
-                if (!user.isCompanion())
+                if (user.companion().isEmpty())
                     return;
 
                 ChatChannel channel = Social.get().getChatManager().getChannel(new String(message));
@@ -123,7 +122,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
                     Social.get().getUserManager().setMainChannel(user, channel);
             }
             case "social:preview" -> {
-                if (!user.isCompanion())
+                if (user.companion().isEmpty())
                     return;
 
                 PlatformAdapter.get().runAsyncTask(plugin, () -> {
@@ -134,7 +133,7 @@ public final class CompanionListener implements Listener, PluginMessageListener 
                     var context = new SocialRegisteredMessageContext(0, 0, user, user.getMainChannel(), Set.of(user), filteredMessage, "", null, null);
                     var rendered = Social.get().getChatManager().getRegisteredRenderer(SocialUser.class).render(SocialUser.dummy(user.getMainChannel()), context);
 
-                    user.getCompanion().preview(rendered.prefix().append(rendered.message()));
+                    user.companion().get().preview(rendered.prefix().append(rendered.message()));
                 });
             }
         }

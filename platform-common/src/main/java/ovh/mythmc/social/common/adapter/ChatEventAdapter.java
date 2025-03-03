@@ -142,7 +142,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
                 registeredMessage.message().applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") "))), 
                 registeredMessage.rawMessage(), 
                 registeredMessage.replyId(),
-                registeredMessage.signedMessage())
+                registeredMessage.signedMessage().orElse(null))
         );
 
         // Update sender's latest message

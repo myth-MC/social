@@ -130,7 +130,7 @@ public final class ChatListener implements Listener {
         });
 
         SocialChannelPostSwitchCallback.INSTANCE.registerListener(IdentifierKeys.CHANNEL_SWITCH_MESSAGE, (user, previousChannel, channel) -> {
-            if (user.isCompanion())
+            if (user.companion().isPresent())
                 return;
             
             SocialParserContext context = SocialParserContext.builder(user, Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))

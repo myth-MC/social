@@ -6,9 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
-public abstract class SocialContextualPlaceholder implements SocialContextualParser {
-
-    public abstract String identifier();
+public abstract class SocialContextualPlaceholder implements SocialIdentifiedParser {
 
     public abstract Component get(SocialParserContext context);
 

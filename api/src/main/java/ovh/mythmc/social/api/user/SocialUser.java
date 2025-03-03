@@ -2,6 +2,7 @@ package ovh.mythmc.social.api.user;
 
 import lombok.*;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,17 +36,9 @@ import javax.annotation.Nullable;
 @DatabaseTable(tableName = "users")
 public class SocialUser implements SocialUserAudienceWrapper {
 
-    public static Dummy dummy() { return new Dummy(null); }
+    public final static Dummy dummy() { return new Dummy(null); }
 
-    public static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
-
-    public static final class Dummy extends SocialUser {
-
-        private Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, 0, "Dummy", null);
-        }
-
-    }
+    public final static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
 
     @DatabaseField(id = true)
     private @NotNull UUID uuid;
@@ -60,11 +53,13 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     private long latestMessageInMilliseconds;
 
-    @DatabaseField
-    @Getter(AccessLevel.PRIVATE)
-    private String cachedNickname = null;
+    @DatabaseField(columnName = "cachedNickname")
+    private String cachedNickname;
 
-    private @Nullable @Experimental SocialUserCompanion companion;
+    private Style displayNameStyle;
+
+    @Getter(AccessLevel.PRIVATE)
+    private SocialUserCompanion companion;
 
     public Optional<Player> player() {
         return Optional.ofNullable(Bukkit.getPlayer(uuid));
@@ -75,8 +70,14 @@ public class SocialUser implements SocialUserAudienceWrapper {
         return Bukkit.getPlayer(uuid);
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isCompanion() {
         return companion != null;
+    }
+
+    @Experimental
+    public Optional<SocialUserCompanion> companion() {
+        return Optional.ofNullable(companion);
     }
 
     public @Nullable CommandSender asCommandSender() {
@@ -86,19 +87,30 @@ public class SocialUser implements SocialUserAudienceWrapper {
         return Bukkit.getConsoleSender();
     }
 
+    @Deprecated(forRemoval = true)
     public boolean hasGroupChatChannel() {
         return getGroupChatChannel() != null;
     }
 
+    @Deprecated(forRemoval = true)
     public @Nullable GroupChatChannel getGroupChatChannel() {
         return Social.get().getChatManager().getGroupChannelByUser(this);
     }
 
-    public Component displayName() {
-        player().ifPresent(player -> cachedNickname = ChatColor.stripColor(player.getDisplayName()));
-        return Component.text(cachedNickname);
+    public Optional<GroupChatChannel> group() {
+        return Optional.ofNullable(Social.get().getChatManager().getGroupChannelByUser(this));
     }
 
+    public Component displayName() {
+        var displayName = Component.text(cachedNickname);
+
+        if (displayNameStyle != null)
+            return displayName.style(displayNameStyle);
+
+        return displayName;
+    }
+
+    @Deprecated(forRemoval = true)
     public String getNickname() {
         if (player().isPresent())
             cachedNickname = ChatColor.stripColor(player().get().getDisplayName());
@@ -108,7 +120,7 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     // Send social messages
     public void sendParsableMessage(@NonNull SocialParserContext context, boolean playerInput) {
-        if (getPlayer() == null)
+        if (player().isEmpty())
             return;
         
         Component parsedMessage = null;
@@ -142,6 +154,14 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     public void sendParsableMessage(@NonNull String message) {
         sendParsableMessage(message, false);
+    }
+
+    public static final class Dummy extends SocialUser {
+
+        private Dummy(ChatChannel channel) {
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel, false, null, 0, "Dummy", null, null);
+        }
+
     }
 
 }

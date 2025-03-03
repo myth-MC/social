@@ -44,7 +44,7 @@ public class UserChatRenderer implements SocialChatRenderer<SocialUser> {
         var renderedPrefix = Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, prefix).channel(channel).build());
 
         // Send as channelable message to companion mod
-        if (target.isCompanion())
+        if (target.companion().isPresent())
             renderedPrefix = CompanionModUtils.asChannelable(renderedPrefix, channel);
 
         return new SocialRendererContext(

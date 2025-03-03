@@ -61,7 +61,8 @@ public class SocialChatRendererUtil {
         Component hoverText = Component.empty();
         for (SocialRegisteredMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply, 8)) {
             hoverText = hoverText
-                .append(Component.text(threadReply.sender().getNickname() + ": ", NamedTextColor.GRAY))
+                .append(threadReply.sender().displayName())
+                .append(Component.text(": ", NamedTextColor.GRAY))
                 .append(threadReply.message())
                 .appendNewline();
         }
