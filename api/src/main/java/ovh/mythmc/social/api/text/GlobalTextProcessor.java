@@ -13,6 +13,7 @@ import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
+import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
@@ -46,10 +47,12 @@ public final class GlobalTextProcessor {
         return parserList;
     }
 
+    @Deprecated(forRemoval = true)
     public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
         return getContextualParsersWithGroupMembers().stream().filter(parser -> parser.getClass().equals(clazz)).findFirst().orElse(null);
     }
 
+    @Deprecated(forRemoval = true)
     public Collection<SocialContextualParser> getContextualParsersWithGroupMembers() {
         List<SocialContextualParser> contextualParsers = new ArrayList<>();
         getContextualParsers().stream().forEach(contextualParser -> {
@@ -64,18 +67,34 @@ public final class GlobalTextProcessor {
         return contextualParsers;
     }
 
-    public Optional<SocialContextualPlaceholder> getContextualPlaceholder(final @NotNull String identifier) {
-        return getContextualParsers().stream()
-            .filter(parser -> parser instanceof SocialContextualPlaceholder placeholder && placeholder.identifier().equals(identifier))
-            .map(parser -> (SocialContextualPlaceholder) parser)
+    public <T extends SocialContextualParser> Collection<T> getContextualParsersByType(Class<T> type) {
+        final var textProcessor = CustomTextProcessor.builder()
+            .parsers(getContextualParsers())
+            .build();
+
+        return textProcessor.getContextualParsersByType(type);
+    }
+
+    public Optional<SocialParserGroup> getGroupByContextualParser(final @NotNull Class<? extends SocialContextualParser> parserClass) {
+        return getContextualParsersByType(SocialParserGroup.class).stream()
+            .filter(group -> !group.getByType(parserClass).isEmpty())
             .findFirst();
     }
 
-    public Optional<SocialContextualKeyword> getContextualKeyword(final @NotNull String identifier) {
-        return getContextualParsers().stream()
-            .filter(parser -> parser instanceof SocialContextualKeyword keyword && keyword.keyword().equals(identifier))
-            .map(parser -> (SocialContextualKeyword) parser)
+    public <T extends SocialIdentifiedParser> Optional<T> getIdentifiedParser(final @NotNull Class<T> type, final @NotNull String identifier) {
+        return getContextualParsersByType(type).stream()
+            .filter(parser -> parser.identifier().equals(identifier))
             .findFirst();
+    }
+
+    @Deprecated(forRemoval = true)
+    public Optional<SocialContextualPlaceholder> getContextualPlaceholder(final @NotNull String identifier) {
+        return getIdentifiedParser(SocialContextualPlaceholder.class, identifier);
+    }
+
+    @Deprecated(forRemoval = true)
+    public Optional<SocialContextualKeyword> getContextualKeyword(final @NotNull String identifier) {
+        return getIdentifiedParser(SocialContextualKeyword.class, identifier);
     }
 
     public boolean isContextualPlaceholder(final @NotNull String identifier) {
@@ -126,6 +145,7 @@ public final class GlobalTextProcessor {
         registerContextualParser(keyword);
     }
 
+    @Internal
     public void unregisterAllParsers() {
         EARLY_PARSERS.removeAll();
         parsers.clear();
@@ -225,7 +245,7 @@ public final class GlobalTextProcessor {
                 members.forEach(user -> {
                     Component userMessage = message;
 
-                    if (user.isCompanion()) {
+                    if (user.companion().isPresent()) {
                         if (channel == null) {
                             userMessage = CompanionModUtils.asBroadcast(message);
                         } else {

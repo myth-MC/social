@@ -13,6 +13,7 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
 import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
 import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
+import ovh.mythmc.social.api.configuration.section.settings.DatabaseSettings;
 import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
 import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
 import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
@@ -63,6 +64,8 @@ public final class SocialConfigProvider {
 
     private CommandsSettings commands = new CommandsSettings();
 
+    private DatabaseSettings databaseSettings = new DatabaseSettings();
+
     static final LoggerWrapper logger = new LoggerWrapper() {
         @Override
         public void info(String message, Object... args) {
@@ -92,6 +95,22 @@ public final class SocialConfigProvider {
         );
     }
 
+    private <T> void saveSettingsFile(String fileName, Class<T> clazz, T newFile, SocialSettings settings) {
+        if (settings instanceof LegacySocialSettings legacySocialSettings) {
+            YamlConfigurations.save(
+                new File(pluginFolder, "settings.yml").toPath(), 
+                LegacySocialSettings.class, 
+                legacySocialSettings);
+
+            return;
+        }
+
+        YamlConfigurations.save(
+            new File(pluginFolder, "settings" + File.separator + fileName).toPath(), 
+            clazz, 
+            newFile);
+    }
+
     public void loadSettings() {
         if (Files.exists(new File(pluginFolder, "settings.yml").toPath())) {
             settings = new LegacySocialSettings();
@@ -112,6 +131,7 @@ public final class SocialConfigProvider {
             serverLinks = settings.getServerLinks();
             textReplacement = settings.getTextReplacement();
             commands = settings.getCommands();
+            databaseSettings = settings.getDatabaseSettings();
 
             logger.warn("This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup");
             return;
@@ -127,6 +147,7 @@ public final class SocialConfigProvider {
         serverLinks = updateSettingsFile("server-links.yml", ServerLinksSettings.class);
         textReplacement = updateSettingsFile("text-replacement.yml", TextReplacementSettings.class);
         commands = updateSettingsFile("commands.yml", CommandsSettings.class);
+        databaseSettings = updateSettingsFile("database.yml", DatabaseSettings.class);
 
         settings = new ModernSocialSettings();
     }
@@ -199,6 +220,11 @@ public final class SocialConfigProvider {
         }
 
         return Sound.sound(Key.key(key), Sound.Source.PLAYER, 0.75f, 1.5f);
+    }
+
+    public void updateVersion(int newVersion) {
+        this.settings.getDatabaseSettings().setVersion(newVersion);
+        saveSettingsFile("database.yml", DatabaseSettings.class, this.settings.getDatabaseSettings(), this.settings);
     }
 
 }

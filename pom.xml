@@ -112,7 +112,7 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>central-release</id>
             <build>
                 <plugins>
                     <plugin>
@@ -181,10 +181,19 @@
             </build>
         </profile>
         <profile>
-            <id>snapshot</id>
+            <id>release</id>
             <distributionManagement>
                 <repository>
                     <id>myth-mc-releases</id>
+                    <url>https://repo.mythmc.ovh/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>snapshot</id>
+            <distributionManagement>
+                <repository>
+                    <id>myth-mc-snapshots</id>
                     <url>https://repo.mythmc.ovh/snapshots</url>
                 </repository>
             </distributionManagement>

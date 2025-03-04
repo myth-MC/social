@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.field.DataPersisterManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -21,6 +22,7 @@ import com.j256.ormlite.table.TableUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.user.SocialUser;
 
@@ -58,12 +60,19 @@ public final class SocialDatabase {
 
     public void initialize(@NotNull String path) throws SQLException {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
-        
+
+        // Custom persisters
+        final var adventureStylePersister = AdventureStylePersister.getSingleton();
+        DataPersisterManager.registerDataPersisters(adventureStylePersister);
+
         // Users table
         TableUtils.createTableIfNotExists(connectionSource, SocialUser.class);
 
         // Define DAOs
         usersDao = DaoManager.createDao(connectionSource, SocialUser.class);
+
+        // Upgrade database
+        upgrade();
 
         // Schedule auto-saver
         scheduleAutoSaver();
@@ -158,6 +167,21 @@ public final class SocialDatabase {
         }
 
         return null;
+    }
+
+    private void upgrade() {
+        final int currentVersion = Social.get().getConfig().getDatabaseSettings().getDatabaseVersion();
+        if (currentVersion < 1) {
+            try {
+                logger.info("Upgrading database...");
+                usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN displayNameStyle STRING;");
+                logger.info("Done!");
+            } catch (SQLException e) {
+                logger.error("Exception while upgrading database: {}", e);
+            }
+        }
+
+        Social.get().getConfig().updateVersion(1);
     }
     
 }

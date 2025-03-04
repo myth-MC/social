@@ -27,7 +27,7 @@ public final class GroupBaseCommand {
             return;
         }
 
-        Social.get().getChatManager().setGroupChannelAlias(user.getGroupChatChannel(), alias);
+        Social.get().getChatManager().setGroupChannelAlias(user.group().get(), alias);
         Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getCommands().getGroupAliasChanged(), Social.get().getConfig().getMessages().getChannelType());
     }
 
@@ -35,7 +35,7 @@ public final class GroupBaseCommand {
     @Permission(value = "social.use.group.chat", def = PermissionDefault.TRUE)
     @Requirement(value = "group", messageKey = "not-in-group")
     public void chat(SocialUser user) {
-        Social.get().getUserManager().setMainChannel(user, user.getGroupChatChannel());
+        Social.get().getUserManager().setMainChannel(user, user.group().get());
     }
 
     @Command("code")
@@ -70,7 +70,7 @@ public final class GroupBaseCommand {
     public void disband(SocialUser user, Flags flags) {
         if (flags.hasFlag("c")) {
             Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
-            Social.get().getChatManager().unregisterChatChannel(user.getGroupChatChannel());
+            Social.get().getChatManager().unregisterChatChannel(user.group().get());
             return;
         }
 
@@ -105,7 +105,7 @@ public final class GroupBaseCommand {
             return;
         }
 
-        user.getGroupChatChannel().removeMember(target);
+        user.group().get().removeMember(target);
     }
 
     @Command("leader")
@@ -118,25 +118,27 @@ public final class GroupBaseCommand {
             return;
         }
 
-        Social.get().getChatManager().setGroupChannelLeader(user.getGroupChatChannel(), target.getUuid());
+        Social.get().getChatManager().setGroupChannelLeader(user.group().get(), target.getUuid());
     }
 
     @Command("leave")
     @Permission(value = "social.use.group.leave", def = PermissionDefault.TRUE)
     @Requirement(value = "group", messageKey = "not-in-group")
     public void leave(SocialUser user) {
-        if (user.getGroupChatChannel().getLeaderUuid().equals(user.getUuid())) {
-            if (user.getGroupChatChannel().getMembers().size() < 2) {
-                Social.get().getChatManager().unregisterChatChannel(user.getGroupChatChannel());
+        final var group = user.group().get();
+
+        if (group.getLeaderUuid().equals(user.getUuid())) {
+            if (group.getMembers().size() < 2) {
+                Social.get().getChatManager().unregisterChatChannel(group);
                 Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
                 return;
             }
 
-            Social.get().getChatManager().setGroupChannelLeader(user.getGroupChatChannel(), user.getGroupChatChannel().getMemberUuids().get(1));
+            Social.get().getChatManager().setGroupChannelLeader(group, group.getMemberUuids().get(1));
         }
 
         Social.get().getTextProcessor().parseAndSend(user, Social.get().getConfig().getMessages().getCommands().getLeftGroup(), Social.get().getConfig().getMessages().getChannelType());
-        user.getGroupChatChannel().removeMember(user);
+        group.removeMember(user);
     }
     
 }

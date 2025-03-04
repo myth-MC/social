@@ -7,11 +7,16 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
-public abstract class SocialContextualKeyword implements SocialUserInputParser {
+public abstract class SocialContextualKeyword implements SocialUserInputParser, SocialIdentifiedParser {
 
     public abstract String keyword();
 
     public abstract Component process(SocialParserContext context);
+
+    @Override
+    public String identifier() {
+        return keyword();
+    }
 
     @Override
     public Component parse(SocialParserContext context) {

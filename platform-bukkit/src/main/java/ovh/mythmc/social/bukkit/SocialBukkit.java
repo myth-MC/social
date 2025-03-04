@@ -58,6 +58,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
     @Override
     public void shutdown() {
         gestalt.terminate();
+        super.shutdown();
     }
 
     @Override

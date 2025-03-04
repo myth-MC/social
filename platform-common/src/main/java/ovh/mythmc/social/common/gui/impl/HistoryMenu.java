@@ -102,7 +102,7 @@ public class HistoryMenu implements HistoryBookMenu {
             Component page = Component.empty();
 
             for (SocialRegisteredMessageContext message : messages) { 
-                Component hoverText = Component.text(message.sender().getNickname() + ": ", NamedTextColor.GRAY)
+                Component hoverText = Component.text(message.sender().getCachedDisplayName() + ": ", NamedTextColor.GRAY)
                     .append(message.message()).color(NamedTextColor.WHITE)
                     .appendNewline()
                     .appendNewline()
@@ -122,7 +122,7 @@ public class HistoryMenu implements HistoryBookMenu {
 
                     Component replyMessage = Component.text("#" + reply.id())
                         .appendSpace()
-                        .append(Component.text("(" + reply.sender().getNickname() + ")", NamedTextColor.BLUE)
+                        .append(Component.text("(" + reply.sender().getCachedDisplayName() + ")", NamedTextColor.BLUE)
                         .appendNewline()
                         .appendNewline()
                         .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getClickToOpenThreadHistory()))

@@ -241,12 +241,12 @@ public final class ChatManager {
 
                 Component filteredMessage = parsePlayerInput(sender, sender.getMainChannel(), message);
 
-                if (!sender.getNickname().equals(senderPlayer.getName()))
+                if (!sender.getCachedDisplayName().equals(senderPlayer.getName()))
                     senderHoverText = senderHoverText
                             .appendNewline()
                             .append(parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
-                if (!recipient.getNickname().equals(recipientPlayer.getName()))
+                if (!recipient.getCachedDisplayName().equals(recipientPlayer.getName()))
                     recipientHoverText = recipientHoverText
                             .appendNewline()
                             .append(parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
@@ -278,7 +278,7 @@ public final class ChatManager {
                 Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
 
                 // Send message to console
-                SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getNickname() + " -> " + recipient.getNickname() + ": " + message));
+                SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getCachedDisplayName() + " -> " + recipient.getCachedDisplayName() + ": " + message));
             });
         });
     }

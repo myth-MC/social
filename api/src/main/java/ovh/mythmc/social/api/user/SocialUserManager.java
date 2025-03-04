@@ -2,6 +2,8 @@ package ovh.mythmc.social.api.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.text.format.Style;
+
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
@@ -110,6 +112,19 @@ public final class SocialUserManager {
                              final boolean socialSpy) {
 
         user.setSocialSpy(socialSpy);
+
+        SocialDatabase.get().update(user);
+    }
+
+    public void setDisplayName(final @NotNull SocialUser user, final @NotNull String displayName) {
+        user.setCachedDisplayName(displayName);
+        user.player().ifPresent(player -> player.setDisplayName(displayName));
+
+        SocialDatabase.get().update(user);
+    }
+
+    public void setDisplayNameStyle(final @NotNull SocialUser user, final Style style) {
+        user.setDisplayNameStyle(style);
 
         SocialDatabase.get().update(user);
     }

@@ -55,6 +55,23 @@ public class SocialParserGroup implements SocialUserInputParser {
         return processor.parse(context.withGroup(Optional.of(this))); 
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends SocialContextualParser> List<T> getByType(@NotNull Class<T> type) {
+        final List<T> typeParsers = new ArrayList<>();
+
+        content.stream()
+            .filter(parser -> type.isInstance(parser))
+            .map(parser -> (T) parser)
+            .forEach(typeParsers::add);
+
+        content.stream() // Recursive search
+            .filter(parser -> parser instanceof SocialParserGroup)
+            .map(parser -> (SocialParserGroup) parser)
+            .forEach(group -> group.getByType(type).forEach(typeParsers::add));
+
+        return typeParsers;
+    }
+
     @Override
     public Component parse(SocialParserContext context) {
         if (context instanceof SocialProcessorContext processorContext) {

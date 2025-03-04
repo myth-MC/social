@@ -21,6 +21,7 @@ import ovh.mythmc.social.api.callback.message.SocialMessageSendCallback;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.user.SocialUser;
 
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public final class DiscordSRVHook implements ChatHook {
 
     @Subscribe // compatibility with Bukkit
     public void onGameChatMessagePostProcess(GameChatMessagePostProcessEvent event) {
-        if (event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent asyncPlayerChatEvent) {
+        if (event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent) {
             //if (chatEvent.getRecipients().isEmpty())
             event.setCancelled(true);
         }
@@ -71,7 +72,7 @@ public final class DiscordSRVHook implements ChatHook {
             .channel(chatChannel)
             .build();
 
-        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getContextualPlaceholder("channel_icon").get().get(context);
+        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getIdentifiedParser(SocialContextualPlaceholder.class, "channel_icon").get().get(context);
 
         miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 
