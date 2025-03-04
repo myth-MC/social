@@ -4,10 +4,8 @@ import lombok.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
 import com.j256.ormlite.field.DataType;
@@ -19,12 +17,11 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
@@ -39,6 +36,11 @@ public class SocialUser implements SocialUserAudienceWrapper {
     public final static Dummy dummy() { return new Dummy(null); }
 
     public final static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
+
+    @Override
+    public SocialUser user() {
+        return this;
+    }
 
     @DatabaseField(id = true)
     private @NotNull UUID uuid;
@@ -62,15 +64,6 @@ public class SocialUser implements SocialUserAudienceWrapper {
     @Getter(AccessLevel.PRIVATE)
     private SocialUserCompanion companion;
 
-    public Optional<Player> player() {
-        return Optional.ofNullable(Bukkit.getPlayer(uuid));
-    }
-
-    @Deprecated(since = "0.4", forRemoval = true)
-    public @Nullable Player getPlayer() {
-        return Bukkit.getPlayer(uuid);
-    }
-
     @Deprecated(forRemoval = true)
     public boolean isCompanion() {
         return companion != null;
@@ -79,13 +72,6 @@ public class SocialUser implements SocialUserAudienceWrapper {
     @Experimental
     public Optional<SocialUserCompanion> companion() {
         return Optional.ofNullable(companion);
-    }
-
-    public @Nullable CommandSender asCommandSender() {
-        if (getPlayer() != null)
-            return getPlayer();
-
-        return Bukkit.getConsoleSender();
     }
 
     @Deprecated(forRemoval = true)
@@ -100,6 +86,10 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     public Optional<GroupChatChannel> group() {
         return Optional.ofNullable(Social.get().getChatManager().getGroupChannelByUser(this));
+    }
+
+    public String name() {
+        return PlatformUsers.get().name(this);
     }
 
     public Component displayName() {
@@ -118,9 +108,6 @@ public class SocialUser implements SocialUserAudienceWrapper {
 
     // Send social messages
     public void sendParsableMessage(@NonNull SocialParserContext context, boolean playerInput) {
-        if (player().isEmpty())
-            return;
-        
         Component parsedMessage = null;
 
         if (playerInput) {

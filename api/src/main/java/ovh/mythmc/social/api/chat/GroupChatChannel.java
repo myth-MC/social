@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.group.SocialGroupJoin;
 import ovh.mythmc.social.api.callback.group.SocialGroupJoinCallback;
@@ -14,8 +16,6 @@ import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)

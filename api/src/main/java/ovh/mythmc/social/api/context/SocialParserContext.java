@@ -2,9 +2,8 @@ package ovh.mythmc.social.api.context;
 
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
 import lombok.AccessLevel;

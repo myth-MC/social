@@ -26,14 +26,14 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
         SocialUser user = context.user();
 
         String hoverTextAsString = Social.get().getConfig().getChat().getClickableNicknameHoverText();
-        if (!user.getCachedDisplayName().equals(user.player().get().getName())) {
+        if (!user.getCachedDisplayName().equals(user.name())) {
             hoverTextAsString = hoverTextAsString + "\n" + Social.get().getConfig().getChat().getPlayerAliasWarningHoverText();
         }
 
         // Todo: temporary workaround
         String commandAsString = Social.get().getConfig().getChat().getClickableNicknameCommand();
-        commandAsString = commandAsString.replace("$username", context.user().player().get().getName());
-        commandAsString = commandAsString.replace("$(username)", context.user().player().get().getName());
+        commandAsString = commandAsString.replace("$username", context.user().name());
+        commandAsString = commandAsString.replace("$(username)", context.user().name());
 
         
         Component hoverText = SocialContextualParser.request(context.withMessage(Component.text(hoverTextAsString)),

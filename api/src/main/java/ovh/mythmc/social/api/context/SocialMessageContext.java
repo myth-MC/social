@@ -3,7 +3,7 @@ package ovh.mythmc.social.api.context;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import lombok.AccessLevel;
 import lombok.Data;
