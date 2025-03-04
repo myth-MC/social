@@ -222,7 +222,12 @@ public final class SocialConfigProvider {
         return Sound.sound(Key.key(key), Sound.Source.PLAYER, 0.75f, 1.5f);
     }
 
-    public void updateVersion(int newVersion) {
+    public void setDatabaseInitialized() {
+        this.settings.getDatabaseSettings().setInitialized(true);
+        saveSettingsFile("database.yml", DatabaseSettings.class, this.settings.getDatabaseSettings(), this.settings);
+    }
+
+    public void updateDatabaseVersion(int newVersion) {
         this.settings.getDatabaseSettings().setVersion(newVersion);
         saveSettingsFile("database.yml", DatabaseSettings.class, this.settings.getDatabaseSettings(), this.settings);
     }

@@ -58,6 +58,8 @@ public final class SocialDatabase {
 
     private Map<UUID, SocialUser> usersCache = new HashMap<>();
 
+    private boolean firstBoot = false;
+
     public void initialize(@NotNull String path) throws SQLException {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
 
@@ -72,10 +74,16 @@ public final class SocialDatabase {
         usersDao = DaoManager.createDao(connectionSource, SocialUser.class);
 
         // Upgrade database
+        firstBoot = !Social.get().getConfig().getDatabaseSettings().isInitialized() &&
+            Social.get().getConfig().getDatabaseSettings().getDatabaseVersion() == 0;
+
         upgrade();
 
         // Schedule auto-saver
         scheduleAutoSaver();
+
+        // Mark database as initialized
+        Social.get().getConfig().setDatabaseInitialized();
     }
 
     public void shutdown() {
@@ -170,18 +178,20 @@ public final class SocialDatabase {
     }
 
     private void upgrade() {
-        final int currentVersion = Social.get().getConfig().getDatabaseSettings().getDatabaseVersion();
-        if (currentVersion < 1) {
-            try {
-                logger.info("Upgrading database...");
-                usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN displayNameStyle STRING;");
-                logger.info("Done!");
-            } catch (SQLException e) {
-                logger.error("Exception while upgrading database: {}", e);
+        if (!firstBoot) {
+            final int currentVersion = Social.get().getConfig().getDatabaseSettings().getDatabaseVersion();
+            if (currentVersion < 1) {
+                try {
+                    logger.info("Upgrading database...");
+                    usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN displayNameStyle STRING;");
+                    logger.info("Done!");
+                } catch (SQLException e) {
+                    logger.error("Exception while upgrading database: {}", e);
+                }
             }
         }
 
-        Social.get().getConfig().updateVersion(1);
+        Social.get().getConfig().updateDatabaseVersion(1);
     }
     
 }

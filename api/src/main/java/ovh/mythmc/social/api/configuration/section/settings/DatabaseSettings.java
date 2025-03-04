@@ -15,10 +15,17 @@ public class DatabaseSettings {
     private int cacheClearInterval = 5;
 
     @Comment("Don't change this, you might lose all your data")
+    private boolean initialized = false;
+
+    @Comment("Don't change this, you might lose all your data")
     private int databaseVersion = 0;
 
     public void setVersion(int version) {
         databaseVersion = version;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     public enum DatabaseType {

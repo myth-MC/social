@@ -31,7 +31,11 @@ public final class SocialUserListener implements Listener {
         SocialUser user = Social.get().getUserManager().getByUuid(event.getPlayer().getUniqueId());
         
         // Update display name
-        user.player().get().setDisplayName(user.getCachedDisplayName());
+        if (user.getCachedDisplayName() == null) {
+            Social.get().getUserManager().setDisplayName(user, user.player().get().getDisplayName());
+        } else {
+            user.player().get().setDisplayName(user.getCachedDisplayName());
+        }
 
         // Emoji chat completions
         if (Social.get().getConfig().getEmojis().isEnabled() && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
