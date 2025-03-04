@@ -9,6 +9,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.social.api.Social;
@@ -30,12 +31,11 @@ import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer.Registered;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -181,14 +181,10 @@ public final class ChatManager {
     }
 
     public void assignChannelsToPlayer(final @NotNull SocialUser user) {
-        user.player().ifPresent(player -> {
-            for (ChatChannel channel : Social.get().getChatManager().getChannels()) {
-                if (channel.isJoinByDefault()) {
-                    if (channel.getPermission() == null || player.hasPermission(channel.getPermission()))
-                        channel.addMember(user.getUuid());
-                }
-            }
-        });
+        channels.stream()
+            .filter(ChatChannel::isJoinByDefault)
+            .filter(channel -> channel.getPermission() == null || hasPermission(user, channel))
+            .forEach(channel -> channel.addMember(user));
     }
 
     public boolean hasGroup(final @NotNull UUID uuid) {
@@ -203,7 +199,7 @@ public final class ChatManager {
         if (chatChannel.getPermission() == null)
             return true;
 
-        if (user.player().isPresent() && user.player().get().hasPermission(chatChannel.getPermission()))
+        if (PlatformUsers.get().checkPermission(user, chatChannel.getPermission()))
             return true;
 
         return false;
@@ -214,73 +210,69 @@ public final class ChatManager {
                                    final @NotNull SocialUser recipient,
                                    final @NotNull String message) {
 
-        sender.player().ifPresent(senderPlayer -> {
-            recipient.player().ifPresent(recipientPlayer -> {
-                // Flood filter
-                if (Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
-                    int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+        // Flood filter
+        if (Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
+            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
-                    if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
-                            !senderPlayer.hasPermission("social.filter.bypass")) {
+            if (System.currentTimeMillis() - sender.getLatestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
+                    !PlatformUsers.get().checkPermission(sender, "social.filter.bypass")) {
 
-                        Social.get().getTextProcessor().parseAndSend(sender, sender.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
-                        return;
-                    }
-                }
+                Social.get().getTextProcessor().parseAndSend(sender, sender.getMainChannel(), Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                return;
+            }
+        }
 
-                Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().prefix() + " ");
-                Component prefixHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
+        Component prefix = parse(sender, sender.getMainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().prefix() + " ");
+        Component prefixHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
 
-                Component senderNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
-                Component senderHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
+        Component senderNickname = parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
+        Component senderHoverText = parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
 
-                Component recipientNickname = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
-                Component recipientHoverText = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
+        Component recipientNickname = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
+        Component recipientHoverText = parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
 
-                Component arrow = parse(recipient, recipient.getMainChannel(), " " + Social.get().getConfig().getCommands().getPrivateMessage().arrow() + " ");
+        Component arrow = parse(recipient, recipient.getMainChannel(), " " + Social.get().getConfig().getCommands().getPrivateMessage().arrow() + " ");
 
-                Component filteredMessage = parsePlayerInput(sender, sender.getMainChannel(), message);
+        Component filteredMessage = parsePlayerInput(sender, sender.getMainChannel(), message);
 
-                if (!sender.getCachedDisplayName().equals(senderPlayer.getName()))
-                    senderHoverText = senderHoverText
-                            .appendNewline()
-                            .append(parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
+        if (!sender.getCachedDisplayName().equals(PlatformUsers.get().name(sender)))
+            senderHoverText = senderHoverText
+                    .appendNewline()
+                    .append(parse(sender, sender.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
-                if (!recipient.getCachedDisplayName().equals(recipientPlayer.getName()))
-                    recipientHoverText = recipientHoverText
-                            .appendNewline()
-                            .append(parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
+        if (!recipient.getCachedDisplayName().equals(PlatformUsers.get().name(recipient)))
+            recipientHoverText = recipientHoverText
+                    .appendNewline()
+                    .append(parse(recipient, recipient.getMainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
-                Component chatMessage = Component.empty()
-                        .append(prefix
-                                .hoverEvent(HoverEvent.showText(prefixHoverText))
-                        )
-                        .append(SocialChatRendererUtil.trim(senderNickname)
-                                .hoverEvent(HoverEvent.showText(senderHoverText))
-                        )
-                        .append(arrow)
-                        .append(SocialChatRendererUtil.trim(recipientNickname)
-                                .hoverEvent(HoverEvent.showText(recipientHoverText))
-                        )
-                        .append(text(": ").color(NamedTextColor.GRAY))
-                        .append(filteredMessage);
+        Component chatMessage = Component.empty()
+                .append(prefix
+                        .hoverEvent(HoverEvent.showText(prefixHoverText))
+                )
+                .append(SocialChatRendererUtil.trim(senderNickname)
+                        .hoverEvent(HoverEvent.showText(senderHoverText))
+                )
+                .append(arrow)
+                .append(SocialChatRendererUtil.trim(recipientNickname)
+                        .hoverEvent(HoverEvent.showText(recipientHoverText))
+                )
+                .append(text(": ").color(NamedTextColor.GRAY))
+                .append(filteredMessage);
 
-                Collection<SocialUser> members = new ArrayList<>();
-                members.add(sender);
-                members.add(recipient);
+        Collection<SocialUser> members = new ArrayList<>();
+        members.add(sender);
+        members.add(recipient);
 
-                Social.get().getUserManager().get().forEach(player -> {
-                    if (player.isSocialSpy() && !members.contains(player))
-                        members.add(player);
-                });
-
-                Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT, null);
-                Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
-
-                // Send message to console
-                SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getCachedDisplayName() + " -> " + recipient.getCachedDisplayName() + ": " + message));
-            });
+        Social.get().getUserManager().get().forEach(player -> {
+            if (player.isSocialSpy() && !members.contains(player))
+                members.add(player);
         });
+
+        Social.get().getTextProcessor().send(members, chatMessage, ChannelType.CHAT, null);
+        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
+
+        // Send message to console
+        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.getCachedDisplayName() + " -> " + recipient.getCachedDisplayName() + ": " + message));
     }
 
     private Component parse(SocialUser user, ChatChannel channel, Component message) {

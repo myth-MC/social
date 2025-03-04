@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
@@ -18,6 +16,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -42,60 +41,52 @@ public final class SocialUserCompanion {
 
     private final SocialUser user;
 
-    private final Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
-
     public void open(final @NotNull ChatChannel channel) {
-        user.player().ifPresent(player -> {
-            String name = channel.getName();
-            String alias = CompanionModUtils.getAliasWithPrefix(channel);
-            String icon = CompanionModUtils.getIconWithoutBrackets(channel);
-            String description = GsonComponentSerializer.gson().serialize(Social.get().getTextProcessor().parse(
-                SocialParserContext.builder(user, channel.getHoverText())
-                    .channel(channel)
-                    .build()));
-    
-            var bytes = encode(
-                name.getBytes(StandardCharsets.UTF_8),
-                alias.getBytes(StandardCharsets.UTF_8),
-                icon.getBytes(StandardCharsets.UTF_8),
-                description.getBytes(StandardCharsets.UTF_8),
-                String.valueOf(channel.getColor().value()).getBytes(StandardCharsets.UTF_8)  
-            );
-    
-            player.sendPluginMessage(plugin, "social:open", bytes);
-        });
+        String name = channel.getName();
+        String alias = CompanionModUtils.getAliasWithPrefix(channel);
+        String icon = CompanionModUtils.getIconWithoutBrackets(channel);
+        String description = GsonComponentSerializer.gson().serialize(Social.get().getTextProcessor().parse(
+            SocialParserContext.builder(user, channel.getHoverText())
+                .channel(channel)
+                .build()));
+
+        var bytes = encode(
+            name.getBytes(StandardCharsets.UTF_8),
+            alias.getBytes(StandardCharsets.UTF_8),
+            icon.getBytes(StandardCharsets.UTF_8),
+            description.getBytes(StandardCharsets.UTF_8),
+            String.valueOf(channel.getColor().value()).getBytes(StandardCharsets.UTF_8)  
+        );
+
+        PlatformUsers.get().sendCustomPayload(user, "social:open", bytes);
     }
 
     public void close(final @NotNull ChatChannel channel) {
-        user.player().ifPresent(player -> player.sendPluginMessage(plugin, "social:close", encode(channel.getName().getBytes(StandardCharsets.UTF_8))));
+        PlatformUsers.get().sendCustomPayload(user, "social:close", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
     }
 
     public void clear() {
-        user.player().ifPresent(player -> player.sendPluginMessage(plugin, "social:closeall", encode("".getBytes(StandardCharsets.UTF_8))));
+        PlatformUsers.get().sendCustomPayload(user, "social:closeall", encode("".getBytes(StandardCharsets.UTF_8)));
     }
 
     public void mainChannel(final @NotNull ChatChannel channel) {
-        user.player().ifPresent(player -> player.sendPluginMessage(plugin, "social:switch", encode(channel.getName().getBytes(StandardCharsets.UTF_8))));
+        PlatformUsers.get().sendCustomPayload(user, "social:switch", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
     }
 
     public void mention(final @NotNull ChatChannel channel, final @NotNull SocialUser sender) {
-        user.player().ifPresent(player -> {
-            var bytes = encode(
-                channel.getName().getBytes(StandardCharsets.UTF_8),
-                sender.getCachedDisplayName().getBytes(StandardCharsets.UTF_8),
-                sender.getUuid().toString().getBytes(StandardCharsets.UTF_8)
-            );
-    
-            player.sendPluginMessage(plugin, "social:mention", bytes);
-        });
+        final var bytes = encode(
+            channel.getName().getBytes(StandardCharsets.UTF_8),
+            sender.getCachedDisplayName().getBytes(StandardCharsets.UTF_8),
+            sender.getUuid().toString().getBytes(StandardCharsets.UTF_8)
+        );
+
+        PlatformUsers.get().sendCustomPayload(user, "social:mention", bytes);
     }
 
     public void preview(final @NotNull Component component) {
-        user.player().ifPresent(player -> {
-            var bytes = encode(GsonComponentSerializer.gson().serialize(component).getBytes(StandardCharsets.UTF_8));
+        final var bytes = encode(GsonComponentSerializer.gson().serialize(component).getBytes(StandardCharsets.UTF_8));
 
-            player.sendPluginMessage(plugin, "social:preview", bytes);
-        });
+        PlatformUsers.get().sendCustomPayload(user, "social:preview", bytes);
     }
 
     public void refresh() {

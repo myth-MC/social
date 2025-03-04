@@ -2,7 +2,6 @@ package ovh.mythmc.social.api.user;
 
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.NonNull;
@@ -21,113 +20,113 @@ import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.sound.Sound.Emitter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 @SuppressWarnings("deprecation")
 public interface SocialUserAudienceWrapper extends Audience, Identified { // 4.18.0
 
-    Player getPlayer();
+    SocialUser user();
 
-    private Audience playerAudience() {
-        return SocialAdventureProvider.get().player(getPlayer());
+    private Audience audience() {
+        return PlatformUsers.get().audience(user());
     }
 
     @Override
     default @NotNull Pointers pointers() {
-        if (playerAudience() == null)
+        if (audience() == null)
             return Pointers.empty();
 
-        return playerAudience().pointers();
+        return audience().pointers();
     }
 
     @Override
     default @NotNull Identity identity() {
-        return Identity.identity(getPlayer().getUniqueId());
+        return Identity.identity(user().getUuid());
     }
 
     @Override
     default void sendMessage(final @NonNull Identity identity, final @NonNull Component message, final @NonNull MessageType type) {
-        playerAudience().sendMessage(identity, message, type);
+        audience().sendMessage(identity, message, type);
     }
 
     @Override
     default void deleteMessage(@NotNull Signature signature) {
-        playerAudience().deleteMessage(signature);
+        audience().deleteMessage(signature);
     }
 
     @Override
     default void deleteMessage(@NotNull SignedMessage signedMessage) {
-        playerAudience().deleteMessage(signedMessage);
+        audience().deleteMessage(signedMessage);
     }
 
     @Override
     default void sendActionBar(final @NonNull Component message) {
-        playerAudience().sendActionBar(message);
+        audience().sendActionBar(message);
     }
 
     @Override
     default void sendPlayerListHeaderAndFooter(final @NonNull Component header, final @NonNull Component footer) {
-        playerAudience().sendPlayerListHeaderAndFooter(header, footer);
+        audience().sendPlayerListHeaderAndFooter(header, footer);
     }
 
     @Override
     default <T> void sendTitlePart(@NotNull TitlePart<T> part, @NotNull T value) {
-        playerAudience().sendTitlePart(part, value);
+        audience().sendTitlePart(part, value);
     }
 
     @Override
     default void clearTitle() {
-        playerAudience().clearTitle();
+        audience().clearTitle();
     }
 
     @Override
     default void showBossBar(@NotNull BossBar bar) {
-        playerAudience().showBossBar(bar);
+        audience().showBossBar(bar);
     }
 
     @Override
     default void hideBossBar(@NotNull BossBar bar) {
-        playerAudience().hideBossBar(bar);
+        audience().hideBossBar(bar);
     }
 
     @Override
     default void playSound(@NotNull Sound sound) {
-        playerAudience().playSound(sound);
+        audience().playSound(sound);
     }
 
     @Override
     default void playSound(@NotNull Sound sound, @NotNull Emitter emitter) {
-        playerAudience().playSound(sound, emitter);
+        audience().playSound(sound, emitter);
     }
 
     @Override
     default void playSound(@NotNull Sound sound, double x, double y, double z) {
-        playerAudience().playSound(sound, x, y, z);
+        audience().playSound(sound, x, y, z);
     }
 
     @Override
     default void stopSound(@NotNull SoundStop stop) {
-        playerAudience().stopSound(stop);
+        audience().stopSound(stop);
     }
 
     @Override
     default void openBook(@NotNull Book book) {
-        playerAudience().openBook(book);
+        audience().openBook(book);
     }
 
     @Override
     default void sendResourcePacks(@NotNull ResourcePackRequest request) {
-        playerAudience().sendResourcePacks(request);
+        audience().sendResourcePacks(request);
     }
 
     @Override
     default void removeResourcePacks(@NotNull UUID id, @NotNull UUID @NotNull... others) {
-        playerAudience().removeResourcePacks(id, others);
+        audience().removeResourcePacks(id, others);
     }
 
     @Override
     default void clearResourcePacks() {
-        playerAudience().clearResourcePacks();
+        audience().clearResourcePacks();
     }
     
 }

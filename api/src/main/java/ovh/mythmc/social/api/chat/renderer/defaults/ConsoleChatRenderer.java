@@ -10,6 +10,7 @@ import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRendererContext;
 import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
 
@@ -24,9 +25,7 @@ public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
         final Component replyIcon = SocialChatRendererUtil.getReplyIcon(sender, context);
 
         // Get sender's nickname
-        Component nickname = sender.displayName();
-        if (sender.player().isPresent())
-            nickname = Component.text(sender.player().get().getName());
+        final Component nickname = Component.text(PlatformUsers.get().name(sender));
 
         // Get channel icon
         final Component channelIcon = SocialChatRendererUtil.getClickableChannelIcon(sender, channel);

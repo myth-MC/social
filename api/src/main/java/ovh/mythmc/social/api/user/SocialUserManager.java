@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.format.Style;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitch;
@@ -15,6 +14,7 @@ import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChange;
 import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChangeCallback;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -26,10 +26,7 @@ public final class SocialUserManager {
 
     // Gets ONLINE users
     public @NotNull Collection<SocialUser> get() {
-        return Bukkit.getOnlinePlayers().stream()
-            .map(player -> getByUuid(player.getUniqueId()))
-            .filter(user -> user != null)
-            .toList();
+        return PlatformUsers.get().onlineUsers();
     }
 
     @Deprecated(forRemoval = true)
@@ -118,7 +115,7 @@ public final class SocialUserManager {
 
     public void setDisplayName(final @NotNull SocialUser user, final @NotNull String displayName) {
         user.setCachedDisplayName(displayName);
-        user.player().ifPresent(player -> player.setDisplayName(displayName));
+        PlatformUsers.get().name(user, displayName);
 
         SocialDatabase.get().update(user);
     }

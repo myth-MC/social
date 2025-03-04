@@ -3,8 +3,6 @@ package ovh.mythmc.social.api.chat.renderer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javax.annotation.Nullable;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;
 
@@ -21,7 +19,7 @@ public interface SocialChatRenderer<T> {
 
     static <T> SocialChatRenderer.Builder<T> builder(@NotNull SocialChatRenderer<T> renderer) { return new Builder<T>(renderer); }
 
-    @Nullable SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context);
+    SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context);
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     static final class Builder<T> {
@@ -65,7 +63,7 @@ public interface SocialChatRenderer<T> {
             return result;
         }
 
-        public @Nullable SocialRendererContext render(@NotNull Audience audience, @NotNull SocialRegisteredMessageContext context) {
+        public SocialRendererContext render(@NotNull Audience audience, @NotNull SocialRegisteredMessageContext context) {
             var result = mapFromAudience(audience);
             if (result.isIgnored())
                 return null;
@@ -79,7 +77,7 @@ public interface SocialChatRenderer<T> {
             return render(result.result(), context);
         }
 
-        public @Nullable SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context) {
+        public SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context) {
             if (renderIf != null && !renderIf.test(context))
                 return null;
 

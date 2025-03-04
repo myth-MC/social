@@ -25,6 +25,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SocialDatabase {
@@ -142,7 +143,7 @@ public final class SocialDatabase {
             usersDao.update(user);
 
             // Clear cache value
-            if (user.player().isEmpty())
+            if (!PlatformUsers.get().isOnline(user))
                 usersCache.remove(user.getUuid());
         } catch (SQLException e) {
             logger.error("Exception while updating entry {}", e);
