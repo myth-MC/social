@@ -8,7 +8,7 @@ import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.reaction.Reaction;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @RequiredArgsConstructor
 @Getter
@@ -22,7 +22,7 @@ import ovh.mythmc.social.api.user.SocialUser;
 })
 public final class SocialReactionTrigger {
 
-    private final SocialUser user;
+    private final AbstractSocialUser<? extends Object> user;
     
     private final Reaction reaction;
 

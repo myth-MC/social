@@ -11,7 +11,7 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Getter
 @Accessors(fluent = true)
@@ -26,7 +26,7 @@ public class SocialRegisteredMessageContext extends SocialMessageContext {
     public SocialRegisteredMessageContext(
         int id,
         long timestamp,
-        SocialUser sender,
+        AbstractSocialUser<? extends Object> sender,
         ChatChannel channel,
         Set<Audience> viewers,
         Component message,

@@ -19,7 +19,7 @@ public final class SocialSpyPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        if (context.user().isSocialSpy()) {
+        if (context.user().socialSpy()) {
             return Component.text("true", NamedTextColor.GREEN);
         }
 

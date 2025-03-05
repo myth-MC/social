@@ -13,6 +13,7 @@
         <module>platform-bukkit</module>
         <module>platform-common</module>
         <module>platform-paper</module>
+        <module>api-bukkit</module>
     </modules>
 
     <properties>
@@ -204,11 +205,6 @@
         <repository>
             <id>jitpack</id>
             <url>https://jitpack.io</url>
-        </repository>
-
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>

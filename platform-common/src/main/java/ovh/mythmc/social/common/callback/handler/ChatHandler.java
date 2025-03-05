@@ -1,0 +1,149 @@
+package ovh.mythmc.social.common.callback.handler;
+
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.Sound.Source;
+import net.kyori.adventure.text.Component;
+import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitchCallback;
+import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitchCallback;
+import ovh.mythmc.social.api.callback.message.SocialMessagePrepareCallback;
+import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
+import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.common.callback.game.UserPresence;
+import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
+
+public final class ChatHandler implements SocialCallbackHandler {
+
+    private static class IdentifierKeys {
+
+        static final String REPLY_CHANNEL_SWITCHER = "social:reply-channel-switcher";
+        static final String CHAT_PERMISSION_CHECKER = "social:chat-permission-checker";
+        static final String CHANNEL_PREPARE_MEMBER = "social:channel-prepare-member";
+        static final String CHANNEL_SWITCH_MESSAGE = "social:channel-switch-message";
+
+    }
+
+    @Override
+    public void register() {
+        SocialMessagePrepareCallback.INSTANCE.registerHandler(IdentifierKeys.REPLY_CHANNEL_SWITCHER, (ctx) -> {
+            if (!Social.get().getChatManager().hasPermission(ctx.sender(), ctx.channel())) {
+                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getChat().getDefaultChannel());
+
+                ctx.channel().removeMember(ctx.sender());
+
+                Social.get().getUserManager().setMainChannel(ctx.sender(), defaultChannel);
+                ctx.cancelled(true);
+                return;
+            }
+
+            if (ctx.isReply()) {
+                // Get the reply context
+                SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(ctx.replyId());
+
+                // Chain of replies (thread)
+                if (reply.isReply())
+                    ctx.replyId(reply.replyId());
+
+                // Switch channel if necessary
+                if (!reply.channel().equals(ctx.channel()) && Social.get().getChatManager().hasPermission(ctx.sender(), reply.channel()))
+                    ctx.channel(reply.channel());
+            }
+        });
+
+        SocialMessagePrepareCallback.INSTANCE.registerHandler(IdentifierKeys.CHAT_PERMISSION_CHECKER, ctx -> {
+            // We'll remove the player from this channel if they no longer have the required permission
+            if (!Social.get().getChatManager().hasPermission(ctx.sender(), ctx.channel())) {
+                var defaultChannel = Social.get().getChatManager().getDefaultChannel();
+
+                ctx.channel().removeMember(ctx.sender());
+                Social.get().getUserManager().setMainChannel(ctx.sender(), defaultChannel);
+
+                ctx.cancelled(true);
+                //ctx.channel(defaultChannel);    
+            }
+        });
+
+        SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.CHAT_PERMISSION_CHECKER, (ctx) -> {
+            // Play reply sound
+            if (ctx.isReply())
+                ctx.sender().playSound(Sound.sound(Key.key("block.stone_button.click_on"), Source.PLAYER, 0.7F, 1.7F));
+
+            if (ctx.channel().getPermission() == null)
+                return;
+
+            // We'll remove the player from this channel if they no longer have the required permission
+            if (!Social.get().getChatManager().hasPermission(ctx.recipient(), ctx.channel())) {
+                ChatChannel defaultChannel = Social.get().getChatManager().getChannel(Social.get().getConfig().getChat().getDefaultChannel());
+
+                ctx.channel().removeMember(ctx.recipient());
+                Social.get().getUserManager().setMainChannel(ctx.recipient(), defaultChannel);
+                ctx.cancelled(true);
+            }
+        });
+
+        SocialChannelPreSwitchCallback.INSTANCE.registerListener(IdentifierKeys.CHANNEL_PREPARE_MEMBER, (user, channel, cancelled) -> {
+            if (!channel.getMemberUuids().contains(user.uuid()))
+                channel.addMember(user.uuid());
+        });
+
+        SocialChannelPostSwitchCallback.INSTANCE.registerListener(IdentifierKeys.CHANNEL_SWITCH_MESSAGE, (user, previousChannel, channel) -> {
+            if (user.companion().isPresent())
+                return;
+            
+            SocialParserContext context = SocialParserContext.builder(user, Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
+                .channel(channel)
+                .build();
+
+            Social.get().getTextProcessor().parseAndSend(context);
+        });
+
+        UserPresenceCallback.INSTANCE.registerHandler("social:assign-channels", ctx -> {
+            if (!ctx.type().equals(UserPresence.Type.JOIN))
+                return;
+
+            // Assign channels
+            ctx.user().ifPresent(user -> {
+                Social.get().getChatManager().assignChannelsToPlayer(user);
+
+                ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
+                if (defaultChannel == null) {
+                    Social.get().getLogger().error("Default channel is unavailable!");
+                    return;
+                }
+
+                Social.get().getUserManager().setMainChannel(user, defaultChannel);
+            });
+        });
+
+        UserPresenceCallback.INSTANCE.registerHandler("social:clear-channels", ctx -> {
+            if (!ctx.type().equals(UserPresence.Type.QUIT))
+                return;
+
+            // Remove user from channels
+            ctx.user().ifPresent(user -> {
+                Social.get().getChatManager().getChannels().forEach(channel -> {
+                    if (channel.getMemberUuids().contains(user.uuid()))
+                        channel.removeMember(user.uuid());
+                });
+            });
+        });
+    }
+
+    @Override
+    public void unregister() {
+        UserPresenceCallback.INSTANCE.unregisterHandlers(
+            "social:assign-channels",
+            "social:clear-channels"
+        );
+
+        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKeys.REPLY_CHANNEL_SWITCHER);
+        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKeys.CHAT_PERMISSION_CHECKER);
+        SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(IdentifierKeys.CHAT_PERMISSION_CHECKER);
+        SocialChannelPreSwitchCallback.INSTANCE.unregisterListeners(IdentifierKeys.CHANNEL_PREPARE_MEMBER);
+        SocialChannelPostSwitchCallback.INSTANCE.unregisterListeners(IdentifierKeys.CHANNEL_SWITCH_MESSAGE);
+    }
+    
+}

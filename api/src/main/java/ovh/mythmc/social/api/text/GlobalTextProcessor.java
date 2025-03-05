@@ -15,7 +15,7 @@ import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 import static net.kyori.adventure.text.Component.text;
@@ -47,7 +47,7 @@ public final class GlobalTextProcessor {
     }
 
     @Deprecated(forRemoval = true)
-    public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
+    public SocialContextualParser getContextualParserByClass(@NotNull Class<? extends Object> clazz) {
         return getContextualParsersWithGroupMembers().stream().filter(parser -> parser.getClass().equals(clazz)).findFirst().orElse(null);
     }
 
@@ -180,7 +180,7 @@ public final class GlobalTextProcessor {
         return textProcessor.parse(context);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, Component message, ChannelType channelType) {
+    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, Component message, ChannelType channelType) {
         return parse(SocialParserContext.builder(user, message)
             .channel(channel)
             .messageChannelType(channelType)
@@ -188,15 +188,15 @@ public final class GlobalTextProcessor {
         );
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, String message, ChannelType channelType) {
+    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, String message, ChannelType channelType) {
         return parse(user, channel, text(message), channelType);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, Component message) {
+    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, Component message) {
         return parse(user, channel, message, ChannelType.CHAT);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, String message) {
+    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, String message) {
         return parse(user, channel, text(message));
     }
 
@@ -204,7 +204,7 @@ public final class GlobalTextProcessor {
         send(List.of(context.user()), parse(context), context.messageChannelType(), context.channel());
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
+    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, Component message, ChannelType channelType) {
         SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(chatChannel)
             .messageChannelType(channelType)
@@ -213,33 +213,33 @@ public final class GlobalTextProcessor {
         parseAndSend(context);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message, ChannelType channelType) {
+    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, String message, ChannelType channelType) {
         parseAndSend(user, chatChannel, text(message), channelType);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message) {
+    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, Component message) {
         parseAndSend(user, chatChannel, message, ChannelType.CHAT);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message) {
+    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, String message) {
         parseAndSend(user, chatChannel, text(message));
     }
 
-    public void parseAndSend(SocialUser user, Component message, ChannelType type) {
-        parseAndSend(user, user.getMainChannel(), message, type);
+    public void parseAndSend(AbstractSocialUser<? extends Object> user, Component message, ChannelType type) {
+        parseAndSend(user, user.mainChannel(), message, type);
     }
 
-    public void parseAndSend(SocialUser user, String message, ChannelType type) {
+    public void parseAndSend(AbstractSocialUser<? extends Object> user, String message, ChannelType type) {
         parseAndSend(user, text(message), type);
     }
 
     @Internal
-    public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
+    public <U extends AbstractSocialUser<?>> void send(final @NotNull Collection<U> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
         if (message == null || message.equals(Component.empty()))
             return;
 
         switch (type) {
-            case ACTION_BAR -> members.forEach(user -> user.sendActionBar(message));
+            case ACTION_BAR -> members.forEach(user -> user.audience().sendActionBar(message));
             case CHAT -> {
                 members.forEach(user -> {
                     Component userMessage = message;
@@ -252,14 +252,14 @@ public final class GlobalTextProcessor {
                         }
                     }
 
-                    user.sendMessage(userMessage);
+                    user.audience().sendMessage(userMessage);
                 });
             }
         }
     }
 
     @Internal
-    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
+    public <U extends AbstractSocialUser<?>> void send(final @NotNull U recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
         send(List.of(recipient), message, type, channel);
     }
 

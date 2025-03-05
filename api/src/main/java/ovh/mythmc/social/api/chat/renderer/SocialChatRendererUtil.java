@@ -10,13 +10,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
 @UtilityClass
 public class SocialChatRendererUtil {
 
-    public Component getClickableChannelIcon(SocialUser user, ChatChannel channel) {
+    public Component getClickableChannelIcon(AbstractSocialUser<? extends Object> user, ChatChannel channel) {
         Component channelIcon = Component.text(channel.getIcon())
             .hoverEvent(getChannelHoverText(user, channel))
             .clickEvent(ClickEvent.runCommand("/social:social channel " + channel.getName()));
@@ -24,7 +24,7 @@ public class SocialChatRendererUtil {
         return channelIcon;
     }
 
-    private Component getChannelHoverText(SocialUser user, ChatChannel channel) {
+    private Component getChannelHoverText(AbstractSocialUser<? extends Object> user, ChatChannel channel) {
         Component channelHoverText = Component.empty();
         if (channel.isShowHoverText())
             channelHoverText = channelHoverText
@@ -35,7 +35,7 @@ public class SocialChatRendererUtil {
         return Social.get().getTextProcessor().parse(SocialParserContext.builder(user, channelHoverText).channel(channel).build());
     }
 
-    public Component getNicknameWithColor(SocialUser user, ChatChannel channel) {
+    public Component getNicknameWithColor(AbstractSocialUser<? extends Object> user, ChatChannel channel) {
         Component nickname = Component.empty()
             .append(Component.text(Social.get().getConfig().getChat().getPlayerNicknameFormat()))
             .colorIfAbsent(channel.getNicknameColor());
@@ -43,7 +43,7 @@ public class SocialChatRendererUtil {
         return nickname;
     }
 
-    public Component getReplyIcon(SocialUser sender, SocialRegisteredMessageContext message) {
+    public Component getReplyIcon(AbstractSocialUser<? extends Object> sender, SocialRegisteredMessageContext message) {
         Component replyIcon = Component.empty();
         
         // Check that message is a reply

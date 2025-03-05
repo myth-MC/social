@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.bukkit.adapter.ChatEventAdapter;
+import ovh.mythmc.social.api.bukkit.adapter.PlatformAdapter;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
-import ovh.mythmc.social.common.adapter.ChatEventAdapter;
-import ovh.mythmc.social.common.adapter.PlatformAdapter;
+import ovh.mythmc.social.bukkit.listener.SocialUserListener;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listener.SocialUserListener;
 import ovh.mythmc.social.paper.adapter.PaperChatEventAdapter;
 import ovh.mythmc.social.paper.adapter.PaperPlatformAdapter;
 import ovh.mythmc.social.paper.adventure.PaperAdventureProvider;

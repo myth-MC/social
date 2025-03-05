@@ -15,13 +15,12 @@ import org.bukkit.util.Transformation;
 
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
+import ovh.mythmc.social.api.bukkit.scheduler.BukkitSocialScheduler;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTrigger;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
-import ovh.mythmc.social.api.user.SocialUser;
-import ovh.mythmc.social.common.adapter.PlatformAdapter;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -30,70 +29,72 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public final class BukkitReactionFactory extends ReactionFactory {
+public final class BukkitReactionFactory extends ReactionFactory<BukkitSocialUser> {
 
     private final JavaPlugin plugin;
 
     private final HashMap<UUID, ItemDisplay> playerReaction = new HashMap<>();
-    //private final String itemDisplayMetadataKey = "socialReaction";
 
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(SocialUser user, Reaction emoji) {
+    public void displayReaction(BukkitSocialUser user, Reaction emoji) {
         user.player().ifPresent(player -> {
             if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getGameMode() == GameMode.SPECTATOR) {
                 return;
             }
     
-            ItemDisplay itemDisplay = playerReaction.get(user.getUuid());
+            ItemDisplay itemDisplay = playerReaction.get(user.uuid());
             if (itemDisplay != null)
                 return;
     
-            itemDisplay = spawnItemDisplay(player, emoji);
-            playerReaction.put(user.getUuid(), itemDisplay);
+            itemDisplay = spawnItemDisplay(user, emoji);
+            playerReaction.put(user.uuid(), itemDisplay);
     
             scheduleItemDisplayUpdate(player, itemDisplay);
         });
     }
 
     @Override
-    public void scheduleReaction(SocialUser user, Reaction reaction) {
+    public void scheduleReaction(BukkitSocialUser user, Reaction reaction) {
         var callback = new SocialReactionTrigger(user, reaction);
+        
         SocialReactionTriggerCallback.INSTANCE.invoke(callback, result -> {
-            if (!result.cancelled())
-                    PlatformAdapter.get().runEntityTask((JavaPlugin) Bukkit.getPluginManager().getPlugin("social"), user.player().get(), () -> {
-                        displayReaction(result.user(), result.reaction());
-            });
+            if (!result.cancelled()) {
+                BukkitSocialScheduler.get().runEntityTask(user.player().get(), () -> {
+                    displayReaction(user, result.reaction());
+                });
+            }
         });
     }
 
-    private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {
-        Location location = player.getLocation();
+    private ItemDisplay spawnItemDisplay(BukkitSocialUser user, Reaction reaction) {
+        final Player player = user.player().orElse(null);
+
+        final Location location = player.getLocation();
         location.setPitch(0);
         location.setYaw(location.getYaw() - 180);
 
-        double offsetY = Social.get().getConfig().getReactions().getOffsetY();
-        ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
+        final double offsetY = Social.get().getConfig().getReactions().getOffsetY();
+        final ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
                 location,
                 EntityType.ITEM_DISPLAY
         );
 
         itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
         if (reaction.sound() != null)
-            SocialAdventureProvider.get().player(player).playSound(reaction.sound());
+            user.playSound(reaction.sound());
 
-        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+        final ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+        final SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
         skullMeta.setOwnerProfile(getProfile(reaction.texture()));
         itemStack.setItemMeta(skullMeta);
 
-        //itemDisplay.setMetadata(itemDisplayMetadataKey, new FixedMetadataValue(plugin, true));
         itemDisplay.setItemStack(itemStack);
 
         itemDisplay.setPersistent(false);
 
-        Transformation transformation = itemDisplay.getTransformation();
+        final Transformation transformation = itemDisplay.getTransformation();
         transformation.getScale().set(0);
         transformation.getTranslation().set(0, offsetY, 0);
         itemDisplay.setTransformation(transformation);

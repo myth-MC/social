@@ -16,12 +16,12 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.bukkit.adapter.PlatformAdapter;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTrigger;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.user.SocialUser;
-import ovh.mythmc.social.common.adapter.PlatformAdapter;
 
 import java.net.MalformedURLException;
 import java.net.URI;

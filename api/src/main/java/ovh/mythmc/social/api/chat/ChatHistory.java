@@ -48,7 +48,7 @@ public final class ChatHistory {
     }
 
     public void delete(SocialRegisteredMessageContext context) {
-        Social.get().getUserManager().get().forEach(user -> user.deleteMessage(context.signedMessage().get()));
+        Social.get().getUserService().get().forEach(user -> user.audience().deleteMessage(context.signedMessage().get()));
 
         SocialRegisteredMessageContext newContext = new SocialRegisteredMessageContext(
             context.id(), 
@@ -74,9 +74,9 @@ public final class ChatHistory {
                 .toList();
     }
 
-    public List<SocialRegisteredMessageContext> getByUser(final @NotNull SocialUser user) {
+    public List<SocialRegisteredMessageContext> getByUser(final @NotNull SocialUser<? extends Object> user) {
         return messages.values().stream()
-                .filter(message -> message.sender().getUuid().equals(user.getUuid()))
+                .filter(message -> message.sender().uuid().equals(user.uuid()))
                 .toList();
     }
 

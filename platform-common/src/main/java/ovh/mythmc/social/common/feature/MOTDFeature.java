@@ -1,27 +1,16 @@
 package ovh.mythmc.social.common.feature;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.common.listener.MOTDListener;
+import ovh.mythmc.social.common.callback.handler.MOTDHandler;
 
 @Feature(group = "social", identifier = "MOTD")
 public final class MOTDFeature {
 
-    private final JavaPlugin plugin;
-
-    private final MOTDListener motdListener = new MOTDListener();
-
-    public MOTDFeature(@NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    private final MOTDHandler motdHandler = new MOTDHandler();
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
@@ -30,12 +19,12 @@ public final class MOTDFeature {
 
     @FeatureEnable
     public void enable() {
-        Bukkit.getPluginManager().registerEvents(motdListener, plugin);
+        motdHandler.register();
     }
 
     @FeatureDisable
     public void disable() {
-        HandlerList.unregisterAll(motdListener);
+        motdHandler.unregister();
     }
-
+    
 }

@@ -20,15 +20,14 @@ import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.sound.Sound.Emitter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
-import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 @SuppressWarnings("deprecation")
 public interface SocialUserAudienceWrapper extends Audience, Identified { // 4.18.0
 
-    SocialUser user();
+    SocialUser<? extends Object> user();
 
     private Audience audience() {
-        return PlatformUsers.get().audience(user());
+        return user().audience();
     }
 
     @Override
@@ -41,7 +40,7 @@ public interface SocialUserAudienceWrapper extends Audience, Identified { // 4.1
 
     @Override
     default @NotNull Identity identity() {
-        return Identity.identity(user().getUuid());
+        return Identity.identity(user().uuid());
     }
 
     @Override

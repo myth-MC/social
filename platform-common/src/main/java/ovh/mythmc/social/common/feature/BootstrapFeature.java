@@ -1,22 +1,13 @@
 package ovh.mythmc.social.common.feature;
 
-import java.util.Arrays;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
-import ovh.mythmc.gestalt.features.FeatureConstructorParams;
-import ovh.mythmc.gestalt.features.GestaltFeature;
-import ovh.mythmc.social.common.feature.hook.DiscordSRVFeature;
-import ovh.mythmc.social.common.feature.hook.PlaceholderAPIFeature;
 
 @Feature(group = "social", identifier = "BOOTSTRAP")
-public final class BootstrapFeature {
+public class BootstrapFeature {
 
     private static boolean initialized = false;
 
@@ -25,33 +16,28 @@ public final class BootstrapFeature {
         if (initialized)
             return;
 
-        // Register gestalt features
         Gestalt.get().register(
+            AddonFeature.class,
             AnnouncementsFeature.class,
+            AnvilFeature.class,
+            BookFeature.class,
+            ChatFeature.class,
+            CompanionFeature.class,
             EmojiFeature.class,
+            GroupFeature.class,
             IPFilterFeature.class,
             MentionsFeature.class,
+            MOTDFeature.class,
+            ReactionsFeature.class,
+            ServerLinksFeature.class,
+            SignFeature.class,
+            SystemMessagesFeature.class,
             TextFormattersFeature.class,
             UpdateCheckerFeature.class,
             URLFilterFeature.class
         );
-
-        // Register features that require a plugin instance
-        registerFeatureWithPluginParam(
-            AnvilFeature.class,
-            BooksFeature.class,
-            ChatFeature.class,
-            CommandsFeature.class,
-            GroupsFeature.class,
-            MOTDFeature.class,
-            CompanionFeature.class,
-            ReactionsFeature.class,
-            ServerLinksFeature.class,
-            SignsFeature.class,
-            SystemMessagesFeature.class,
-            DiscordSRVFeature.class,
-            PlaceholderAPIFeature.class);
-
+        
+        // Register features
         initialized = true;
     }
 
@@ -64,17 +50,5 @@ public final class BootstrapFeature {
     public void disable() {
         Gestalt.get().disableAllFeatures("social");
     }
-
-    private static void registerFeatureWithPluginParam(Class<?>... classes) {
-        Arrays.stream(classes).forEach(clazz -> {
-            Gestalt.get().register(GestaltFeature.builder()
-                .featureClass(clazz)
-                .constructorParams(FeatureConstructorParams.builder()
-                    .params((JavaPlugin) Bukkit.getPluginManager().getPlugin("social")) // works for now but it needs to be changed asap
-                    .types(JavaPlugin.class)
-                    .build())
-                .build());
-        });
-    }
-
+    
 }

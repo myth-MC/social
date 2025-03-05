@@ -1,52 +1,37 @@
 package ovh.mythmc.social.common.feature;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 import ovh.mythmc.social.api.user.SocialUserCompanion;
-import ovh.mythmc.social.common.listener.CompanionListener;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
+import ovh.mythmc.social.common.callback.handler.CompanionHandler;
 
-@Feature(group = "social", identifier = "MESSAGING")
+@Feature(group = "social", identifier = "COMPANION")
 public final class CompanionFeature {
 
-    private final JavaPlugin plugin;
-
-    private final CompanionListener listener;
-
-    public CompanionFeature(final @NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.listener = new CompanionListener(plugin);
-    }
+    private final CompanionHandler companionHandler = new CompanionHandler();
 
     @FeatureInitialize
     public void initialize() {
         SocialUserCompanion.S2C_CHANNELS.forEach(channelName -> {
-            Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(plugin, channelName);
+            PlatformAdapter.get().registerS2CPayloadChannel(channelName);
         });
 
         SocialUserCompanion.C2S_CHANNELS.forEach(channelName -> {
-            Bukkit.getServer().getMessenger().registerIncomingPluginChannel(plugin, channelName, listener);
+            PlatformAdapter.get().registerC2SPayloadChannel(channelName);
         });
     }
 
     @FeatureEnable
     public void enable() {
-        Bukkit.getPluginManager().registerEvents(listener, plugin);
-
-        listener.registerCallbackHandlers();
+        companionHandler.register();
     }
 
     @FeatureDisable
     public void disable() {
-        HandlerList.unregisterAll(listener);
-
-        listener.unregisterCallbackHandlers();
+        companionHandler.unregister();
     }
     
 }

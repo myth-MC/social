@@ -8,7 +8,6 @@ import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.context.SocialContext;
 import ovh.mythmc.social.common.context.SocialMenuContext;
 
@@ -21,9 +20,11 @@ public interface BookMenu extends Menu {
         if (context instanceof SocialMenuContext menuContext) {
             List<Component> pages = format(menuContext, book(menuContext).pages());
 
+            menuContext.viewer().openBook(book(menuContext).pages(pages));
+            /*
             SocialAdventureProvider.get()
                 .player(menuContext.viewer().player().get())
-                .openBook(book(menuContext).pages(pages));
+                .openBook(book(menuContext).pages(pages)); */
         }
     }
 

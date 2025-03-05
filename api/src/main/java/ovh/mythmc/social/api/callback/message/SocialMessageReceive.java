@@ -12,7 +12,7 @@ import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @RequiredArgsConstructor
 @Getter
@@ -30,9 +30,9 @@ import ovh.mythmc.social.api.user.SocialUser;
 })
 public class SocialMessageReceive {
 
-    private final SocialUser sender;
+    private final AbstractSocialUser<? extends Object> sender;
 
-    private final SocialUser recipient;
+    private final AbstractSocialUser<? extends Object> recipient;
 
     private final ChatChannel channel;
 

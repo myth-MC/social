@@ -7,13 +7,16 @@ import ovh.mythmc.social.api.chat.ChatManager;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.emoji.EmojiManager;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
+import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.reaction.ReactionManager;
 import ovh.mythmc.social.api.text.GlobalTextProcessor;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUserManager;
+import ovh.mythmc.social.api.user.SocialUserService;
 
-public interface Social {
+public interface Social<P, U extends AbstractSocialUser<P>> {
 
-    @NotNull static Social get() { return SocialSupplier.get(); }
+    @NotNull static Social<?, ?> get() { return SocialSupplier.get(); }
 
     @ApiStatus.Internal
     void reload(ReloadType type);
@@ -23,6 +26,10 @@ public interface Social {
     @NotNull LoggerWrapper getLogger();
 
     @NotNull SocialConfigProvider getConfig();
+
+    @NotNull SocialUserService<P, U> getUserService();
+
+    @NotNull ReactionFactory<U> getReactionFactory();
 
     @NotNull default AnnouncementManager getAnnouncementManager() { return AnnouncementManager.instance; }
 

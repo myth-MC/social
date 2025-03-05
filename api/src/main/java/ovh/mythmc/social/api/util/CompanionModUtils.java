@@ -6,7 +6,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @UtilityClass
 public class CompanionModUtils {
@@ -27,14 +27,14 @@ public class CompanionModUtils {
         
         if (channel instanceof GroupChatChannel groupChatChannel) {
             alias = groupChatChannel.getAliasOrName();
-            prefix = Social.get().getTextProcessor().parse(SocialUser.dummy(channel), groupChatChannel, ":raw_shield:");
+            prefix = Social.get().getTextProcessor().parse(AbstractSocialUser.dummy(channel), groupChatChannel, ":raw_shield:");
         }
 
         return PlainTextComponentSerializer.plainText().serialize(prefix) + alias;
     }
 
     public String getIconWithoutBrackets(ChatChannel channel) {
-        Component icon = Social.get().getTextProcessor().parse(SocialUser.dummy(channel), channel, channel.getIcon());
+        Component icon = Social.get().getTextProcessor().parse(AbstractSocialUser.dummy(channel), channel, channel.getIcon());
         
         return PlainTextComponentSerializer.plainText().serialize(icon)
             .replace("[", "")
