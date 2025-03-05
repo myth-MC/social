@@ -12,7 +12,7 @@ import ovh.mythmc.social.api.callback.group.SocialGroupJoin;
 import ovh.mythmc.social.api.callback.group.SocialGroupJoinCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeave;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaveCallback;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -71,8 +71,8 @@ public class GroupChatChannel extends ChatChannel {
         return super.removeMember(uuid);
     }
 
-    public SocialUser getLeader() {
-        return Social.get().getUserManager().getByUuid(leaderUuid);
+    public AbstractSocialUser<? extends Object> getLeader() {
+        return Social.get().getUserService().getByUuid(leaderUuid).orElse(null);
     }
 
 }

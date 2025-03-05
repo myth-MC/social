@@ -13,11 +13,11 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.bukkit.adapter.ChatEventAdapter;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceive;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.user.SocialUser;
-import ovh.mythmc.social.common.adapter.ChatEventAdapter;
 
 public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent> {
 

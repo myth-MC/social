@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.text.CustomTextProcessor;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(fluent = true)
@@ -29,7 +29,7 @@ public class SocialProcessorContext extends SocialParserContext {
     private final List<Class<? extends SocialContextualParser>> appliedParsers;
     
     SocialProcessorContext(
-        SocialUser user, 
+        AbstractSocialUser<? extends Object> user, 
         ChatChannel channel, 
         Component message, 
         ChannelType messageChannelType,

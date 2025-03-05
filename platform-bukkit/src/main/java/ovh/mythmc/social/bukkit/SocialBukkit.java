@@ -6,16 +6,17 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.bukkit.adapter.ChatEventAdapter;
+import ovh.mythmc.social.api.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.bukkit.adapter.BukkitChatEventAdapter;
 import ovh.mythmc.social.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
+import ovh.mythmc.social.bukkit.listener.SocialUserListener;
 import ovh.mythmc.social.bukkit.reaction.BukkitReactionFactory;
-import ovh.mythmc.social.common.adapter.ChatEventAdapter;
-import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
-import ovh.mythmc.social.common.listener.*;
+import ovh.mythmc.social.common.handlers.*;
 
 public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
 
@@ -31,7 +32,7 @@ public final class SocialBukkit extends SocialBootstrap<SocialBukkitPlugin> {
         ReactionFactory.set(new BukkitReactionFactory(plugin));
 
         // Set platform wrapper
-        PlatformAdapter.set(new BukkitPlatformAdapter());
+        BukkitPlatformAdapter.set(new BukkitPlatformAdapter());
 
         // Set chat wrapper
         ChatEventAdapter.set(new BukkitChatEventAdapter());

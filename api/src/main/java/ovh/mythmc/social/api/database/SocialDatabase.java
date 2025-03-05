@@ -24,8 +24,7 @@ import lombok.NoArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
-import ovh.mythmc.social.api.user.SocialUser;
-import ovh.mythmc.social.api.user.platform.PlatformUsers;
+import ovh.mythmc.social.api.user.DatabaseUser;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SocialDatabase {
@@ -55,9 +54,9 @@ public final class SocialDatabase {
         }
     };
 
-    private Dao<SocialUser, UUID> usersDao;
+    private Dao<DatabaseUser, UUID> usersDao;
 
-    private Map<UUID, SocialUser> usersCache = new HashMap<>();
+    private Map<UUID, DatabaseUser> usersCache = new HashMap<>();
 
     private boolean firstBoot = false;
 
@@ -69,10 +68,10 @@ public final class SocialDatabase {
         DataPersisterManager.registerDataPersisters(adventureStylePersister);
 
         // Users table
-        TableUtils.createTableIfNotExists(connectionSource, SocialUser.class);
+        TableUtils.createTableIfNotExists(connectionSource, DatabaseUser.class);
 
         // Define DAOs
-        usersDao = DaoManager.createDao(connectionSource, SocialUser.class);
+        usersDao = DaoManager.createDao(connectionSource, DatabaseUser.class);
 
         // Upgrade database
         firstBoot = !Social.get().getConfig().getDatabaseSettings().isInitialized() &&
@@ -92,7 +91,7 @@ public final class SocialDatabase {
         updateAllEntries();
     }
 
-    public void create(final @NotNull SocialUser user) {
+    public void create(final @NotNull DatabaseUser user) {
         try {
             usersDao.createIfNotExists(user);
         } catch (SQLException e) {
@@ -100,7 +99,7 @@ public final class SocialDatabase {
         }
     }
 
-    public void delete(final @NotNull SocialUser user) {
+    public void delete(final @NotNull DatabaseUser user) {
         try {
             usersDao.delete(user);
         } catch (SQLException e) {
@@ -108,10 +107,10 @@ public final class SocialDatabase {
         }
     }
 
-    public void update(final @NotNull SocialUser user) {
+    public void update(final @NotNull DatabaseUser user) {
         try {
-            if (usersCache.containsKey(user.getUuid())) {
-                usersCache.put(user.getUuid(), user);
+            if (usersCache.containsKey(user.uuid())) {
+                usersCache.put(user.uuid(), user);
                 return;
             }
 
@@ -138,19 +137,19 @@ public final class SocialDatabase {
         Map.copyOf(usersCache).values().forEach(this::updateEntry);
     }
 
-    private void updateEntry(final @NotNull SocialUser user) {
+    private void updateEntry(final @NotNull DatabaseUser user) {
         try {
             usersDao.update(user);
 
             // Clear cache value
-            if (!PlatformUsers.get().isOnline(user))
-                usersCache.remove(user.getUuid());
+            if (!user.sourceUser().isOnline())
+                usersCache.remove(user.uuid());
         } catch (SQLException e) {
             logger.error("Exception while updating entry {}", e);
         }
     }
 
-    public Collection<SocialUser> getUsers() {
+    public Collection<DatabaseUser> getUsers() {
         try {
             return usersDao.queryForAll();
         } catch (SQLException e) {
@@ -160,12 +159,12 @@ public final class SocialDatabase {
         return null;
     }
 
-    public SocialUser getUserByUuid(final @NotNull UUID uuid) {
+    public DatabaseUser getUserByUuid(final @NotNull UUID uuid) {
         if (usersCache.containsKey(uuid))
             return usersCache.get(uuid);
 
         try {
-            SocialUser user = usersDao.queryForId(uuid);
+            DatabaseUser user = usersDao.queryForId(uuid);
             if (user == null)
                 return null;
 

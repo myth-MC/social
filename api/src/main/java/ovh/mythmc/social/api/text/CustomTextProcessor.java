@@ -27,7 +27,6 @@ import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
 import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
-import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Builder
@@ -62,7 +61,7 @@ public class CustomTextProcessor {
             if (!(parser instanceof SocialUserInputParser) && playerInput)
                 continue;
 
-            if (!parser.supportsOfflinePlayers() && !PlatformUsers.get().isOnline(context.user()))
+            if (!parser.supportsOfflinePlayers() && !context.user().isOnline())
                 continue;
 
             if (Collections.frequency(processorContext.appliedParsers(), parser.getClass()) > 3) {

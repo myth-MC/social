@@ -16,7 +16,6 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.user.platform.PlatformUsers;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -39,7 +38,7 @@ public final class SocialUserCompanion {
         "social:preview"
     );
 
-    private final SocialUser user;
+    private final AbstractSocialUser<? extends Object> user;
 
     public void open(final @NotNull ChatChannel channel) {
         String name = channel.getName();
@@ -58,35 +57,35 @@ public final class SocialUserCompanion {
             String.valueOf(channel.getColor().value()).getBytes(StandardCharsets.UTF_8)  
         );
 
-        PlatformUsers.get().sendCustomPayload(user, "social:open", bytes);
+        user.sendCustomPayload("social:open", bytes);
     }
 
     public void close(final @NotNull ChatChannel channel) {
-        PlatformUsers.get().sendCustomPayload(user, "social:close", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
+        user.sendCustomPayload("social:close", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
     }
 
     public void clear() {
-        PlatformUsers.get().sendCustomPayload(user, "social:closeall", encode("".getBytes(StandardCharsets.UTF_8)));
+        user.sendCustomPayload("social:closeall", encode("".getBytes(StandardCharsets.UTF_8)));
     }
 
     public void mainChannel(final @NotNull ChatChannel channel) {
-        PlatformUsers.get().sendCustomPayload(user, "social:switch", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
+        user.sendCustomPayload("social:switch", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
     }
 
-    public void mention(final @NotNull ChatChannel channel, final @NotNull SocialUser sender) {
+    public void mention(final @NotNull ChatChannel channel, final @NotNull AbstractSocialUser<? extends Object> sender) {
         final var bytes = encode(
             channel.getName().getBytes(StandardCharsets.UTF_8),
-            sender.getCachedDisplayName().getBytes(StandardCharsets.UTF_8),
-            sender.getUuid().toString().getBytes(StandardCharsets.UTF_8)
+            sender.cachedName().getBytes(StandardCharsets.UTF_8),
+            sender.uuid().toString().getBytes(StandardCharsets.UTF_8)
         );
 
-        PlatformUsers.get().sendCustomPayload(user, "social:mention", bytes);
+        user.sendCustomPayload("social:mention", bytes);
     }
 
     public void preview(final @NotNull Component component) {
         final var bytes = encode(GsonComponentSerializer.gson().serialize(component).getBytes(StandardCharsets.UTF_8));
 
-        PlatformUsers.get().sendCustomPayload(user, "social:preview", bytes);
+        user.sendCustomPayload("social:preview", bytes);
     }
 
     public void refresh() {

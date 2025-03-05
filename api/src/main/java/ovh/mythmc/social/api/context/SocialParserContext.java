@@ -15,7 +15,7 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
@@ -23,11 +23,11 @@ import ovh.mythmc.social.api.user.SocialUser;
 @With
 public class SocialParserContext implements SocialContext {
     
-    public static SocialParserContextBuilder builder(@NotNull SocialUser user, @NotNull Component message) {
+    public static SocialParserContextBuilder builder(@NotNull AbstractSocialUser<? extends Object> user, @NotNull Component message) {
         return new SocialParserContextBuilder(user, message);
     }
 
-    private final SocialUser user;
+    private final AbstractSocialUser<? extends Object> user;
 
     private final ChatChannel channel;
 
@@ -39,7 +39,7 @@ public class SocialParserContext implements SocialContext {
     private final Optional<SocialParserGroup> group;
 
     SocialParserContext(
-        SocialUser user,
+        AbstractSocialUser<? extends Object> user,
         ChatChannel channel,
         Component message,
         ChannelType messageChannelType,
@@ -54,7 +54,7 @@ public class SocialParserContext implements SocialContext {
 
     public static abstract class Builder<T extends Builder<?, ?>, R> {
 
-        protected final SocialUser user;
+        protected final AbstractSocialUser<? extends Object> user;
 
         protected final Component message;
 
@@ -64,10 +64,10 @@ public class SocialParserContext implements SocialContext {
 
         protected Optional<SocialParserGroup> group;
 
-        Builder(SocialUser user, Component message) {
+        Builder(AbstractSocialUser<? extends Object> user, Component message) {
             this.user = user;
             this.message = message;
-            this.channel = user.getMainChannel();
+            this.channel = user.mainChannel();
             this.messageChannelType = ChannelType.CHAT;
         }
 
@@ -94,7 +94,7 @@ public class SocialParserContext implements SocialContext {
 
     public static class SocialParserContextBuilder extends Builder<SocialParserContextBuilder, SocialParserContext> {
 
-        SocialParserContextBuilder(SocialUser user, Component message) {
+        SocialParserContextBuilder(AbstractSocialUser<? extends Object> user, Component message) {
             super(user, message);
         }
 

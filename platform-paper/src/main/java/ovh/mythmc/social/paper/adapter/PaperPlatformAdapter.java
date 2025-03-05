@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.common.adapter.PlatformAdapter;
+import ovh.mythmc.social.api.bukkit.adapter.PlatformAdapter;
 
 public final class PaperPlatformAdapter extends PlatformAdapter {
 

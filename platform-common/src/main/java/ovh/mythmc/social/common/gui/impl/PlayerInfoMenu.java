@@ -45,7 +45,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component mainChannel = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMainChannel()),
-            Component.text(context.target().getMainChannel().getName())
+            Component.text(context.target().mainChannel().getName())
         );
 
         Component visibleChannels = getField(

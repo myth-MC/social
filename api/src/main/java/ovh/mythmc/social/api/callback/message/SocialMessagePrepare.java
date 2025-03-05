@@ -10,7 +10,7 @@ import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Getter
 @Setter
@@ -25,7 +25,7 @@ import ovh.mythmc.social.api.user.SocialUser;
 })
 public class SocialMessagePrepare {
 
-    private final SocialUser sender;
+    private final AbstractSocialUser<? extends Object> sender;
 
     private @NotNull ChatChannel channel;
 
@@ -35,7 +35,7 @@ public class SocialMessagePrepare {
 
     private boolean cancelled = false;
 
-    public SocialMessagePrepare(SocialUser sender, ChatChannel channel, String plainMessage, Integer replyId) {
+    public SocialMessagePrepare(AbstractSocialUser<? extends Object> sender, ChatChannel channel, String plainMessage, Integer replyId) {
         this.sender = sender;
         this.channel = channel;
         this.plainMessage = plainMessage;

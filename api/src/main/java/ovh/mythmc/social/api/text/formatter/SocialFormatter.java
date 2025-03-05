@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.filter.SocialFilterLike;
-import ovh.mythmc.social.api.user.platform.PlatformUsers;
 
 public abstract class SocialFormatter implements SocialFilterLike {
 
@@ -18,7 +17,7 @@ public abstract class SocialFormatter implements SocialFilterLike {
     
     @Override
     public Component parse(SocialParserContext context) {
-        if (!PlatformUsers.get().checkPermission(context.user(), "social.text-formatting"))
+        if (!context.user().checkPermission("social.text-formatting"))
             return context.message();
 
         var formattedMessage = replace(context);

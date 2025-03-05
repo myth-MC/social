@@ -8,12 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
@@ -52,22 +53,23 @@ public class ChatChannel {
         return true;
     }
 
-    public boolean addMember(SocialUser user) {
-        return addMember(user.getUuid());
+    public boolean addMember(AbstractSocialUser<? extends Object> user) {
+        return addMember(user.uuid());
     }
 
     public boolean removeMember(UUID uuid) {
         return memberUuids.remove(uuid);
     }
 
-    public boolean removeMember(SocialUser user) {
-        return removeMember(user.getUuid());
+    public boolean removeMember(AbstractSocialUser<? extends Object> user) {
+        return removeMember(user.uuid());
     }
 
-    public Collection<SocialUser> getMembers() {
+    public Collection<AbstractSocialUser<? extends Object>> getMembers() {
         return memberUuids.stream()
-            .map(Social.get().getUserManager()::getByUuid)
-            .toList();
+            .map(Social.get().getUserService()::getByUuid)
+            .map(o -> o.orElse(null))
+            .collect(Collectors.toList());
     }
 
     public static ChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {

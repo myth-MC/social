@@ -12,11 +12,11 @@ import com.j256.ormlite.logger.Logger;
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
+import ovh.mythmc.social.api.bukkit.feature.hook.BootstrapFeature;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.database.SocialDatabase;
+import ovh.mythmc.social.common.callback.handler.InternalFeatureHandler;
 import ovh.mythmc.social.common.feature.AddonFeature;
-import ovh.mythmc.social.common.feature.BootstrapFeature;
-import ovh.mythmc.social.common.listener.InternalFeatureListener;
 import ovh.mythmc.social.common.text.parser.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholder.chat.ChannelIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholder.chat.ChannelNicknameColorPlaceholder;
@@ -61,7 +61,7 @@ public abstract class SocialBootstrap<T> implements Social {
         Gestalt.get().register(AddonFeature.class);
 
         // Register internal listener
-        Gestalt.get().getListenerRegistry().register(new InternalFeatureListener());
+        Gestalt.get().getListenerRegistry().register(new InternalFeatureHandler());
 
         // Load settings
         reloadAll();

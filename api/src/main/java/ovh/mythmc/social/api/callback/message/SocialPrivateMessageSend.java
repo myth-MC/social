@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @RequiredArgsConstructor
 @Getter
@@ -24,9 +24,9 @@ import ovh.mythmc.social.api.user.SocialUser;
 })
 public final class SocialPrivateMessageSend {
 
-    private final SocialUser sender;
+    private final AbstractSocialUser<? extends Object> sender;
 
-    private final SocialUser recipient;
+    private final AbstractSocialUser<? extends Object> recipient;
 
     private @NotNull String plainMessage;
 
