@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.callback.message.SocialMessagePrepare;
 import ovh.mythmc.social.api.callback.message.SocialMessagePrepareCallback;
 import ovh.mythmc.social.api.callback.message.SocialMessageSend;
@@ -36,7 +37,8 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
 
     public void on(E event) {
         // Set variables
-        var sender = Social.get().getUserService().getByUuid(event.getPlayer().getUniqueId()).orElse(null);
+        //final var sender = Social.get().getUserService().getByUuid(event.getPlayer().getUniqueId()).orElse(null);
+        final var sender = BukkitSocialUser.from(event.getPlayer());
         if (sender == null) {
             event.setCancelled(true);
             return;

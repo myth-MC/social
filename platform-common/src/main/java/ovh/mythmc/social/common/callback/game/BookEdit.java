@@ -23,7 +23,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public class BookEdit {
 
-    private final AbstractSocialUser<? extends Object> user;
+    private final AbstractSocialUser user;
 
     private List<Component> pages;
     

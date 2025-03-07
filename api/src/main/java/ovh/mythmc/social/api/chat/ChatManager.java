@@ -107,14 +107,14 @@ public final class ChatManager {
             .findFirst().orElse(null);
     }
 
-    public GroupChatChannel getGroupChannelByUser(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public GroupChatChannel getGroupChannelByUser(final @NotNull AbstractSocialUser user) {
         return getGroupChannelByUser(user.uuid());
     }
 
     public void setGroupChannelLeader(final @NotNull GroupChatChannel groupChatChannel,
                                       final @NotNull UUID leaderUuid) {
-        AbstractSocialUser<? extends Object> previousLeader = Social.get().getUserService().getByUuid(groupChatChannel.getLeaderUuid()).orElse(null);
-        AbstractSocialUser<? extends Object> leader = Social.get().getUserService().getByUuid(leaderUuid).orElse(null);
+        AbstractSocialUser previousLeader = Social.get().getUserService().getByUuid(groupChatChannel.getLeaderUuid()).orElse(null);
+        AbstractSocialUser leader = Social.get().getUserService().getByUuid(leaderUuid).orElse(null);
 
         SocialGroupLeaderChange socialGroupLeaderChange = new SocialGroupLeaderChange(groupChatChannel, previousLeader, leader);
         SocialGroupLeaderChangeCallback.INSTANCE.invoke(socialGroupLeaderChange);
@@ -173,13 +173,13 @@ public final class ChatManager {
         return channels.remove(chatChannel);
     }
 
-    public List<ChatChannel> getVisibleChannels(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public List<ChatChannel> getVisibleChannels(final @NotNull AbstractSocialUser user) {
         return channels.stream()
             .filter(channel -> hasPermission(user, channel))
             .collect(Collectors.toList());
     }
 
-    public void assignChannelsToPlayer(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public void assignChannelsToPlayer(final @NotNull AbstractSocialUser user) {
         channels.stream()
             .filter(ChatChannel::isJoinByDefault)
             .filter(channel -> channel.getPermission() == null || hasPermission(user, channel))
@@ -190,11 +190,11 @@ public final class ChatManager {
         return getGroupChannelByUser(uuid) != null;
     }
 
-    public boolean hasGroup(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public boolean hasGroup(final @NotNull AbstractSocialUser user) {
         return hasGroup(user.uuid());
     }
 
-    public boolean hasPermission(final @NotNull AbstractSocialUser<? extends Object> user, final @NotNull ChatChannel chatChannel) {
+    public boolean hasPermission(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel chatChannel) {
         if (chatChannel.getPermission() == null)
             return true;
 
@@ -205,8 +205,8 @@ public final class ChatManager {
     }
 
     @Internal
-    public void sendPrivateMessage(final @NotNull AbstractSocialUser<? extends Object> sender,
-                                   final @NotNull AbstractSocialUser<? extends Object> recipient,
+    public void sendPrivateMessage(final @NotNull AbstractSocialUser sender,
+                                   final @NotNull AbstractSocialUser recipient,
                                    final @NotNull String message) {
 
         // Flood filter
@@ -234,12 +234,12 @@ public final class ChatManager {
 
         Component filteredMessage = parsePlayerInput(sender, sender.mainChannel(), message);
 
-        if (!sender.cachedName().equals(sender.name()))
+        if (!sender.cachedDisplayName().equals(sender.name()))
             senderHoverText = senderHoverText
                     .appendNewline()
                     .append(parse(sender, sender.mainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
-        if (!recipient.cachedName().equals(recipient.name()))
+        if (!recipient.cachedDisplayName().equals(recipient.name()))
             recipientHoverText = recipientHoverText
                     .appendNewline()
                     .append(parse(recipient, recipient.mainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
@@ -258,7 +258,7 @@ public final class ChatManager {
                 .append(text(": ").color(NamedTextColor.GRAY))
                 .append(filteredMessage);
 
-        Collection<AbstractSocialUser<? extends Object>> members = new ArrayList<>();
+        Collection<AbstractSocialUser> members = new ArrayList<>();
         members.add(sender);
         members.add(recipient);
 
@@ -271,10 +271,10 @@ public final class ChatManager {
         Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console
-        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.cachedName() + " -> " + recipient.cachedName() + ": " + message));
+        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.cachedDisplayName() + " -> " + recipient.cachedDisplayName() + ": " + message));
     }
 
-    private Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, Component message) {
+    private Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(channel)
             .build();
@@ -282,11 +282,11 @@ public final class ChatManager {
         return Social.get().getTextProcessor().parse(context);
     }
 
-    private Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, String message) {
+    private Component parse(AbstractSocialUser user, ChatChannel channel, String message) {
         return parse(user, channel, text(message));
     }
 
-    private Component parsePlayerInput(AbstractSocialUser<? extends Object> user, ChatChannel channel, String message) {
+    private Component parsePlayerInput(AbstractSocialUser user, ChatChannel channel, String message) {
         SocialParserContext context = SocialParserContext.builder(user, text(message))
             .channel(channel)
             .build();

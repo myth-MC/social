@@ -53,7 +53,7 @@ public class ChatChannel {
         return true;
     }
 
-    public boolean addMember(AbstractSocialUser<? extends Object> user) {
+    public boolean addMember(AbstractSocialUser user) {
         return addMember(user.uuid());
     }
 
@@ -61,11 +61,11 @@ public class ChatChannel {
         return memberUuids.remove(uuid);
     }
 
-    public boolean removeMember(AbstractSocialUser<? extends Object> user) {
+    public boolean removeMember(AbstractSocialUser user) {
         return removeMember(user.uuid());
     }
 
-    public Collection<AbstractSocialUser<? extends Object>> getMembers() {
+    public Collection<AbstractSocialUser> getMembers() {
         return memberUuids.stream()
             .map(Social.get().getUserService()::getByUuid)
             .map(o -> o.orElse(null))

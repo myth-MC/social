@@ -58,20 +58,20 @@ public class GroupChatChannel extends ChatChannel {
 
         super.addMember(uuid);
 
-        var callback = new SocialGroupJoin(this, getLeader());
+        final var callback = new SocialGroupJoin(this, getLeader());
         SocialGroupJoinCallback.INSTANCE.invoke(callback);
 
         return true;
     }
 
     public boolean removeMember(UUID uuid) {
-        var callback = new SocialGroupLeave(this, getLeader());
+        final var callback = new SocialGroupLeave(this, getLeader());
         SocialGroupLeaveCallback.INSTANCE.invoke(callback);
 
         return super.removeMember(uuid);
     }
 
-    public AbstractSocialUser<? extends Object> getLeader() {
+    public AbstractSocialUser getLeader() {
         return Social.get().getUserService().getByUuid(leaderUuid).orElse(null);
     }
 

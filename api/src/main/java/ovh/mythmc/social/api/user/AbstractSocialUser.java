@@ -1,6 +1,5 @@
 package ovh.mythmc.social.api.user;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,35 +10,27 @@ import com.j256.ormlite.table.DatabaseTable;
 import lombok.AccessLevel;
 import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.database.model.DatabaseUser;
 import ovh.mythmc.social.api.reaction.Reaction;
 
 @DatabaseTable(tableName = "users")
 @Setter(AccessLevel.PROTECTED)
-public abstract class AbstractSocialUser<P extends Object> implements SocialUser<P>, SocialUserAudienceWrapper {
+public abstract class AbstractSocialUser extends DatabaseUser implements SocialUser, ForwardingAudience.Single {
 
     public final static Dummy<?> dummy() { return new Dummy<>(null); }
 
     public final static Dummy<?> dummy(ChatChannel channel) { return new Dummy<>(channel); }
 
-    protected final P player;
-
     protected abstract void sendCustomPayload(String channel, byte[] payload);
 
     public abstract void playReaction(@NotNull Reaction reaction);
-
-    private @NotNull UUID uuid;
-
-    private ArrayList<String> blockedChannels = new ArrayList<>();
-
-    private String cachedName;
-
-    private Style displayNameStyle;
 
     private long latestMessageInMilliseconds = 0L;
 
@@ -49,32 +40,16 @@ public abstract class AbstractSocialUser<P extends Object> implements SocialUser
 
     private SocialUserCompanion companion;
 
-    protected AbstractSocialUser(final UUID uuid, final P player, final String name) {
-        this.uuid = uuid;
-        this.player = player;
-        this.cachedName = name;
+    protected AbstractSocialUser() {
     }
 
-    protected AbstractSocialUser(final UUID uuid, final P player, final String name, final ChatChannel channel) {
-        this.uuid = uuid;
-        this.player = player;
-        this.cachedName = name;
+    protected AbstractSocialUser(final UUID uuid, final String name) {
+        super(uuid, name);
+    }
+
+    protected AbstractSocialUser(final UUID uuid, final String name, final ChatChannel channel) {
+        super(uuid, name);
         this.mainChannel = channel;
-    }
-
-    @Override
-    public SocialUser<?> user() {
-        return this;
-    }
-
-    @Override
-    public Optional<P> player() {
-        return Optional.ofNullable(player);
-    }
-
-    @Override
-    public UUID uuid() {
-        return uuid;
     }
 
     @Override
@@ -88,18 +63,13 @@ public abstract class AbstractSocialUser<P extends Object> implements SocialUser
     }
 
     @Override
-    public ArrayList<String> blockedChannels() {
-        return blockedChannels;
-    }
-
-    @Override
     public long latestMessageInMilliseconds() {
         return latestMessageInMilliseconds;
     }
 
     @Override
-    public Style displayNameStyle() {
-        return displayNameStyle;
+    public boolean clearFromCache() {
+        return !isOnline();
     }
 
     @Override
@@ -112,9 +82,12 @@ public abstract class AbstractSocialUser<P extends Object> implements SocialUser
         return Optional.ofNullable(Social.get().getChatManager().getGroupChannelByUser(this));
     }
 
-    @Override
-    public String cachedName() {
-        return cachedName;
+    protected void setCachedDisplayName(String cachedDisplayName) {
+        this.cachedDisplayName = cachedDisplayName;
+    }
+
+    protected void setDisplayNameStyle(Style style) {
+        this.displayNameStyle = style;
     }
 
     // Send social messages
@@ -152,15 +125,10 @@ public abstract class AbstractSocialUser<P extends Object> implements SocialUser
         sendParsableMessage(message, false);
     }
 
-    public static final class Dummy<P> extends AbstractSocialUser<P> {
+    public static final class Dummy<P> extends AbstractSocialUser {
 
         private Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), null, "Dummy", channel);
-        }
-
-        @Override
-        public Optional<P> player() {
-            return Optional.ofNullable(null);
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), "Dummy", channel);
         }
 
         @Override
@@ -174,6 +142,11 @@ public abstract class AbstractSocialUser<P extends Object> implements SocialUser
 
         @Override
         public boolean checkPermission(@NotNull String permission) {
+            return false;
+        }
+
+        @Override
+        public boolean isOnline() {
             return false;
         }
 

@@ -38,7 +38,7 @@ public final class SocialUserCompanion {
         "social:preview"
     );
 
-    private final AbstractSocialUser<? extends Object> user;
+    private final AbstractSocialUser user;
 
     public void open(final @NotNull ChatChannel channel) {
         String name = channel.getName();
@@ -72,10 +72,10 @@ public final class SocialUserCompanion {
         user.sendCustomPayload("social:switch", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
     }
 
-    public void mention(final @NotNull ChatChannel channel, final @NotNull AbstractSocialUser<? extends Object> sender) {
+    public void mention(final @NotNull ChatChannel channel, final @NotNull AbstractSocialUser sender) {
         final var bytes = encode(
             channel.getName().getBytes(StandardCharsets.UTF_8),
-            sender.cachedName().getBytes(StandardCharsets.UTF_8),
+            sender.cachedDisplayName().getBytes(StandardCharsets.UTF_8),
             sender.uuid().toString().getBytes(StandardCharsets.UTF_8)
         );
 

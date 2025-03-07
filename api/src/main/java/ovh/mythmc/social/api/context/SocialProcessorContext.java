@@ -29,7 +29,7 @@ public class SocialProcessorContext extends SocialParserContext {
     private final List<Class<? extends SocialContextualParser>> appliedParsers;
     
     SocialProcessorContext(
-        AbstractSocialUser<? extends Object> user, 
+        AbstractSocialUser user, 
         ChatChannel channel, 
         Component message, 
         ChannelType messageChannelType,

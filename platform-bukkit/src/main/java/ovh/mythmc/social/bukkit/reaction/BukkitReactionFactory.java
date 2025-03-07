@@ -21,6 +21,7 @@ import ovh.mythmc.social.api.callback.reaction.SocialReactionTrigger;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -29,7 +30,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public final class BukkitReactionFactory extends ReactionFactory<BukkitSocialUser> {
+public final class BukkitReactionFactory extends ReactionFactory {
 
     private final JavaPlugin plugin;
 
@@ -38,7 +39,8 @@ public final class BukkitReactionFactory extends ReactionFactory<BukkitSocialUse
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(BukkitSocialUser user, Reaction emoji) {
+    public void displayReaction(AbstractSocialUser abstractSocialUser, Reaction emoji) {
+        final var user = BukkitSocialUser.from(abstractSocialUser);
         user.player().ifPresent(player -> {
             if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getGameMode() == GameMode.SPECTATOR) {
                 return;
@@ -56,8 +58,9 @@ public final class BukkitReactionFactory extends ReactionFactory<BukkitSocialUse
     }
 
     @Override
-    public void scheduleReaction(BukkitSocialUser user, Reaction reaction) {
-        var callback = new SocialReactionTrigger(user, reaction);
+    public void play(AbstractSocialUser abstractSocialUser, Reaction reaction) {
+        final var user = BukkitSocialUser.from(abstractSocialUser);
+        final var callback = new SocialReactionTrigger(user, reaction);
         
         SocialReactionTriggerCallback.INSTANCE.invoke(callback, result -> {
             if (!result.cancelled()) {

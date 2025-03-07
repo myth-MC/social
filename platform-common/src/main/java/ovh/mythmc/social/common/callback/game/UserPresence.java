@@ -19,11 +19,12 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Callback
 @CallbackFields({
     @CallbackField(field = "user", getter = "user()"),
-    @CallbackField(field = "type", getter = "type()")
+    @CallbackField(field = "type", getter = "type()"),
+    @CallbackField(field = "message", getter = "message()")
 })
 public final class UserPresence {
 
-    private Optional<? extends AbstractSocialUser<?>> user;
+    private Optional<? extends AbstractSocialUser> user;
 
     private final UserPresence.Type type;
 

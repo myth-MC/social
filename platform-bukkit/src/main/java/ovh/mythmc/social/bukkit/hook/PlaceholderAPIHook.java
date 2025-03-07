@@ -34,7 +34,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
-            AbstractSocialUser<?> user = Social.get().getUserService().getByUuid(player.getUniqueId()).orElse(null);
+            AbstractSocialUser user = Social.get().getUserService().getByUuid(player.getUniqueId()).get();
             if (user == null)
                 return null;
 
@@ -73,7 +73,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.getName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return groupChatChannel.getLeader().cachedName();
+                    return groupChatChannel.getLeader().cachedDisplayName();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
                     return groupChatChannel.getLeader().name();
@@ -101,17 +101,18 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserService().getByUuid(uuid).orElse(null).name();
+                    return Social.get().getUserService().getByUuid(uuid).get().name();
                 }
                 if (params.startsWith("group_player_")) {
                     Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.getMembers().size())
                         return null;
+
                     UUID uuid = groupChatChannel.getMemberUuids().get(integer);
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserService().getByUuid(uuid).orElse(null).cachedName();
+                    return Social.get().getUserService().getByUuid(uuid).get().cachedDisplayName();
                 }
             }
 

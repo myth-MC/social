@@ -30,9 +30,9 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public class SocialMessageReceive {
 
-    private final AbstractSocialUser<? extends Object> sender;
+    private final AbstractSocialUser sender;
 
-    private final AbstractSocialUser<? extends Object> recipient;
+    private final AbstractSocialUser recipient;
 
     private final ChatChannel channel;
 

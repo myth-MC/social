@@ -10,7 +10,7 @@ import ovh.mythmc.social.api.bukkit.scheduler.BukkitSocialScheduler;
 
 public class BukkitSocialSchedulerImpl extends BukkitSocialScheduler {
 
-    private final Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
+    protected final Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
 
     @Override
     public void runRegionTask(@NotNull Location location, @NotNull Runnable runnable) {

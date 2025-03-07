@@ -25,7 +25,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public class SocialMessagePrepare {
 
-    private final AbstractSocialUser<? extends Object> sender;
+    private final AbstractSocialUser sender;
 
     private @NotNull ChatChannel channel;
 
@@ -35,7 +35,7 @@ public class SocialMessagePrepare {
 
     private boolean cancelled = false;
 
-    public SocialMessagePrepare(AbstractSocialUser<? extends Object> sender, ChatChannel channel, String plainMessage, Integer replyId) {
+    public SocialMessagePrepare(AbstractSocialUser sender, ChatChannel channel, String plainMessage, Integer replyId) {
         this.sender = sender;
         this.channel = channel;
         this.plainMessage = plainMessage;

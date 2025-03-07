@@ -2,13 +2,13 @@ package ovh.mythmc.social.bukkit;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class SocialBukkitPlugin extends JavaPlugin {
+public class SocialPlatformBukkitPlugin extends JavaPlugin {
 
-    private SocialBukkit bootstrap;
+    private SocialPlatformBukkit bootstrap;
 
     @Override
     public void onEnable() {
-        bootstrap = new SocialBukkit(this);
+        bootstrap = new SocialPlatformBukkit(this);
         bootstrap.initialize();
     }
 

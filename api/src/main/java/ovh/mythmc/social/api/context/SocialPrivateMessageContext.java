@@ -12,11 +12,11 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 public class SocialPrivateMessageContext extends SocialMessageContext {
     
-    private final Set<AbstractSocialUser<? extends Object>> recipients;
+    private final Set<AbstractSocialUser> recipients;
 
     public SocialPrivateMessageContext(
-        AbstractSocialUser<? extends Object> sender,
-        Set<AbstractSocialUser<? extends Object>> recipients,
+        AbstractSocialUser sender,
+        Set<AbstractSocialUser> recipients,
         Set<Audience> viewers,
         String rawMessage,
         SignedMessage signedMessage) {

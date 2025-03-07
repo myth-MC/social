@@ -4,6 +4,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.common.callback.game.UserChat;
 import ovh.mythmc.social.common.callback.game.UserChatCallback;
@@ -18,8 +20,8 @@ public class UserChatInvoker implements Listener {
             return;
         }
 
-        UserChatCallback.INSTANCE.invoke(new UserChat(user, event.getMessage()), result -> {
-            event.setMessage(result.message());
+        UserChatCallback.INSTANCE.invoke(new UserChat(user, Component.text(event.getMessage())), result -> {
+            event.setMessage(LegacyComponentSerializer.legacySection().serialize(result.message()));
             event.setCancelled(result.cancelled());
         });
     }

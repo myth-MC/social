@@ -20,11 +20,7 @@ public class SocialUserManager {
 
     public static final SocialUserManager instance = new SocialUserManager();
 
-    private static DatabaseUser getDatabaseUser(@NotNull AbstractSocialUser<? extends Object> user) {
-        return DatabaseUser.fromUser(user);
-    }
-
-    public void setMainChannel(@NotNull AbstractSocialUser<? extends Object> user, @NotNull ChatChannel channel) {
+    public void setMainChannel(@NotNull AbstractSocialUser user, @NotNull ChatChannel channel) {
         ChatChannel previousChannel = user.mainChannel();
 
         var preSwitchCallback = new SocialChannelPreSwitch(user, channel);
@@ -38,43 +34,43 @@ public class SocialUserManager {
         var postSwitchCallback = new SocialChannelPostSwitch(user, previousChannel, channel);
         SocialChannelPostSwitchCallback.INSTANCE.invoke(postSwitchCallback);
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void setLatestMessage(@NotNull AbstractSocialUser<? extends Object> user, long latestMessageInMilliseconds) {
+    public void setLatestMessage(@NotNull AbstractSocialUser user, long latestMessageInMilliseconds) {
         user.setLatestMessageInMilliseconds(latestMessageInMilliseconds);
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void setSocialSpy(@NotNull AbstractSocialUser<? extends Object> user, boolean socialSpy) {
+    public void setSocialSpy(@NotNull AbstractSocialUser user, boolean socialSpy) {
         user.setSocialSpy(socialSpy);
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void setDisplayName(@NotNull AbstractSocialUser<? extends Object> user, @NotNull String displayName) {
-        user.setCachedName(displayName);
+    public void setDisplayName(@NotNull AbstractSocialUser user, @NotNull String displayName) {
+        user.setCachedDisplayName(displayName);
         user.name(displayName);
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void setDisplayNameStyle(@NotNull AbstractSocialUser<? extends Object> user, @NotNull Style style) {
+    public void setDisplayNameStyle(@NotNull AbstractSocialUser user, @NotNull Style style) {
         user.setDisplayNameStyle(style);
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public boolean isGloballyMuted(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public boolean isGloballyMuted(final @NotNull AbstractSocialUser user) {
         return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(channel -> channel.getName()).toList());
     }
 
-    public boolean isMuted(final @NotNull AbstractSocialUser<? extends Object> user, final @NotNull ChatChannel channel) {
+    public boolean isMuted(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {
         return user.blockedChannels().contains(channel.getName());
     }
 
-    public void mute(final @NotNull AbstractSocialUser<? extends Object> user, final @NotNull ChatChannel channel) {
+    public void mute(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {
         var callback = new SocialUserMuteStatusChange(user, channel, true);
         SocialUserMuteStatusChangeCallback.INSTANCE.invoke(callback);
 
@@ -82,10 +78,10 @@ public class SocialUserManager {
             return;
 
         user.blockedChannels().add(channel.getName());
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void unmute(final @NotNull AbstractSocialUser<? extends Object> user, final @NotNull ChatChannel channel) {
+    public void unmute(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {
         var callback = new SocialUserMuteStatusChange(user, channel, false);
         SocialUserMuteStatusChangeCallback.INSTANCE.invoke(callback);
 
@@ -93,19 +89,19 @@ public class SocialUserManager {
             return;
 
         user.blockedChannels().remove(channel.getName());
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void enableCompanion(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public void enableCompanion(final @NotNull AbstractSocialUser user) {
         user.setCompanion(new SocialUserCompanion(user));
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
 
-    public void disableCompanion(final @NotNull AbstractSocialUser<? extends Object> user) {
+    public void disableCompanion(final @NotNull AbstractSocialUser user) {
         user.setCompanion(null);
 
-        SocialDatabase.get().update(getDatabaseUser(user));
+        SocialDatabase.get().update(user);
     }
     
 }

@@ -67,7 +67,7 @@ public final class CompanionHandler implements SocialCallbackHandler {
                 Social.get().getUserManager().disableCompanion(user);
         
                 SocialScheduler.get().runAsyncTaskLater(() -> {
-                    if (user.player().isEmpty() || user.companion().isEmpty())
+                    if (!user.isOnline() || user.companion().isEmpty())
                         return;
         
                     user.companion().get().clear();

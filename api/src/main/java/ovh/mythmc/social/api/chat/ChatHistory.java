@@ -74,7 +74,7 @@ public final class ChatHistory {
                 .toList();
     }
 
-    public List<SocialRegisteredMessageContext> getByUser(final @NotNull SocialUser<? extends Object> user) {
+    public List<SocialRegisteredMessageContext> getByUser(final @NotNull SocialUser user) {
         return messages.values().stream()
                 .filter(message -> message.sender().uuid().equals(user.uuid()))
                 .toList();

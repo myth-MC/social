@@ -24,7 +24,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public final class SocialChannelPreSwitch {
 
-    private @NotNull AbstractSocialUser<? extends Object> user;
+    private @NotNull AbstractSocialUser user;
 
     private @NotNull ChatChannel channel;
 

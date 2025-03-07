@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.ServerLinks;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -14,10 +15,11 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings.ServerLink;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.bukkit.callback.game.invoker.CustomPayloadReceiveInvoker;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 
-public final class BukkitPlatformAdapter extends PlatformAdapter<BukkitSocialUser> {
+public class BukkitPlatformAdapter extends PlatformAdapter {
 
     private final Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
 
@@ -34,7 +36,7 @@ public final class BukkitPlatformAdapter extends PlatformAdapter<BukkitSocialUse
     }
 
     @Override
-    public void sendServerLinks(@NotNull BukkitSocialUser user, @NotNull Collection<ServerLink> links) {
+    public void sendServerLinks(@NotNull AbstractSocialUser user, @NotNull Collection<ServerLink> links) {
         final ServerLinks serverLinks = Bukkit.getServerLinks().copy();
         List.copyOf(serverLinks.getLinks()).forEach(link -> serverLinks.removeLink(link));
 
@@ -50,14 +52,27 @@ public final class BukkitPlatformAdapter extends PlatformAdapter<BukkitSocialUse
             }
         });
 
-        user.player().ifPresent(player -> {
+        final var bukkitUser = BukkitSocialUser.from(user);
+        bukkitUser.player().ifPresent(player -> {
             player.sendLinks(serverLinks);
         });
     }
 
     @Override
-    public void sendAutoCompletions(@NotNull BukkitSocialUser user, @NotNull Collection<String> autoCompletions) {
-        user.player().ifPresent(player -> player.addCustomChatCompletions(autoCompletions));
+    public void sendAutoCompletions(@NotNull AbstractSocialUser user, @NotNull Collection<String> autoCompletions) {
+        final var bukkitUser = BukkitSocialUser.from(user);
+        bukkitUser.player().ifPresent(player -> player.addCustomChatCompletions(autoCompletions));
+    }
+
+    @Override
+    public boolean canAssignNickname(@NotNull AbstractSocialUser user, @NotNull String nickname) {
+        boolean canAssign = true;
+        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+            if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(nickname) && offlinePlayer.hasPlayedBefore() && !offlinePlayer.getUniqueId().equals(user.uuid()))
+                canAssign = false;
+        }
+
+        return canAssign;
     }
     
 }

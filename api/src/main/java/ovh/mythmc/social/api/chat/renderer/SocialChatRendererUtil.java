@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 @UtilityClass
 public class SocialChatRendererUtil {
 
-    public Component getClickableChannelIcon(AbstractSocialUser<? extends Object> user, ChatChannel channel) {
+    public Component getClickableChannelIcon(AbstractSocialUser user, ChatChannel channel) {
         Component channelIcon = Component.text(channel.getIcon())
             .hoverEvent(getChannelHoverText(user, channel))
             .clickEvent(ClickEvent.runCommand("/social:social channel " + channel.getName()));
@@ -24,7 +24,7 @@ public class SocialChatRendererUtil {
         return channelIcon;
     }
 
-    private Component getChannelHoverText(AbstractSocialUser<? extends Object> user, ChatChannel channel) {
+    private Component getChannelHoverText(AbstractSocialUser user, ChatChannel channel) {
         Component channelHoverText = Component.empty();
         if (channel.isShowHoverText())
             channelHoverText = channelHoverText
@@ -35,7 +35,7 @@ public class SocialChatRendererUtil {
         return Social.get().getTextProcessor().parse(SocialParserContext.builder(user, channelHoverText).channel(channel).build());
     }
 
-    public Component getNicknameWithColor(AbstractSocialUser<? extends Object> user, ChatChannel channel) {
+    public Component getNicknameWithColor(AbstractSocialUser user, ChatChannel channel) {
         Component nickname = Component.empty()
             .append(Component.text(Social.get().getConfig().getChat().getPlayerNicknameFormat()))
             .colorIfAbsent(channel.getNicknameColor());
@@ -43,7 +43,7 @@ public class SocialChatRendererUtil {
         return nickname;
     }
 
-    public Component getReplyIcon(AbstractSocialUser<? extends Object> sender, SocialRegisteredMessageContext message) {
+    public Component getReplyIcon(AbstractSocialUser sender, SocialRegisteredMessageContext message) {
         Component replyIcon = Component.empty();
         
         // Check that message is a reply

@@ -21,7 +21,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public final class UserDeath {
 
-    private final AbstractSocialUser<? extends Object> user;
+    private final AbstractSocialUser user;
 
     private Component deathMessage;
     

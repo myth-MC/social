@@ -5,6 +5,6 @@ import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Callback
-public final record SocialGroupLeave(GroupChatChannel groupChatChannel, AbstractSocialUser<? extends Object> user) {
+public final record SocialGroupLeave(GroupChatChannel groupChatChannel, AbstractSocialUser user) {
     
 }

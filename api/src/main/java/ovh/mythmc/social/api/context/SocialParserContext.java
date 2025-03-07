@@ -23,11 +23,11 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @With
 public class SocialParserContext implements SocialContext {
     
-    public static SocialParserContextBuilder builder(@NotNull AbstractSocialUser<? extends Object> user, @NotNull Component message) {
+    public static SocialParserContextBuilder builder(@NotNull AbstractSocialUser user, @NotNull Component message) {
         return new SocialParserContextBuilder(user, message);
     }
 
-    private final AbstractSocialUser<? extends Object> user;
+    private final AbstractSocialUser user;
 
     private final ChatChannel channel;
 
@@ -39,7 +39,7 @@ public class SocialParserContext implements SocialContext {
     private final Optional<SocialParserGroup> group;
 
     SocialParserContext(
-        AbstractSocialUser<? extends Object> user,
+        AbstractSocialUser user,
         ChatChannel channel,
         Component message,
         ChannelType messageChannelType,
@@ -54,7 +54,7 @@ public class SocialParserContext implements SocialContext {
 
     public static abstract class Builder<T extends Builder<?, ?>, R> {
 
-        protected final AbstractSocialUser<? extends Object> user;
+        protected final AbstractSocialUser user;
 
         protected final Component message;
 
@@ -64,7 +64,7 @@ public class SocialParserContext implements SocialContext {
 
         protected Optional<SocialParserGroup> group;
 
-        Builder(AbstractSocialUser<? extends Object> user, Component message) {
+        Builder(AbstractSocialUser user, Component message) {
             this.user = user;
             this.message = message;
             this.channel = user.mainChannel();
@@ -94,7 +94,7 @@ public class SocialParserContext implements SocialContext {
 
     public static class SocialParserContextBuilder extends Builder<SocialParserContextBuilder, SocialParserContext> {
 
-        SocialParserContextBuilder(AbstractSocialUser<? extends Object> user, Component message) {
+        SocialParserContextBuilder(AbstractSocialUser user, Component message) {
             super(user, message);
         }
 

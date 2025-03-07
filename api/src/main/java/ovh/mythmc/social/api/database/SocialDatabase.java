@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.database;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -20,20 +22,28 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
-import ovh.mythmc.social.api.user.DatabaseUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SocialDatabase {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Internal
+public final class SocialDatabase<T extends AbstractSocialUser> {
 
-    private static final SocialDatabase instance = new SocialDatabase();
+    private static SocialDatabase<? extends AbstractSocialUser> instance;
 
-    public static SocialDatabase get() {
-        return instance;
+    public static <T extends AbstractSocialUser> void newInstance(@NotNull Class<T> type) {
+        instance = new SocialDatabase<>(type);
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends AbstractSocialUser> SocialDatabase<T> get() {
+        return (SocialDatabase<T>) instance;
+    }
+
+    private final Class<T> type;
 
     private final ScheduledExecutorService asyncScheduler = Executors.newScheduledThreadPool(1);
 
@@ -54,9 +64,9 @@ public final class SocialDatabase {
         }
     };
 
-    private Dao<DatabaseUser, UUID> usersDao;
+    private Dao<T, UUID> usersDao;
 
-    private Map<UUID, DatabaseUser> usersCache = new HashMap<>();
+    private Map<UUID, T> usersCache = new HashMap<>();
 
     public void initialize(@NotNull String path) throws SQLException {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
@@ -66,10 +76,10 @@ public final class SocialDatabase {
         DataPersisterManager.registerDataPersisters(adventureStylePersister);
 
         // Users table
-        TableUtils.createTableIfNotExists(connectionSource, DatabaseUser.class);
+        TableUtils.createTableIfNotExists(connectionSource, type);
 
         // Define DAOs
-        usersDao = DaoManager.createDao(connectionSource, DatabaseUser.class);
+        usersDao = DaoManager.createDao(connectionSource, type);
 
         // Upgrade database
         upgrade();
@@ -83,7 +93,7 @@ public final class SocialDatabase {
         updateAllEntries();
     }
 
-    public void create(final @NotNull DatabaseUser user) {
+    public void create(final @NotNull T user) {
         try {
             usersDao.createIfNotExists(user);
         } catch (SQLException e) {
@@ -91,7 +101,7 @@ public final class SocialDatabase {
         }
     }
 
-    public void delete(final @NotNull DatabaseUser user) {
+    public void delete(final @NotNull T user) {
         try {
             usersDao.delete(user);
         } catch (SQLException e) {
@@ -99,7 +109,7 @@ public final class SocialDatabase {
         }
     }
 
-    public void update(final @NotNull DatabaseUser user) {
+    public void update(final @NotNull T user) {
         try {
             if (usersCache.containsKey(user.uuid())) {
                 usersCache.put(user.uuid(), user);
@@ -129,19 +139,19 @@ public final class SocialDatabase {
         Map.copyOf(usersCache).values().forEach(this::updateEntry);
     }
 
-    private void updateEntry(final @NotNull DatabaseUser user) {
+    private void updateEntry(final @NotNull T user) {
         try {
             usersDao.update(user);
 
             // Clear cache value
-            if (!user.sourceUser().isOnline())
+            if (user.clearFromCache())
                 usersCache.remove(user.uuid());
         } catch (SQLException e) {
             logger.error("Exception while updating entry {}", e);
         }
     }
 
-    public Collection<DatabaseUser> getUsers() {
+    public Collection<T> getUsers() {
         try {
             return usersDao.queryForAll();
         } catch (SQLException e) {
@@ -151,12 +161,12 @@ public final class SocialDatabase {
         return null;
     }
 
-    public DatabaseUser getUserByUuid(final @NotNull UUID uuid) {
+    public T getUserByUuid(final @NotNull UUID uuid) {
         if (usersCache.containsKey(uuid))
             return usersCache.get(uuid);
 
         try {
-            DatabaseUser user = usersDao.queryForId(uuid);
+            T user = usersDao.queryForId(uuid);
             if (user == null)
                 return null;
 
@@ -167,6 +177,36 @@ public final class SocialDatabase {
         }
 
         return null;
+    }
+
+    public T getUserByName(final @NotNull String name) {
+        T cachedUser = findCachedUserByName(name);
+        if (cachedUser != null)
+            return cachedUser;
+
+        try {
+            List<T> users = usersDao.queryBuilder()
+                    .where()
+                    .eq("name", name)
+                    .query();
+
+            if (users != null && !users.isEmpty()) {
+                T user = users.getFirst();
+                
+                usersCache.put(user.uuid(), user);
+                return user;
+            }
+        } catch (SQLException e) {
+            logger.error("Exception while getting account {}", e);
+        }
+
+        return null;
+    }
+
+    private T findCachedUserByName(final @NotNull String name) {
+        return usersCache.values().stream()
+            .filter(user -> user.name().equals(name))
+            .findFirst().orElse(null);
     }
 
     private void upgrade() {

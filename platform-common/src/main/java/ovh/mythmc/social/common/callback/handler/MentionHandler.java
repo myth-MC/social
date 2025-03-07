@@ -22,7 +22,7 @@ public final class MentionHandler {
 
     public void registerCallbackHandlers() {
         SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.MENTIONS, (ctx) -> {
-            if (ctx.sender().player().isEmpty() || ctx.recipient().player().isEmpty())
+            if (!ctx.sender().isOnline() || !ctx.recipient().isOnline())
                 return;
 
             if (ctx.recipient().equals(ctx.sender()))
@@ -38,7 +38,7 @@ public final class MentionHandler {
             // Username
             message = message.replaceText((builder) -> {
                 builder
-                    .match(Pattern.quote("@" + ctx.recipient().name()) + "|" + Pattern.quote("@" + ctx.recipient().cachedName()))
+                    .match(Pattern.quote("@" + ctx.recipient().name()) + "|" + Pattern.quote("@" + ctx.recipient().cachedDisplayName()))
                     .replacement((match, textBuilder) -> {
                         wrapper.mentioned = true;
                         return Component.text(match.group()).color(ctx.channel().getColor());

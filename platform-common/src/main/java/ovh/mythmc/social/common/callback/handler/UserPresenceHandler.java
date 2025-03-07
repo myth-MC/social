@@ -62,9 +62,9 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
                 return;
 
             ctx.user().ifPresent(user -> {
-                String cachedName = user.cachedName();
-                if (cachedName != null)
-                    user.name(user.cachedName());
+                String cachedDisplayName = user.cachedDisplayName();
+                if (cachedDisplayName != null)
+                    user.name(user.cachedDisplayName());
             });
         });
     }

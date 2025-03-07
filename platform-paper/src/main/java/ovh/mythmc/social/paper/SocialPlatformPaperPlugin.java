@@ -2,13 +2,13 @@ package ovh.mythmc.social.paper;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class SocialPaperPlugin extends JavaPlugin {
+public class SocialPlatformPaperPlugin extends JavaPlugin {
 
-    private SocialPaper bootstrap;
+    private SocialPlatformPaper bootstrap;
 
     @Override
     public void onEnable() {
-        bootstrap = new SocialPaper(this);
+        bootstrap = new SocialPlatformPaper(this);
         bootstrap.initialize();;
     }
 

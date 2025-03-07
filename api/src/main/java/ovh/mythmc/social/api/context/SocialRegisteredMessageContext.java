@@ -26,7 +26,7 @@ public class SocialRegisteredMessageContext extends SocialMessageContext {
     public SocialRegisteredMessageContext(
         int id,
         long timestamp,
-        AbstractSocialUser<? extends Object> sender,
+        AbstractSocialUser sender,
         ChatChannel channel,
         Set<Audience> viewers,
         Component message,

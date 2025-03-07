@@ -15,13 +15,13 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.bukkit.adapter.PlatformAdapter;
+import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
+import ovh.mythmc.social.api.bukkit.scheduler.BukkitSocialScheduler;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTrigger;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -40,59 +40,65 @@ public final class PaperReactionFactory extends ReactionFactory {
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(SocialUser user, Reaction emoji) {
+    public void displayReaction(AbstractSocialUser abstractSocialUser, Reaction emoji) {
+        final var user = BukkitSocialUser.from(abstractSocialUser);
+
         if (user.player().isEmpty() || 
             user.player().get().hasPotionEffect(PotionEffectType.INVISIBILITY) || 
             user.player().get().getGameMode() == GameMode.SPECTATOR)
             return;
 
-        ItemDisplay itemDisplay = playerReaction.get(user.getUuid());
+        ItemDisplay itemDisplay = playerReaction.get(user.uuid());
         if (itemDisplay != null)
             return;
 
-        itemDisplay = spawnItemDisplay(user.player().get(), emoji);
-        playerReaction.put(user.getUuid(), itemDisplay);
+        itemDisplay = spawnItemDisplay(user, emoji);
+        playerReaction.put(user.uuid(), itemDisplay);
 
         scheduleItemDisplayUpdate(user.player().get(), itemDisplay);
     }
 
     @Override
-    public void scheduleReaction(SocialUser user, Reaction reaction) {
+    public void play(AbstractSocialUser abstractSocialUser, Reaction reaction) {
+        final var user = BukkitSocialUser.from(abstractSocialUser);
+
         var callback = new SocialReactionTrigger(user, reaction);
         SocialReactionTriggerCallback.INSTANCE.invoke(callback, result -> {
             if (!result.cancelled())
-                    PlatformAdapter.get().runEntityTask((JavaPlugin) Bukkit.getPluginManager().getPlugin("social"), user.player().get(), () -> {
+                    BukkitSocialScheduler.get().runEntityTask(user.player().get(), () -> {
                         displayReaction(result.user(), result.reaction());
             });
         });
     }
 
-    private ItemDisplay spawnItemDisplay(Player player, Reaction reaction) {
-        Location location = player.getLocation();
+    private ItemDisplay spawnItemDisplay(BukkitSocialUser user, Reaction reaction) {
+        final Player player = user.player().get();
+
+        final Location location = player.getLocation();
         location.setPitch(0);
         location.setYaw(location.getYaw() - 180);
 
-        double offsetY = Social.get().getConfig().getReactions().getOffsetY();
-        ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
+        final double offsetY = Social.get().getConfig().getReactions().getOffsetY();
+        final ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
                 location,
                 EntityType.ITEM_DISPLAY
         );
 
         itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
         if (reaction.sound() != null)
-            SocialAdventureProvider.get().player(player).playSound(reaction.sound());
+        if (reaction.sound() != null)
+            user.playSound(reaction.sound());
 
-        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+        final ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+        final SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
         skullMeta.setPlayerProfile(getProfile(reaction.texture()));
         itemStack.setItemMeta(skullMeta);
 
-        //itemDisplay.setMetadata(itemDisplayMetadataKey, new FixedMetadataValue(plugin, true));
         itemDisplay.setItemStack(itemStack);
 
         itemDisplay.setPersistent(false);
 
-        Transformation transformation = itemDisplay.getTransformation();
+        final Transformation transformation = itemDisplay.getTransformation();
         transformation.getScale().set(0);
         transformation.getTranslation().set(0, offsetY, 0);
         itemDisplay.setTransformation(transformation);
