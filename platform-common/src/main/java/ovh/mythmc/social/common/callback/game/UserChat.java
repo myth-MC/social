@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.TextComponent;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
@@ -21,9 +22,9 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public final class UserChat {
 
-    private final AbstractSocialUser<? extends Object> user;
+    private final AbstractSocialUser user;
 
-    private final String message;
+    private final TextComponent message;
 
     private boolean cancelled = false;
     

@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>social</artifactId>
-        <version>0.4.2</version>
+        <version>0.5.0</version>
     </parent>
 
     <properties>
@@ -29,11 +29,6 @@
         <repository>
             <id>Scarsz-Nexus</id>
             <url>https://nexus.scarsz.me/content/groups/public/</url>
-        </repository>
-
-        <repository>
-            <id>triumphteam</id>
-            <url>https://repo.triumphteam.dev/snapshots/</url>
         </repository>
     </repositories>
     
@@ -88,9 +83,9 @@
         </dependency>
 
         <dependency>
-            <groupId>dev.triumphteam</groupId>
-            <artifactId>triumph-cmd-bukkit</artifactId>
-            <version>2.0.0-ALPHA-10</version>
+            <groupId>org.incendo</groupId>
+            <artifactId>cloud-paper</artifactId>
+            <version>2.0.0-beta.10</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

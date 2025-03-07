@@ -26,7 +26,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public final class SocialMessageSend {
 
-    private final AbstractSocialUser<? extends Object> sender;
+    private final AbstractSocialUser sender;
 
     private final ChatChannel channel;
 

@@ -11,12 +11,12 @@ import ovh.mythmc.social.api.context.SocialRendererContext;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
-public class UserChatRenderer<U extends AbstractSocialUser<? extends Object>> implements SocialChatRenderer<U> {
+public class UserChatRenderer<U extends AbstractSocialUser> implements SocialChatRenderer<U> {
 
     @Override
     public SocialRendererContext render(U target, SocialRegisteredMessageContext context) {
         // Set variables
-        final AbstractSocialUser<? extends Object> sender = context.sender();
+        final AbstractSocialUser sender = context.sender();
         final ChatChannel channel = context.channel();
 
         // Get channel icon

@@ -29,7 +29,7 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
         
             Component deathMessage = parse(ctx.user(), ctx.user().mainChannel(), Component.text(unformattedMessage).append(ctx.deathMessage()));
             
-            for (AbstractSocialUser<?> user : Social.get().getUserService().get()) {
+            for (AbstractSocialUser user : Social.get().getUserService().get()) {
                 if (unformattedMessage.contains(user.name())) {
                     deathMessage = deathMessage.replaceText(TextReplacementConfig.builder()
                         .matchLiteral(user.name())
@@ -102,7 +102,7 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
         UserPresenceCallback.INSTANCE.unregisterHandlers("social:presence-system-messages");
     }
 
-    private Component parse(AbstractSocialUser<?> user, ChatChannel channel, Component message) {
+    private Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(channel)
             .build();

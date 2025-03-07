@@ -24,9 +24,9 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public final class SocialPrivateMessageSend {
 
-    private final AbstractSocialUser<? extends Object> sender;
+    private final AbstractSocialUser sender;
 
-    private final AbstractSocialUser<? extends Object> recipient;
+    private final AbstractSocialUser recipient;
 
     private @NotNull String plainMessage;
 

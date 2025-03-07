@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>social</artifactId>
-    <version>0.4.2</version>
+    <version>0.5.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>api</module>
@@ -53,10 +53,6 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>ovh.mythmc.social.libs.org.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>dev.triumphteam</pattern>
-                            <shadedPattern>ovh.mythmc.social.libs.dev.triumphteam</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.j256</pattern>

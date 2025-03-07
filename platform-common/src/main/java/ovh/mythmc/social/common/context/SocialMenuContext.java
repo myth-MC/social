@@ -14,8 +14,8 @@ import lombok.Setter;
 @Accessors(fluent = true)
 public class SocialMenuContext implements SocialContext {
     
-    private final AbstractSocialUser<? extends Object> viewer;
+    private final AbstractSocialUser viewer;
 
-    private final AbstractSocialUser<? extends Object> target;
+    private final AbstractSocialUser target;
 
 }

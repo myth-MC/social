@@ -12,9 +12,7 @@ import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 
-public interface SocialUser<P> {
-
-    Optional<P> player();
+public interface SocialUser {
 
     Audience audience();
 
@@ -36,23 +34,21 @@ public interface SocialUser<P> {
 
     String name();
 
-    String cachedName();
+    String cachedDisplayName();
 
     void name(@NotNull String name);
 
     boolean checkPermission(@NotNull String permission);
 
+    boolean isOnline();
+
     default Component displayName() {
-        final var displayName = Component.text(cachedName());
+        final var displayName = Component.text(cachedDisplayName());
 
         if (displayNameStyle() != null)
             return displayName.style(displayNameStyle());
 
         return displayName;
-    }
-
-    default boolean isOnline() {
-        return player().isPresent();
     }
     
 }

@@ -180,7 +180,7 @@ public final class GlobalTextProcessor {
         return textProcessor.parse(context);
     }
 
-    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, Component message, ChannelType channelType) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, Component message, ChannelType channelType) {
         return parse(SocialParserContext.builder(user, message)
             .channel(channel)
             .messageChannelType(channelType)
@@ -188,15 +188,15 @@ public final class GlobalTextProcessor {
         );
     }
 
-    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, String message, ChannelType channelType) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, String message, ChannelType channelType) {
         return parse(user, channel, text(message), channelType);
     }
 
-    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, Component message) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {
         return parse(user, channel, message, ChannelType.CHAT);
     }
 
-    public Component parse(AbstractSocialUser<? extends Object> user, ChatChannel channel, String message) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, String message) {
         return parse(user, channel, text(message));
     }
 
@@ -204,7 +204,7 @@ public final class GlobalTextProcessor {
         send(List.of(context.user()), parse(context), context.messageChannelType(), context.channel());
     }
 
-    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, Component message, ChannelType channelType) {
+    public void parseAndSend(AbstractSocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
         SocialParserContext context = SocialParserContext.builder(user, message)
             .channel(chatChannel)
             .messageChannelType(channelType)
@@ -213,28 +213,28 @@ public final class GlobalTextProcessor {
         parseAndSend(context);
     }
 
-    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, String message, ChannelType channelType) {
+    public void parseAndSend(AbstractSocialUser user, ChatChannel chatChannel, String message, ChannelType channelType) {
         parseAndSend(user, chatChannel, text(message), channelType);
     }
 
-    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, Component message) {
+    public void parseAndSend(AbstractSocialUser user, ChatChannel chatChannel, Component message) {
         parseAndSend(user, chatChannel, message, ChannelType.CHAT);
     }
 
-    public void parseAndSend(AbstractSocialUser<? extends Object> user, ChatChannel chatChannel, String message) {
+    public void parseAndSend(AbstractSocialUser user, ChatChannel chatChannel, String message) {
         parseAndSend(user, chatChannel, text(message));
     }
 
-    public void parseAndSend(AbstractSocialUser<? extends Object> user, Component message, ChannelType type) {
+    public void parseAndSend(AbstractSocialUser user, Component message, ChannelType type) {
         parseAndSend(user, user.mainChannel(), message, type);
     }
 
-    public void parseAndSend(AbstractSocialUser<? extends Object> user, String message, ChannelType type) {
+    public void parseAndSend(AbstractSocialUser user, String message, ChannelType type) {
         parseAndSend(user, text(message), type);
     }
 
     @Internal
-    public <U extends AbstractSocialUser<?>> void send(final @NotNull Collection<U> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
+    public void send(final @NotNull Collection<AbstractSocialUser> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
         if (message == null || message.equals(Component.empty()))
             return;
 
@@ -259,7 +259,7 @@ public final class GlobalTextProcessor {
     }
 
     @Internal
-    public <U extends AbstractSocialUser<?>> void send(final @NotNull U recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
+    public void send(final @NotNull AbstractSocialUser recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
         send(List.of(recipient), message, type, channel);
     }
 

@@ -20,7 +20,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 public class SocialMessageContext implements SocialContext {
 
-    private final AbstractSocialUser<? extends Object> sender;
+    private final AbstractSocialUser sender;
 
     private final ChatChannel channel;
 

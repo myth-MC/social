@@ -5,7 +5,7 @@ authors:
 version: '${project.version}'
 api-version: '1.19'
 
-main: ovh.mythmc.social.paper.SocialPaperPlugin
+main: ovh.mythmc.social.paper.SocialPlatformPaperPlugin
 folia-supported: true
 
 dependencies:
@@ -15,10 +15,6 @@ dependencies:
       required: false
       join-classpath: true
     DiscordSRV:
-      load: BEFORE
-      required: false
-      join-classpath: true
-    packetevents:
       load: BEFORE
       required: false
       join-classpath: true

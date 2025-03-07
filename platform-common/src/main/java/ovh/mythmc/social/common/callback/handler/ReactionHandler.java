@@ -18,7 +18,7 @@ public final class ReactionHandler implements SocialCallbackHandler {
                     continue;
 
                 for (String triggerWord : r.triggerWords()) {
-                    if (message.matches("(?i:" + Pattern.quote(triggerWord) + ")")) {
+                    if (message.content().matches("(?i:" + Pattern.quote(triggerWord) + ")")) {
                         reaction = r;
                     }
                 }

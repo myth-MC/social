@@ -17,7 +17,7 @@ import ovh.mythmc.social.api.bukkit.adapter.ChatEventAdapter;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceive;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent> {
 
@@ -77,7 +77,7 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
 
             // Trigger message receive event if recipient is a SocialUser
             var mapResult = renderer.mapFromAudience(viewer);
-            if (mapResult.isSuccess() && mapResult.result() instanceof SocialUser recipient) {
+            if (mapResult.isSuccess() && mapResult.result() instanceof AbstractSocialUser recipient) {
                 // Trigger message receive event
                 var callback = new SocialMessageReceive(
                     context.sender(), 

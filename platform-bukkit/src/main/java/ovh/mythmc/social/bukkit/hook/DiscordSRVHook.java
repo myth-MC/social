@@ -14,7 +14,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
@@ -28,7 +27,7 @@ import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 @RequiredArgsConstructor
 public final class DiscordSRVHook implements ChatHook {
 
-    private final JavaPlugin plugin;
+    private final Plugin plugin;
 
     public void registerMessageCallbackHandler() {
         SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv", (sender, channel, message, messageId, replyId) -> {

@@ -108,7 +108,7 @@ public final class GroupHandler implements SocialCallbackHandler {
         SocialGroupLeaderChangeCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_LEADER_CHANGE_MESSAGE);
     }
 
-    private static void setDefaultChannel(AbstractSocialUser<?> user) {
+    private static void setDefaultChannel(AbstractSocialUser user) {
         ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
         if (defaultChannel == null) return;
 

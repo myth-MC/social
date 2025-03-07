@@ -18,7 +18,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @RequiredArgsConstructor
 public class SocialRendererContext implements SocialContext {
 
-    private final AbstractSocialUser<? extends Object> sender;
+    private final AbstractSocialUser sender;
 
     private final ChatChannel channel;
 

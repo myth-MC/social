@@ -3,20 +3,19 @@ package ovh.mythmc.social.common.boot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
 
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
-import ovh.mythmc.social.api.bukkit.feature.hook.BootstrapFeature;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.database.SocialDatabase;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.callback.handler.InternalFeatureHandler;
+import ovh.mythmc.social.common.command.SocialCommandProvider;
 import ovh.mythmc.social.common.feature.AddonFeature;
+import ovh.mythmc.social.common.feature.BootstrapFeature;
 import ovh.mythmc.social.common.text.parser.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholder.chat.ChannelIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholder.chat.ChannelNicknameColorPlaceholder;
@@ -31,26 +30,26 @@ import ovh.mythmc.social.common.text.placeholder.prefix.*;
 
 import java.io.File;
 
+import org.incendo.cloud.CommandManager;
+
 @Getter
 @RequiredArgsConstructor
-public abstract class SocialBootstrap<T> implements Social {
+public abstract class SocialBootstrap implements Social {
 
-    private final JavaPlugin plugin;
     private final SocialConfigProvider config;
 
     private final File dataDirectory;
 
-    public SocialBootstrap(final @NotNull JavaPlugin plugin,
-                           final File dataDirectory) {
-        SocialSupplier.set(this);
+    private SocialCommandProvider commandProvider;
 
-        this.plugin = plugin;
+    public SocialBootstrap(final File dataDirectory) {
         this.config = new SocialConfigProvider(dataDirectory);
-        
         this.dataDirectory = dataDirectory;
     }
 
     public final void initialize() {
+        SocialSupplier.set(this);
+
         // Initialize gestalt
         initializeGestalt();
 
@@ -60,41 +59,59 @@ public abstract class SocialBootstrap<T> implements Social {
         // Register add-on feature (add-ons can listen to this class to sync their state)
         Gestalt.get().register(AddonFeature.class);
 
+        // Register platform features (chat renderer, hooks...)
+        registerPlatformFeatures();
+
         // Register internal listener
         Gestalt.get().getListenerRegistry().register(new InternalFeatureHandler());
 
         // Load settings
         reloadAll();
 
+        // Register command manager
+        commandProvider = new SocialCommandProvider(commandManager());
+
         try {
             // Enable plugin
             enable();
+
+            // Register commands
+            commandProvider.register();
+
+            // Instantiate database
+            SocialDatabase.newInstance(userType());
 
             // Initialize database
             Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary verbose
             SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
         } catch (Throwable throwable) {
-            getLogger().error("An error has occurred while initializing social: {}", throwable);
+            Social.get().getLogger().error("An error has occurred while initializing social: {}", throwable);
             throwable.printStackTrace(System.err);
             return;
         }
     }
 
+    public abstract Class<? extends AbstractSocialUser> userType();
+
     public abstract void initializeGestalt();
 
+    public abstract void registerPlatformFeatures();
+
+    public abstract void unregisterPlatformFeatures();
+
     public abstract void enable();
+
+    public abstract CommandManager<AbstractSocialUser> commandManager();
 
     public void shutdown() {
         SocialDatabase.get().shutdown();
     }
 
-    @Override
     public final void reload(ReloadType type) {
         switch (type) {
             case ADDONS:
                 Gestalt.get().disableFeature(AddonFeature.class);
                 Gestalt.get().enableFeature(AddonFeature.class);
-
                 break;
             case SETTINGS:
                 getConfig().loadSettings();

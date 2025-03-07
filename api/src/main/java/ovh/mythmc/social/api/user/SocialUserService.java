@@ -1,8 +1,6 @@
 package ovh.mythmc.social.api.user;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,41 +10,22 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
 
-public abstract class SocialUserService<P, U extends AbstractSocialUser<P>> {
+public abstract class SocialUserService {
 
-    private static SocialUserService<?, ?> instance;
+    protected abstract AbstractSocialUser createUserInstance(@NotNull UUID uuid);
 
-    @SuppressWarnings("unchecked")
-    public final static <P, U extends AbstractSocialUser<P>> SocialUserService<P, U> of(P playerType) {
-        if (instance.canMap(playerType))
-            return (SocialUserService<P, U>) instance;
+    public abstract Collection<AbstractSocialUser> get();
 
-        return null;
+    public void register(@NotNull AbstractSocialUser user) {
+        SocialDatabase.get().create(user);
     }
 
-    public final static <P, U extends AbstractSocialUser<P>> void set(SocialUserService<P, U> service) {
-        instance = service;
-    }
-
-    protected abstract U createInstance(@NotNull P player, @NotNull UUID uuid);
-
-    public abstract boolean canMap(Object player);
-
-    public abstract U map(Object player);
-
-    private final Collection<U> users = new ArrayList<>();
-
-    public void register(@NotNull U user) {
-        final var databaseUser = DatabaseUser.fromUser(user);
-        SocialDatabase.get().create(databaseUser);
-    }
-
-    public U register(@NotNull P player, @NotNull UUID uuid) {
+    public AbstractSocialUser register(@NotNull UUID uuid) {
         // Todo: recover data from last session
         String defaultChatChannelName = Social.get().getConfig().getChat().getDefaultChannel();
         ChatChannel defaultChatChannel = Social.get().getChatManager().getDefaultChannel();
 
-        U user = createInstance(player, uuid);
+        AbstractSocialUser user = createUserInstance(uuid);
         user.setSocialSpy(false);
 
         if (defaultChatChannel == null) {
@@ -62,23 +41,21 @@ public abstract class SocialUserService<P, U extends AbstractSocialUser<P>> {
         return user;
     }
 
-    public Collection<U> get() {
-        return List.copyOf(users);
+    public Optional<AbstractSocialUser> getByName(@NotNull String name) {
+        return Optional.ofNullable(SocialDatabase.get().getUserByName(name));
     }
 
-    public Optional<U> getByUuid(@NotNull UUID uuid) {
-        return get().stream()
-            .filter(user -> user.uuid().equals(uuid))
-            .findFirst();
+    public Optional<AbstractSocialUser> getByUuid(@NotNull UUID uuid) {
+        return Optional.ofNullable(SocialDatabase.get().getUserByUuid(uuid));
     }
 
-    public Collection<U> getSocialSpyUsers() {
+    public Collection<AbstractSocialUser> getSocialSpyUsers() {
         return get().stream()
             .filter(SocialUser::socialSpy)
             .toList();
     }
 
-    public Collection<U> getSocialSpyUsersInChannel(ChatChannel channel) {
+    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(ChatChannel channel) {
         return get().stream()
             .filter(user -> user.socialSpy() && user.mainChannel().equals(channel))
             .toList();

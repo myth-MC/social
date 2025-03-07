@@ -23,7 +23,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 })
 public final class SignEdit {
 
-    private final AbstractSocialUser<? extends Object> user;
+    private final AbstractSocialUser user;
 
     private List<Component> lines;
     
