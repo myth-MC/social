@@ -32,7 +32,7 @@ import ovh.mythmc.social.bukkit.callback.game.invoker.UserDeathInvoker;
 import ovh.mythmc.social.bukkit.callback.game.invoker.UserPresenceInvoker;
 import ovh.mythmc.social.bukkit.feature.hook.DiscordSRVFeature;
 import ovh.mythmc.social.bukkit.feature.hook.PlaceholderAPIFeature;
-import ovh.mythmc.social.bukkit.feature.listener.PlatformChatRendererListener;
+import ovh.mythmc.social.bukkit.feature.listener.BukkitChatRendererListener;
 import ovh.mythmc.social.bukkit.reaction.BukkitReactionFactory;
 import ovh.mythmc.social.bukkit.scheduler.BukkitSocialSchedulerImpl;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
@@ -124,13 +124,12 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
             PlaceholderAPIFeature.class
         );
 
-        Gestalt.get().getListenerRegistry().register(new PlatformChatRendererListener());
+        Gestalt.get().getListenerRegistry().register(new BukkitChatRendererListener());
     }
 
     @Override
     public void unregisterPlatformFeatures() {
         Gestalt.get().unregister(
-            PlatformChatRendererListener.class,
             DiscordSRVFeature.class,
             PlaceholderAPIFeature.class
         );

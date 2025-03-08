@@ -25,7 +25,6 @@ import ovh.mythmc.social.api.user.SocialUserService;
 import ovh.mythmc.social.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.bukkit.feature.hook.DiscordSRVFeature;
 import ovh.mythmc.social.bukkit.feature.hook.PlaceholderAPIFeature;
-import ovh.mythmc.social.bukkit.feature.listener.PlatformChatRendererListener;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.paper.adventure.PaperAdventureProvider;
@@ -35,6 +34,7 @@ import ovh.mythmc.social.paper.callback.game.invoker.SignEditInvoker;
 import ovh.mythmc.social.paper.callback.game.invoker.UserChatInvoker;
 import ovh.mythmc.social.paper.callback.game.invoker.UserDeathInvoker;
 import ovh.mythmc.social.paper.callback.game.invoker.UserPresenceInvoker;
+import ovh.mythmc.social.paper.feature.listener.PaperChatRendererListener;
 import ovh.mythmc.social.paper.reaction.PaperReactionFactory;
 import ovh.mythmc.social.paper.scheduler.PaperSocialSchedulerImpl;
 
@@ -133,13 +133,12 @@ public final class SocialPlatformPaper extends SocialBootstrap {
             PlaceholderAPIFeature.class
         );
 
-        Gestalt.get().getListenerRegistry().register(new PlatformChatRendererListener());
+        Gestalt.get().getListenerRegistry().register(new PaperChatRendererListener());
     }
 
     @Override
     public void unregisterPlatformFeatures() {
         Gestalt.get().unregister(
-            PlatformChatRendererListener.class,
             DiscordSRVFeature.class,
             PlaceholderAPIFeature.class
         );
