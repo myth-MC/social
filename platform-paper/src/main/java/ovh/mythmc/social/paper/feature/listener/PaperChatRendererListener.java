@@ -1,4 +1,4 @@
-package ovh.mythmc.social.bukkit.feature.listener;
+package ovh.mythmc.social.paper.feature.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -10,14 +10,14 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.defaults.UserChatRenderer;
-import ovh.mythmc.social.bukkit.adapter.BukkitChatEventAdapter;
 import ovh.mythmc.social.common.feature.ChatFeature;
+import ovh.mythmc.social.paper.adapter.PaperChatEventAdapter;
 
-public final class PlatformChatRendererListener {
+public class PaperChatRendererListener {
 
     private SocialChatRenderer.Registered<BukkitSocialUser> renderer;
 
-    private final BukkitChatEventAdapter chatEventAdapter = new BukkitChatEventAdapter();
+    private final PaperChatEventAdapter chatEventAdapter = new PaperChatEventAdapter();
 
     @FeatureListener(feature = ChatFeature.class, events = FeatureEvent.ENABLE)
     public void enable() {
@@ -42,7 +42,6 @@ public final class PlatformChatRendererListener {
     @FeatureListener(feature = ChatFeature.class, events = FeatureEvent.DISABLE)
     public void disable() {
         Social.get().getChatManager().unregisterRenderer(renderer);
-
         HandlerList.unregisterAll(chatEventAdapter);
     }
     

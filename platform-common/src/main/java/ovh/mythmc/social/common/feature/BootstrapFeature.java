@@ -6,7 +6,7 @@ import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 
-@Feature(group = "social", identifier = "BOOTSTRAP")
+@Feature(group = "social-bootstrap", identifier = "BOOTSTRAP")
 public class BootstrapFeature {
 
     private static boolean initialized = false;
