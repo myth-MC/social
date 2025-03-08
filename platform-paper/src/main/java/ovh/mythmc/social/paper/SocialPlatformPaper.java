@@ -1,6 +1,6 @@
 package ovh.mythmc.social.paper;
 
-import org.bstats.bukkit.Metrics;
+import ovh.mythmc.social.libs.org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

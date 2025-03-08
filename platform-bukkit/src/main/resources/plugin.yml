@@ -12,6 +12,9 @@ libraries:
   - net.kyori:adventure-text-minimessage:4.18.0
   - net.kyori:adventure-text-serializer-plain:4.18.0
   - net.kyori:adventure-text-serializer-gson:4.18.0
+  - org.incendo:cloud-core:2.0.0
+  - org.incendo:cloud-minecraft-extras:2.0.0-beta.10
+  - org.incendo:cloud-paper:2.0.0-beta.10
 
 permissions:
   social.use.nickname.others:
