@@ -3,9 +3,6 @@ package ovh.mythmc.social.common.boot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import com.j256.ormlite.logger.Level;
-import com.j256.ormlite.logger.Logger;
-
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
@@ -82,7 +79,6 @@ public abstract class SocialBootstrap implements Social {
             SocialDatabase.newInstance(userType());
 
             // Initialize database
-            Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary verbose
             SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
         } catch (Throwable throwable) {
             Social.get().getLogger().error("An error has occurred while initializing social: {}", throwable);

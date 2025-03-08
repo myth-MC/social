@@ -1,13 +1,13 @@
 package ovh.mythmc.social.api.user;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
-
-import com.google.common.io.ByteStreams;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -95,13 +95,17 @@ public final class SocialUserCompanion {
         });
     }
 
-    private <T> byte[] encode(byte[]... bytes) {
-        var out = ByteStreams.newDataOutput();
+    private byte[] encode(byte[]... bytes) {
+        final var out = new ByteArrayOutputStream();
 
-        for (int i = 0; i < bytes.length; i++) {
-            out.write(bytes[i]);
-            if (bytes.length > i + 1)
-                out.write(";".getBytes(StandardCharsets.UTF_8));
+        try {
+            for (int i = 0; i < bytes.length; i++) {
+                out.write(bytes[i]);
+                if (bytes.length > i + 1)
+                    out.write(";".getBytes(StandardCharsets.UTF_8));
+            }
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
         }
 
         return out.toByteArray();

@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
@@ -66,9 +68,11 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
 
     private Dao<T, UUID> usersDao;
 
-    private Map<UUID, T> usersCache = new HashMap<>();
+    private final Map<UUID, T> usersCache = new HashMap<>();
 
     public void initialize(@NotNull String path) throws SQLException {
+        Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary verbose
+
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
 
         // Custom persisters

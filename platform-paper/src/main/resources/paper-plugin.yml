@@ -5,6 +5,7 @@ authors:
 version: '${project.version}'
 api-version: '1.19'
 
+loader: ovh.mythmc.social.paper.SocialPlatformPaperLoader
 main: ovh.mythmc.social.paper.SocialPlatformPaperPlugin
 folia-supported: true
 
