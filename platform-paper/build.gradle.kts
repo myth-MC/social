@@ -13,6 +13,18 @@ dependencies {
     compileOnly(libs.io.papermc.paper.paper.api)
 }
 
+tasks {
+    processResources {
+        val replacements = mapOf(
+            "version" to version.toString()
+        )
+        inputs.properties(replacements)
+        filesMatching("paper-plugin.yml") {
+            expand(replacements)
+        }
+    }
+}
+
 tasks.shadowJar {
     minimize()
 }

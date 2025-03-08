@@ -7,7 +7,6 @@ import org.incendo.cloud.minecraft.extras.parser.TextColorParser;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.StringParser;
-import org.incendo.cloud.suggestion.SuggestionProvider;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
@@ -58,7 +57,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             .literal("announce")
             .commandDescription(Description.of("Announces a provided parsable message"))
             .permission("social.use.announce")
-            .required("message", StringParser.greedyFlagYieldingStringParser(), SuggestionProvider.suggestingStrings("Message to broadcast"))
+            .required("message", StringParser.greedyFlagYieldingStringParser())
             .flag(commandManager.flagBuilder("self")
                 .withDescription(Description.of("Shows this message to the sender only"))
             )
@@ -107,14 +106,12 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 final var contextBuilder = SocialParserContext.builder(ctx.sender(), announcement.message())
                     .messageChannelType(channelType);
 
-                final var context = contextBuilder.messageChannelType(ChannelType.ACTION_BAR).build();
-
                 if (self) {
-                    ctx.sender().sendParsableMessage(context);
+                    ctx.sender().sendParsableMessage(contextBuilder.build());
                     return;
                 }
 
-                Social.get().getUserService().get().forEach(recipient -> recipient.sendParsableMessage(context));
+                Social.get().getUserService().get().forEach(recipient -> recipient.sendParsableMessage(contextBuilder.build()));
             })
         );
 
@@ -546,8 +543,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 final var contextBuilder = SocialParserContext.builder(user, Component.empty());
                 final var optionalGroup = Social.get().getTextProcessor().getGroupByContextualParser(keyword.getClass());
 
-                if (optionalGroup.isPresent())
-                    contextBuilder.group(optionalGroup.get());
+                optionalGroup.ifPresent(contextBuilder::group);
 
                 user.sendParsableMessage(
                     Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorResult())

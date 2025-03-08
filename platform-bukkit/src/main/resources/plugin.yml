@@ -1,6 +1,6 @@
 name: social
 authors: [myth-MC, U8092]
-version: '${project.version}'
+version: '$version'
 api-version: 1.19
 
 main: ovh.mythmc.social.bukkit.SocialPlatformBukkitPlugin

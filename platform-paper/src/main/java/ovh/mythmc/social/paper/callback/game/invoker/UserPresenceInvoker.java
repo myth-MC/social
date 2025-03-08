@@ -22,7 +22,6 @@ public class UserPresenceInvoker implements Listener {
         var user = BukkitSocialUser.from(event.getPlayer());
         if (user == null) {
             user = BukkitSocialUser.from(Social.get().getUserService().register(event.getPlayer().getUniqueId()));
-            System.out.println("crear");
         }
 
         UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.LOGIN, Optional.empty()));

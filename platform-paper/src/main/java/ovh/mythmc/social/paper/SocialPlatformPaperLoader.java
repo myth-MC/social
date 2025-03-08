@@ -14,7 +14,7 @@ public final class SocialPlatformPaperLoader implements PluginLoader {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
         resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-core:2.0.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecrat-extras:2.0.0-beta.10"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecraft-extras:2.0.0-beta.10"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-paper:2.0.0-beta.10"), null));
 
         classpathBuilder.addLibrary(resolver);

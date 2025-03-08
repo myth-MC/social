@@ -18,6 +18,18 @@ dependencies {
     compileOnly(libs.com.discordsrv.discordsrv)
 }
 
+tasks {
+    processResources {
+        val replacements = mapOf(
+            "version" to version.toString()
+        )
+        inputs.properties(replacements)
+        filesMatching("plugin.yml") {
+            expand(replacements)
+        }
+    }
+}
+
 tasks.shadowJar {
     relocate("org.bstats", "ovh.mythmc.social.libs.org.bstats")
 }
