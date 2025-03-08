@@ -59,8 +59,7 @@ public interface SocialChatRenderer<T> {
             if (map == null)
                 return MapResult.failure("This renderer cannot map objects!");
 
-            var result = map.apply(audience);
-            return result;
+            return map.apply(audience);
         }
 
         public SocialRendererContext render(@NotNull Audience audience, @NotNull SocialRegisteredMessageContext context) {
@@ -68,7 +67,7 @@ public interface SocialChatRenderer<T> {
             if (result.isIgnored())
                 return null;
 
-            if (result instanceof MapResult.Failure failure) {
+            if (result instanceof MapResult.Failure<?> failure) {
                 Social.get().getLogger().error(failure.debugMessage);
 
                 return null;
@@ -87,7 +86,7 @@ public interface SocialChatRenderer<T> {
     }
 
     @NonExtendable
-    static abstract class MapResult<T> {
+    abstract class MapResult<T> {
 
         public abstract T result();
 

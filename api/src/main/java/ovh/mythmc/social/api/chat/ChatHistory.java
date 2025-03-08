@@ -15,6 +15,7 @@ import ovh.mythmc.social.api.context.SocialMessageContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ChatHistory {
@@ -44,11 +45,11 @@ public final class ChatHistory {
     }
 
     public boolean canDelete(SocialMessageContext context) {
-        return context.signedMessage().isPresent() ? context.signedMessage().get().canDelete() : false;
+        return context.signedMessage().isPresent() && context.signedMessage().get().canDelete();
     }
 
     public void delete(SocialRegisteredMessageContext context) {
-        Social.get().getUserService().get().forEach(user -> user.audience().deleteMessage(context.signedMessage().get()));
+        Social.get().getUserService().get().forEach(user -> user.deleteMessage(context.signedMessage().get()));
 
         SocialRegisteredMessageContext newContext = new SocialRegisteredMessageContext(
             context.id(), 
@@ -89,8 +90,8 @@ public final class ChatHistory {
     public List<SocialRegisteredMessageContext> getThread(final @NotNull SocialRegisteredMessageContext messageContext, int limit) {
         return messages.values().stream()
                 .filter(value ->
-                        (value.isReply() && value.replyId() == messageContext.id()) ||
-                        (value.isReply() && value.replyId() == messageContext.replyId()) ||
+                        (value.isReply() && Objects.equals(value.replyId(), messageContext.id())) ||
+                        (value.isReply() && Objects.equals(value.replyId(), messageContext.replyId())) ||
                         value.id().equals(messageContext.id()) ||
                         value.id().equals(messageContext.replyId())
                 )

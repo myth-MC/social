@@ -19,10 +19,8 @@ public final class GroupIconPlaceholder extends SocialContextualPlaceholder {
     @Override
     public Component get(SocialParserContext context) {
         final var optionalGroup = context.user().group();
-        if (optionalGroup.isEmpty())
-            return Component.empty();
+        return optionalGroup.map(groupChatChannel -> Component.text(groupChatChannel.getIcon())).orElseGet(Component::empty);
 
-        return Component.text(optionalGroup.get().getIcon());
     }
 
 }

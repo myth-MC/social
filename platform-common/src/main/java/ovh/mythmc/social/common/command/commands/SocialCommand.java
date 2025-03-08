@@ -515,8 +515,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 final var contextBuilder = SocialParserContext.builder(user, Component.empty());
                 final var optionalGroup = Social.get().getTextProcessor().getGroupByContextualParser(placeholder.getClass());
 
-                if (optionalGroup.isPresent())
-                    contextBuilder.group(optionalGroup.get());
+                optionalGroup.ifPresent(contextBuilder::group);
 
                 user.sendParsableMessage(
                     Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorResult())

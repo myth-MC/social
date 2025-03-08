@@ -47,14 +47,14 @@ public final class GlobalTextProcessor {
     }
 
     @Deprecated(forRemoval = true)
-    public SocialContextualParser getContextualParserByClass(@NotNull Class<? extends Object> clazz) {
+    public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
         return getContextualParsersWithGroupMembers().stream().filter(parser -> parser.getClass().equals(clazz)).findFirst().orElse(null);
     }
 
     @Deprecated(forRemoval = true)
     public Collection<SocialContextualParser> getContextualParsersWithGroupMembers() {
         List<SocialContextualParser> contextualParsers = new ArrayList<>();
-        getContextualParsers().stream().forEach(contextualParser -> {
+        getContextualParsers().forEach(contextualParser -> {
             if (contextualParser instanceof SocialParserGroup group) {
                 contextualParsers.addAll(group.get());
                 return;
@@ -96,10 +96,12 @@ public final class GlobalTextProcessor {
         return getIdentifiedParser(SocialContextualKeyword.class, identifier);
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isContextualPlaceholder(final @NotNull String identifier) {
         return getContextualPlaceholder(identifier) != null;
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isContextualKeyword(final @NotNull String keyword) {
         return getContextualKeyword(keyword) != null;
     }
@@ -156,11 +158,11 @@ public final class GlobalTextProcessor {
     }
 
     public void unregisterContextualPlaceholder(final @NotNull String identifier) {
-        getContextualPlaceholder(identifier).ifPresent(placeholder -> unregisterContextualParser(placeholder));
+        getContextualPlaceholder(identifier).ifPresent(this::unregisterContextualParser);
     }
 
     public void unregisterContextualKeyword(final @NotNull String identifier) {
-        getContextualKeyword(identifier).ifPresent(keyword -> unregisterContextualParser(keyword));
+        getContextualKeyword(identifier).ifPresent(this::unregisterContextualParser);
     }
 
     public Component parsePlayerInput(@NotNull SocialParserContext context) {
@@ -235,26 +237,24 @@ public final class GlobalTextProcessor {
 
     @Internal
     public void send(final @NotNull Collection<AbstractSocialUser> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
-        if (message == null || message.equals(Component.empty()))
+        if (message.equals(Component.empty()))
             return;
 
         switch (type) {
             case ACTION_BAR -> members.forEach(user -> user.audience().sendActionBar(message));
-            case CHAT -> {
-                members.forEach(user -> {
-                    Component userMessage = message;
+            case CHAT -> members.forEach(user -> {
+                Component userMessage = message;
 
-                    if (user.companion().isPresent()) {
-                        if (channel == null) {
-                            userMessage = CompanionModUtils.asBroadcast(message);
-                        } else {
-                            userMessage = CompanionModUtils.asChannelable(message, channel);
-                        }
+                if (user.companion().isPresent()) {
+                    if (channel == null) {
+                        userMessage = CompanionModUtils.asBroadcast(message);
+                    } else {
+                        userMessage = CompanionModUtils.asChannelable(message, channel);
                     }
+                }
 
-                    user.audience().sendMessage(userMessage);
-                });
-            }
+                user.audience().sendMessage(userMessage);
+            });
         }
     }
 

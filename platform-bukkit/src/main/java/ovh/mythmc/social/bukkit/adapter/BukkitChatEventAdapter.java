@@ -33,7 +33,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 
     @Override
     public void viewers(AsyncPlayerChatEvent event, Set<Audience> viewers) {
-        Collection<Player> players = viewers.stream()
+        final Collection<Player> players = viewers.stream()
             .filter(audience -> audience.get(Identity.UUID).isPresent())
             .map(audience -> Bukkit.getPlayer(audience.get(Identity.UUID).get()))
             .toList();
@@ -51,7 +51,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 	@Override
 	public void render(AsyncPlayerChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
         event.getRecipients().forEach(player -> {
-            var recipient = Social.get().getUserService().getByUuid(player.getUniqueId()).get();
+            final var recipient = Social.get().getUserService().getByUuid(player.getUniqueId()).get();
             
             var renderer = Social.get().getChatManager().getRegisteredRenderer(recipient);
             if (renderer == null)

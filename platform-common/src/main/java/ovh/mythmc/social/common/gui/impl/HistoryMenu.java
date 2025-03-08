@@ -79,7 +79,7 @@ public class HistoryMenu implements HistoryBookMenu {
         List<SocialRegisteredMessageContext> messages = new ArrayList<>(context.messages());
         Collections.reverse(messages);
         for (SocialRegisteredMessageContext message : messages) {
-            if (pages.size() > 0 && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
+            if (!pages.isEmpty() && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
                 pages.get(pages.size() -1).messages.add(message);
                 continue;
             }

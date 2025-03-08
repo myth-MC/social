@@ -1,6 +1,7 @@
 package ovh.mythmc.social.api.chat.renderer.defaults;
 
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
@@ -14,7 +15,7 @@ import ovh.mythmc.social.api.util.CompanionModUtils;
 public class UserChatRenderer<U extends AbstractSocialUser> implements SocialChatRenderer<U> {
 
     @Override
-    public SocialRendererContext render(U target, SocialRegisteredMessageContext context) {
+    public SocialRendererContext render(@NotNull  U target, @NotNull SocialRegisteredMessageContext context) {
         // Set variables
         final AbstractSocialUser sender = context.sender();
         final ChatChannel channel = context.channel();

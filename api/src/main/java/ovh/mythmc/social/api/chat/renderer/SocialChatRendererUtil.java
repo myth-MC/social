@@ -17,11 +17,9 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 public class SocialChatRendererUtil {
 
     public Component getClickableChannelIcon(AbstractSocialUser user, ChatChannel channel) {
-        Component channelIcon = Component.text(channel.getIcon())
+        return Component.text(channel.getIcon())
             .hoverEvent(getChannelHoverText(user, channel))
             .clickEvent(ClickEvent.runCommand("/social:social channel " + channel.getName()));
-
-        return channelIcon;
     }
 
     private Component getChannelHoverText(AbstractSocialUser user, ChatChannel channel) {
@@ -35,12 +33,10 @@ public class SocialChatRendererUtil {
         return Social.get().getTextProcessor().parse(SocialParserContext.builder(user, channelHoverText).channel(channel).build());
     }
 
-    public Component getNicknameWithColor(AbstractSocialUser user, ChatChannel channel) {
-        Component nickname = Component.empty()
+    public Component getNicknameWithColor(ChatChannel channel) {
+        return Component.empty()
             .append(Component.text(Social.get().getConfig().getChat().getPlayerNicknameFormat()))
             .colorIfAbsent(channel.getNicknameColor());
-
-        return nickname;
     }
 
     public Component getReplyIcon(AbstractSocialUser sender, SocialRegisteredMessageContext message) {
@@ -96,7 +92,7 @@ public class SocialChatRendererUtil {
 
     public Component trim(final @NotNull Component component) {
         if (component instanceof TextComponent textComponent) {
-            textComponent.content(textComponent.content().trim());
+            textComponent = textComponent.content(textComponent.content().trim());
             return textComponent;
         }
 

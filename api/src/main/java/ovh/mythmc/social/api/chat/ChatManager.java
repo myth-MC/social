@@ -48,7 +48,7 @@ public final class ChatManager {
 
     private final Collection<ChatChannel> channels = new ArrayList<>();
 
-    private final Map<Class<? extends Object>, SocialChatRenderer.Registered<? extends Object>> renderersMap = new HashMap<>();
+    private final Map<Class<?>, SocialChatRenderer.Registered<?>> renderersMap = new HashMap<>();
 
     public <T> SocialChatRenderer.Registered<T> registerRenderer(final @NotNull Class<T> targetClass, final @NotNull SocialChatRenderer<T> renderer, final @NotNull Function<SocialChatRenderer.Builder<T>, SocialChatRenderer.Builder<T>> options) {
         var builder = SocialChatRenderer.builder(renderer);
@@ -78,7 +78,7 @@ public final class ChatManager {
     public @Nullable <T> SocialChatRenderer.Registered<T> getRegisteredRenderer(final @NotNull Audience audience) {
         return (Registered<T>) this.renderersMap.entrySet().stream()
             .filter(entry -> entry.getValue().mapFromAudience(audience).isSuccess())
-            .map(entry -> entry.getValue())
+            .map(Map.Entry::getValue)
             .findFirst().orElse(null);
     }
 
@@ -198,10 +198,7 @@ public final class ChatManager {
         if (chatChannel.getPermission() == null)
             return true;
 
-        if (user.checkPermission(chatChannel.getPermission()))
-            return true;
-
-        return false;
+        return user.checkPermission(chatChannel.getPermission());
     }
 
     @Internal

@@ -55,7 +55,7 @@ public class CustomTextProcessor {
         SocialProcessorContext processorContext = SocialProcessorContext.from(context, this);
         
         for (SocialContextualParser parser : getWithExclusions()) {
-            if (parser instanceof SocialFilterLike && playerInput == false)
+            if (parser instanceof SocialFilterLike && !playerInput)
                 continue;
 
             if (!(parser instanceof SocialUserInputParser) && playerInput)
@@ -92,14 +92,14 @@ public class CustomTextProcessor {
         final List<T> typeParsers = new ArrayList<>();
 
         parsers.stream()
-            .filter(parser -> type.isInstance(parser))
+            .filter(type::isInstance)
             .map(parser -> (T) parser)
             .forEach(typeParsers::add);
 
         parsers.stream()
             .filter(parser -> parser instanceof SocialParserGroup)
             .map(parser -> (SocialParserGroup) parser)
-            .forEach(group -> group.getByType(type).forEach(typeParsers::add));
+            .forEach(group -> typeParsers.addAll(group.getByType(type)));
 
         return typeParsers;
     }

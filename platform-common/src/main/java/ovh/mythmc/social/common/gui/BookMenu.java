@@ -21,10 +21,6 @@ public interface BookMenu extends Menu {
             List<Component> pages = format(menuContext, book(menuContext).pages());
 
             menuContext.viewer().openBook(book(menuContext).pages(pages));
-            /*
-            SocialAdventureProvider.get()
-                .player(menuContext.viewer().player().get())
-                .openBook(book(menuContext).pages(pages)); */
         }
     }
 

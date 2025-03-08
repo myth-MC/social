@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.bukkit.scheduler.BukkitSocialScheduler;
@@ -39,7 +40,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(AbstractSocialUser abstractSocialUser, Reaction emoji) {
+    public void displayReaction(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction emoji) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
         user.player().ifPresent(player -> {
             if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getGameMode() == GameMode.SPECTATOR) {
@@ -58,7 +59,7 @@ public final class BukkitReactionFactory extends ReactionFactory {
     }
 
     @Override
-    public void play(AbstractSocialUser abstractSocialUser, Reaction reaction) {
+    public void play(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction reaction) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
         final var callback = new SocialReactionTrigger(user, reaction);
         

@@ -43,10 +43,7 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
                 .map(audience -> audience.get(Identity.UUID).get())
                 .toList();
 
-            if (viewerUuids.contains(viewerUuid))
-                return false;
-
-            return true;
+            return !viewerUuids.contains(viewerUuid);
         });
     }
 

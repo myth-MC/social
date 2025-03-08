@@ -1,7 +1,5 @@
 package ovh.mythmc.social.common.command.parser;
 
-import java.util.stream.Collectors;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -43,8 +41,8 @@ public final class IdentifiedParserParser<T extends SocialIdentifiedParser> impl
             @NonNull CommandContext<AbstractSocialUser> commandContext, @NonNull CommandInput input) {
 
         return Social.get().getTextProcessor().getContextualParsersByType(type).stream()
-            .map(identifiedParser -> identifiedParser.identifier())
-            .collect(Collectors.toUnmodifiableList());
+            .map(SocialIdentifiedParser::identifier)
+            .toList();
     }
 
     @Override
@@ -54,10 +52,7 @@ public final class IdentifiedParserParser<T extends SocialIdentifiedParser> impl
         final String input = commandInput.readString();
         final var optionalParser = Social.get().getTextProcessor().getIdentifiedParser(type, input);
 
-        if (optionalParser.isEmpty())
-            return ArgumentParseResult.failure(new UnknownIdentifiedParserException(input, this, commandContext));
-
-        return ArgumentParseResult.success(optionalParser.get());
+        return optionalParser.map(ArgumentParseResult::success).orElseGet(() -> ArgumentParseResult.failure(new UnknownIdentifiedParserException(input, this, commandContext)));
     }
     
 }

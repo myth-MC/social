@@ -1,6 +1,7 @@
 package ovh.mythmc.social.api.bukkit;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -21,7 +22,7 @@ public final class BukkitSocialUserService extends SocialUserService {
     public Collection<AbstractSocialUser> get() {
         return Bukkit.getOnlinePlayers().stream()
             .map(player -> getByUuid(player.getUniqueId()).orElse(null))
-            .filter(user -> user != null)
+            .filter(Objects::nonNull)
             .toList();
     }
     

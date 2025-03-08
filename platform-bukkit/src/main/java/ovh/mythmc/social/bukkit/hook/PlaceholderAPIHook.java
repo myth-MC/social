@@ -34,9 +34,11 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
-            AbstractSocialUser user = Social.get().getUserService().getByUuid(player.getUniqueId()).get();
-            if (user == null)
+            final var optionalUser = Social.get().getUserService().getByUuid(player.getUniqueId());
+            if (optionalUser.isEmpty())
                 return null;
+
+            final var user = optionalUser.get();
 
             if (params.startsWith("player_")) {
                 if (params.equalsIgnoreCase("player_is_in_group")) {
@@ -126,8 +128,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
         final Player player = BukkitSocialUser.from(context.user()).player().orElse(null);
 
         final String serialized = GsonComponentSerializer.gson().serialize(context.message());
-        final Component parsedMessage = GsonComponentSerializer.gson().deserialize(PlaceholderAPI.setPlaceholders(player, serialized));
-        return parsedMessage;
+        return GsonComponentSerializer.gson().deserialize(PlaceholderAPI.setPlaceholders(player, serialized));
     }
 
     private Integer tryParse(String text) {

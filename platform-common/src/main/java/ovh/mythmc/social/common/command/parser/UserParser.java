@@ -49,10 +49,7 @@ public final class UserParser implements ArgumentParser<AbstractSocialUser, Abst
         final String input = commandInput.readString();
         final Optional<AbstractSocialUser> optionalUser = Social.get().getUserService().getByName(input);
 
-        if (optionalUser.isEmpty())
-            return ArgumentParseResult.failure(new UnknownUserException(input, this, commandContext));
-
-        return ArgumentParseResult.success(optionalUser.get());
+        return optionalUser.map(ArgumentParseResult::success).orElseGet(() -> ArgumentParseResult.failure(new UnknownUserException(input, this, commandContext)));
     }
 
 }

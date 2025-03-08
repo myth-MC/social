@@ -5,6 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialMessageContext;
@@ -83,7 +84,7 @@ public final class MentionHandler {
         );
     }
 
-    private static Sound getSoundByKey(String key) {
+    private static Sound getSoundByKey(@NotNull String key) {
         if (!Key.parseable(key))
             return null;
 

@@ -63,7 +63,7 @@ public class SocialUserManager {
     }
 
     public boolean isGloballyMuted(final @NotNull AbstractSocialUser user) {
-        return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(channel -> channel.getName()).toList());
+        return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(ChatChannel::getName).toList());
     }
 
     public boolean isMuted(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {

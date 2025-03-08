@@ -23,7 +23,7 @@ public class SignEditInvoker implements Listener {
             return;
 
         final List<Component> lines = Arrays.asList(event.getLines()).stream()
-            .map(line -> Component.text(line))
+            .map(Component::text)
             .collect(Collectors.toList());
 
         SignEditCallback.INSTANCE.invoke(new SignEdit(user, lines), result -> {

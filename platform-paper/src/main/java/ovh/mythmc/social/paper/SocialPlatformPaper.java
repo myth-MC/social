@@ -53,10 +53,10 @@ public final class SocialPlatformPaper extends SocialBootstrap {
 
         this.plugin = plugin;
         this.reactionFactory = new PaperReactionFactory(plugin);
-        this.commandManager = new LegacyPaperCommandManager<AbstractSocialUser>(
+        this.commandManager = new LegacyPaperCommandManager<>(
             plugin, 
             ExecutionCoordinator.simpleCoordinator(),
-            SenderMapper.<CommandSender, AbstractSocialUser>create(commandSender -> {
+            SenderMapper.create(commandSender -> {
                 if (commandSender instanceof Player player)
                     return Social.get().getUserService().getByUuid(player.getUniqueId()).get();
 

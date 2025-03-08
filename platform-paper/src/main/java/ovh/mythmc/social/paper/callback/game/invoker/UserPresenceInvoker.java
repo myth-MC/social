@@ -33,9 +33,7 @@ public class UserPresenceInvoker implements Listener {
         final Component message = event.joinMessage();
 
         UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.JOIN, Optional.ofNullable(message)), result -> {
-            result.message().ifPresentOrElse(joinMessage -> {
-                event.joinMessage(joinMessage);
-            }, () -> event.joinMessage(null));
+            result.message().ifPresentOrElse(event::joinMessage, () -> event.joinMessage(null));
         });
     }
 
@@ -45,9 +43,7 @@ public class UserPresenceInvoker implements Listener {
         final Component message = event.quitMessage();
 
         UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.QUIT, Optional.ofNullable(message)), result -> {
-            result.message().ifPresentOrElse(quitMessage -> {
-                event.quitMessage(quitMessage);
-            }, () -> event.quitMessage(null));
+            result.message().ifPresentOrElse(event::quitMessage, () -> event.quitMessage(null));
         });
     }
 }

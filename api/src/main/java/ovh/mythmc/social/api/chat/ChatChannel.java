@@ -76,7 +76,7 @@ public class ChatChannel {
         String name = channelField.name();
         TextColor color = NamedTextColor.YELLOW;
         String icon = "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>";
-        Boolean showHoverText = false;
+        boolean showHoverText = false;
         Component hoverText = Component.empty();
         TextColor nicknameColor = NamedTextColor.GRAY;
         String textDivider = "<gray>:raw_divider:</gray>";

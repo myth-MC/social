@@ -35,7 +35,7 @@ public final class EmojiDictionaryMenu implements SimpleBookMenu {
         List<DictionaryPage> pages = new ArrayList<>();
 
         for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
-            if (pages.size() > 0 && pages.get(pages.size() -1).emojis.size() < Social.get().getConfig().getMenus().getEmojiDictionary().getMaxEmojisPerPage()) {
+            if (!pages.isEmpty() && pages.get(pages.size() -1).emojis.size() < Social.get().getConfig().getMenus().getEmojiDictionary().getMaxEmojisPerPage()) {
                 pages.get(pages.size() -1).emojis.add(emoji);
                 continue;
             }
@@ -43,7 +43,7 @@ public final class EmojiDictionaryMenu implements SimpleBookMenu {
             pages.add(new DictionaryPage(List.of(emoji)));
         }
 
-        return Book.book(title, author, pages.stream().map(page -> page.asComponent()).toList());
+        return Book.book(title, author, pages.stream().map(DictionaryPage::asComponent).toList());
     }
 
     private class DictionaryPage {

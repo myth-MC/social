@@ -28,7 +28,7 @@ public class SocialParserGroup implements SocialUserInputParser {
     }
 
     public void add(final @NotNull SocialContextualParser... parsers) {
-        Arrays.stream(parsers).forEach(content::add);
+        content.addAll(Arrays.asList(parsers));
     }
 
     public void remove(final @NotNull SocialContextualParser... parsers) {
@@ -60,14 +60,14 @@ public class SocialParserGroup implements SocialUserInputParser {
         final List<T> typeParsers = new ArrayList<>();
 
         content.stream()
-            .filter(parser -> type.isInstance(parser))
+            .filter(type::isInstance)
             .map(parser -> (T) parser)
             .forEach(typeParsers::add);
 
         content.stream() // Recursive search
             .filter(parser -> parser instanceof SocialParserGroup)
             .map(parser -> (SocialParserGroup) parser)
-            .forEach(group -> group.getByType(type).forEach(typeParsers::add));
+            .forEach(group -> typeParsers.addAll(group.getByType(type)));
 
         return typeParsers;
     }

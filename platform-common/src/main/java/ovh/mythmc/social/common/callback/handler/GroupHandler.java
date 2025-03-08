@@ -86,7 +86,7 @@ public final class GroupHandler implements SocialCallbackHandler {
                     group.removeMember(user);
 
                     if (group.getLeaderUuid().equals(user.uuid())) {
-                        if (group.getMembers().size() < 1) {
+                        if (group.getMembers().isEmpty()) {
                             Social.get().getChatManager().unregisterChatChannel(group);
                         } else {
                             Social.get().getChatManager().setGroupChannelLeader(group, group.getMemberUuids().get(0));

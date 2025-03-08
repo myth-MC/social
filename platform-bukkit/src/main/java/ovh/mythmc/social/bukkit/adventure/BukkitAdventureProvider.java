@@ -12,7 +12,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 public class BukkitAdventureProvider extends SocialAdventureProvider {
 
-    public static BukkitAdventureProvider get() {
+    public static @NotNull BukkitAdventureProvider get() {
         return (BukkitAdventureProvider) SocialAdventureProvider.get();
     }
 

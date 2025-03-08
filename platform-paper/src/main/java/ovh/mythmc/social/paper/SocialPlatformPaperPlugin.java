@@ -9,7 +9,7 @@ public class SocialPlatformPaperPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         bootstrap = new SocialPlatformPaper(this);
-        bootstrap.initialize();;
+        bootstrap.initialize();
     }
 
     @Override

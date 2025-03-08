@@ -36,7 +36,7 @@ public abstract class DatabaseUser {
 
     public abstract boolean clearFromCache();
 
-    protected DatabaseUser(final UUID uuid, final String name) {
+    protected DatabaseUser(final @NotNull UUID uuid, final String name) {
         this.uuid = uuid;
         this.cachedDisplayName = name;
     }

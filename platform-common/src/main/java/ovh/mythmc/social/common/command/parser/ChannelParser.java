@@ -1,7 +1,5 @@
 package ovh.mythmc.social.common.command.parser;
 
-import java.util.stream.Collectors;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -40,7 +38,7 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
         return Social.get().getChatManager().getChannels().stream()
             .filter(channel -> !(channel instanceof GroupChatChannel))
             .map(ChatChannel::getName)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
     }
 
     @Override

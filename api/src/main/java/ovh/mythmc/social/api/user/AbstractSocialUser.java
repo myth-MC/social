@@ -14,6 +14,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
@@ -24,9 +25,9 @@ import ovh.mythmc.social.api.reaction.Reaction;
 @Setter(AccessLevel.PROTECTED)
 public abstract class AbstractSocialUser extends DatabaseUser implements SocialUser, ForwardingAudience.Single {
 
-    public final static Dummy<?> dummy() { return new Dummy<>(null); }
+    public static Dummy<?> dummy() { return new Dummy<>(null); }
 
-    public final static Dummy<?> dummy(ChatChannel channel) { return new Dummy<>(channel); }
+    public static Dummy<?> dummy(ChatChannel channel) { return new Dummy<>(channel); }
 
     protected abstract void sendCustomPayload(String channel, byte[] payload);
 
@@ -132,8 +133,8 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         }
 
         @Override
-        public Audience audience() {
-            return null;
+        public @NotNull Audience audience() {
+            return SocialAdventureProvider.get().console();
         }
 
         @Override

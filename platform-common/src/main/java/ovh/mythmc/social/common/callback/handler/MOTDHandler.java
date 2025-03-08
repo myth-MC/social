@@ -13,7 +13,7 @@ public final class MOTDHandler implements SocialCallbackHandler {
                 return;
 
             optionalUser.ifPresent(user -> {
-                Social.get().getConfig().getMotd().getMessage().forEach(line -> user.sendParsableMessage(line));
+                Social.get().getConfig().getMotd().getMessage().forEach(user::sendParsableMessage);
             });
         });
     }

@@ -1,7 +1,7 @@
 package ovh.mythmc.social.paper.callback.game.invoker;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,8 +22,7 @@ public class BookEditInvoker implements Listener {
             return;
 
         final BookMeta bookMeta = event.getNewBookMeta();
-        final List<Component> pages = bookMeta.pages().stream()
-            .collect(Collectors.toList());
+        final List<Component> pages = new ArrayList<>(bookMeta.pages());
 
         BookEditCallback.INSTANCE.invoke(new BookEdit(user, pages), result -> {
             for (int i = 0; i < result.pages().size(); i++) {

@@ -22,7 +22,7 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     BukkitSocialUser() {
     }
 
-    protected BukkitSocialUser(UUID uuid, String name) {
+    BukkitSocialUser(UUID uuid, String name) {
         super(uuid, name);
     }
 
@@ -45,7 +45,7 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     }
 
     @Override
-    public Audience audience() {
+    public @NotNull Audience audience() {
         return SocialAdventureProvider.get().user(this);
     }
 
@@ -66,7 +66,7 @@ public final class BukkitSocialUser extends AbstractSocialUser {
 
     @Override
     public boolean isOnline() {
-        return player() != null;
+        return player().isPresent();
     }
 
     @Override

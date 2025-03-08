@@ -2,7 +2,6 @@ package ovh.mythmc.social.common.command.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.component.CommandComponent;
@@ -39,11 +38,9 @@ public final class ReactionParser implements AggregateParser<AbstractSocialUser,
         components.add(CommandComponent.<AbstractSocialUser, String>builder()
             .name("category")
             .parser(StringParser.stringParser())
-            .suggestionProvider(SuggestionProvider.blockingStrings((ctx, input) -> {
-                return Social.get().getReactionManager().getCategories().stream()
-                    .filter(categoryName -> !categoryName.equalsIgnoreCase("HIDDEN"))
-                    .collect(Collectors.toUnmodifiableList());
-            }))
+            .suggestionProvider(SuggestionProvider.blockingStrings((ctx, input) -> Social.get().getReactionManager().getCategories().stream()
+                .filter(categoryName -> !categoryName.equalsIgnoreCase("HIDDEN"))
+                .toList()))
             .build()
         );
 
@@ -53,8 +50,8 @@ public final class ReactionParser implements AggregateParser<AbstractSocialUser,
             .suggestionProvider(SuggestionProvider.blockingStrings((ctx, input) -> {
                 final String category = ctx.get("category");
                 return Social.get().getReactionManager().getByCategory(category).stream()
-                    .map(reaction -> reaction.name())
-                    .collect(Collectors.toUnmodifiableList());
+                    .map(Reaction::name)
+                    .toList();
             }))
             .build()
         );
@@ -70,7 +67,7 @@ public final class ReactionParser implements AggregateParser<AbstractSocialUser,
 
             final Reaction reaction = Social.get().getReactionManager().get(category, identifier);
             if (reaction == null)
-                return ArgumentParseResult.failureFuture(new UnknownReactionException(category, identifier, null, commandContext));
+                return ArgumentParseResult.failureFuture(new UnknownReactionException(category, identifier, this, commandContext));
 
             return ArgumentParseResult.successFuture(reaction);
         };

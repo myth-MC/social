@@ -28,7 +28,7 @@ public interface SocialContextualParser {
     @SuppressWarnings("unchecked")
     static Component request(@NotNull SocialParserContext context, final @NotNull Class<?>... requestedParsers) {
         return requestList(context, Arrays.stream(requestedParsers)
-            .filter(clazz -> SocialContextualParser.class.isAssignableFrom(clazz))
+            .filter(SocialContextualParser.class::isAssignableFrom)
             .map(clazz -> Social.get().getTextProcessor().getContextualParsersByType((Class<SocialContextualParser>) clazz).stream().findFirst().orElse(null))
             .toList());
     }

@@ -24,7 +24,7 @@ public class BookEditInvoker implements Listener {
 
         final BookMeta bookMeta = event.getNewBookMeta();
         final List<Component> pages = bookMeta.getPages().stream()
-            .map(page -> Component.text(page))
+            .map(Component::text)
             .collect(Collectors.toList());
 
         BookEditCallback.INSTANCE.invoke(new BookEdit(user, pages), result -> {

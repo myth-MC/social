@@ -14,6 +14,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUserCompanion;
 import ovh.mythmc.social.common.callback.game.CustomPayloadReceiveCallback;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 
@@ -84,7 +85,7 @@ public final class CompanionHandler implements SocialCallbackHandler {
 
             switch (payloadChannel) {
                 case "social:refresh" -> {
-                    user.companion().ifPresent(companion -> companion.refresh());
+                    user.companion().ifPresent(SocialUserCompanion::refresh);
                 }
                 case "social:bonjour" -> {
                     if (Social.get().getConfig().getGeneral().isDebug())
