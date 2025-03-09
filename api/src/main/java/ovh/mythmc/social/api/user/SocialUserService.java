@@ -26,6 +26,9 @@ public abstract class SocialUserService {
         ChatChannel defaultChatChannel = Social.get().getChatManager().getDefaultChannel();
 
         AbstractSocialUser user = createUserInstance(uuid);
+        if (user.cachedDisplayName() == null)
+            user.setCachedDisplayName("");
+
         user.setSocialSpy(false);
 
         if (defaultChatChannel == null) {

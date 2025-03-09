@@ -5,17 +5,21 @@ import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
+import ovh.mythmc.social.common.callback.handler.UserPresenceHandler;
 
 @Feature(group = "social-bootstrap", identifier = "BOOTSTRAP")
 public class BootstrapFeature {
 
     private static boolean initialized = false;
 
+    private final UserPresenceHandler userPresenceHandler = new UserPresenceHandler();
+
     @FeatureInitialize
     public void initialize() {
         if (initialized)
             return;
 
+        // Register features
         Gestalt.get().register(
             AddonFeature.class,
             AnnouncementsFeature.class,
@@ -36,8 +40,10 @@ public class BootstrapFeature {
             UpdateCheckerFeature.class,
             URLFilterFeature.class
         );
-        
-        // Register features
+
+        // User presence handler
+        userPresenceHandler.register();
+
         initialized = true;
     }
 

@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.configuration.section.settings;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
+import lombok.Setter;
 
 @Configuration
 @Getter
@@ -14,6 +15,7 @@ public class DatabaseSettings {
     @Comment("Time between each cache clean in minutes")
     private int cacheClearInterval = 5;
 
+    @Setter
     @Comment("Don't change this, you might lose all your data")
     private boolean initialized = false;
 
@@ -22,10 +24,6 @@ public class DatabaseSettings {
 
     public void setVersion(int version) {
         databaseVersion = version;
-    }
-
-    public void setInitialized(boolean initialized) {
-        this.initialized = initialized;
     }
 
     public enum DatabaseType {

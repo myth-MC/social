@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.AccessLevel;
@@ -28,13 +27,7 @@ public final class BukkitSocialUserService extends SocialUserService {
     
     @Override
     protected AbstractSocialUser createUserInstance(@NotNull UUID uuid) {
-        String name = "";
-        final Player player = Bukkit.getPlayer(uuid);
-        if (player != null)
-            name = player.getName();
-
-        return new BukkitSocialUser(uuid, name);
+        return new BukkitSocialUser(uuid);
     }
-
     
 }

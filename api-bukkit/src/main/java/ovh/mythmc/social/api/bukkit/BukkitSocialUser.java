@@ -22,8 +22,8 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     BukkitSocialUser() {
     }
 
-    BukkitSocialUser(UUID uuid, String name) {
-        super(uuid, name);
+    BukkitSocialUser(UUID uuid) {
+        super(uuid);
     }
 
     public static BukkitSocialUser from(AbstractSocialUser user) {
@@ -36,7 +36,7 @@ public final class BukkitSocialUser extends AbstractSocialUser {
         return null;
     }
 
-    public static BukkitSocialUser from(Player player) {
+    public static BukkitSocialUser from(@NotNull Player player) {
         return from(player.getUniqueId());
     }
 

@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Accessors(fluent = true)
 @Getter
 @DatabaseTable(tableName = "users")
@@ -35,11 +35,6 @@ public abstract class DatabaseUser {
     protected Style displayNameStyle;
 
     public abstract boolean clearFromCache();
-
-    protected DatabaseUser(final @NotNull UUID uuid, final String name) {
-        this.uuid = uuid;
-        this.cachedDisplayName = name;
-    }
 
     protected DatabaseUser() {
     }

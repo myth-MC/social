@@ -25,9 +25,9 @@ import ovh.mythmc.social.api.reaction.Reaction;
 @Setter(AccessLevel.PROTECTED)
 public abstract class AbstractSocialUser extends DatabaseUser implements SocialUser, ForwardingAudience.Single {
 
-    public static Dummy<?> dummy() { return new Dummy<>(null); }
+    public static Dummy dummy() { return new Dummy(null); }
 
-    public static Dummy<?> dummy(ChatChannel channel) { return new Dummy<>(channel); }
+    public static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
 
     protected abstract void sendCustomPayload(String channel, byte[] payload);
 
@@ -44,12 +44,12 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
     protected AbstractSocialUser() {
     }
 
-    protected AbstractSocialUser(final UUID uuid, final String name) {
-        super(uuid, name);
+    protected AbstractSocialUser(final UUID uuid) {
+        super(uuid);
     }
 
-    protected AbstractSocialUser(final UUID uuid, final String name, final ChatChannel channel) {
-        super(uuid, name);
+    protected AbstractSocialUser(final UUID uuid, final ChatChannel channel) {
+        super(uuid);
         this.mainChannel = channel;
     }
 
@@ -126,10 +126,10 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         sendParsableMessage(message, false);
     }
 
-    public static final class Dummy<P> extends AbstractSocialUser {
+    public static final class Dummy extends AbstractSocialUser {
 
         private Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), "Dummy", channel);
+            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel);
         }
 
         @Override
@@ -154,6 +154,11 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         @Override
         public String name() {
             return "Dummy";
+        }
+
+        @Override
+        public String cachedDisplayName() {
+            return name();
         }
 
         @Override

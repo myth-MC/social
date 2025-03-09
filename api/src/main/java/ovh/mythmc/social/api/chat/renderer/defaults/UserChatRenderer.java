@@ -27,7 +27,7 @@ public class UserChatRenderer<U extends AbstractSocialUser> implements SocialCha
         final Component replyIcon = SocialChatRendererUtil.getReplyIcon(sender, context);
 
         // Get sender's nickname
-        final Component nickname = SocialChatRendererUtil.getNicknameWithColor(sender, channel);
+        final Component nickname = SocialChatRendererUtil.getNicknameWithColor(channel);
 
         // Get channel divider
         final Component textDivider = Component.text(channel.getTextDivider());

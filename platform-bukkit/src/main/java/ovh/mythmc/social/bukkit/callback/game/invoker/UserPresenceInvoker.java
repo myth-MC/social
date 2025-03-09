@@ -26,7 +26,7 @@ public class UserPresenceInvoker implements Listener {
             user = BukkitSocialUser.from(Social.get().getUserService().register(event.getPlayer().getUniqueId()));
         }
 
-        UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.LOGIN, Optional.empty()));
+        UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.of(user), UserPresence.Type.LOGIN, Optional.empty()));
     }
 
     @EventHandler
@@ -34,7 +34,7 @@ public class UserPresenceInvoker implements Listener {
         final var user = BukkitSocialUser.from(event.getPlayer());
         final var message = Component.text(ChatColor.stripColor(event.getJoinMessage()));
 
-        UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.JOIN, Optional.of(message)), result -> {
+        UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.of(user), UserPresence.Type.JOIN, Optional.of(message)), result -> {
             result.message().ifPresentOrElse(joinMessage -> {
                 event.setJoinMessage(LegacyComponentSerializer.legacySection().serialize(joinMessage));
             }, () -> event.setJoinMessage(null));
@@ -46,7 +46,7 @@ public class UserPresenceInvoker implements Listener {
         final var user = BukkitSocialUser.from(event.getPlayer());
         final var message = Component.text(ChatColor.stripColor(event.getQuitMessage()));
 
-        UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.QUIT, Optional.of(message)), result -> {
+        UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.of(user), UserPresence.Type.QUIT, Optional.of(message)), result -> {
             result.message().ifPresentOrElse(quitMessage -> {
                 event.setQuitMessage(LegacyComponentSerializer.legacySection().serialize(quitMessage));
             }, () -> event.setQuitMessage(null));

@@ -83,7 +83,6 @@ public abstract class SocialBootstrap implements Social {
         } catch (Throwable throwable) {
             Social.get().getLogger().error("An error has occurred while initializing social: {}", throwable);
             throwable.printStackTrace(System.err);
-            return;
         }
     }
 

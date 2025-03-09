@@ -62,7 +62,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
 
                 return AbstractSocialUser.dummy();
             }, user -> {
-                if (user instanceof AbstractSocialUser.Dummy<?>)
+                if (user instanceof AbstractSocialUser.Dummy)
                     return Bukkit.getConsoleSender();
 
                 return Bukkit.getPlayer(user.uuid());
