@@ -1,8 +1,6 @@
 package ovh.mythmc.social.api.context;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -27,16 +25,17 @@ public class SocialProcessorContext extends SocialParserContext {
     private final CustomTextProcessor processor;
 
     private final List<Class<? extends SocialContextualParser>> appliedParsers;
-    
+
     SocialProcessorContext(
         AbstractSocialUser user, 
         ChatChannel channel, 
         Component message, 
         ChannelType messageChannelType,
-        Optional<SocialParserGroup> group,
+        SocialParserGroup group,
+        List<InjectedValue> injectedValues,
         CustomTextProcessor processor) {
 
-        super(user, channel, message, messageChannelType, group);
+        super(user, channel, message, messageChannelType, group, injectedValues);
         this.processor = processor;
         this.appliedParsers = new ArrayList<>();
     }
@@ -56,7 +55,8 @@ public class SocialProcessorContext extends SocialParserContext {
             context.channel(), 
             context.message(), 
             context.messageChannelType(), 
-            context.group(),
+            context.group().orElse(null),
+            context.injectedValues(),
             processor);
     }   
     

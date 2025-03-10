@@ -3,7 +3,6 @@ package ovh.mythmc.social.api.text.group;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -52,7 +51,7 @@ public class SocialParserGroup implements SocialUserInputParser {
                 .toList())
             .build();
 
-        return processor.parse(context.withGroup(Optional.of(this))); 
+        return processor.parse(context.withGroup(this));
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +79,7 @@ public class SocialParserGroup implements SocialUserInputParser {
                 .playerInput(processorContext.processor().playerInput())
                 .build();
 
-            return processor.parse(processorContext.withGroup(Optional.of(this))); 
+            return processor.parse(processorContext.withGroup(this));
         }
 
         return context.message();

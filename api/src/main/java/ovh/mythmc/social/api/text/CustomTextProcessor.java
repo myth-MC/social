@@ -1,20 +1,10 @@
 package ovh.mythmc.social.api.text;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Setter;
-import lombok.With;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -37,13 +27,16 @@ import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 public class CustomTextProcessor {
 
     @Builder.Default
-    private Collection<SocialContextualParser> parsers = new ArrayList<>();
+    private final List<SocialContextualParser> parsers = new ArrayList<>();
 
     @Builder.Default
-    private Collection<Class<? extends SocialContextualParser>> exclusions = new ArrayList<>();
+    private final Collection<Class<? extends SocialContextualParser>> exclusions = new ArrayList<>();
 
     @Builder.Default
     private boolean playerInput = false;
+
+    @Getter(AccessLevel.PRIVATE)
+    private final List<SocialContextualParser> parserQueue = new ArrayList<>();
 
     public static CustomTextProcessor defaultProcessor() {
         return CustomTextProcessor.builder()
@@ -51,10 +44,17 @@ public class CustomTextProcessor {
             .build();
     }
 
-    public Component parse(SocialParserContext context) {
+    public Component parse(@NotNull SocialParserContext context) {
         SocialProcessorContext processorContext = SocialProcessorContext.from(context, this);
-        
-        for (SocialContextualParser parser : getWithExclusions()) {
+
+        initializeQueue(getWithExclusions());
+
+        while (!parserQueue.isEmpty()) {
+            final SocialContextualParser parser = parserQueue.getFirst();
+
+            // Remove parser from queue
+            parserQueue.remove(parser);
+
             if (parser instanceof SocialFilterLike && !playerInput)
                 continue;
 
@@ -78,10 +78,18 @@ public class CustomTextProcessor {
                 Component hoverText = ((HoverEvent<Component>) processorContext.message().hoverEvent()).value();
 
                 Component messageWithHoverText = processorContext.message()
-                    .hoverEvent(parser.parse(processorContext.withMessage(hoverText)));
+                        .hoverEvent(parser.parse(processorContext.withMessage(hoverText)));
 
                 processorContext = SocialProcessorContext.from(processorContext.withMessage(messageWithHoverText), this);
             }
+        }
+
+        // Process injected values
+        for (SocialParserContext.InjectedValue injectedValue : processorContext.injectedValues()) {
+            Component message = processorContext.message();
+
+            message = injectedValue.parser().parse(processorContext.withMessage(message));
+            processorContext = SocialProcessorContext.from(processorContext.withMessage(message), this);
         }
 
         return processorContext.message();
@@ -116,10 +124,19 @@ public class CustomTextProcessor {
             .findFirst();
     }
 
+    private void initializeQueue(@NotNull List<SocialContextualParser> parserQueue) {
+        this.parserQueue.clear();
+        this.parserQueue.addAll(parserQueue);
+    }
+
     private List<SocialContextualParser> getWithExclusions() {
         return parsers.stream()
             .filter(parser -> !exclusions.contains(parser.getClass()))
             .toList();
+    }
+
+    public void injectParser(@NotNull SocialContextualParser parser) {
+        this.parserQueue.add(parser);
     }
     
 }

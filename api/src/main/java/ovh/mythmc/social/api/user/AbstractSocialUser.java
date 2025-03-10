@@ -41,6 +41,8 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
 
     private SocialUserCompanion companion;
 
+    private UUID latestPrivateMessageRecipient;
+
     protected AbstractSocialUser() {
     }
 
@@ -83,12 +85,20 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         return Optional.ofNullable(Social.get().getChatManager().getGroupChannelByUser(this));
     }
 
+    public Optional<AbstractSocialUser> latestPrivateMessageRecipient() {
+        return Social.get().getUserService().getByUuid(latestPrivateMessageRecipient);
+    }
+
     protected void setCachedDisplayName(String cachedDisplayName) {
         this.cachedDisplayName = cachedDisplayName;
     }
 
     protected void setDisplayNameStyle(Style style) {
         this.displayNameStyle = style;
+    }
+
+    protected void setLatestPrivateMessageRecipient(UUID recipientUuid) {
+        this.latestPrivateMessageRecipient = recipientUuid;
     }
 
     // Send social messages

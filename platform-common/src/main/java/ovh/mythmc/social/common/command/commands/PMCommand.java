@@ -35,8 +35,11 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
 
                 final var callback = new SocialPrivateMessageSend(ctx.sender(), recipient, message);
                 SocialPrivateMessageSendCallback.INSTANCE.invoke(callback, result -> {
-                    if (!result.cancelled())
-                        Social.get().getChatManager().sendPrivateMessage(result.sender(), result.recipient(), result.plainMessage());
+                    if (result.cancelled())
+                        return;
+
+                    Social.get().getChatManager().sendPrivateMessage(result.sender(), result.recipient(), result.plainMessage());
+                    Social.get().getUserManager().setLatestPrivateMessageRecipient(result.sender(), result.recipient());
                 });    
             })
         );

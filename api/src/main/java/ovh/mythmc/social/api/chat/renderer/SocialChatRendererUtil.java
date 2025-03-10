@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.context.SocialParserContext;
 
@@ -41,7 +42,7 @@ public class SocialChatRendererUtil {
 
     public Component getReplyIcon(AbstractSocialUser sender, SocialRegisteredMessageContext message) {
         Component replyIcon = Component.empty();
-        
+
         // Check that message is a reply
         if (!message.isReply())
             return replyIcon;
@@ -51,7 +52,7 @@ public class SocialChatRendererUtil {
             return replyIcon;
 
         // Get the reply context
-        SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
+        final SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
 
         // Icon hover text
         Component hoverText = Component.empty();
@@ -80,11 +81,15 @@ public class SocialChatRendererUtil {
             );
 
         // Set icon
-        replyIcon = Component.text(Social.get().getConfig().getChat().getReplyFormat())
+        replyIcon = Component.text(Social.get().getConfig().getChat().getReplyIcon())
             .hoverEvent(hoverText)
             .clickEvent(ClickEvent.suggestCommand("(re:#" + reply.id() + ") "))
             .appendSpace()
-            .append(Component.text("(#" + reply.id() + ")", NamedTextColor.DARK_GRAY))
+            .append(Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, Component.text(Social.get().getConfig().getChat().getReplyDescriptor()))
+                .injectValue("reply_id", reply.id(), SocialInjectionParsers.PLACEHOLDER)
+                .injectValue("reply_sender", reply.sender().displayName(), SocialInjectionParsers.PLACEHOLDER)
+                .build()
+            ))
             .appendSpace();
 
         return replyIcon;

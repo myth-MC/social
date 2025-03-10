@@ -208,7 +208,7 @@ public final class ChatManager {
 
         // Flood filter
         if (Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
-            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+            final int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
             if (System.currentTimeMillis() - sender.latestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
                     !sender.checkPermission("social.filter.bypass")) {
@@ -218,18 +218,18 @@ public final class ChatManager {
             }
         }
 
-        Component prefix = parse(sender, sender.mainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().prefix() + " ");
-        Component prefixHoverText = parse(sender, sender.mainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
+        final Component prefix = parse(sender, sender.mainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().prefix() + " ");
+        final Component prefixHoverText = parse(sender, sender.mainChannel(), Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
 
-        Component senderNickname = parse(sender, sender.mainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
+        final Component senderNickname = parse(sender, sender.mainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
         Component senderHoverText = parse(sender, sender.mainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
 
-        Component recipientNickname = parse(recipient, recipient.mainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
+        final Component recipientNickname = parse(recipient, recipient.mainChannel(), Social.get().getConfig().getChat().getPlayerNicknameFormat());
         Component recipientHoverText = parse(recipient, recipient.mainChannel(), Social.get().getConfig().getChat().getClickableNicknameHoverText());
 
-        Component arrow = parse(recipient, recipient.mainChannel(), " " + Social.get().getConfig().getCommands().getPrivateMessage().arrow() + " ");
+        final Component arrow = parse(recipient, recipient.mainChannel(), " " + Social.get().getConfig().getCommands().getPrivateMessage().arrow() + " ");
 
-        Component filteredMessage = parsePlayerInput(sender, sender.mainChannel(), message);
+        final Component filteredMessage = parsePlayerInput(sender, sender.mainChannel(), message);
 
         if (!sender.cachedDisplayName().equals(sender.name()))
             senderHoverText = senderHoverText
@@ -241,7 +241,7 @@ public final class ChatManager {
                     .appendNewline()
                     .append(parse(recipient, recipient.mainChannel(), Social.get().getConfig().getChat().getPlayerAliasWarningHoverText()));
 
-        Component chatMessage = Component.empty()
+        final Component chatMessage = Component.empty()
                 .append(prefix
                         .hoverEvent(HoverEvent.showText(prefixHoverText))
                 )
@@ -268,7 +268,7 @@ public final class ChatManager {
         Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
 
         // Send message to console
-        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.cachedDisplayName() + " -> " + recipient.cachedDisplayName() + ": " + message));
+        SocialAdventureProvider.get().console().sendMessage(Component.text("[PM] " + sender.name() + " -> " + recipient.name() + ": " + message));
     }
 
     private Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {

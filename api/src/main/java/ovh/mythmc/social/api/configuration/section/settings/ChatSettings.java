@@ -31,8 +31,11 @@ public class ChatSettings {
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "$(clickable_nickname)";
 
-    @Comment("Message that appears when a player replies to a message")
-    private String replyFormat = "<blue>:raw_box_up_and_right:</blue>";
+    @Comment("Icon that appears when a player replies to a message")
+    private String replyIcon = "<blue>:raw_box_up_and_right:</blue>";
+
+    @Comment("Brief text that appears right after the reply icon")
+    private String replyDescriptor = "<dark_gray>(#$(reply_id))</dark_gray>";
 
     @Comment("Text that appears when hovering over a message reply")
     private String replyHoverText = "<dark_gray>Click here to reply to <gray>$(nickname)</gray>'s message</dark_gray>";

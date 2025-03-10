@@ -62,6 +62,10 @@ public class SocialUserManager {
         SocialDatabase.get().update(user);
     }
 
+    public void setLatestPrivateMessageRecipient(@NotNull AbstractSocialUser user, @NotNull AbstractSocialUser recipient) {
+        user.setLatestPrivateMessageRecipient(recipient.uuid());
+    }
+
     public boolean isGloballyMuted(final @NotNull AbstractSocialUser user) {
         return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(ChatChannel::getName).toList());
     }

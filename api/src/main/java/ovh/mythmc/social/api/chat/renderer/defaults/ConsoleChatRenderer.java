@@ -28,7 +28,8 @@ public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
         final Component nickname = Component.text(sender.name());
 
         // Get channel icon
-        final Component channelIcon = SocialChatRendererUtil.getClickableChannelIcon(sender, channel);
+        final Component channelIcon = Component.text(context.channel().getName())
+            .color(context.channel().getColor());
 
         // Get channel divider
         final Component textDivider = Component.text(channel.getTextDivider());

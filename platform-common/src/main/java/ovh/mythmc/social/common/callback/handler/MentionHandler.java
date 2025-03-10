@@ -57,7 +57,7 @@ public final class MentionHandler {
 
         SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.MENTIONS_REPLY_FORMATTER, (ctx) -> {
             if (ctx.isReply()) {
-                Component replyFormat = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(), Social.get().getConfig().getChat().getReplyFormat());
+                Component replyFormat = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(), Social.get().getConfig().getChat().getReplyIcon());
                 String replyFormatStripped = MiniMessage.miniMessage().stripTags(MiniMessage.miniMessage().serialize(replyFormat));
     
                 SocialMessageContext context = Social.get().getChatManager().getHistory().getById(ctx.replyId());
