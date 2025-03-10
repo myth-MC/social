@@ -55,13 +55,4 @@ public final class ReactionManager {
         return reactionList;
     }
 
-    public Reaction getByName(String name) {
-        for (Reaction reaction : reactionsMap.keySet()) {
-            if (reaction.name().equalsIgnoreCase(name))
-                return reaction;
-        }
-
-        return null;
-    }
-
 }

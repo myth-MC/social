@@ -8,6 +8,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":social-api"))
     implementation(project(path = ":social-bukkit", configuration = "shadow"))
     compileOnly(libs.org.incendo.cloud.paper)
     compileOnly(libs.io.papermc.paper.paper.api)

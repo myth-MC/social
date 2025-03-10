@@ -30,7 +30,7 @@ public final class DiscordSRVHook implements ChatHook {
     private final Plugin plugin;
 
     public void registerMessageCallbackHandler() {
-        SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv", (sender, channel, message, messageId, replyId) -> {
+        SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv", (sender, channel, message, messageId, replyId, cancelled) -> {
             if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channel.getName()) == null) {
                 DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + channel.getName() + " but none found");
                 return;
@@ -44,7 +44,7 @@ public final class DiscordSRVHook implements ChatHook {
             }
 
             final Player player = BukkitSocialUser.from(sender).player().orElse(null);
-            DiscordSRV.getPlugin().processChatMessage(player, plainMessage, channel.getName(), false, null);
+            DiscordSRV.getPlugin().processChatMessage(player, plainMessage, channel.getName(), cancelled, null);
         });
     }
 

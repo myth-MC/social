@@ -22,7 +22,8 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
     @CallbackField(field = "channel", getter = "channel()"),
     @CallbackField(field = "message", getter = "message()"),
     @CallbackField(field = "messageId", getter = "messageId()"),
-    @CallbackField(field = "replyId", getter = "replyId()")
+    @CallbackField(field = "replyId", getter = "replyId()"),
+    @CallbackField(field = "cancelled", getter = "cancelled()")
 })
 public final class SocialMessageSend {
 
@@ -35,6 +36,8 @@ public final class SocialMessageSend {
     private final int messageId;
 
     private final Integer replyId;
+
+    private final boolean cancelled;
 
     public boolean isReply() {
         if (replyId == null)

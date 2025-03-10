@@ -20,6 +20,7 @@ public final class InternalFeatureHandler {
                 "social", 
                 "http://textures.minecraft.net/texture/7faf072f1692f795b19b7862879829aff55709673ed821c23cf0018ef04a26aa", 
                 Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.PLAYER, 0.75f, 1.5f),
+                null,
                 List.of("chirp")
             )
         );

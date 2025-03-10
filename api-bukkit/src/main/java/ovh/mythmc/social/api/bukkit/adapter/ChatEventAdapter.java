@@ -82,7 +82,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         }
 
         // Prepare message event
-        var preCallback = new SocialMessagePrepare(sender, channel, plainMessage, replyId);
+        final var preCallback = new SocialMessagePrepare(sender, channel, plainMessage, replyId);
         SocialMessagePrepareCallback.INSTANCE.invoke(preCallback);
 
         if (preCallback.cancelled()) {
@@ -107,23 +107,23 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         viewers(event, viewers);
 
         // Get message context
-        var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.getMembers()), plainMessage, replyId, signedMessage(event));
+        final var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.getMembers()), plainMessage, replyId, signedMessage(event));
 
         // Filter message
-        var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
+        final var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
             SocialParserContext.builder(sender, Component.text(plainMessage))
                 .channel(channel)
                 .build());
 
         // Register message in history
-        var registeredMessage = Social.get().getChatManager().getHistory().register(message, filteredMessage);
+        final var registeredMessage = Social.get().getChatManager().getHistory().register(message, filteredMessage);
 
         // Get ID to reply to this message
         Integer idToReply = registeredMessage.id();
         if (replyId != null)
             idToReply = Integer.min(replyId, idToReply);
 
-        var postCallback = new SocialMessageSend(sender, channel, filteredMessage, registeredMessage.id(), idToReply);
+        final var postCallback = new SocialMessageSend(sender, channel, filteredMessage, registeredMessage.id(), idToReply, event.isCancelled());
         SocialMessageSendCallback.INSTANCE.invoke(postCallback);
 
         // Let the impl handle the rest

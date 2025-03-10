@@ -196,9 +196,9 @@ public final class SocialConfigProvider {
         settings.getReactions().getReactions().forEach(reactionField -> {
             Reaction reaction;
             if (reactionField.sound() != null) {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), getSoundByKey(reactionField.sound()), reactionField.triggerWords());
+                reaction = new Reaction(reactionField.name(), reactionField.texture(), getSoundByKey(reactionField.sound()), reactionField.particle(), reactionField.triggerWords());
             } else {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
+                reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.particle(), reactionField.triggerWords());
             }
             Social.get().getReactionManager().registerReaction("SERVER", reaction);
         });
@@ -213,7 +213,7 @@ public final class SocialConfigProvider {
         });
     }
 
-    private Sound getSoundByKey(String key) {
+    private Sound getSoundByKey(@NotNull String key) {
         if (!Key.parseable(key)) {
             logger.warn("reactions.yml contains an invalid key: " + key);
             return null;

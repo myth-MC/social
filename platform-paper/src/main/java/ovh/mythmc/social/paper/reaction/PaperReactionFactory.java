@@ -84,8 +84,16 @@ public final class PaperReactionFactory extends ReactionFactory {
                 EntityType.ITEM_DISPLAY
         );
 
+        if (reaction.particle() != null) {
+            final String particle = reaction.particle()
+                .toUpperCase()
+                .replace(".", "_")
+                .replace("MINECRAFT:", "");
+
+            itemDisplay.getWorld().spawnParticle(Particle.valueOf(particle), itemDisplay.getLocation().add(0, 2, 0), 3, 0.2, 0.2, 0.2);
+        }
+
         itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
-        if (reaction.sound() != null)
         if (reaction.sound() != null)
             user.playSound(reaction.sound());
 
