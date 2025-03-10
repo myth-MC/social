@@ -52,7 +52,7 @@ public class ChatSettings {
     @Comment("Sound that will be played to the mentioned player")
     private String mentionSound = "block.chain.place";
 
-    @Comment("Whether markdown-style text formatting options for players should be enabled or disabled")
+    @Comment({"Whether text formatting options for players should be enabled", "This will allow colors and text decoration to players with permission social.text-formatting"})
     private boolean playerFormatOptions = true;
 
     @Comment("Groups module")

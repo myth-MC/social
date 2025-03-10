@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParser;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SocialInjectionEmptyParser implements SocialInjectionParser {
+public class SocialInjectionEmptyParser implements SocialInjectionParser {
 
     public static final SocialInjectionEmptyParser INSTANCE = new SocialInjectionEmptyParser();
 

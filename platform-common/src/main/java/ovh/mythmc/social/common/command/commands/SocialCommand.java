@@ -22,7 +22,6 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.text.formatter.SocialFormatter;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
@@ -440,7 +439,6 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 ctx.sender().sendParsableMessage(registeredParsers);
                 ctx.sender().sendParsableMessage(getFormattedParserInfo(SocialContextualPlaceholder.class));
                 ctx.sender().sendParsableMessage(getFormattedParserInfo(SocialContextualKeyword.class));
-                ctx.sender().sendParsableMessage(getFormattedParserInfo(SocialFormatter.class));
             })
         );
 

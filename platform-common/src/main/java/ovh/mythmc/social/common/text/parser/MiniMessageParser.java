@@ -27,11 +27,11 @@ public final class MiniMessageParser implements SocialContextualParser {
         return message;
     }
 
-    private Component miniMessage(@NotNull Component component) {
+    private static Component miniMessage(@NotNull Component component) {
         String serialized = MiniMessage.miniMessage().serialize(component);
         return MiniMessage.miniMessage().deserialize(serialized
             .replace("\\<", "<") // Possibly the worst way to achieve this (not even supported by MiniMessage's team, so plz don't do it)
-    );
+        );
     }
     
 }

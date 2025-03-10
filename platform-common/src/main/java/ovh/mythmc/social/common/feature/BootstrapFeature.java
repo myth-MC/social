@@ -36,7 +36,7 @@ public class BootstrapFeature {
             ServerLinksFeature.class,
             SignFeature.class,
             SystemMessagesFeature.class,
-            TextFormattersFeature.class,
+            TextFormattingFeature.class,
             UpdateCheckerFeature.class,
             URLFilterFeature.class
         );
