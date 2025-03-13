@@ -6,21 +6,13 @@ import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 
+import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.announcements.SocialAnnouncement;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
-import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
-import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
-import ovh.mythmc.social.api.configuration.section.settings.DatabaseSettings;
-import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
-import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
-import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
-import ovh.mythmc.social.api.configuration.section.settings.ReactionsSettings;
-import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings;
-import ovh.mythmc.social.api.configuration.section.settings.SystemMessagesSettings;
-import ovh.mythmc.social.api.configuration.section.settings.TextReplacementSettings;
+import ovh.mythmc.social.api.chat.SimpleChatChannel;
+import ovh.mythmc.social.api.configuration.section.settings.*;
+import ovh.mythmc.social.api.configuration.serializer.TextComponentSerializer;
 import ovh.mythmc.social.api.emoji.Emoji;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
@@ -35,6 +27,11 @@ import java.nio.file.Files;
 public final class SocialConfigProvider {
 
     private final File pluginFolder;
+
+    private final YamlConfigurationProperties properties = YamlConfigurationProperties.newBuilder()
+        .charset(StandardCharsets.UTF_8)
+        .addSerializer(TextComponent.class, new TextComponentSerializer())
+        .build();
 
     @Deprecated(since = "0.4", forRemoval = true) 
     private SocialSettings settings;
@@ -91,7 +88,7 @@ public final class SocialConfigProvider {
         return YamlConfigurations.update(
             new File(pluginFolder, "settings" + File.separator + fileName).toPath(),
             clazz,
-            YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+            properties
         );
     }
 
@@ -118,7 +115,7 @@ public final class SocialConfigProvider {
             settings = YamlConfigurations.update(
                 new File(pluginFolder, "settings.yml").toPath(),
                 LegacySocialSettings.class,
-                YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+                properties
             );
 
             general = settings.getGeneral();
@@ -156,7 +153,7 @@ public final class SocialConfigProvider {
         messages = YamlConfigurations.update(
                 new File(pluginFolder, "messages.yml").toPath(),
                 SocialMessages.class,
-                YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+                properties
         );
     }
 
@@ -204,7 +201,7 @@ public final class SocialConfigProvider {
         });
 
         // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel)));
+        settings.getChat().getChannels().forEach(channel -> Social.get().getChatManager().registerChatChannel(SimpleChatChannel.fromConfigField(channel)));
 
         // Register announcements
         settings.getAnnouncements().getMessages().forEach(announcementField -> {

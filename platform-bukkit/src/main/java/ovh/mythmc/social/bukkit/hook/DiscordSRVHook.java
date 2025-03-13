@@ -31,8 +31,8 @@ public final class DiscordSRVHook implements ChatHook {
 
     public void registerMessageCallbackHandler() {
         SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv", (sender, channel, message, messageId, replyId, cancelled) -> {
-            if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channel.getName()) == null) {
-                DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + channel.getName() + " but none found");
+            if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channel.name()) == null) {
+                DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + channel.name() + " but none found");
                 return;
             }
 
@@ -44,7 +44,7 @@ public final class DiscordSRVHook implements ChatHook {
             }
 
             final Player player = BukkitSocialUser.from(sender).player().orElse(null);
-            DiscordSRV.getPlugin().processChatMessage(player, plainMessage, channel.getName(), cancelled, null);
+            DiscordSRV.getPlugin().processChatMessage(player, plainMessage, channel.name(), cancelled, null);
         });
     }
 
@@ -61,16 +61,16 @@ public final class DiscordSRVHook implements ChatHook {
     }
 
     @Override
-    public void broadcastMessageToChannel(String channel, github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component message) {
-        ChatChannel chatChannel = getChannelByCaseInsensitiveName(channel);
-        if (chatChannel == null)
+    public void broadcastMessageToChannel(String channelName, github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component message) {
+        ChatChannel channel = getChannelByCaseInsensitiveName(channelName);
+        if (channel == null)
             return;
 
         String miniMessage = MessageUtil.toMiniMessage(message);
         
         // Workaround for placeholders
-        SocialParserContext context = SocialParserContext.builder(BukkitSocialUser.dummy(chatChannel), net.kyori.adventure.text.Component.empty())
-            .channel(chatChannel)
+        SocialParserContext context = SocialParserContext.builder(BukkitSocialUser.dummy(channel), net.kyori.adventure.text.Component.empty())
+            .channel(channel)
             .build();
 
         TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getIdentifiedParser(SocialContextualPlaceholder.class, "channel_icon").get().get(context);
@@ -78,8 +78,8 @@ public final class DiscordSRVHook implements ChatHook {
         miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 
         String finalMiniMessage = miniMessage;
-        chatChannel.getMembers().forEach(user -> {
-            if (!Social.get().getChatManager().hasPermission(user, chatChannel))
+        channel.members().forEach(user -> {
+            if (!Social.get().getChatManager().hasPermission(user, channel))
                 return;
 
             // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)

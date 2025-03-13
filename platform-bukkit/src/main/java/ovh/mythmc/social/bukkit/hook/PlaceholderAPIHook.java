@@ -3,11 +3,13 @@ package ovh.mythmc.social.bukkit.hook;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.imdanix.text.MiniTranslator;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.util.UUID;
 
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -19,12 +21,16 @@ import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Getter
 public final class PlaceholderAPIHook implements SocialContextualParser, Listener {
 
     private final SocialPlaceholderExpansion expansion = new SocialPlaceholderExpansion();
+
+    private final static LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacyAmpersand().toBuilder()
+        .hexColors()
+        .hexCharacter('&')
+        .build();
 
     @Getter
     public class SocialPlaceholderExpansion extends PlaceholderExpansion {
@@ -52,7 +58,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (target == null) 
                         return "false";
 
-                    final GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByUser(player.getUniqueId());
+                    final GroupChatChannel groupChatChannel = Social.get().getChatManager().getGroupChannelByUser(BukkitSocialUser.from(player.getUniqueId()));
                     if (groupChatChannel == null)
                         return "false";
                     return "true";
@@ -64,16 +70,13 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                 if (groupChatChannel == null) return null;
 
                 if (params.equalsIgnoreCase("group_name")) {
-                    return groupChatChannel.getName();
+                    return groupChatChannel.name();
                 }
                 if (params.equalsIgnoreCase("group_alias")) {
-                    return groupChatChannel.getAlias();
+                    return groupChatChannel.alias();
                 }
                 if (params.equalsIgnoreCase("group_alias_or_name")) {
-                    if (groupChatChannel.getAlias() != null)
-                        return groupChatChannel.getAlias();
-
-                    return groupChatChannel.getName();
+                    return groupChatChannel.aliasOrName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
                     return groupChatChannel.getLeader().cachedDisplayName();
@@ -87,9 +90,9 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                 
                 if (params.startsWith("group_player_uuid_")) {
                     final Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
-                    if (integer == null || integer >= groupChatChannel.getMembers().size())
+                    if (integer == null || integer >= groupChatChannel.members().size())
                         return null;
-                    final UUID uuid = groupChatChannel.getMemberUuids().get(integer);
+                    final UUID uuid = groupChatChannel.members().get(integer).uuid();
                     if (uuid == null)
                         return null;
 
@@ -97,10 +100,10 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                 }
                 if (params.startsWith("group_player_username_")) {
                     final Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
-                    if (integer == null || integer >= groupChatChannel.getMembers().size())
+                    if (integer == null || integer >= groupChatChannel.members().size())
                         return null;
 
-                    final UUID uuid = groupChatChannel.getMemberUuids().get(integer);
+                    final UUID uuid = groupChatChannel.members().get(integer).uuid();
                     if (uuid == null)
                         return null;
 
@@ -108,10 +111,10 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                 }
                 if (params.startsWith("group_player_")) {
                     final Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
-                    if (integer == null || integer >= groupChatChannel.getMembers().size())
+                    if (integer == null || integer >= groupChatChannel.members().size())
                         return null;
 
-                    final UUID uuid = groupChatChannel.getMemberUuids().get(integer);
+                    final UUID uuid = groupChatChannel.members().get(integer).uuid();
                     if (uuid == null)
                         return null;
 
@@ -126,9 +129,12 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
     @Override
     public Component parse(SocialParserContext context) {
         final Player player = BukkitSocialUser.from(context.user()).player().orElse(null);
-
         final String serialized = GsonComponentSerializer.gson().serialize(context.message());
-        return GsonComponentSerializer.gson().deserialize(PlaceholderAPI.setPlaceholders(player, serialized));
+
+        String parsedMessage = PlaceholderAPI.setPlaceholders(player, serialized);
+        parsedMessage = MiniTranslator.toMini(parsedMessage.replace('§', '&'));
+
+        return GsonComponentSerializer.gson().deserialize(parsedMessage);
     }
 
     private Integer tryParse(String text) {

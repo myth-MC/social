@@ -22,7 +22,7 @@ public interface SocialChatRenderer<T> {
     SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context);
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    static final class Builder<T> {
+    final class Builder<T> {
 
         private final SocialChatRenderer<T> renderer;
 
@@ -47,7 +47,7 @@ public interface SocialChatRenderer<T> {
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    static final class Registered<T> {
+    final class Registered<T> {
 
         private final SocialChatRenderer<T> renderer;
 
@@ -98,7 +98,7 @@ public interface SocialChatRenderer<T> {
             return new Ignore<T>(null);
         }
 
-        public static <T> MapResult.Failure<T> failure(String debugMessage) {
+        static <T> MapResult.Failure<T> failure(@NotNull String debugMessage) {
             return new Failure<>(null, debugMessage);
         }
 

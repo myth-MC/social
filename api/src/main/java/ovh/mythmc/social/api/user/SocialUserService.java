@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.SimpleChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
 
 public abstract class SocialUserService {
@@ -23,7 +24,7 @@ public abstract class SocialUserService {
     public AbstractSocialUser register(@NotNull UUID uuid) {
         // Todo: recover data from last session
         String defaultChatChannelName = Social.get().getConfig().getChat().getDefaultChannel();
-        ChatChannel defaultChatChannel = Social.get().getChatManager().getDefaultChannel();
+        ChatChannel defaultHybridChatChannel = Social.get().getChatManager().getDefaultChannel();
 
         AbstractSocialUser user = createUserInstance(uuid);
         if (user.cachedDisplayName() == null)
@@ -31,13 +32,13 @@ public abstract class SocialUserService {
 
         user.setSocialSpy(false);
 
-        if (defaultChatChannel == null) {
+        if (defaultHybridChatChannel == null) {
             Social.get().getLogger().warn("Default channel '" + defaultChatChannelName + "' is unavailable!");
         } else {
-            if (!defaultChatChannel.getMemberUuids().contains(uuid))
-                defaultChatChannel.addMember(uuid);
+            if (!defaultHybridChatChannel.members().contains(user))
+                defaultHybridChatChannel.addMember(user);
 
-            user.setMainChannel(defaultChatChannel);
+            user.setMainChannel(defaultHybridChatChannel);
         }
 
         register(user);
@@ -58,7 +59,7 @@ public abstract class SocialUserService {
             .toList();
     }
 
-    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(ChatChannel channel) {
+    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(SimpleChatChannel channel) {
         return get().stream()
             .filter(user -> user.socialSpy() && user.mainChannel().equals(channel))
             .toList();

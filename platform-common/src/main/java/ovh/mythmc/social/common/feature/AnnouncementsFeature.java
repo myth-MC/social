@@ -21,7 +21,7 @@ public final class AnnouncementsFeature {
 
     @FeatureDisable
     public void disable() {
-        Social.get().getAnnouncementManager().getAnnouncements().clear();
+        Social.get().getAnnouncementManager().unregisterAllAnnouncements();
     }
 
 }

@@ -1,56 +1,110 @@
 package ovh.mythmc.social.api.chat;
 
-import lombok.*;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
-
+import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
+import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
+import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.function.Predicate;
 
-@Getter
-@Setter(AccessLevel.PROTECTED)
-@RequiredArgsConstructor
-@ToString
-@EqualsAndHashCode
 public class ChatChannel {
 
+    public static ChatChannelBuilder builder(@NotNull String name, @NotNull FormatBuilder formatBuilder) {
+        return new ChatChannelBuilder(name, formatBuilder);
+    }
+    
     private final String name;
+
+    private String alias;
+
+    private final Component icon;
+
+    private final Component description;
 
     private final TextColor color;
 
-    private final String icon;
-
-    private final boolean showHoverText;
-
-    private final Component hoverText;
-
-    private final TextColor nicknameColor;
-
-    private final String textDivider;
-
-    private final TextColor textColor;
+    private final FormatBuilder formatBuilder;
 
     private final String permission;
 
     private final boolean joinByDefault;
 
-    private List<UUID> memberUuids = new ArrayList<>();
+    private final LinkedHashSet<UUID> memberUuids = new LinkedHashSet<>();
+
+    private final Collection<ChatRendererFeature> supportedRendererFeatures;
+
+    protected ChatChannel(@NotNull String name, @Nullable String alias, @NotNull Component icon, @NotNull Component description, @NotNull TextColor color, @NotNull FormatBuilder formatBuilder, @Nullable String permission, boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
+        this.name = name;
+        this.alias = alias;
+        this.icon = icon;
+        this.description = description;
+        this.color = color;
+        this.formatBuilder = formatBuilder;
+        this.permission = permission;
+        this.joinByDefault = joinByDefault;
+        this.supportedRendererFeatures = supportedRendererFeatures;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public String alias() {
+        return alias;
+    }
+
+    protected void alias(@NotNull String alias) {
+        this.alias = alias;
+    }
+
+    public String aliasOrName() {
+        return alias() != null ? alias : name;
+    }
+
+    public Component icon() {
+        return icon;
+    }
+
+    public Component description() {
+        return description;
+    }
+
+    public TextColor color() {
+        return color;
+    }
+
+    protected FormatBuilder formatBuilder() {
+        return formatBuilder;
+    }
+
+    public String permission() {
+        return permission;
+    }
+
+    public boolean joinByDefault() {
+        return joinByDefault;
+    }
+
+    public Collection<ChatRendererFeature> supportedRendererFeatures() {
+        return supportedRendererFeatures;
+    }
+
+    public Component prefix(@NotNull AbstractSocialUser user, @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser) {
+        return formatBuilder().preRenderPrefix(user, supportedRendererFeatures(), message, parser);
+    }
 
     public boolean addMember(UUID uuid) {
-        if (memberUuids.contains(uuid))
-            return false;
-
-        memberUuids.add(uuid);
-        return true;
+        return memberUuids.add(uuid);
     }
 
     public boolean addMember(AbstractSocialUser user) {
@@ -65,93 +119,184 @@ public class ChatChannel {
         return removeMember(user.uuid());
     }
 
-    public Collection<AbstractSocialUser> getMembers() {
+    public List<AbstractSocialUser> members() {
         return memberUuids.stream()
             .map(Social.get().getUserService()::getByUuid)
             .map(o -> o.orElse(null))
-            .collect(Collectors.toList());
+            .filter(Objects::nonNull)
+            .toList();
     }
 
-    public static ChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {
-        String name = channelField.name();
-        TextColor color = NamedTextColor.YELLOW;
-        String icon = "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>";
-        boolean showHoverText = false;
-        Component hoverText = Component.empty();
-        TextColor nicknameColor = NamedTextColor.GRAY;
-        String textDivider = "<gray>:raw_divider:</gray>";
-        TextColor textColor = NamedTextColor.WHITE;
-        String permission = null;
-        boolean joinByDefault = false;
+    public static final class FormatBuilder {
 
-        if (channelField.inherit() != null) { // Inherit properties from another channel
-            ChatChannel inherit = Social.get().getChatManager().getChannel(channelField.inherit());
-            
-            color = inherit.getColor();
-            icon = inherit.getIcon();
-            showHoverText = inherit.isShowHoverText();
-            hoverText = inherit.getHoverText();
-            nicknameColor = inherit.getNicknameColor();
-            textDivider = inherit.getTextDivider();
-            textColor = inherit.getTextColor();
-            permission = inherit.getPermission();
-            joinByDefault = inherit.isJoinByDefault();
+        public static FormatBuilder empty() {
+            return new FormatBuilder();
         }
 
-        if (channelField.color() != null)
-            color = TextColor.fromHexString(channelField.color());
-
-        if (channelField.icon() != null)
-            icon = channelField.icon();
-
-        if (channelField.showHoverText() != null)
-            showHoverText = channelField.showHoverText();
-
-        if (channelField.hoverText() != null)
-            hoverText = getHoverTextAsComponent(channelField.hoverText());
-
-        if (channelField.nicknameColor() != null)
-            nicknameColor = TextColor.fromHexString(channelField.nicknameColor());
-
-        if (channelField.textDivider() != null)
-            textDivider = channelField.textDivider();
-
-        if (channelField.textColor() != null)
-            textColor = TextColor.fromHexString(channelField.textColor());
-
-        if (channelField.permission() != null)
-            permission = channelField.permission();
-
-        if (channelField.joinByDefault() != null)
-            joinByDefault = channelField.joinByDefault();
-
-        return new ChatChannel(
-            name, 
-            color, 
-            icon, 
-            showHoverText, 
-            hoverText, 
-            nicknameColor, 
-            textDivider, 
-            textColor, 
-            permission, 
-            joinByDefault
-        );
-    }
-
-    protected static Component getHoverTextAsComponent(List<String> hoverTextList) {
-        Component hoverText = Component.empty();
-
-        for (int i = 0; i < hoverTextList.size(); i++) {
-            hoverText = hoverText
-                .append(Component.text(hoverTextList.get(i)));
-
-            if (i < hoverTextList.size() - 1)
-                hoverText = hoverText
-                    .appendNewline();
+        public static FormatBuilder from(@NotNull TextComponent base) {
+            return new FormatBuilder()
+                .append(base);
         }
 
-        return hoverText;
+        private FormatBuilder() { }
+
+        private final List<SocialInjectedValue<?>> injectedValues = new ArrayList<>();
+
+        public FormatBuilder injectValues(@NotNull Iterable<? extends SocialInjectedValue<?>> injectedValues) {
+            for (SocialInjectedValue<?> injectedValue : injectedValues) {
+                this.injectedValues.add(injectedValue);
+            }
+
+            return this;
+        }
+
+        public FormatBuilder injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
+            this.injectedValues.add(injectedValue);
+            return this;
+        }
+
+        public FormatBuilder injectValue(@NotNull SocialInjectedValue<?> injectedValue, int index) {
+            this.injectedValues.add(index, injectedValue);
+            return this;
+        }
+
+        public FormatBuilder append(@NotNull TextComponent component, int index) {
+            final var injectedValue = SocialInjectedValue.literal(component);
+            return injectValue(injectedValue, index);
+        }
+
+        public FormatBuilder append(@NotNull TextComponent component) {
+            final var injectedValue = SocialInjectedValue.literal(component);
+            return injectValue(injectedValue);
+        }
+
+        public FormatBuilder appendConditional(@NotNull TextComponent component, @NotNull Predicate<SocialParserContext> predicate, int index) {
+            final var injectedValue = SocialInjectedValue.conditional(SocialInjectedValue.literal(component), SocialInjectionParsers.LITERAL, predicate);
+            return injectValue(injectedValue, index);
+        }
+
+        public FormatBuilder appendConditional(@NotNull TextComponent component, @NotNull Predicate<SocialParserContext> predicate) {
+            final var injectedValue = SocialInjectedValue.conditional(SocialInjectedValue.literal(component), SocialInjectionParsers.LITERAL, predicate);
+            return injectValue(injectedValue);
+        }
+
+        public FormatBuilder appendSpace() {
+            return append(Component.space());
+        }
+
+        public Component preRenderPrefix(@NotNull AbstractSocialUser target, @NotNull Iterable<? extends ChatRendererFeature> supportedFeatures, @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser) {
+            // Inject values into context
+            parser.injectValues(this.injectedValues);
+
+            Component component = Component.empty();
+
+            for (ChatRendererFeature feature : supportedFeatures) {
+                if (feature.isApplicable(message))
+                    feature.handler().handle(target, this, message, parser);
+            }
+
+            for (SocialInjectedValue<?> injectedValue : this.injectedValues) {
+                component = injectedValue.parse(parser.withMessage(component));
+            }
+
+            return component;
+        }
+
     }
 
+    public static final class ChatChannelBuilder extends Builder<ChatChannelBuilder, ChatChannel> {
+
+        ChatChannelBuilder(@NotNull String name, @NotNull FormatBuilder formatBuilder) {
+            super(name, formatBuilder);
+        }
+
+        @Override
+        public ChatChannel build() {
+            return new ChatChannel(name, alias, icon, description, color, formatBuilder, permission, joinByDefault, supportedFeatures);
+        }
+
+        @Override
+        public ChatChannelBuilder get() {
+            return this;
+        }
+    }
+
+    public static abstract class Builder<T extends Builder<T, R>, R extends ChatChannel> {
+
+        protected final String name;
+
+        protected String alias;
+
+        protected final FormatBuilder formatBuilder;
+
+        protected Component icon;
+
+        protected Component description = Component.empty();
+
+        protected TextColor color = NamedTextColor.YELLOW;
+
+        protected String permission;
+
+        protected boolean joinByDefault = false;
+
+        protected final List<UUID> memberUuids = new ArrayList<>();
+
+        protected final Collection<ChatRendererFeature> supportedFeatures = new ArrayList<>();
+
+        protected Builder(@NotNull String name, @NotNull FormatBuilder formatBuilder) {
+            this.name = name;
+            this.formatBuilder = formatBuilder;
+            this.icon = Component.text(name);
+        }
+
+        public abstract R build();
+
+        public abstract T get();
+
+        public T alias(@NotNull String alias) {
+            get().alias = alias;
+            return get();
+        }
+
+        public T icon(@NotNull Component icon) {
+            get().icon = icon;
+            return get();
+        }
+
+        public T description(@NotNull Component description) {
+            get().description = description;
+            return get();
+        }
+
+        public T color(@NotNull TextColor color) {
+            get().color = color;
+            return get();
+        }
+
+        public T permission(@NotNull String permission) {
+            get().permission = permission;
+            return get();
+        }
+
+        public T joinByDefault(boolean joinByDefault) {
+            get().joinByDefault = joinByDefault;
+            return get();
+        }
+
+        public T member(@NotNull UUID uuid) {
+            get().memberUuids.add(uuid);
+            return get();
+        }
+
+        public T member(@NotNull AbstractSocialUser user) {
+            return member(user.uuid());
+        }
+
+        public T supportedFeature(@NotNull ChatRendererFeature feature) {
+            get().supportedFeatures.add(feature);
+            return get();
+        }
+
+    }
+    
 }

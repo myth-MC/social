@@ -42,7 +42,7 @@ public final class MentionHandler {
                     .match(Pattern.quote("@" + ctx.recipient().name()) + "|" + Pattern.quote("@" + ctx.recipient().cachedDisplayName()))
                     .replacement((match, textBuilder) -> {
                         wrapper.mentioned = true;
-                        return Component.text(match.group()).color(ctx.channel().getColor());
+                        return Component.text(match.group()).color(ctx.channel().color());
                     });
             });
 
@@ -66,7 +66,7 @@ public final class MentionHandler {
                     Component replacement = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(), replyFormat);
                     Component message = ctx.message().replaceText(TextReplacementConfig.builder()
                             .matchLiteral(replyFormatStripped)
-                            .replacement(replacement.color(ctx.channel().getColor()))
+                            .replacement(replacement.color(ctx.channel().color()))
                             .once()
                             .build()
                     );

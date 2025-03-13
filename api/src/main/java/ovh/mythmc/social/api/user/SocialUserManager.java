@@ -20,10 +20,10 @@ public class SocialUserManager {
 
     public static final SocialUserManager instance = new SocialUserManager();
 
-    public void setMainChannel(@NotNull AbstractSocialUser user, @NotNull ChatChannel channel) {
+    public void setMainChannel(@NotNull AbstractSocialUser user, @NotNull ChatChannel channel, boolean informUser) {
         ChatChannel previousChannel = user.mainChannel();
 
-        var preSwitchCallback = new SocialChannelPreSwitch(user, channel);
+        var preSwitchCallback = new SocialChannelPreSwitch(user, channel, informUser);
         SocialChannelPreSwitchCallback.INSTANCE.invoke(preSwitchCallback);
 
         if (preSwitchCallback.cancelled())
@@ -31,7 +31,7 @@ public class SocialUserManager {
 
         user.setMainChannel(channel);
         
-        var postSwitchCallback = new SocialChannelPostSwitch(user, previousChannel, channel);
+        var postSwitchCallback = new SocialChannelPostSwitch(user, preSwitchCallback.informUser(), previousChannel, channel);
         SocialChannelPostSwitchCallback.INSTANCE.invoke(postSwitchCallback);
 
         SocialDatabase.get().update(user);
@@ -67,11 +67,11 @@ public class SocialUserManager {
     }
 
     public boolean isGloballyMuted(final @NotNull AbstractSocialUser user) {
-        return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(ChatChannel::getName).toList());
+        return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(ChatChannel::name).toList());
     }
 
     public boolean isMuted(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {
-        return user.blockedChannels().contains(channel.getName());
+        return user.blockedChannels().contains(channel.name());
     }
 
     public void mute(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {
@@ -81,7 +81,7 @@ public class SocialUserManager {
         if (callback.cancelled())
             return;
 
-        user.blockedChannels().add(channel.getName());
+        user.blockedChannels().add(channel.name());
         SocialDatabase.get().update(user);
     }
 
@@ -92,7 +92,7 @@ public class SocialUserManager {
         if (callback.cancelled())
             return;
 
-        user.blockedChannels().remove(channel.getName());
+        user.blockedChannels().remove(channel.name());
         SocialDatabase.get().update(user);
     }
 

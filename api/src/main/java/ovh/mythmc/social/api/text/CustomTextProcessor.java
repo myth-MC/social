@@ -14,6 +14,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialProcessorContext;
 import ovh.mythmc.social.api.text.filter.SocialFilterLike;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
 import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
@@ -84,11 +85,11 @@ public class CustomTextProcessor {
             }
         }
 
-        // Process injected values
-        for (SocialParserContext.InjectedValue injectedValue : processorContext.injectedValues()) {
+        // Process injections
+        for (SocialInjectedValue<?> injectedValue : processorContext.injectedValues()) {
             Component message = processorContext.message();
 
-            message = injectedValue.parser().parse(processorContext.withMessage(message));
+            message = injectedValue.parse(processorContext.withMessage(message));
             processorContext = SocialProcessorContext.from(processorContext.withMessage(message), this);
         }
 

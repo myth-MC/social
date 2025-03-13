@@ -5,6 +5,6 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Callback
-public final record SocialChannelPostSwitch(AbstractSocialUser user, ChatChannel previousChannel, ChatChannel channel) {
+public record SocialChannelPostSwitch(AbstractSocialUser user, boolean informUser, ChatChannel previousChannel, ChatChannel channel) {
     
 }

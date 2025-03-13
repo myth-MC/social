@@ -7,9 +7,8 @@ import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.callback.message.SocialPrivateMessageSend;
-import ovh.mythmc.social.api.callback.message.SocialPrivateMessageSendCallback;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.UserParser;
 
@@ -28,19 +27,31 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
             .commandDescription(Description.of("Sends a private message to another user"))
             .permission("social.use.pm")
             .required("recipient", UserParser.userParser())
-            .required("message", StringParser.greedyStringParser())
+            .optional("message", StringParser.greedyStringParser())
             .handler(ctx -> {
                 final AbstractSocialUser recipient = ctx.get("recipient");
-                final String message = ctx.get("message");
 
-                final var callback = new SocialPrivateMessageSend(ctx.sender(), recipient, message);
-                SocialPrivateMessageSendCallback.INSTANCE.invoke(callback, result -> {
-                    if (result.cancelled())
-                        return;
+                // Send message
+                if (ctx.contains("message")) {
+                    final String message = ctx.get("message");
 
-                    Social.get().getChatManager().sendPrivateMessage(result.sender(), result.recipient(), result.plainMessage());
-                    Social.get().getUserManager().setLatestPrivateMessageRecipient(result.sender(), result.recipient());
-                });    
+                    final var privateChannel = Social.get().getChatManager().privateChatChannel(ctx.sender(), recipient);
+                    final var previousChannel = ctx.sender().mainChannel();
+
+                    // Quickly switch channels
+                    Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
+                    PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
+                    Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
+
+                    // Set latest private message recipient (necessary for the /reply command to work)
+                    Social.get().getUserManager().setLatestPrivateMessageRecipient(ctx.sender(), recipient);
+
+                    return;
+                }
+
+                // Open channel
+                final var privateChannel = Social.get().getChatManager().privateChatChannel(ctx.sender(), recipient);
+                Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
             })
         );
     }

@@ -31,6 +31,7 @@ import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.ChannelParser;
 import ovh.mythmc.social.common.command.parser.IdentifiedParserParser;
+import ovh.mythmc.social.common.command.parser.RegisteredMessageParser;
 import ovh.mythmc.social.common.command.parser.UserParser;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext;
 import ovh.mythmc.social.common.context.SocialHistoryMenuContext.HeaderType;
@@ -122,7 +123,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             .required("channel", ChannelParser.channelParser())
             .handler(ctx -> {
                 final ChatChannel channel = ctx.get("channel");
-                if (channel instanceof GroupChatChannel && !channel.getMemberUuids().contains(ctx.sender().uuid())) {
+                if (channel instanceof GroupChatChannel && !channel.members().contains(ctx.sender())) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getChannelDoesNotExist(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
@@ -130,12 +131,12 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 if (channel == ctx.sender().mainChannel())
                     return;
 
-                if (channel.getPermission() != null && !ctx.sender().checkPermission(channel.getPermission())) {
+                if (channel.permission() != null && !ctx.sender().checkPermission(channel.permission())) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
 
-                Social.get().getUserManager().setMainChannel(ctx.sender(), channel);
+                Social.get().getUserManager().setMainChannel(ctx.sender(), channel, true);
             })
         );
 
@@ -207,10 +208,12 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
         commandManager.command(socialCommand
             .literal("history")
             .literal("thread")
-            .required("id", IntegerParser.integerParser(0, Social.get().getChatManager().getHistory().get().size() - 1))
+            .required("id", RegisteredMessageParser.registeredMessageParser())
+            //.required("id", IntegerParser.integerParser(0, Social.get().getChatManager().getHistory().get().size() - 1))
             .handler(ctx -> {
-                final Integer threadId = ctx.get("id");
-                final SocialRegisteredMessageContext message = Social.get().getChatManager().getHistory().getById(threadId);
+                final SocialRegisteredMessageContext message = ctx.get("id");
+                //final Integer threadId = ctx.get("id");
+                //final SocialRegisteredMessageContext message = Social.get().getChatManager().getHistory().getById(threadId);
                 final SocialHistoryMenuContext context = SocialHistoryMenuContext.builder()
                     .headerType(HeaderType.THREAD)
                     .messages(Social.get().getChatManager().getHistory().getThread(message, 128))
@@ -578,7 +581,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
         );
     }
 
-    static enum DictionaryType {
+    enum DictionaryType {
         EMOJIS,
         KEYWORDS
     }

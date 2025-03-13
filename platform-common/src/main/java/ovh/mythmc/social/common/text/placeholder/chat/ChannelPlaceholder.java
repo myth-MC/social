@@ -20,14 +20,8 @@ public final class ChannelPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        ChatChannel chatChannel = context.channel();
-        
-        String channelName = chatChannel.getName();
-        if (chatChannel instanceof GroupChatChannel groupChatChannel && groupChatChannel.getAlias() != null)
-            channelName = groupChatChannel.getAlias();
-
-        return Component.text(channelName)
-            .color(chatChannel.getColor());
+        return Component.text(context.channel().aliasOrName())
+            .color(context.channel().color());
     }
 
 }

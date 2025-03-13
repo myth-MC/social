@@ -45,7 +45,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component mainChannel = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMainChannel()),
-            Component.text(context.target().mainChannel().getName())
+            Component.text(context.target().mainChannel().name())
         );
 
         Component visibleChannels = getField(
@@ -56,7 +56,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
         Component visibleChannelsHoverText = MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannelsHoverText());
 
         for (ChatChannel channel : Social.get().getChatManager().getVisibleChannels(context.target())) {
-            SocialParserContext parserContext = SocialParserContext.builder(context.target(), Component.text(channel.getIcon() + " " + channel.getName(), channel.getColor()))
+            SocialParserContext parserContext = SocialParserContext.builder(context.target(), channel.icon().append(Component.text(" " + channel.name(), channel.color())))
                 .build();
 
             visibleChannelsHoverText = visibleChannelsHoverText

@@ -38,6 +38,11 @@ public final class AnnouncementManager {
         return announcements.remove(announcement);
     }
 
+    public void unregisterAllAnnouncements() {
+        List.copyOf(announcements).forEach(this::unregisterAnnouncement);
+        latest = 0;
+    }
+
     private void performTask() {
         if (!Social.get().getConfig().getAnnouncements().isEnabled())
             return;
@@ -45,33 +50,33 @@ public final class AnnouncementManager {
         asyncScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
-                SocialAnnouncement announcement = announcements.get(latest);
+            final SocialAnnouncement announcement = announcements.get(latest);
 
-                if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
-                    Social.get().getUserService().get().forEach(user -> {
-                        SocialParserContext context = SocialParserContext.builder(user, announcement.message())
-                            .messageChannelType(ChannelType.ACTION_BAR)
+            if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
+                Social.get().getUserService().get().forEach(user -> {
+                    final SocialParserContext context = SocialParserContext.builder(user, announcement.message())
+                        .messageChannelType(ChannelType.ACTION_BAR)
+                        .build();
+
+                    Social.get().getTextProcessor().parseAndSend(context);
+                });
+            } else {
+                for (ChatChannel channel : announcement.channels()) {
+                    channel.members().forEach(user -> {
+                        final SocialParserContext context = SocialParserContext.builder(user, announcement.message())
                             .build();
 
-                        Social.get().getTextProcessor().parseAndSend(context);
+                        final Component component = Social.get().getTextProcessor().parse(context);
+                        Social.get().getTextProcessor().send(user, component, ChannelType.CHAT, channel);
                     });
-                } else {
-                    for (ChatChannel channel : announcement.channels()) {
-                        channel.getMembers().forEach(user -> {
-                            SocialParserContext context = SocialParserContext.builder(user, announcement.message())
-                                .build();
-
-                            Component component = Social.get().getTextProcessor().parse(context);
-                            Social.get().getTextProcessor().send(user, component, ChannelType.CHAT, channel);
-                        });
-                    }
                 }
+            }
 
-                latest++;
-                if (latest >= announcements.size())
-                    latest = 0;
+            latest++;
+            if (latest >= announcements.size())
+                latest = 0;
 
-                performTask();
+            performTask();
             }
         }, Social.get().getConfig().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
     }

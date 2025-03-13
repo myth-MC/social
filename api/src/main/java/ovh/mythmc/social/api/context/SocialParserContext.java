@@ -13,7 +13,8 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
-import ovh.mythmc.social.api.text.injection.SocialInjectionParser;
+import ovh.mythmc.social.api.text.injection.value.AbstractSocialInjectedValue;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Data
@@ -39,7 +40,7 @@ public class SocialParserContext implements SocialContext {
 
     @ApiStatus.Experimental
     @With(AccessLevel.NONE)
-    private final List<InjectedValue> injectedValues;
+    private final List<SocialInjectedValue<?>> injectedValues;
 
     SocialParserContext(
         AbstractSocialUser user,
@@ -47,7 +48,7 @@ public class SocialParserContext implements SocialContext {
         Component message,
         ChannelType messageChannelType,
         SocialParserGroup group,
-        List<InjectedValue> injectedValues) {
+        List<SocialInjectedValue<?>> injectedValues) {
 
         this.user = user;
         this.channel = channel;
@@ -61,15 +62,36 @@ public class SocialParserContext implements SocialContext {
         return Optional.ofNullable(group);
     }
 
-    public List<InjectedValue> injectedValues() {
+    public List<SocialInjectedValue<?>> injectedValues() {
         return List.copyOf(injectedValues);
     }
 
     @SuppressWarnings("unchecked")
-    public <V> Optional<V> getInjectedValue(@NotNull String identifier) {
-        return (Optional<V>) this.injectedValues.stream()
+    public <T extends SocialInjectedValue<?>> List<T> injectedValues(@NotNull Class<T> type) {
+        return injectedValues().stream()
+            .filter(type::isInstance)
+            .map(injectedValue -> (T) injectedValue)
+            .toList();
+    }
+
+    public void injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
+        this.injectedValues.add(injectedValue);
+    }
+
+    public void injectValues(@NotNull Iterable<? extends SocialInjectedValue<?>> injectedValues) {
+        injectedValues.forEach(this.injectedValues::add);
+    }
+
+    public @Nullable <V> V getInjectedValue(@NotNull String identifier) {
+        return getInjectedValue(identifier, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public @Nullable <V> V getInjectedValue(@NotNull String identifier, V defaultValue) {
+        return (V) injectedValues(AbstractSocialInjectedValue.Identified.class).stream()
             .filter(injectedValue -> injectedValue.identifier().equals(identifier))
-            .findFirst();
+            .map(AbstractSocialInjectedValue::value)
+            .findFirst().orElse(defaultValue);
     }
 
     public static abstract class Builder<T extends Builder<?, ?>, R> {
@@ -84,7 +106,7 @@ public class SocialParserContext implements SocialContext {
 
         protected SocialParserGroup group;
 
-        protected List<InjectedValue> injectedValues;
+        protected List<SocialInjectedValue<?>> injectedValues;
 
         Builder(AbstractSocialUser user, Component message) {
             this.user = user;
@@ -113,8 +135,13 @@ public class SocialParserContext implements SocialContext {
             return get();
         }
 
-        public T injectValue(@NotNull String identifier, @NotNull Object value, @NotNull SocialInjectionParser parser) {
-            get().injectedValues.add(new InjectedValue(identifier, value, parser));
+        public T injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
+            get().injectedValues.add(injectedValue);
+            return get();
+        }
+
+        public T injectValues(@NotNull Iterable<? extends SocialInjectedValue<?>> injectedValues) {
+            injectedValues.forEach(get().injectedValues::add);
             return get();
         }
 
@@ -140,34 +167,6 @@ public class SocialParserContext implements SocialContext {
                 messageChannelType,
                 group,
                 injectedValues);
-        }
-
-    }
-
-    public static class InjectedValue {
-
-        private final String identifier;
-
-        private final Object value;
-
-        private final SocialInjectionParser parser;
-
-        private InjectedValue(String identifier, Object value, SocialInjectionParser parser) {
-            this.identifier = identifier;
-            this.value = value;
-            this.parser = parser;
-        }
-
-        public String identifier() {
-            return identifier;
-        }
-
-        public Object value() {
-            return value;
-        }
-
-        public SocialInjectionParser parser() {
-            return parser;
         }
 
     }

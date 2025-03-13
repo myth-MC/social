@@ -48,7 +48,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         var plainMessage = PlainTextComponentSerializer.plainText().serialize(message(event));
 
         // Flood filter
-        if (Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
+        if (Social.get().getConfig().getChat().getFilter().isEnabled() && Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
             int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
             if (System.currentTimeMillis() - sender.latestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
@@ -95,7 +95,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         plainMessage = preCallback.plainMessage();
 
         // Set viewers
-        Set<Audience> viewers = new HashSet<>(channel.getMembers());
+        Set<Audience> viewers = new HashSet<>(channel.members());
 
         // Add socialspy
         viewers.addAll(Social.get().getUserService().getSocialSpyUsers());
@@ -107,7 +107,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         viewers(event, viewers);
 
         // Get message context
-        final var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.getMembers()), plainMessage, replyId, signedMessage(event));
+        final var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.members()), plainMessage, replyId, signedMessage(event));
 
         // Filter message
         final var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
@@ -134,8 +134,9 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
                 registeredMessage.timestamp(), 
                 registeredMessage.sender(), 
                 registeredMessage.channel(), 
-                registeredMessage.viewers(), 
-                registeredMessage.message().applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") "))), 
+                registeredMessage.viewers(),
+                registeredMessage.message(),
+                //registeredMessage.message().applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") "))),
                 registeredMessage.rawMessage(), 
                 registeredMessage.replyId(),
                 registeredMessage.signedMessage().orElse(null))

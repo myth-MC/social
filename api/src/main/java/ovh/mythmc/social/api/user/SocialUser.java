@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.audience.Audience;
@@ -42,7 +43,7 @@ public interface SocialUser {
 
     boolean isOnline();
 
-    default Component displayName() {
+    default @NotNull TextComponent displayName() {
         final var displayName = Component.text(cachedDisplayName());
 
         if (displayNameStyle() != null)

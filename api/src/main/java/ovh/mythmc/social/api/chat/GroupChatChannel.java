@@ -3,6 +3,7 @@ package ovh.mythmc.social.api.chat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,26 +15,24 @@ import ovh.mythmc.social.api.callback.group.SocialGroupLeave;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaveCallback;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
-public class GroupChatChannel extends ChatChannel {
+public class GroupChatChannel extends SimpleChatChannel {
 
     private UUID leaderUuid;
 
-    private String alias;
-
     private final int code;
 
-    public GroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias, final int code) {
+    GroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias, final int code) {
         super(
                 "G-" + code,
+                alias,
                 TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getColor()),
-                Social.get().getConfig().getChat().getGroups().getIcon(),
+                Component.text(Social.get().getConfig().getChat().getGroups().getIcon()),
                 Social.get().getConfig().getChat().getGroups().isShowHoverText(),
-                getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),
+                SimpleChatChannel.getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),
                 TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getNicknameColor()),
                 Social.get().getConfig().getChat().getGroups().getTextDivider(),
                 TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getTextColor()),
@@ -42,18 +41,12 @@ public class GroupChatChannel extends ChatChannel {
         );
 
         this.leaderUuid = leaderUuid;
-        this.alias = alias;
         this.code = code;
-    }
-
-    public String getAliasOrName() {
-        return Optional.ofNullable(alias)
-            .orElse(this.getName());
     }
 
     @Override
     public boolean addMember(UUID uuid) {
-        if (getMembers().size() >= Social.get().getConfig().getChat().getGroups().getPlayerLimit())
+        if (members().size() >= Social.get().getConfig().getChat().getGroups().getPlayerLimit())
             return false;
 
         super.addMember(uuid);

@@ -30,7 +30,7 @@ public final class GroupHandler implements SocialCallbackHandler {
         SocialGroupJoinCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_JOIN_MESSAGE, (ctx) -> {
             Component joinMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().mainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerJoinedGroup());
 
-            ctx.groupChatChannel().getMembers().forEach(user -> {
+            ctx.groupChatChannel().members().forEach(user -> {
                 if (user.uuid().equals(ctx.user().uuid())) return;
     
                 Social.get().getTextProcessor().send(user, joinMessage, Social.get().getConfig().getMessages().getChannelType(), ctx.groupChatChannel());
@@ -42,7 +42,7 @@ public final class GroupHandler implements SocialCallbackHandler {
 
             Component leftMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().mainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
     
-            ctx.groupChatChannel().getMembers().forEach(user -> {
+            ctx.groupChatChannel().members().forEach(user -> {
                 Social.get().getTextProcessor().send(user, leftMessage, Social.get().getConfig().getMessages().getChannelType(), ctx.groupChatChannel());
             });
         });
@@ -51,7 +51,7 @@ public final class GroupHandler implements SocialCallbackHandler {
             var leader = ctx.groupChatChannel().getLeader();
         
             // Switch main channel
-            Social.get().getUserManager().setMainChannel(leader, ctx.groupChatChannel());
+            Social.get().getUserManager().setMainChannel(leader, ctx.groupChatChannel(), true);
     
             // Message
             int groupCode = ctx.groupChatChannel().getCode();
@@ -60,7 +60,7 @@ public final class GroupHandler implements SocialCallbackHandler {
         });
 
         SocialGroupDisbandCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_DISBAND_MESSAGE, (ctx) -> {
-            ctx.groupChatChannel().getMembers().forEach(user -> {
+            ctx.groupChatChannel().members().forEach(user -> {
                 Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
     
                 setDefaultChannel(user);
@@ -70,7 +70,7 @@ public final class GroupHandler implements SocialCallbackHandler {
         SocialGroupLeaderChangeCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_LEADER_CHANGE_MESSAGE, (ctx) -> {
             Component leaderChangeMessage = Social.get().getTextProcessor().parse(ctx.leader(), ctx.leader().mainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
 
-            ctx.groupChatChannel().getMembers().forEach(user -> {
+            ctx.groupChatChannel().members().forEach(user -> {
                 Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), leaderChangeMessage, ChannelType.CHAT);
             });
         });
@@ -86,10 +86,10 @@ public final class GroupHandler implements SocialCallbackHandler {
                     group.removeMember(user);
 
                     if (group.getLeaderUuid().equals(user.uuid())) {
-                        if (group.getMembers().isEmpty()) {
+                        if (group.members().isEmpty()) {
                             Social.get().getChatManager().unregisterChatChannel(group);
                         } else {
-                            Social.get().getChatManager().setGroupChannelLeader(group, group.getMemberUuids().get(0));
+                            Social.get().getChatManager().setGroupChannelLeader(group, group.members().stream().findFirst().get().uuid());
                         }
                     }
                 });
@@ -109,10 +109,10 @@ public final class GroupHandler implements SocialCallbackHandler {
     }
 
     private static void setDefaultChannel(AbstractSocialUser user) {
-        ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
+        final ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
         if (defaultChannel == null) return;
 
-        Social.get().getUserManager().setMainChannel(user, defaultChannel);
+        Social.get().getUserManager().setMainChannel(user, defaultChannel, true);
     }
     
 }

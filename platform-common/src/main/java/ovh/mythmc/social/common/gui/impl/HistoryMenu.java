@@ -33,11 +33,11 @@ public class HistoryMenu implements HistoryBookMenu {
         switch (context.headerType()) {
             case CHANNEL:
                 if (context.channel() != null) {
-                    TextColor channelColor = context.channel().getColor();
+                    TextColor channelColor = context.channel().color();
                     if (channelColor.equals(NamedTextColor.YELLOW))
                         channelColor = NamedTextColor.GOLD;
         
-                    scope = Component.text(context.channel().getName(), channelColor);
+                    scope = Component.text(context.channel().name(), channelColor);
                 }
                 break;
             case PLAYER:
@@ -108,7 +108,7 @@ public class HistoryMenu implements HistoryBookMenu {
                     .appendNewline()
                     .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext()).colorIfAbsent(NamedTextColor.BLUE))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().getName(), message.channel().getColor())));
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().name(), message.channel().color())));
 
                 Component toAppend = Component.empty()
                     .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))

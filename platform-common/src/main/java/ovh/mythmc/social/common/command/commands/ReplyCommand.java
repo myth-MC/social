@@ -6,9 +6,8 @@ import org.incendo.cloud.description.Description;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.callback.message.SocialPrivateMessageSend;
-import ovh.mythmc.social.api.callback.message.SocialPrivateMessageSendCallback;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
 
 public final class ReplyCommand implements MainCommand<AbstractSocialUser> {
@@ -34,11 +33,12 @@ public final class ReplyCommand implements MainCommand<AbstractSocialUser> {
                 }
 
                 final String message = ctx.get("message");
-                final var callback = new SocialPrivateMessageSend(ctx.sender(), optionalRecipient.get(), message);
-                SocialPrivateMessageSendCallback.INSTANCE.invoke(callback, result -> {
-                    if (!result.cancelled())
-                        Social.get().getChatManager().sendPrivateMessage(result.sender(), result.recipient(), result.plainMessage());
-                });
+                final var previousChannel = ctx.sender().mainChannel();
+                final var privateChannel = Social.get().getChatManager().privateChatChannel(ctx.sender(), optionalRecipient.get());
+
+                Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
+                PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
+                Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
             })
         );
     }

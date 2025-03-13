@@ -95,7 +95,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 
         // This allows the message to be logged in console and sent to plugins such as DiscordSRV
         event.getRecipients().clear();
-        event.setFormat("(" + messageContext.channel().getName() + ") %s: %s");
+        event.setFormat("(" + messageContext.channel().name() + ") %s: %s");
 	}
     
 }

@@ -6,32 +6,26 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedPlaceholder;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParser;
 
 import java.util.regex.Pattern;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SocialInjectionPlaceholder implements SocialInjectionParser {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class SocialInjectionPlaceholder implements SocialInjectionParser<SocialInjectedPlaceholder> {
 
     public static final SocialInjectionPlaceholder INSTANCE = new SocialInjectionPlaceholder();
 
     @Override
-    public Component parse(@NotNull SocialParserContext context) {
+    public Component parse(@NotNull SocialParserContext context, @NotNull SocialInjectedPlaceholder value) {
         Component message = context.message();
 
-        for (SocialParserContext.InjectedValue injectedValue : context.injectedValues()) {
-            final var regexString = "\\$\\((?i:" + injectedValue.identifier() + "\\))";
+        final var regexString = "\\$\\((?i:" + value.identifier() + "\\))";
 
-            message = message.replaceText(TextReplacementConfig.builder()
-                .match(Pattern.compile(regexString))
-                .replacement((result) -> {
-                    if (injectedValue.value() instanceof Component component)
-                        return component;
-
-                    return Component.text(injectedValue.value().toString());
-                })
-                .build());
-        }
+        message = message.replaceText(TextReplacementConfig.builder()
+            .match(Pattern.compile(regexString))
+            .replacement((result) -> value.value())
+            .build());
 
         return message;
     }

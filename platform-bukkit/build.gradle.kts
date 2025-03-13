@@ -11,6 +11,7 @@ dependencies {
     api(project(":social-api-bukkit"))
     api(project(path = ":social-common", configuration = "shadow"))
     api(libs.org.bstats.bstats.bukkit)
+    api(libs.com.github.imdanix.minitranslator) // Used for PlaceholderAPI legacy codes
     compileOnly(libs.org.incendo.cloud.paper)
     compileOnly(libs.org.spigotmc.spigot.api)
     compileOnly(libs.net.kyori.adventure.platform.bukkit)
@@ -32,6 +33,7 @@ tasks {
 
 tasks.shadowJar {
     relocate("org.bstats", "ovh.mythmc.social.libs.org.bstats")
+    relocate("com.github.imdanix", "ovh.mythmc.social.libs.com.github.imdanix")
 }
 
 description = "social-bukkit"

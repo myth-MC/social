@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
-import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRendererContext;
@@ -21,36 +20,19 @@ public final class ConsoleChatRenderer implements SocialChatRenderer<Audience> {
         final ChatChannel channel = context.channel();
         final String rawMessage = context.rawMessage();
 
-        // Reply icon
-        final Component replyIcon = SocialChatRendererUtil.getReplyIcon(sender, context);
+        final var prefix = Component.empty()
+            .append(Component.text("[" + channel.name() + "]"))
+            .appendSpace()
+            .append(Component.text(sender.name()))
+            .append(Component.text(": "));
 
-        // Get sender's nickname
-        final Component nickname = Component.text(sender.name());
-
-        // Get channel icon
-        final Component channelIcon = Component.text(context.channel().getName())
-            .color(context.channel().getColor());
-
-        // Get channel divider
-        final Component textDivider = Component.text(channel.getTextDivider());
-
-        // Render message prefix (channel icon, reply icon, display name, text divider...)
-        Component renderedPrefix = Social.get().getTextProcessor().parse(
-            SocialParserContext.builder(sender, Component.empty()
-                .append(channelIcon)
-                .appendSpace()
-                .append(replyIcon)
-                .append(nickname)
-                .appendSpace()
-                .append(textDivider)
-                .appendSpace())
-            .build());
+        //final var renderedPrefix = Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, prefix).channel(channel).build());
 
         return new SocialRendererContext(
             sender, 
             channel,
             context.viewers(), 
-            renderedPrefix, 
+            prefix,
             rawMessage,
             Component.text(rawMessage),
             context.replyId(),

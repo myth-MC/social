@@ -65,6 +65,12 @@ public class BukkitPlatformAdapter extends PlatformAdapter {
     }
 
     @Override
+    public void sendChatMessage(@NotNull AbstractSocialUser user, @NotNull String message) {
+        final var bukkitUser = BukkitSocialUser.from(user);
+        bukkitUser.player().ifPresent(player -> player.chat(message));
+    }
+
+    @Override
     public boolean canAssignNickname(@NotNull AbstractSocialUser user, @NotNull String nickname) {
         boolean canAssign = true;
         for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {

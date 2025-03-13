@@ -66,7 +66,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
                     return;
                 }
 
-                Social.get().getChatManager().setGroupChannelAlias(ctx.sender().group().get(), alias);
+                Social.get().getChatManager().setChannelAlias(ctx.sender().group().get(), alias);
                 Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getGroupAliasChanged(), Social.get().getConfig().getMessages().getChannelType());
             })
         );
@@ -77,7 +77,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
             .commandDescription(Description.of("Switches to your group's chat channel"))
             .permission(Permission.allOf(Permission.of("social.use.group.chat"), Requirements.HAS_GROUP))
             .handler(ctx -> {
-                Social.get().getUserManager().setMainChannel(ctx.sender(), ctx.sender().group().get());
+                Social.get().getUserManager().setMainChannel(ctx.sender(), ctx.sender().group().get(), true);
             })
         );
 
@@ -146,7 +146,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
 
                 if (chatChannel.addMember(ctx.sender())) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getJoinedGroup(), Social.get().getConfig().getMessages().getChannelType());
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), chatChannel);
+                    Social.get().getUserManager().setMainChannel(ctx.sender(), chatChannel, true);
                 } else {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getGroupIsFull(), Social.get().getConfig().getMessages().getChannelType());
                 }
@@ -206,13 +206,13 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
                 final var group = ctx.sender().group().get();
 
                 if (group.getLeaderUuid().equals(ctx.sender().uuid())) {
-                    if (group.getMembers().size() < 2) {
+                    if (group.members().size() < 2) {
                         Social.get().getChatManager().unregisterChatChannel(group);
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
                         return;
                     }
         
-                    Social.get().getChatManager().setGroupChannelLeader(group, group.getMemberUuids().get(1));
+                    Social.get().getChatManager().setGroupChannelLeader(group, group.members().stream().findFirst().get().uuid());
                 }
         
                 Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getLeftGroup(), Social.get().getConfig().getMessages().getChannelType());

@@ -20,6 +20,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @CallbackFields({
     @CallbackField(field = "user", getter = "user()"),
     @CallbackField(field = "channel", getter = "channel()"),
+    @CallbackField(field = "informUser", getter = "informUser()"),
     @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
 })
 public final class SocialChannelPreSwitch {
@@ -27,6 +28,8 @@ public final class SocialChannelPreSwitch {
     private @NotNull AbstractSocialUser user;
 
     private @NotNull ChatChannel channel;
+
+    private @NotNull boolean informUser;
 
     private boolean cancelled = false;
     

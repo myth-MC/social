@@ -13,6 +13,7 @@ import ovh.mythmc.social.api.chat.ChannelType;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.text.CustomTextProcessor;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
@@ -28,11 +29,11 @@ public class SocialProcessorContext extends SocialParserContext {
 
     SocialProcessorContext(
         AbstractSocialUser user, 
-        ChatChannel channel, 
+        ChatChannel channel,
         Component message, 
         ChannelType messageChannelType,
         SocialParserGroup group,
-        List<InjectedValue> injectedValues,
+        List<SocialInjectedValue<?>> injectedValues,
         CustomTextProcessor processor) {
 
         super(user, channel, message, messageChannelType, group, injectedValues);

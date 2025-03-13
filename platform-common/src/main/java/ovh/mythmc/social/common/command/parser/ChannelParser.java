@@ -11,8 +11,9 @@ import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import io.leangen.geantyref.TypeToken;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.SimpleChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.common.command.exception.UnauthorizedChannelException;
 import ovh.mythmc.social.common.command.exception.UnknownChannelException;
 
 public final class ChannelParser implements ArgumentParser<AbstractSocialUser, ChatChannel>, BlockingSuggestionProvider.Strings<AbstractSocialUser>, ParserDescriptor<AbstractSocialUser, ChatChannel> {
@@ -36,8 +37,8 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
             @NonNull CommandContext<AbstractSocialUser> commandContext, @NonNull CommandInput input) {
 
         return Social.get().getChatManager().getChannels().stream()
-            .filter(channel -> !(channel instanceof GroupChatChannel))
-            .map(ChatChannel::getName)
+            .filter(channel -> channel instanceof SimpleChatChannel)
+            .map(ChatChannel::name)
             .toList();
     }
 
@@ -50,6 +51,9 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
 
         if (channel == null)
             return ArgumentParseResult.failure(new UnknownChannelException(input, this, commandContext));
+
+        if (!(channel instanceof SimpleChatChannel))
+            return ArgumentParseResult.failure(new UnauthorizedChannelException(input, this, commandContext));
 
         return ArgumentParseResult.success(channel);
     }

@@ -14,6 +14,7 @@ org-incendo-cloud-core = "2.0.0"
 org-incendo-cloud-minecraft-extras = "2.0.0-beta.10"
 org-incendo-cloud-paper = "2.0.0-beta.10"
 org-spigotmc-spigot-api = "1.21.4-R0.1-SNAPSHOT"
+com-github-imdanix-minitranslator = "v2.3"
 
 [libraries]
 com-discordsrv-discordsrv = { module = "com.discordsrv:discordsrv", version.ref = "com-discordsrv-discordsrv" }
@@ -28,3 +29,4 @@ org-incendo-cloud-core = { module = "org.incendo:cloud-core", version.ref = "org
 org-incendo-cloud-minecraft-extras = { module = "org.incendo:cloud-minecraft-extras", version.ref = "org-incendo-cloud-minecraft-extras" }
 org-incendo-cloud-paper = { module = "org.incendo:cloud-paper", version.ref = "org-incendo-cloud-paper" }
 org-spigotmc-spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "org-spigotmc-spigot-api" }
+com-github-imdanix-minitranslator = { module = "com.github.imDaniX:MiniTranslator", version.ref = "com-github-imdanix-minitranslator" }

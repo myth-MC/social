@@ -11,5 +11,7 @@ public final class SocialCaptionKeys {
     public static final Caption ARGUMENT_PARSE_FAILURE_REACTION = Caption.of("argument.parse.failure.reaction");
 
     public static final Caption ARGUMENT_PARSE_FAILURE_USER = Caption.of("argument.parse.failure.user");
+
+    public static final Caption ARGUMENT_PARSE_FAILURE_MESSAGE = Caption.of("argument.parse.failure.message");
     
 }

@@ -69,9 +69,9 @@ public final class ChatHistory {
         return messages.values().stream().toList();
     }
 
-    public List<SocialRegisteredMessageContext> getByChannel(final @NotNull ChatChannel chatChannel) {
+    public List<SocialRegisteredMessageContext> getByChannel(final @NotNull ChatChannel channel) {
         return messages.values().stream()
-                .filter(message -> message.channel().equals(chatChannel))
+                .filter(message -> message.channel().equals(channel))
                 .toList();
     }
 

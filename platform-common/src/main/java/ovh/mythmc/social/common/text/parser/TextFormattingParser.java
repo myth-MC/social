@@ -7,7 +7,7 @@ import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.filter.SocialFilterLike;
-import ovh.mythmc.social.api.text.injection.defaults.SocialInjectionTagParser;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +21,8 @@ public final class TextFormattingParser implements SocialFilterLike {
 
         final List<TagResolver> tagResolvers = new ArrayList<>();
 
-        context.injectedValues().forEach(injectedValue -> {
-            if (injectedValue.parser() instanceof SocialInjectionTagParser && injectedValue.value() instanceof TagResolver tagResolver) {
-                tagResolvers.add(tagResolver);
-            }
+        context.injectedValues(SocialInjectedTag.class).forEach(injectedTag -> {
+            tagResolvers.add(injectedTag.value());
         });
 
         return miniMessage(

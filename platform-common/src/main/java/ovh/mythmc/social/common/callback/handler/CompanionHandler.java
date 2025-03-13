@@ -36,7 +36,7 @@ public final class CompanionHandler implements SocialCallbackHandler {
                     return;
     
                 if (ctx.channel() instanceof GroupChatChannel groupChannel &&
-                    !groupChannel.getMemberUuids().contains(user.uuid()))
+                    !groupChannel.members().contains(user))
                     return;
     
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel()))
@@ -97,9 +97,9 @@ public final class CompanionHandler implements SocialCallbackHandler {
                     if (user.companion().isEmpty())
                         return;
 
-                    ChatChannel channel = Social.get().getChatManager().getChannel(new String(payload));
+                    final ChatChannel channel = Social.get().getChatManager().getChannel(new String(payload));
                     if (channel != null)
-                        Social.get().getUserManager().setMainChannel(user, channel);
+                        Social.get().getUserManager().setMainChannel(user, channel, false);
                 }
                 case "social:preview" -> {
                     if (user.companion().isEmpty())

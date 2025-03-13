@@ -28,5 +28,7 @@ public abstract class PlatformAdapter {
     public abstract void sendServerLinks(@NotNull AbstractSocialUser user, @NotNull Collection<ServerLink> links);
 
     public abstract void sendAutoCompletions(@NotNull AbstractSocialUser user, @NotNull Collection<String> autoCompletions);
-    
+
+    public abstract void sendChatMessage(@NotNull AbstractSocialUser user, @NotNull String message);
+
 }

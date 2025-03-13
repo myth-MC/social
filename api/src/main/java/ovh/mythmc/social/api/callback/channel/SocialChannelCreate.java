@@ -4,6 +4,6 @@ import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.social.api.chat.ChatChannel;
 
 @Callback
-public final record SocialChannelCreate(ChatChannel channel) {
+public record SocialChannelCreate(ChatChannel channel) {
     
 }

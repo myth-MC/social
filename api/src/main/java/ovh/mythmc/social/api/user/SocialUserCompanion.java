@@ -41,11 +41,11 @@ public final class SocialUserCompanion {
     private final AbstractSocialUser user;
 
     public void open(final @NotNull ChatChannel channel) {
-        String name = channel.getName();
+        String name = channel.name();
         String alias = CompanionModUtils.getAliasWithPrefix(channel);
         String icon = CompanionModUtils.getIconWithoutBrackets(channel);
         String description = GsonComponentSerializer.gson().serialize(Social.get().getTextProcessor().parse(
-            SocialParserContext.builder(user, channel.getHoverText())
+            SocialParserContext.builder(user, channel.description())
                 .channel(channel)
                 .build()));
 
@@ -54,14 +54,14 @@ public final class SocialUserCompanion {
             alias.getBytes(StandardCharsets.UTF_8),
             icon.getBytes(StandardCharsets.UTF_8),
             description.getBytes(StandardCharsets.UTF_8),
-            String.valueOf(channel.getColor().value()).getBytes(StandardCharsets.UTF_8)  
+            String.valueOf(channel.color().value()).getBytes(StandardCharsets.UTF_8)
         );
 
         user.sendCustomPayload("social:open", bytes);
     }
 
     public void close(final @NotNull ChatChannel channel) {
-        user.sendCustomPayload("social:close", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
+        user.sendCustomPayload("social:close", encode(channel.name().getBytes(StandardCharsets.UTF_8)));
     }
 
     public void clear() {
@@ -69,12 +69,12 @@ public final class SocialUserCompanion {
     }
 
     public void mainChannel(final @NotNull ChatChannel channel) {
-        user.sendCustomPayload("social:switch", encode(channel.getName().getBytes(StandardCharsets.UTF_8)));
+        user.sendCustomPayload("social:switch", encode(channel.name().getBytes(StandardCharsets.UTF_8)));
     }
 
     public void mention(final @NotNull ChatChannel channel, final @NotNull AbstractSocialUser sender) {
         final var bytes = encode(
-            channel.getName().getBytes(StandardCharsets.UTF_8),
+            channel.name().getBytes(StandardCharsets.UTF_8),
             sender.cachedDisplayName().getBytes(StandardCharsets.UTF_8),
             sender.uuid().toString().getBytes(StandardCharsets.UTF_8)
         );

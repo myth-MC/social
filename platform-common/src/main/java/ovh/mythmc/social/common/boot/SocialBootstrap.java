@@ -15,9 +15,8 @@ import ovh.mythmc.social.common.feature.AddonFeature;
 import ovh.mythmc.social.common.feature.BootstrapFeature;
 import ovh.mythmc.social.common.text.parser.MiniMessageParser;
 import ovh.mythmc.social.common.text.placeholder.chat.ChannelIconPlaceholder;
-import ovh.mythmc.social.common.text.placeholder.chat.ChannelNicknameColorPlaceholder;
 import ovh.mythmc.social.common.text.placeholder.chat.ChannelPlaceholder;
-import ovh.mythmc.social.common.text.placeholder.chat.ChannelTextColorPlaceholder;
+import ovh.mythmc.social.common.text.placeholder.chat.ClickableChannelIconPlaceholder;
 import ovh.mythmc.social.common.text.placeholder.player.ClickableNicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholder.player.FormattedNicknamePlaceholder;
 import ovh.mythmc.social.common.text.placeholder.player.NicknamePlaceholder;
@@ -143,8 +142,7 @@ public abstract class SocialBootstrap implements Social {
         Social.get().getTextProcessor().registerContextualParser(
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
-                new ChannelNicknameColorPlaceholder(),
-                new ChannelTextColorPlaceholder(),
+                new ClickableChannelIconPlaceholder(),
                 new SocialSpyPlaceholder()
         );
 

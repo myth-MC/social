@@ -23,4 +23,6 @@ public class InfoMessages {
 
     private String userUnmutedGlobally = "$(info_prefix) <gray>You have been unmuted globally.</gray>";
 
+    private String userOpenedPrivateChannel = "$(info_prefix) <gray>You have opened a <green>private channel</green> with $(formatted_nickname).</gray>";
+
 }
