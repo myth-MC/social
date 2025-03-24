@@ -32,7 +32,7 @@ public final class ChatManager {
 
     private final ChatHistory history = new ChatHistory();
 
-    private final Collection<ChatChannel> channels = new ArrayList<>();
+    private final Set<ChatChannel> channels = new HashSet<>();
 
     private final Map<Class<?>, SocialChatRenderer.Registered<?>> renderersMap = new HashMap<>();
 

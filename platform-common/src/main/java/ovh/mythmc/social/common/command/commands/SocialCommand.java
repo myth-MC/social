@@ -364,7 +364,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             .literal("set")
             .commandDescription(Description.of("Sets a nickname"))
             .permission("social.use.nickname.set")
-            .required("nickname", StringParser.stringParser())
+            .required("nickname", StringParser.quotedStringParser())
             .optional("user", UserParser.userParser())
             .handler(ctx -> {
                 String nickname = ctx.get("nickname");

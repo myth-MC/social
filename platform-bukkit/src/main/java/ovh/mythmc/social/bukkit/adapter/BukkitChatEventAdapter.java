@@ -43,6 +43,11 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
     }
 
     @Override
+    protected void cancel(AsyncPlayerChatEvent event) {
+        event.setCancelled(true);
+    }
+
+    @Override
     @EventHandler
     public void on(AsyncPlayerChatEvent event) {
         super.on(event);

@@ -61,12 +61,38 @@ dependencies {
 }
 
 group = "ovh.mythmc"
-version = "0.5.0"
+version = "0.5.0db2"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
+        pom {
+            name = "social"
+            description = "Enhance your server's communication with social. Modular, customizable and feature-packed."
+            url = "https://github.com/myth-MC/social"
+            licenses {
+                license {
+                    name = "GNU General Public License v3.0"
+                    url = "https://www.gnu.org/licenses/gpl-3.0.html#license-text"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
+            val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
+            url = if (version.toString().contains("db") || version.toString().contains("rc")) snapshotsRepoUrl else releasesRepoUrl
+
+            credentials {
+                val usernameProvider = providers.gradleProperty("myth-mc-username")
+                val passwordProvider = providers.gradleProperty("myth-mc-password")
+
+                username = usernameProvider.get()
+                password = passwordProvider.get()
+            }
+        }
     }
 }
 

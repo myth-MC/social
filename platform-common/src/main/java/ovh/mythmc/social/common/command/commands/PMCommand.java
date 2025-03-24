@@ -7,6 +7,8 @@ import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.PrivateChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
@@ -24,6 +26,15 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
         final Command.Builder<AbstractSocialUser> pmCommand = commandManager.commandBuilder("pm", "msg", "w", "whisper", "tell");
 
         commandManager.command(pmCommand
+            .handler(ctx -> {
+                if (ctx.sender().mainChannel() instanceof PrivateChatChannel) {
+                    final ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
+                    Social.get().getUserManager().setMainChannel(ctx.sender(), defaultChannel, true);
+                }
+            })
+        );
+
+        commandManager.command(pmCommand
             .commandDescription(Description.of("Sends a private message to another user"))
             .permission("social.use.pm")
             .required("recipient", UserParser.userParser())
@@ -33,7 +44,7 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
 
                 // Send message
                 if (ctx.contains("message")) {
-                    final String message = ctx.get("message");
+                    final String message = ctx.get("message");;
 
                     final var privateChannel = Social.get().getChatManager().privateChatChannel(ctx.sender(), recipient);
                     final var previousChannel = ctx.sender().mainChannel();
@@ -51,7 +62,7 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
 
                 // Open channel
                 final var privateChannel = Social.get().getChatManager().privateChatChannel(ctx.sender(), recipient);
-                Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
+                Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, true);
             })
         );
     }

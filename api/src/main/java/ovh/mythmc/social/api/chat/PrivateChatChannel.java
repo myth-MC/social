@@ -6,6 +6,7 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
@@ -64,6 +65,7 @@ public class PrivateChatChannel extends ChatChannel {
         );
     }
 
+    @ApiStatus.Internal
     private AbstractSocialUser getRecipientForSender(@NotNull AbstractSocialUser user) {
         if (participant1.uuid().equals(user.uuid()))
             return participant2;

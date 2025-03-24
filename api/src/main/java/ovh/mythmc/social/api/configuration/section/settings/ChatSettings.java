@@ -46,13 +46,21 @@ public class ChatSettings {
             new Channel("staff", null, "global", "#FF5555", "social.admin", "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", null, List.of("This channel is restricted to staff members"), "#FFFF55", null, null, null)
     );
 
+    @Comment({
+        "When set to true, the plugin will automatically create commands that allow users to send messages through specific channels without switching their main one",
+        "For example:",
+        "- /global (switches to the global channel)",
+        "- /staff Hey! (sends 'Hey!' to the staff channel)"
+    })
+    private boolean createChannelCommands = false;
+
     @Comment("Whether mentions should be enabled or disabled")
     private boolean mentions = true;
 
     @Comment("Sound that will be played to the mentioned player")
     private String mentionSound = "block.chain.place";
 
-    @Comment({"Whether text formatting options for players should be enabled", "This will allow colors and text decoration to players with permission social.text-formatting"})
+    @Comment({"Whether text formatting options for players should be enabled", "This will allow using colors and text decoration tags to players with permission social.text-formatting"})
     private boolean playerFormatOptions = true;
 
     @Comment("Groups module")

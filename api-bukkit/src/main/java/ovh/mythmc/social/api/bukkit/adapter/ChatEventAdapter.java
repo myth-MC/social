@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
@@ -27,20 +25,24 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 
 public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> implements Listener {
 
-    public abstract Component message(E event);
+    protected abstract Component message(E event);
 
-    public abstract SignedMessage signedMessage(E event);
+    protected abstract SignedMessage signedMessage(E event);
 
-    public abstract void viewers(E event, Set<Audience> viewers);
+    protected abstract void viewers(E event, Set<Audience> viewers);
 
-    public abstract void render(E event, @NotNull SocialRegisteredMessageContext messageContext);
+    protected abstract void render(E event, @NotNull SocialRegisteredMessageContext messageContext);
 
+    protected abstract void cancel(E event);
+    
     public void on(E event) {
+        if (event.isCancelled())
+            return;
+
         // Set variables
-        //final var sender = Social.get().getUserService().getByUuid(event.getPlayer().getUniqueId()).orElse(null);
         final var sender = BukkitSocialUser.from(event.getPlayer());
         if (sender == null) {
-            event.setCancelled(true);
+            cancel(event);
             return;
         }
 
@@ -55,7 +57,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
                     sender.player().isPresent() && !sender.checkPermission("social.filter.bypass")) {
 
                 Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
-                event.setCancelled(true);
+                cancel(event);
                 return;
             }
         }
@@ -63,7 +65,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         // Cancel and show error message if sender is muted
         if (Social.get().getUserManager().isMuted(sender, channel)) {
             Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(), Social.get().getConfig().getMessages().getChannelType());
-            event.setCancelled(true);
+            cancel(event);
             return;
         }
 
@@ -77,7 +79,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
 
         // Cancel if message is empty
         if (plainMessage.isBlank()) {
-            event.setCancelled(true);
+            cancel(event);
             return;
         }
 
@@ -86,7 +88,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         SocialMessagePrepareCallback.INSTANCE.invoke(preCallback);
 
         if (preCallback.cancelled()) {
-            event.setCancelled(true);
+            cancel(event);
             return;
         }
 
@@ -136,7 +138,6 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
                 registeredMessage.channel(), 
                 registeredMessage.viewers(),
                 registeredMessage.message(),
-                //registeredMessage.message().applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") "))),
                 registeredMessage.rawMessage(), 
                 registeredMessage.replyId(),
                 registeredMessage.signedMessage().orElse(null))

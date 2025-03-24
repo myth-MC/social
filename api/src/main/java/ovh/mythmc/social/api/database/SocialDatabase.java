@@ -29,6 +29,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Internal
@@ -198,14 +199,16 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
 
         try {
             List<T> users = usersDao.queryBuilder()
-                    .where()
-                    .eq("name", name)
-                    .query();
+                .where()
+                .eq("cachedNickname", name)
+                .query();
 
             if (users != null && !users.isEmpty()) {
                 T user = users.getFirst();
-                
-                usersCache.put(user.uuid(), user);
+
+                if (user.isOnline()) // We'll only cache the result if the player is online
+                    usersCache.put(user.uuid(), user);
+
                 return user;
             }
         } catch (SQLException e) {
@@ -217,6 +220,7 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
 
     private T findCachedUserByName(final @NotNull String name) {
         return usersCache.values().stream()
+            .filter(SocialUser::isOnline)
             .filter(user -> user.name().equals(name))
             .findFirst().orElse(null);
     }

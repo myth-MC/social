@@ -52,7 +52,6 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
     public void register(@NotNull CommandManager<AbstractSocialUser> commandManager) {
         final Command.Builder<AbstractSocialUser> groupCommand = commandManager.commandBuilder("group");
 
-
         // /group alias
         commandManager.command(groupCommand
             .literal("alias")

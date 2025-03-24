@@ -11,9 +11,13 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.SimpleChatChannel;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.defaults.ConsoleChatRenderer;
+import ovh.mythmc.social.api.scheduler.SocialScheduler;
+import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.callback.handler.ChatHandler;
+import ovh.mythmc.social.common.command.SocialCommandProvider;
 
 @Feature(group = "social", identifier = "CHAT")
 public final class ChatFeature {
@@ -30,6 +34,17 @@ public final class ChatFeature {
     @FeatureEnable
     public void enable() {
         chatHandler.register();
+
+        // Register channel commands
+        SocialScheduler.get().runAsyncTaskLater(() -> {
+            if (Social.get().getConfig().getChat().isCreateChannelCommands()) {
+                final SocialCommandProvider commandProvider = ((SocialBootstrap) Social.get()).getCommandProvider();
+
+                Social.get().getChatManager().getChannels().stream()
+                    .filter(channel -> channel instanceof SimpleChatChannel)
+                    .forEach(commandProvider::registerChannelCommand);
+            }
+        }, 40);
 
         // Assign channels to every user
         final ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
@@ -59,6 +74,12 @@ public final class ChatFeature {
     public void disable() {
         // Unregister handlers
         chatHandler.unregister();
+
+        // Unregister channel commands
+        final SocialCommandProvider commandProvider = ((SocialBootstrap) Social.get()).getCommandProvider();
+        Social.get().getChatManager().getChannels().stream()
+            .filter(channel -> channel instanceof SimpleChatChannel)
+            .forEach(commandProvider::unregisterChannelCommand);
 
         // Remove channels
         Social.get().getChatManager().getChannels().clear();

@@ -71,9 +71,23 @@ public class CustomTextProcessor {
             }
 
             processorContext.addAppliedParser(parser.getClass());
-            processorContext = SocialProcessorContext.from(processorContext.withMessage(parser.parse(processorContext)), this);
+
+            try {
+                processorContext = SocialProcessorContext.from(processorContext.withMessage(parser.parse(processorContext)), this);
+                processorContext = SocialProcessorContext.from(processorContext.withMessage(parseHoverText(parser, processorContext)), this);
+            } catch (Throwable t) {
+                Social.get().getLogger().error(
+                    "Parser {} couldn't be applied: {}",
+                    parser.getClass().getSimpleName(),
+                    t
+                );
+
+                t.printStackTrace(System.err);
+            }
+
 
             // Workaround to parse the HoverEvent
+            /*
             if (processorContext.message().hoverEvent() != null && processorContext.message().hoverEvent().action().equals(Action.SHOW_TEXT)) {
                 @SuppressWarnings("unchecked")
                 Component hoverText = ((HoverEvent<Component>) processorContext.message().hoverEvent()).value();
@@ -83,6 +97,8 @@ public class CustomTextProcessor {
 
                 processorContext = SocialProcessorContext.from(processorContext.withMessage(messageWithHoverText), this);
             }
+
+             */
         }
 
         // Process injections
@@ -138,6 +154,21 @@ public class CustomTextProcessor {
 
     public void injectParser(@NotNull SocialContextualParser parser) {
         this.parserQueue.add(parser);
+    }
+
+    private static Component parseHoverText(@NotNull SocialContextualParser parser, @NotNull SocialProcessorContext context) {
+        Component message = context.message();
+
+        // Workaround to parse the HoverEvent
+        if (context.message().hoverEvent() != null && context.message().hoverEvent().action().equals(Action.SHOW_TEXT)) {
+            @SuppressWarnings("unchecked")
+            Component hoverText = ((HoverEvent<Component>) context.message().hoverEvent()).value();
+
+            message = context.message()
+                .hoverEvent(parser.parse(context.withMessage(hoverText)));
+        }
+
+        return message;
     }
     
 }

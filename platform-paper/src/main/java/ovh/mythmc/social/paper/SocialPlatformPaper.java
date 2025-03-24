@@ -1,8 +1,8 @@
 package ovh.mythmc.social.paper;
 
+import org.incendo.cloud.setting.ManagerSetting;
 import ovh.mythmc.social.libs.org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
@@ -74,6 +74,8 @@ public final class SocialPlatformPaper extends SocialBootstrap {
         } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             commandManager.registerAsynchronousCompletions();
         }
+
+        commandManager.settings().set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
 
         // Platform implementations
         SocialAdventureProvider.set(new PaperAdventureProvider());

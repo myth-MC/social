@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -48,9 +50,26 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
     }
 
     @Override
+    public void cancel(AsyncChatEvent event) {
+        // I know this sucks, but for some reason AsyncChatEvent is not cancellable?
+        event.viewers().clear();
+        event.setCancelled(true);
+    }
+
+    @Override
     @EventHandler
     public void on(AsyncChatEvent event) {
-        super.on(event);
+        final boolean isCancelled = event.viewers().stream()
+            .noneMatch(audience -> audience instanceof Player);
+
+        if (!isCancelled)
+            super.on(event);
+    }
+
+    @EventHandler
+    public void cancellationWorkaround(AsyncPlayerChatEvent event) {
+        if (event.isCancelled())
+            event.getRecipients().clear();
     }
 
     @Override

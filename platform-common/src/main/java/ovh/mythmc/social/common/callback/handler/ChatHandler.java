@@ -5,9 +5,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.Sound.Source;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.callback.channel.SocialChannelCreateCallback;
-import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitchCallback;
-import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitchCallback;
+import ovh.mythmc.social.api.callback.channel.*;
 import ovh.mythmc.social.api.callback.message.SocialMessagePrepareCallback;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.chat.ChatChannel;
@@ -31,6 +29,7 @@ public final class ChatHandler implements SocialCallbackHandler {
 
     @Override
     public void register() {
+        // Private channel open info
         SocialChannelCreateCallback.INSTANCE.registerHandler(IdentifierKeys.PRIVATE_MESSAGE_CHANNEL_INFO, ctx -> {
             if (ctx.channel() instanceof PrivateChatChannel privateChatChannel) {
                 final var context = SocialParserContext.builder(privateChatChannel.getParticipant2(), Component.text(Social.get().getConfig().getMessages().getInfo().getUserOpenedPrivateChannel()))
@@ -108,8 +107,17 @@ public final class ChatHandler implements SocialCallbackHandler {
 
             if (user.companion().isPresent()) // Don't send message to users who use the companion mod
                 return;
+
+            if (channel instanceof PrivateChatChannel) {
+                final var context = SocialParserContext.builder(user, Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChangedToPrivateMessage()))
+                    .channel(channel)
+                    .build();
+
+                Social.get().getTextProcessor().parseAndSend(context);
+                return;
+            }
             
-            SocialParserContext context = SocialParserContext.builder(user, Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
+            final var context = SocialParserContext.builder(user, Component.text(Social.get().getConfig().getMessages().getCommands().getChannelChanged()))
                 .channel(channel)
                 .build();
 
