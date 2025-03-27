@@ -61,7 +61,12 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
                     return Social.get().getUserService().getByUuid(player.getUniqueId()).orElse(null);
 
                 return AbstractSocialUser.dummy();
-            }, user -> Bukkit.getPlayer(user.uuid())));
+            }, user -> {
+                if (user instanceof AbstractSocialUser.Dummy)
+                    return Bukkit.getConsoleSender();
+
+                return Bukkit.getPlayer(user.uuid());
+            }));
 
         // Command manager platform-specific adjustments
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {

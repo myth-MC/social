@@ -5,6 +5,7 @@
 plugins {
     `java-library`
     `maven-publish`
+    id("com.gradleup.shadow")
 }
 
 repositories {
@@ -57,7 +58,7 @@ dependencies {
 }
 
 group = "ovh.mythmc"
-version = "0.5.0-db2"
+version = providers.gradleProperty("version").get()
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
@@ -89,6 +90,13 @@ publishing {
                 password = passwordProvider.get()
             }
         }
+    }
+}
+
+tasks.shadowJar {
+    minimize()
+    for (relocation in Relocations.relocations) {
+        relocate(relocation.key, relocation.value)
     }
 }
 

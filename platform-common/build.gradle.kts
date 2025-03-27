@@ -4,11 +4,10 @@
 
 plugins {
     id("buildlogic.java-conventions")
-    id("com.gradleup.shadow") version "9.0.0-beta10"
 }
 
 dependencies {
-    api(project(path = ":social-api", configuration = "shadow"))
+    compileOnly(project(path = ":social-api")) // API should be available at runtime
     compileOnly(libs.org.incendo.cloud.core) // Platform implementations decide whether to shade it
     compileOnly(libs.org.incendo.cloud.minecraft.extras) // ^
 }
