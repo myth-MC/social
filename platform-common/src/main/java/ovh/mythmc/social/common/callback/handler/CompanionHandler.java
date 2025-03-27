@@ -1,9 +1,7 @@
 package ovh.mythmc.social.common.callback.handler;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
-import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.channel.SocialChannelCreateCallback;
 import ovh.mythmc.social.api.callback.channel.SocialChannelDeleteCallback;
@@ -12,8 +10,13 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.network.channel.channels.SocialBonjourChannel;
+import ovh.mythmc.social.api.network.channel.channels.SocialChannelSwitchChannel;
+import ovh.mythmc.social.api.network.channel.channels.SocialChannelsRefreshChannel;
+import ovh.mythmc.social.api.network.channel.channels.SocialMessagePreviewChannel;
+import ovh.mythmc.social.api.network.payload.payloads.channel.SocialChannelSwitchPayload;
+import ovh.mythmc.social.api.network.payload.payloads.message.SocialMessagePreviewPayload;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUserCompanion;
 import ovh.mythmc.social.common.callback.game.CustomPayloadReceiveCallback;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
@@ -80,44 +83,38 @@ public final class CompanionHandler implements SocialCallbackHandler {
 
         CustomPayloadReceiveCallback.INSTANCE.registerHandler("social:companion-receiver", ctx -> {
             final var user = ctx.user();
-            final String payloadChannel = ctx.channel();
-            final byte[] payload = ctx.payload();
 
-            switch (payloadChannel) {
-                case "social:refresh" -> {
-                    user.companion().ifPresent(SocialUserCompanion::refresh);
-                }
-                case "social:bonjour" -> {
-                    if (Social.get().getConfig().getGeneral().isDebug())
-                        Social.get().getLogger().info("Received bonjour message from " + user.name() + "! Companion features will be enabled");
+            if (ctx.channel() instanceof SocialChannelsRefreshChannel) {
+                user.companion().ifPresent(SocialUserCompanion::refresh);
+            } else if (ctx.channel() instanceof SocialBonjourChannel) {
+                if (Social.get().getConfig().getGeneral().isDebug())
+                    Social.get().getLogger().info("Received bonjour message from " + user.name() + "! Companion features will be enabled");
 
-                    Social.get().getUserManager().enableCompanion(user);
-                }
-                case "social:switch" -> {
-                    if (user.companion().isEmpty())
-                        return;
+                Social.get().getUserManager().enableCompanion(user);
+            } else if (ctx.channel() instanceof SocialChannelSwitchChannel) {
+                final ChatChannel channel = ((SocialChannelSwitchPayload) ctx.payload()).channel();
 
-                    final ChatChannel channel = Social.get().getChatManager().getChannel(new String(payload));
-                    if (channel != null)
-                        Social.get().getUserManager().setMainChannel(user, channel, false);
-                }
-                case "social:preview" -> {
-                    if (user.companion().isEmpty())
-                        return;
+                if (user.companion().isEmpty())
+                    return;
 
-                    CompletableFuture.runAsync(() -> {
-                        final var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
-                            SocialParserContext.builder(user, Component.text(new String(payload)))
-                                .build());
-    
-                        final var context = new SocialRegisteredMessageContext(0, 0, user, user.mainChannel(), Set.of(user), filteredMessage, "", null, null);
-                        final var rendered = Social.get().getChatManager().getRegisteredRenderer(AbstractSocialUser.class).render(AbstractSocialUser.dummy(user.mainChannel()), context);
-    
-                        user.companion().get().preview(rendered.prefix().append(rendered.message()));
-                    });
-              
-                }
+                if (channel != null)
+                    Social.get().getUserManager().setMainChannel(user, channel, false);
+            } else if (ctx.channel() instanceof SocialMessagePreviewChannel) {
+                if (user.companion().isEmpty())
+                    return;
+
+                SocialScheduler.get().runAsyncTask(() -> {
+                    final var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
+                        SocialParserContext.builder(user, ((SocialMessagePreviewPayload) ctx.payload()).message())
+                            .build());
+
+                    final var context = new SocialRegisteredMessageContext(0, 0, user, user.mainChannel(), Set.of(user), filteredMessage, "", null, null);
+                    final var rendered = Social.get().getChatManager().getRegisteredRenderer(user.rendererClass()).render(user, context);
+
+                    user.companion().get().preview(rendered.prefix().append(rendered.message()));
+                });
             }
+
         });
     }
 

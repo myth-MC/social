@@ -83,9 +83,21 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
             return;
         }
 
+        // Set viewers
+        final Set<Audience> viewers = new HashSet<>(channel.members());
+
+        // Add socialspy
+        viewers.addAll(Social.get().getUserService().getSocialSpyUsers());
+
+        // Add console
+        viewers.add(SocialAdventureProvider.get().console());
+
         // Prepare message event
-        final var preCallback = new SocialMessagePrepare(sender, channel, plainMessage, replyId);
+        final var preCallback = new SocialMessagePrepare(sender, channel, viewers, plainMessage, replyId);
         SocialMessagePrepareCallback.INSTANCE.invoke(preCallback);
+
+        // Set viewers
+        viewers(event, preCallback.viewers());
 
         if (preCallback.cancelled()) {
             cancel(event);
@@ -95,18 +107,6 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         // Update variables
         channel = preCallback.channel();
         plainMessage = preCallback.plainMessage();
-
-        // Set viewers
-        Set<Audience> viewers = new HashSet<>(channel.members());
-
-        // Add socialspy
-        viewers.addAll(Social.get().getUserService().getSocialSpyUsers());
-
-        // Add console
-        viewers.add(SocialAdventureProvider.get().console());
-
-        // Set viewers
-        viewers(event, viewers);
 
         // Get message context
         final var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.members()), plainMessage, replyId, signedMessage(event));

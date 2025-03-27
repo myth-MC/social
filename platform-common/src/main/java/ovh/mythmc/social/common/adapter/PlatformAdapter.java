@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings.ServerLink;
+import ovh.mythmc.social.api.network.channel.NetworkChannelWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 public abstract class PlatformAdapter {
@@ -21,9 +22,7 @@ public abstract class PlatformAdapter {
 
     public abstract boolean canAssignNickname(@NotNull AbstractSocialUser user, @NotNull String nickname);
 
-    public abstract void registerS2CPayloadChannel(@NotNull String channel);
-
-    public abstract void registerC2SPayloadChannel(@NotNull String channel);
+    public abstract void registerPayloadChannel(final @NotNull NetworkChannelWrapper channel);
 
     public abstract void sendServerLinks(@NotNull AbstractSocialUser user, @NotNull Collection<ServerLink> links);
 

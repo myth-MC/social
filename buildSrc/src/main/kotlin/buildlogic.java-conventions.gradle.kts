@@ -22,10 +22,6 @@ repositories {
     }
 
     maven {
-        url = uri("https://repo.mythmc.ovh/snapshots/")
-    }
-
-    maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
 
@@ -61,7 +57,7 @@ dependencies {
 }
 
 group = "ovh.mythmc"
-version = "0.5.0db2"
+version = "0.5.0-db2"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {

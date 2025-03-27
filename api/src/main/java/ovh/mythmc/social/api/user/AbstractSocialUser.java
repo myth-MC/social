@@ -19,6 +19,8 @@ import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.chat.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.database.model.DatabaseUser;
+import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
+import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
 
 @DatabaseTable(tableName = "users")
@@ -29,7 +31,7 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
 
     public static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
 
-    protected abstract void sendCustomPayload(String channel, byte[] payload);
+    public abstract <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(final @NotNull S2CNetworkChannelWrapper<T> channel, final @NotNull T payload);
 
     public abstract void playReaction(@NotNull Reaction reaction);
 
@@ -143,6 +145,11 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         }
 
         @Override
+        public Class<? extends SocialUser> rendererClass() {
+            return Dummy.class;
+        }
+
+        @Override
         public @NotNull Audience audience() {
             return SocialAdventureProvider.get().console();
         }
@@ -172,7 +179,7 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         }
 
         @Override
-        protected void sendCustomPayload(String channel, byte[] payload) {
+        public <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(@NotNull S2CNetworkChannelWrapper<T> channel, @NotNull T payload) {
         }
 
         @Override

@@ -14,7 +14,6 @@ dependencies {
 }
 
 tasks.shadowJar {
-    minimize()
     relocate("de.exlll", "ovh.mythmc.social.libs.de.exlll")
     relocate("org.snakeyaml", "ovh.mythmc.social.libs.org.snakeyaml")
     relocate("com.j256", "ovh.mythmc.social.libs.com.j256")

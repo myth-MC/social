@@ -1,5 +1,6 @@
 package ovh.mythmc.social.api.callback.message;
 
+import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.Getter;
@@ -12,6 +13,8 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Accessors(fluent = true)
@@ -19,15 +22,18 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @CallbackFields({
     @CallbackField(field = "sender", getter = "sender()"),
     @CallbackField(field = "channel", getter = "channel()"),
+    @CallbackField(field = "viewers", getter = "viewers()"),
     @CallbackField(field = "plainMessage", getter = "plainMessage()"),
     @CallbackField(field = "replyId", getter = "replyId()"),
     @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
 })
-public class SocialMessagePrepare {
+public final class SocialMessagePrepare {
 
     private final AbstractSocialUser sender;
 
     private @NotNull ChatChannel channel;
+
+    private final Set<Audience> viewers;
 
     private @NotNull String plainMessage;
 
@@ -35,9 +41,10 @@ public class SocialMessagePrepare {
 
     private boolean cancelled = false;
 
-    public SocialMessagePrepare(AbstractSocialUser sender, ChatChannel channel, String plainMessage, Integer replyId) {
+    public SocialMessagePrepare(AbstractSocialUser sender, ChatChannel channel, Set<Audience> viewers, String plainMessage, Integer replyId) {
         this.sender = sender;
         this.channel = channel;
+        this.viewers = viewers;
         this.plainMessage = plainMessage;
         this.replyId = replyId;
     }

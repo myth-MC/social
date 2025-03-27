@@ -15,24 +15,28 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings.ServerLink;
+import ovh.mythmc.social.api.network.channel.C2SNetworkChannelWrapper;
+import ovh.mythmc.social.api.network.channel.NetworkChannelWrapper;
+import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.bukkit.callback.game.invoker.CustomPayloadReceiveInvoker;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 
 public class BukkitPlatformAdapter extends PlatformAdapter {
 
-    private final Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
+    private final @NotNull Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
 
     private final CustomPayloadReceiveInvoker listener = new CustomPayloadReceiveInvoker();
 
     @Override
-    public void registerS2CPayloadChannel(@NotNull String channel) {
-        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(plugin, channel);
-    }
+    public void registerPayloadChannel(@NotNull NetworkChannelWrapper channel) {
+        if (channel instanceof C2SNetworkChannelWrapper<?>) {
+            Bukkit.getServer().getMessenger().registerIncomingPluginChannel(plugin, channel.identifier().toString(), listener);
+        }
 
-    @Override
-    public void registerC2SPayloadChannel(@NotNull String channel) {
-        Bukkit.getServer().getMessenger().registerIncomingPluginChannel(plugin, channel, listener);
+        if (channel instanceof S2CNetworkChannelWrapper<?>) {
+            Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(plugin, channel.identifier().toString());
+        }
     }
 
     @Override

@@ -15,6 +15,8 @@ import ovh.mythmc.social.api.chat.GroupChatChannel;
 
 public interface SocialUser {
 
+    Class<? extends SocialUser> rendererClass();
+
     Audience audience();
 
     UUID uuid();

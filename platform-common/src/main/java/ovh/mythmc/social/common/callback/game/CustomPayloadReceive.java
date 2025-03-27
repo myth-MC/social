@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
+import ovh.mythmc.social.api.network.channel.C2SNetworkChannelWrapper;
+import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @AllArgsConstructor
@@ -23,8 +25,8 @@ public final class CustomPayloadReceive {
 
     private final AbstractSocialUser user;
 
-    private final String channel;
+    private final C2SNetworkChannelWrapper<?> channel;
 
-    private final byte[] payload;
+    private final NetworkPayloadWrapper.ClientToServer payload;
     
 }

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.Getter;
@@ -12,8 +13,11 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
+import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Getter
 @Accessors(fluent = true)
@@ -45,6 +49,11 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     }
 
     @Override
+    public Class<? extends SocialUser> rendererClass() {
+        return BukkitSocialUser.class;
+    }
+
+    @Override
     public @NotNull Audience audience() {
         return SocialAdventureProvider.get().user(this);
     }
@@ -70,8 +79,16 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     }
 
     @Override
-    protected void sendCustomPayload(String channel, byte[] payload) {
-        player().get().sendPluginMessage(Bukkit.getPluginManager().getPlugin("social"), channel, payload);
+    public <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(@NotNull S2CNetworkChannelWrapper<T> channel, @NotNull T payload) {
+        player().ifPresent(player -> {
+            final Plugin plugin = Bukkit.getPluginManager().getPlugin("social");
+
+            player.sendPluginMessage(
+                plugin,
+                channel.identifier().toString(),
+                channel.encode(payload).bytes()
+            );
+        });
     }
 
     @Override
