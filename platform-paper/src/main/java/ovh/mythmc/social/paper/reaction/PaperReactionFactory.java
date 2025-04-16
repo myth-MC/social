@@ -14,6 +14,7 @@ import org.bukkit.util.Transformation;
 import com.destroystokyo.paper.profile.PlayerProfile;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.bukkit.scheduler.BukkitSocialScheduler;
@@ -40,7 +41,7 @@ public final class PaperReactionFactory extends ReactionFactory {
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(AbstractSocialUser abstractSocialUser, Reaction emoji) {
+    public void displayReaction(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction emoji) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
 
         if (user.player().isEmpty() || 
@@ -59,7 +60,7 @@ public final class PaperReactionFactory extends ReactionFactory {
     }
 
     @Override
-    public void play(AbstractSocialUser abstractSocialUser, Reaction reaction) {
+    public void play(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction reaction) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
 
         var callback = new SocialReactionTrigger(user, reaction);

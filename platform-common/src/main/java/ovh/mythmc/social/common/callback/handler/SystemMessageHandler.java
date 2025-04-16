@@ -5,8 +5,7 @@ import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
@@ -40,7 +39,7 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
                 }
             }
 
-            final ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
 
             Social.get().getTextProcessor().send(Social.get().getUserService().get(), deathMessage, channelType, null);
             ctx.deathMessage(Component.empty());
@@ -65,7 +64,7 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
                                 return;
             
                             final Component parsedMessage = parse(user, user.mainChannel(), Component.text(unformattedMessage));
-                            final ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+                            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
             
                             Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage, channelType, null);
                         });
@@ -87,7 +86,7 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
                             return;
         
                         final Component parsedMessage = parse(user, user.mainChannel(), Component.text(unformattedMessage));
-                        final ChannelType channelType = ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+                        final ChatChannel.ChannelType channelType = ChatChannel.ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
         
                         Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage, channelType, null);
                     });

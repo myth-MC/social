@@ -6,8 +6,8 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.channel.SocialChannelCreateCallback;
 import ovh.mythmc.social.api.callback.channel.SocialChannelDeleteCallback;
 import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitchCallback;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.network.channel.channels.SocialBonjourChannel;
@@ -39,7 +39,7 @@ public final class CompanionHandler implements SocialCallbackHandler {
                     return;
     
                 if (ctx.channel() instanceof GroupChatChannel groupChannel &&
-                    !groupChannel.members().contains(user))
+                    !groupChannel.isMember(user))
                     return;
     
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel()))
@@ -55,7 +55,7 @@ public final class CompanionHandler implements SocialCallbackHandler {
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel())) {
                     user.companion().get().close(ctx.channel());
                     if (user.mainChannel().equals(ctx.channel()))
-                        user.companion().get().mainChannel(Social.get().getChatManager().getDefaultChannel());
+                        user.companion().get().mainChannel(Social.get().getChatManager().getCachedOrDefault(user));
                 }
             });
         });

@@ -1,4 +1,4 @@
-package ovh.mythmc.social.api.chat;
+package ovh.mythmc.social.api.chat.channel;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,9 +9,12 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
 import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
+import ovh.mythmc.social.api.util.Mutable;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +23,7 @@ import static net.kyori.adventure.text.Component.text;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
-public class SimpleChatChannel extends ChatChannel {
+public class SimpleChatChannel extends ChatChannelImpl {
 
     private final boolean showHoverText;
 
@@ -44,7 +47,7 @@ public class SimpleChatChannel extends ChatChannel {
                                 @Nullable String permission,
                                 boolean joinByDefault) {
 
-        super(name, alias, icon, hoverText, color, FormatBuilder.empty(), permission, joinByDefault, supportedFeatures());
+        super(name, Mutable.of(alias), icon, hoverText, color, ChatFormatBuilder.empty(), permission, joinByDefault, supportedFeatures());
         this.showHoverText = showHoverText;
         this.hoverText = hoverText;
         this.nicknameColor = nicknameColor;
@@ -53,8 +56,8 @@ public class SimpleChatChannel extends ChatChannel {
     }
 
     @Override
-    protected FormatBuilder formatBuilder() {
-        return FormatBuilder.empty()
+    protected ChatFormatBuilder formatBuilder() {
+        return ChatFormatBuilder.empty()
             .append(text("$(clickable_channel_icon)"))
             .appendSpace()
             .append(text("$(formatted_nickname)"))
@@ -87,7 +90,7 @@ public class SimpleChatChannel extends ChatChannel {
         boolean joinByDefault = false;
 
         if (channelField.inherit() != null) { // Inherit properties from another channel
-            final ChatChannel channel = Social.get().getChatManager().getChannel(channelField.inherit());
+            final ChatChannel channel = Social.registries().channels().value(RegistryKey.identified(channelField.inherit())).orElse(null);
             if (channel instanceof SimpleChatChannel inherit) {
                 color = inherit.color();
                 icon = inherit.icon();
@@ -96,7 +99,7 @@ public class SimpleChatChannel extends ChatChannel {
                 nicknameColor = inherit.getNicknameColor();
                 textDivider = inherit.getTextDivider();
                 textColor = inherit.getTextColor();
-                permission = inherit.permission();
+                permission = inherit.permission().orElse(null);
                 joinByDefault = inherit.joinByDefault();
             }
 

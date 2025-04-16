@@ -6,9 +6,9 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
-import ovh.mythmc.social.api.chat.PrivateChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @UtilityClass

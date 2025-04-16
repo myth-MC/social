@@ -145,11 +145,20 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
                 // Schedule next task
                 scheduleAutoSaver();
             }
-        }, 5, TimeUnit.MINUTES);
+        }, Social.get().getConfig().getDatabaseSettings().getCacheClearInterval(), TimeUnit.MINUTES);
     }
 
     private void updateAllEntries() {
+        final boolean debug = Social.get().getConfig().getGeneral().isDebug();
+        final var startTime = System.currentTimeMillis();
+
+        if (debug)
+            logger.info("Updating " + usersCache.size() + " cached users...");
+
         Map.copyOf(usersCache).values().forEach(this::updateEntry);
+
+        if (debug)
+            logger.info("Done! (took " + (System.currentTimeMillis() - startTime) + "ms)");
     }
 
     private void updateEntry(final @NotNull T user) {
@@ -228,18 +237,25 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
     private void upgrade() {
         if (!firstBoot) {
             final int currentVersion = Social.get().getConfig().getDatabaseSettings().getDatabaseVersion();
-            if (currentVersion < 1) {
-                try {
+            try {
+                if (currentVersion < 1) {
                     logger.info("Upgrading database...");
                     usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN displayNameStyle STRING;");
                     logger.info("Done!");
-                } catch (SQLException e) {
-                    logger.error("Exception while upgrading database: {}", e);
                 }
+
+                if (currentVersion < 2) {
+                    logger.info("Upgrading database...");
+                    usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN cachedMainChannel STRING;");
+                    logger.info("Done!");
+                }
+            } catch (SQLException e) {
+                logger.error("Exception while upgrading database: {}", e);
+                e.printStackTrace(System.err);
             }
         }
 
-        Social.get().getConfig().updateDatabaseVersion(1);
+        Social.get().getConfig().updateDatabaseVersion(2);
     }
     
 }

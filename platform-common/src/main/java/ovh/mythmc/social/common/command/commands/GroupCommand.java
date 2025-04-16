@@ -11,7 +11,7 @@ import org.incendo.cloud.permission.PredicatePermission;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.UserParser;
@@ -35,7 +35,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
         };
 
         public final static PredicatePermission<AbstractSocialUser> IS_GROUP_LEADER = user -> {
-            if (user.group().isPresent() && user.group().get().getLeaderUuid().equals(user.uuid()))
+            if (user.group().isPresent() && user.group().get().leaderUuid().get().equals(user.uuid()))
                 return PermissionResult.allowed(Permission.EMPTY);
 
             return PermissionResult.denied(Permission.EMPTY);
@@ -65,7 +65,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
                     return;
                 }
 
-                Social.get().getChatManager().setChannelAlias(ctx.sender().group().get(), alias);
+                ctx.sender().group().get().alias().set(alias);
                 Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getGroupAliasChanged(), Social.get().getConfig().getMessages().getChannelType());
             })
         );
@@ -99,14 +99,14 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
             .handler(ctx -> {
                 final String alias = ctx.getOrDefault("alias", null);
                 if (alias == null) {
-                    Social.get().getChatManager().registerGroupChatChannel(ctx.sender().uuid());
+                    GroupChatChannel.create(ctx.sender().uuid(), null);
                 } else {
                     if (alias.length() > 16) {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getGroupAliasTooLong(), Social.get().getConfig().getMessages().getChannelType());
                         return;
                     }
-        
-                    Social.get().getChatManager().registerGroupChatChannel(ctx.sender().uuid(), alias);
+
+                    GroupChatChannel.create(ctx.sender().uuid(), alias);
                 }
             })
         );
@@ -191,8 +191,8 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
                     // user isn't a member of your group
                     return;
                 }
-        
-                Social.get().getChatManager().setGroupChannelLeader(ctx.sender().group().get(), target.uuid());
+
+                ctx.sender().group().get().leaderUuid().set(target.uuid());
             })
         );
 
@@ -204,14 +204,14 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
             .handler(ctx -> {
                 final var group = ctx.sender().group().get();
 
-                if (group.getLeaderUuid().equals(ctx.sender().uuid())) {
+                if (group.leaderUuid().get().equals(ctx.sender().uuid())) {
                     if (group.members().size() < 2) {
                         Social.get().getChatManager().unregisterChatChannel(group);
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
                         return;
                     }
-        
-                    Social.get().getChatManager().setGroupChannelLeader(group, group.members().stream().findFirst().get().uuid());
+
+                    group.leaderUuid().set(group.members().stream().findFirst().get().uuid());
                 }
         
                 Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getLeftGroup(), Social.get().getConfig().getMessages().getChannelType());

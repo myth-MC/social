@@ -20,8 +20,6 @@ public abstract class PlatformAdapter {
         return instance;
     }
 
-    public abstract boolean canAssignNickname(@NotNull AbstractSocialUser user, @NotNull String nickname);
-
     public abstract void registerPayloadChannel(final @NotNull NetworkChannelWrapper channel);
 
     public abstract void sendServerLinks(@NotNull AbstractSocialUser user, @NotNull Collection<ServerLink> links);

@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
@@ -115,7 +115,7 @@ public class ChatRendererFeature {
     @FunctionalInterface
     public interface Handler {
 
-        void handle(@NotNull AbstractSocialUser target, @NotNull ChatChannel.FormatBuilder format, @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser);
+        void handle(@NotNull AbstractSocialUser target, @NotNull ChatFormatBuilder format, @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser);
 
     }
 

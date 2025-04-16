@@ -3,7 +3,7 @@ package ovh.mythmc.social.api.chat.renderer.defaults;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
 import ovh.mythmc.social.api.context.SocialParserContext;

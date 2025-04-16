@@ -14,7 +14,7 @@ import org.incendo.cloud.permission.PredicatePermission;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.commands.*;
@@ -71,8 +71,8 @@ public final class SocialCommandProvider {
     private static Command.Builder<AbstractSocialUser> channelCommandBuilder(@NotNull CommandManager<AbstractSocialUser> commandManager, @NotNull ChatChannel channel) {
         Command.Builder<AbstractSocialUser> commandBuilder;
 
-        if (channel.alias() != null) {
-            commandBuilder = commandManager.commandBuilder(channel.name(), channel.alias());
+        if (channel.alias().isPresent()) {
+            commandBuilder = commandManager.commandBuilder(channel.name(), channel.alias().get());
         } else {
             commandBuilder = commandManager.commandBuilder(channel.name());
         }
@@ -80,10 +80,10 @@ public final class SocialCommandProvider {
         return commandBuilder
             .commandDescription(Description.of("Switches your main channel to " + channel.name() + " or sends a message without having to switch"))
             .permission(PredicatePermission.of(user -> {
-                if (channel.permission() == null)
+                if (channel.permission().isEmpty())
                     return true;
 
-                return user.checkPermission(channel.permission());
+                return user.checkPermission(channel.permission().get());
             }))
             .optional("message", StringParser.greedyStringParser())
             .handler(ctx -> {

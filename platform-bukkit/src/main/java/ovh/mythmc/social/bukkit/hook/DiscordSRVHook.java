@@ -19,10 +19,10 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.callback.message.SocialMessagePrepareCallback;
 import ovh.mythmc.social.api.callback.message.SocialMessageSendCallback;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 @RequiredArgsConstructor
 public final class DiscordSRVHook implements ChatHook {
@@ -83,17 +83,19 @@ public final class DiscordSRVHook implements ChatHook {
                 return;
 
             // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
-            Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), finalMiniMessage, ChannelType.CHAT);
+            Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), finalMiniMessage, ChatChannel.ChannelType.CHAT);
         });
     }
 
     private static ChatChannel getChannelByCaseInsensitiveName(String name) {
-        if (!Social.get().getChatManager().exists(name)) {
+        final var channelRegistry = Social.registries().channels();
+
+        if (!channelRegistry.containsKey(RegistryKey.identified(name))) {
             DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "No channel matching name " + name + " has been found.");
             return null;
         }
 
-        return Social.get().getChatManager().getChannel(name);
+        return channelRegistry.value(RegistryKey.identified(name)).orElse(null);
     }
 
     @Override

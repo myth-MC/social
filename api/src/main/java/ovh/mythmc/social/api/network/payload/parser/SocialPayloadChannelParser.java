@@ -2,10 +2,10 @@ package ovh.mythmc.social.api.network.payload.parser;
 
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.ChatManager;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.network.exception.UndecodablePayloadException;
 import ovh.mythmc.social.api.network.payload.encoding.SocialPayloadEncoder;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 public final class SocialPayloadChannelParser implements SocialPayloadComponentParser<ChatChannel> {
 
@@ -14,13 +14,13 @@ public final class SocialPayloadChannelParser implements SocialPayloadComponentP
 
     @Override
     public @NotNull ChatChannel parse(final @NotNull SocialPayloadEncoder payload) {
-        final ChatManager chatManager = Social.get().getChatManager();
+        final var channelRegistry = Social.registries().channels();
         final String channelName = new String(payload.bytes());
 
-        if (!chatManager.exists(channelName))
+        if (!channelRegistry.containsKey(RegistryKey.identified(channelName)))
             throw new UndecodablePayloadException(this, payload.bytes());
 
-        return chatManager.getChannel(channelName);
+        return channelRegistry.value(RegistryKey.identified(channelName)).get();
     }
 
 }

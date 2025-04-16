@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 
@@ -73,19 +73,19 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.name();
                 }
                 if (params.equalsIgnoreCase("group_alias")) {
-                    return groupChatChannel.alias();
+                    return groupChatChannel.alias().get();
                 }
                 if (params.equalsIgnoreCase("group_alias_or_name")) {
                     return groupChatChannel.aliasOrName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return groupChatChannel.getLeader().cachedDisplayName();
+                    return groupChatChannel.leader().cachedDisplayName();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
-                    return groupChatChannel.getLeader().name();
+                    return groupChatChannel.leader().name();
                 }
                 if (params.equalsIgnoreCase("group_leader_uuid")) {
-                    return groupChatChannel.getLeaderUuid().toString();
+                    return groupChatChannel.leaderUuid().toString();
                 }
                 
                 if (params.startsWith("group_player_uuid_")) {

@@ -22,12 +22,14 @@ import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.libs.com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
+@DatabaseTable(tableName = "users")
 public final class SpongeSocialUser extends AbstractSocialUser {
 
     SpongeSocialUser() {

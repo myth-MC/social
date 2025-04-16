@@ -41,7 +41,7 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
             ctx.user().ifPresent(user -> {
                 // Emoji chat completions
                 if (Social.get().getConfig().getEmojis().isEnabled() && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
-                    PlatformAdapter.get().sendAutoCompletions(user, Social.get().getEmojiManager().getEmojis().stream()
+                    PlatformAdapter.get().sendAutoCompletions(user, Social.registries().emojis().values().stream()
                         .map(emoji -> ":" + emoji.name() + ":")
                         .toList());
 

@@ -9,8 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.text.CustomTextProcessor;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
@@ -31,7 +30,7 @@ public class SocialProcessorContext extends SocialParserContext {
         AbstractSocialUser user, 
         ChatChannel channel,
         Component message, 
-        ChannelType messageChannelType,
+        ChatChannel.ChannelType messageChannelType,
         SocialParserGroup group,
         List<SocialInjectedValue<?>> injectedValues,
         CustomTextProcessor processor) {

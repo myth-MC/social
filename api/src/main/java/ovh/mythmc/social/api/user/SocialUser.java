@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 
 public interface SocialUser {
 

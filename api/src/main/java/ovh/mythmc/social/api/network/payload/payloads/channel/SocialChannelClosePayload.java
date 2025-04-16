@@ -1,7 +1,7 @@
 package ovh.mythmc.social.api.network.payload.payloads.channel;
 
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.network.payload.AbstractNetworkPayloadWrapper;
 
 public final class SocialChannelClosePayload extends AbstractNetworkPayloadWrapper.S2C {

@@ -15,8 +15,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.database.model.DatabaseUser;
 import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
@@ -84,7 +84,9 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
 
     @Override
     public Optional<GroupChatChannel> group() {
-        return Optional.ofNullable(Social.get().getChatManager().getGroupChannelByUser(this));
+        return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
+            .filter(group -> group.isMember(this.uuid))
+            .findAny();
     }
 
     public Optional<AbstractSocialUser> latestPrivateMessageRecipient() {
@@ -105,7 +107,7 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
 
     // Send social messages
     public void sendParsableMessage(@NotNull SocialParserContext context, boolean playerInput) {
-        Component parsedMessage = null;
+        Component parsedMessage;
 
         if (playerInput) {
             parsedMessage = Social.get().getTextProcessor().parsePlayerInput(context);

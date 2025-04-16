@@ -7,8 +7,7 @@ import ovh.mythmc.social.api.callback.group.SocialGroupDisbandCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupJoinCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaderChangeCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaveCallback;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.callback.game.UserPresence;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
@@ -48,13 +47,13 @@ public final class GroupHandler implements SocialCallbackHandler {
         });
 
         SocialGroupCreateCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_CREATE_MESSAGE, (ctx) -> {
-            var leader = ctx.groupChatChannel().getLeader();
+            var leader = ctx.groupChatChannel().leader();
         
             // Switch main channel
             Social.get().getUserManager().setMainChannel(leader, ctx.groupChatChannel(), true);
     
             // Message
-            int groupCode = ctx.groupChatChannel().getCode();
+            int groupCode = ctx.groupChatChannel().code();
             String createdMessage = String.format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
             Social.get().getTextProcessor().parseAndSend(leader, createdMessage, Social.get().getConfig().getMessages().getChannelType());
         });
@@ -71,7 +70,7 @@ public final class GroupHandler implements SocialCallbackHandler {
             Component leaderChangeMessage = Social.get().getTextProcessor().parse(ctx.leader(), ctx.leader().mainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
 
             ctx.groupChatChannel().members().forEach(user -> {
-                Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), leaderChangeMessage, ChannelType.CHAT);
+                Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), leaderChangeMessage, ChatChannel.ChannelType.CHAT);
             });
         });
 
@@ -85,11 +84,11 @@ public final class GroupHandler implements SocialCallbackHandler {
                     // Not necessary since ChatListener already takes care of this
                     group.removeMember(user);
 
-                    if (group.getLeaderUuid().equals(user.uuid())) {
+                    if (group.leaderUuid().get().equals(user.uuid())) {
                         if (group.members().isEmpty()) {
                             Social.get().getChatManager().unregisterChatChannel(group);
                         } else {
-                            Social.get().getChatManager().setGroupChannelLeader(group, group.members().stream().findFirst().get().uuid());
+                            group.leader(group.members().stream().findFirst().get());
                         }
                     }
                 });
@@ -109,7 +108,7 @@ public final class GroupHandler implements SocialCallbackHandler {
     }
 
     private static void setDefaultChannel(AbstractSocialUser user) {
-        final ChatChannel defaultChannel = Social.get().getChatManager().getDefaultChannel();
+        final ChatChannel defaultChannel = Social.get().getChatManager().getCachedOrDefault(user);
         if (defaultChannel == null) return;
 
         Social.get().getUserManager().setMainChannel(user, defaultChannel, true);

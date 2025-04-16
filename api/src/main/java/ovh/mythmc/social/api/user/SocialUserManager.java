@@ -12,7 +12,7 @@ import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitch;
 import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitchCallback;
 import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChange;
 import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChangeCallback;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -67,7 +67,7 @@ public class SocialUserManager {
     }
 
     public boolean isGloballyMuted(final @NotNull AbstractSocialUser user) {
-        return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(ChatChannel::name).toList());
+        return user.blockedChannels().containsAll(Social.registries().channels().values().stream().map(ChatChannel::name).toList());
     }
 
     public boolean isMuted(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {

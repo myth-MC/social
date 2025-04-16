@@ -8,7 +8,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannelImpl;
+import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.text.injection.conditional.SocialInjectedConditionalValue;
 import ovh.mythmc.social.api.text.injection.value.AbstractSocialInjectedValue;
@@ -116,15 +117,15 @@ public class ChannelsSettings {
                                    @Nullable List<ConfiguredInjectableValue> injections,
                                    @Nullable List<BuildableComponent> builder) {
 
-        public ChatChannel toChannel() {
-            return ChatChannel.builder(name, toFormatBuilder())
+        public ChatChannelImpl toChannel() {
+            return ChatChannelImpl.builder(name, toFormatBuilder())
                 .icon(icon)
                 .description(description)
                 .color(Objects.requireNonNull(TextColor.fromHexString(color)))
                 .build();
         }
 
-        public ChatChannel.FormatBuilder toFormatBuilder() {
+        public ChatFormatBuilder toFormatBuilder() {
             final List<SocialInjectedValue<?>> injectedValues = new ArrayList<>();
             if (injections != null) {
                 for (ConfiguredInjectableValue injectedValue : injections) {
@@ -161,7 +162,7 @@ public class ChannelsSettings {
                 .map(BuildableComponent::toInjectableValue)
                 .toList();
 
-            return ChatChannel.FormatBuilder.empty()
+            return ChatFormatBuilder.empty()
                 .injectValues(injectableBuilder)
                 .injectValues(injectedValues);
         }

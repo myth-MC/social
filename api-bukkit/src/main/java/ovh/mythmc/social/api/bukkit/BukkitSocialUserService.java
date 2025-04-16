@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ovh.mythmc.social.api.database.reference.UUIDResolver;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUserService;
 
@@ -16,6 +17,13 @@ import ovh.mythmc.social.api.user.SocialUserService;
 public final class BukkitSocialUserService extends SocialUserService {
 
     public static final BukkitSocialUserService instance = new BukkitSocialUserService();
+
+    private final BukkitUUIDResolver uuidResolver = new BukkitUUIDResolver();
+
+    @Override
+    public UUIDResolver uuidResolver() {
+        return this.uuidResolver;
+    }
 
     @Override
     public Collection<AbstractSocialUser> get() {

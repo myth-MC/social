@@ -16,10 +16,9 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.Social.ReloadType;
-import ovh.mythmc.social.api.announcements.SocialAnnouncement;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.announcements.Announcement;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
@@ -27,7 +26,6 @@ import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
-import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.ChannelParser;
 import ovh.mythmc.social.common.command.parser.IdentifiedParserParser;
@@ -63,7 +61,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             )
             .flag(commandManager.flagBuilder("type")
                 .withDescription(Description.of("The channel type of this message"))
-                .withComponent(EnumParser.enumParser(ChannelType.class))
+                .withComponent(EnumParser.enumParser(ChatChannel.ChannelType.class))
             )
             .handler(ctx -> {
                 final boolean self = ctx.flags().isPresent("self");
@@ -88,16 +86,16 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             .literal("announcement")
             .commandDescription(Description.of("Announces a configured message"))
             .permission("social.use.announcement")
-            .required("id", IntegerParser.integerParser(0, Social.get().getAnnouncementManager().getAnnouncements().size() - 1))
+            .required("id", IntegerParser.integerParser(0, Social.registries().announcements().registry().size() - 1))
             .flag(commandManager.flagBuilder("self")
                 .withDescription(Description.of("Shows this message to the sender only"))
             )
             .handler(ctx -> {
                 final Integer id = ctx.get("id");
                 final boolean self = ctx.flags().isPresent("self");
-                final ChannelType channelType = Social.get().getConfig().getAnnouncements().isUseActionBar() ? ChannelType.ACTION_BAR : ChannelType.CHAT;
+                final ChatChannel.ChannelType channelType = Social.get().getConfig().getAnnouncements().isUseActionBar() ? ChatChannel.ChannelType.ACTION_BAR : ChatChannel.ChannelType.CHAT;
 
-                final SocialAnnouncement announcement = Social.get().getAnnouncementManager().getAnnouncements().get(id);
+                final Announcement announcement = Social.registries().announcements().values().get(id);
                 if (announcement == null) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getUnknownAnnouncement(), Social.get().getConfig().getMessages().getChannelType());
                     return;
@@ -131,7 +129,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 if (channel == ctx.sender().mainChannel())
                     return;
 
-                if (channel.permission() != null && !ctx.sender().checkPermission(channel.permission())) {
+                if (channel.permission().isPresent() && !ctx.sender().checkPermission(channel.permission().get())) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
@@ -302,8 +300,8 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel(), Social.get().getConfig().getMessages().getErrors().getUserIsAlreadyMuted(), Social.get().getConfig().getMessages().getChannelType());
                         return;
                     }
-        
-                    Social.get().getChatManager().getChannels().forEach(registeredChannel -> Social.get().getUserManager().mute(target, registeredChannel));
+
+                    Social.registries().channels().values().forEach(registeredChannel -> Social.get().getUserManager().mute(target, registeredChannel));
         
                     // Command sender
                     String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserMutedGlobally(), target.cachedDisplayName());
@@ -346,7 +344,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                         return;
                     }
         
-                    Social.get().getChatManager().getChannels().forEach(registeredChannel -> Social.get().getUserManager().unmute(target, registeredChannel));
+                    Social.registries().channels().forEach(c -> Social.get().getUserManager().unmute(target, c));
         
                     // Command sender
                     String successMessage = String.format(Social.get().getConfig().getMessages().getCommands().getUserUnmutedGlobally(), target.displayName());
@@ -375,7 +373,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                     return;
                 }
 
-                if (!PlatformAdapter.get().canAssignNickname(ctx.sender(), nickname)) {
+                if (Social.get().getUserService().uuidResolver().resolve(nickname).isPresent()) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getNicknameAlreadyInUse(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
@@ -461,7 +459,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 .withDescription(Description.of("Channel for the parser context"))
             )
             .flag(commandManager.flagBuilder("type")
-                .withComponent(EnumParser.enumParser(ChannelType.class))
+                .withComponent(EnumParser.enumParser(ChatChannel.ChannelType.class))
                 .withDescription(Description.of("Channel type for the parser context"))
             )
             .flag(commandManager.flagBuilder("userInput")
@@ -473,7 +471,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
 
                 final AbstractSocialUser user = ctx.flags().getValue("user", ctx.sender());
                 final ChatChannel channel = ctx.flags().getValue("channel", user.mainChannel());
-                final ChannelType type = ctx.flags().getValue("type", ChannelType.CHAT);
+                final ChatChannel.ChannelType type = ctx.flags().getValue("type", ChatChannel.ChannelType.CHAT);
                 final boolean userInput = ctx.flags().getValue("userInput", false);
 
                 final var context = SocialParserContext.builder(user, message)
@@ -483,7 +481,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
 
                 final var processedMessage = Social.get().getTextProcessor().parse(context);
                 var result = processedMessage;
-                if (context.messageChannelType().equals(ChannelType.CHAT)) {
+                if (context.messageChannelType().equals(ChatChannel.ChannelType.CHAT)) {
                     result = Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorResult())
                         .append(result)
                         .hoverEvent(Component.text(Social.get().getConfig().getMessages().getCommands().getProcessorClickToAnnounce()))

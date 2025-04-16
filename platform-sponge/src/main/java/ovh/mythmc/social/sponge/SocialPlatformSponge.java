@@ -4,6 +4,7 @@ import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.sponge.SpongeCommandManager;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
@@ -51,7 +52,7 @@ public final class SocialPlatformSponge extends SocialBootstrap {
 
     @Override
     public Class<? extends AbstractSocialUser> userType() {
-        return null;
+        return SpongeSocialUser.class;
     }
 
     @Override

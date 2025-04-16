@@ -17,6 +17,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUserService;
+import ovh.mythmc.social.api.bukkit.BukkitUUIDResolver;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
@@ -111,6 +112,9 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     }
 
     private void registerListeners() {
+        // Platform UUID resolver
+        Bukkit.getPluginManager().registerEvents((BukkitUUIDResolver) Social.get().getUserService().uuidResolver(), plugin);
+
         // Invokers
         Bukkit.getPluginManager().registerEvents(new AnvilRenameInvoker(), plugin);
         Bukkit.getPluginManager().registerEvents(new BookEditInvoker(), plugin);

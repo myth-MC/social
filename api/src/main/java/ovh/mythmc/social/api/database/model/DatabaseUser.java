@@ -28,6 +28,9 @@ public abstract class DatabaseUser {
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     protected ArrayList<String> blockedChannels = new ArrayList<>();
 
+    @DatabaseField(columnName = "cachedMainChannel")
+    protected String cachedMainChannel;
+
     @DatabaseField(columnName = "cachedNickname")
     protected String cachedDisplayName;
 

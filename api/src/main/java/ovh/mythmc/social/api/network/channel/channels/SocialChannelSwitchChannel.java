@@ -1,7 +1,7 @@
 package ovh.mythmc.social.api.network.channel.channels;
 
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.network.channel.AbstractNetworkChannelWrapper;
 import ovh.mythmc.social.api.network.channel.identifier.NetworkChannelIdentifiers;
 import ovh.mythmc.social.api.network.payload.encoding.SocialPayloadEncoder;

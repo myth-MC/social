@@ -3,7 +3,7 @@ package ovh.mythmc.social.api.configuration;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import ovh.mythmc.social.api.chat.ChannelType;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.configuration.section.messages.CommandsMessages;
 import ovh.mythmc.social.api.configuration.section.messages.ErrorsMessages;
 import ovh.mythmc.social.api.configuration.section.messages.InfoMessages;
@@ -33,11 +33,11 @@ public class SocialMessages {
     @Comment({"", "Command messages"})
     private CommandsMessages commands = new CommandsMessages();
 
-    public ChannelType getChannelType() {
+    public ChatChannel.ChannelType getChannelType() {
         if (useActionBar)
-            return ChannelType.ACTION_BAR;
+            return ChatChannel.ChannelType.ACTION_BAR;
 
-        return ChannelType.CHAT;
+        return ChatChannel.ChannelType.CHAT;
     }
 
 }

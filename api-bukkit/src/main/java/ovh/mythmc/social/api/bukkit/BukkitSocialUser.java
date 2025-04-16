@@ -18,9 +18,11 @@ import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.libs.com.j256.ormlite.table.DatabaseTable;
 
 @Getter
 @Accessors(fluent = true)
+@DatabaseTable(tableName = "users")
 public final class BukkitSocialUser extends AbstractSocialUser {
 
     BukkitSocialUser() {

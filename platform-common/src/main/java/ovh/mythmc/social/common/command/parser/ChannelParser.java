@@ -10,9 +10,10 @@ import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 
 import io.leangen.geantyref.TypeToken;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.SimpleChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.command.exception.UnauthorizedChannelException;
 import ovh.mythmc.social.common.command.exception.UnknownChannelException;
 
@@ -36,7 +37,7 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
     public @NonNull Iterable<@NonNull String> stringSuggestions(
             @NonNull CommandContext<AbstractSocialUser> commandContext, @NonNull CommandInput input) {
 
-        return Social.get().getChatManager().getChannels().stream()
+        return Social.registries().channels().values().stream()
             .filter(channel -> channel instanceof SimpleChatChannel)
             .map(ChatChannel::name)
             .toList();
@@ -47,7 +48,7 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
             @NonNull CommandContext<@NonNull AbstractSocialUser> commandContext, @NonNull CommandInput commandInput) {
 
         final String input = commandInput.readString();
-        final ChatChannel channel = Social.get().getChatManager().getChannel(input);
+        final ChatChannel channel = Social.registries().channels().value(RegistryKey.identified(input)).orElse(null);
 
         if (channel == null)
             return ArgumentParseResult.failure(new UnknownChannelException(input, this, commandContext));

@@ -27,9 +27,9 @@ public final class FormatSuggestions implements BlockingSuggestionProvider.Strin
         Social.get().getTextProcessor().getContextualParsersByType(SocialContextualKeyword.class)
             .forEach(keyword -> suggestions.add("[" + keyword.keyword() + "]"));
 
-        Social.get().getEmojiManager().getEmojis().stream()
-            .filter(emoji -> !Social.get().getEmojiManager().getCategory(emoji).equalsIgnoreCase("HIDDEN"))
-            .forEach(emoji -> suggestions.add(":" + emoji.name() + ":"));
+        Social.registries().emojis().registry().entrySet().stream()
+            .filter(entry -> !entry.getKey().namespace().equalsIgnoreCase("hidden"))
+            .forEach(entry -> suggestions.add(":" + entry.getValue().name() + ":"));
 
         return suggestions;
     }

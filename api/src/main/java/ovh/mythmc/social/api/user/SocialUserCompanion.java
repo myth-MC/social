@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.network.channel.channels.SocialPayloadChannels;
 import ovh.mythmc.social.api.network.payload.payloads.channel.*;
 import ovh.mythmc.social.api.network.payload.payloads.message.SocialMessagePreviewPayload;
@@ -43,7 +43,7 @@ public final class SocialUserCompanion {
     }
 
     public void refresh() {
-        Social.get().getChatManager().getChannels().forEach(channel -> {
+        Social.registries().channels().values().forEach(channel -> {
             if (Social.get().getChatManager().hasPermission(user, channel))
                 open(channel);
         });

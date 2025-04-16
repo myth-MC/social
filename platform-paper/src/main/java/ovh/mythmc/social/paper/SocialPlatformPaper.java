@@ -1,6 +1,7 @@
 package ovh.mythmc.social.paper;
 
 import org.incendo.cloud.setting.ManagerSetting;
+import ovh.mythmc.social.api.bukkit.BukkitUUIDResolver;
 import ovh.mythmc.social.libs.org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -119,6 +120,9 @@ public final class SocialPlatformPaper extends SocialBootstrap {
     }
 
     private void registerListeners() {
+        // Platform UUID resolver
+        Bukkit.getPluginManager().registerEvents((BukkitUUIDResolver) Social.get().getUserService().uuidResolver(), plugin);
+
         // Invokers
         Bukkit.getPluginManager().registerEvents(new AnvilRenameInvoker(), plugin);
         Bukkit.getPluginManager().registerEvents(new BookEditInvoker(), plugin);

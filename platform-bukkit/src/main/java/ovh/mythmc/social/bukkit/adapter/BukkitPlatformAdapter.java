@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.ServerLinks;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -72,17 +71,6 @@ public class BukkitPlatformAdapter extends PlatformAdapter {
     public void sendChatMessage(@NotNull AbstractSocialUser user, @NotNull String message) {
         final var bukkitUser = BukkitSocialUser.from(user);
         bukkitUser.player().ifPresent(player -> player.chat(message));
-    }
-
-    @Override
-    public boolean canAssignNickname(@NotNull AbstractSocialUser user, @NotNull String nickname) {
-        boolean canAssign = true;
-        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
-            if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(nickname) && offlinePlayer.hasPlayedBefore() && !offlinePlayer.getUniqueId().equals(user.uuid()))
-                canAssign = false;
-        }
-
-        return canAssign;
     }
     
 }

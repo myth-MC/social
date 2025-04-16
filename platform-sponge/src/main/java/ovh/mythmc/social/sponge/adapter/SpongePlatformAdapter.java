@@ -2,8 +2,6 @@ package ovh.mythmc.social.sponge.adapter;
 
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Cause;
 import org.spongepowered.api.event.EventContext;
 import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings;
@@ -15,11 +13,6 @@ import ovh.mythmc.social.sponge.api.SpongeSocialUser;
 import java.util.Collection;
 
 public final class SpongePlatformAdapter extends PlatformAdapter {
-
-    @Override
-    public boolean canAssignNickname(@NotNull AbstractSocialUser user, @NotNull String nickname) {
-        return Sponge.server().gameProfileManager().cache().findByName(nickname).isEmpty();
-    }
 
     @Override
     public void registerPayloadChannel(@NotNull NetworkChannelWrapper channel) {

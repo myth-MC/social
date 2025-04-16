@@ -13,7 +13,8 @@ public final class ReactionHandler implements SocialCallbackHandler {
     public void register() {
         UserChatCallback.INSTANCE.registerListener("social:reaction-trigger", (user, message, cancelled) -> {
             Reaction reaction = null;
-            for (Reaction r : Social.get().getReactionManager().getReactionsMap().keySet()) {
+
+            for (Reaction r : Social.registries().reactions().values()) {
                 if (r.triggerWords() == null || r.triggerWords().isEmpty())
                     continue;
 
