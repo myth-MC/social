@@ -10,34 +10,36 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
+import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.util.Mutable;
 
 public interface SocialUser {
 
-    Class<? extends SocialUser> rendererClass();
+    @NotNull Class<? extends SocialUser> rendererClass();
 
-    Audience audience();
+    @NotNull Audience audience();
 
-    UUID uuid();
+    @NotNull UUID uuid();
 
-    ChatChannel mainChannel();
+    @Nullable ChatChannel mainChannel();
 
-    boolean socialSpy();
+    @NotNull Mutable<Boolean> socialSpy();
 
-    List<String> blockedChannels();
+    @NotNull List<String> blockedChannels();
 
-    long latestMessageInMilliseconds();
+    @NotNull Mutable<Long> latestMessageInMilliseconds();
 
-    Style displayNameStyle();
+    @NotNull Mutable<Style> displayNameStyle();
 
-    Optional<SocialUserCompanion> companion();
+    @NotNull Optional<SocialUserCompanion> companion();
 
-    Optional<GroupChatChannel> group();
+    @NotNull Optional<GroupChatChannel> group();
 
-    String name();
+    @NotNull String name();
 
-    String cachedDisplayName();
+    @NotNull Mutable<String> cachedDisplayName();
 
     void name(@NotNull String name);
 
@@ -46,10 +48,10 @@ public interface SocialUser {
     boolean isOnline();
 
     default @NotNull TextComponent displayName() {
-        final var displayName = Component.text(cachedDisplayName());
+        final var displayName = Component.text(cachedDisplayName().get());
 
-        if (displayNameStyle() != null)
-            return displayName.style(displayNameStyle());
+        if (displayNameStyle().isPresent())
+            return displayName.style(displayNameStyle().get());
 
         return displayName;
     }

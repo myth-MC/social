@@ -11,6 +11,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,6 +38,7 @@ public final class GroupChatChannel extends SimpleChatChannel {
             "G-" + code,
             alias,
             TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getColor()),
+            Collections.emptyList(),
             Component.text(Social.get().getConfig().getChat().getGroups().getIcon()),
             Social.get().getConfig().getChat().getGroups().isShowHoverText(),
             SimpleChatChannel.getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),

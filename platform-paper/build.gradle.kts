@@ -26,3 +26,4 @@ tasks {
 }
 
 description = "social-paper"
+java.sourceCompatibility = JavaVersion.VERSION_21

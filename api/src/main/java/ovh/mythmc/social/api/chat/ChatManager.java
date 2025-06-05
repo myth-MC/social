@@ -70,13 +70,12 @@ public final class ChatManager {
         return Social.registries().channels().value(RegistryKey.identified(channelName)).orElse(null);
     }
 
-
     public ChatChannel getDefault() {
         return Social.registries().channels().value(RegistryKey.identified(Social.get().getConfig().getChat().getDefaultChannel())).orElse(null);
     }
 
     public ChatChannel getCachedOrDefault(@NotNull AbstractSocialUser user) {
-        final String cachedMainChannelName = user.cachedMainChannel();
+        final String cachedMainChannelName = user.cachedMainChannelName().get();
         if (cachedMainChannelName != null) {
             final ChatChannel cachedMainChannel = Social.registries().channels().value(RegistryKey.identified(cachedMainChannelName)).orElse(null);
             if (cachedMainChannel != null)
@@ -86,21 +85,26 @@ public final class ChatManager {
         return Social.registries().channels().value(RegistryKey.identified(Social.get().getConfig().getChat().getDefaultChannel())).orElse(null);
     }
 
+    public Optional<GroupChatChannel> groupChannelByCode(final int code) {
+        return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
+            .filter(groupChatChannel -> groupChatChannel.name().equals("G-" + code))
+            .findAny();
+    }
+
     @Deprecated
     public GroupChatChannel getGroupChannelByCode(final int code) {
-        ChatChannel ChatChannel = getChannel("G-" + code);
-        if (ChatChannel instanceof GroupChatChannel)
-            return (GroupChatChannel) ChatChannel;
+        return groupChannelByCode(code).orElse(null);
+    }
 
-        return null;
+    public Optional<GroupChatChannel> groupChannelByUser(final @NotNull AbstractSocialUser user) {
+        return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
+            .filter(channel -> channel.isMember(user))
+            .findAny();
     }
 
     @Deprecated
     public GroupChatChannel getGroupChannelByUser(final @NotNull AbstractSocialUser user) {
-        return channels().stream()
-            .filter(channel -> channel instanceof GroupChatChannel && channel.members().contains(user))
-            .map(channel -> (GroupChatChannel) channel)
-            .findFirst().orElse(null);
+        return groupChannelByUser(user).orElse(null);
     }
 
     @Deprecated
@@ -138,7 +142,7 @@ public final class ChatManager {
     }
 
     public boolean hasGroup(final @NotNull AbstractSocialUser user) {
-        return getGroupChannelByUser(user) != null;
+        return groupChannelByUser(user).isPresent();
     }
 
     public boolean hasPermission(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {

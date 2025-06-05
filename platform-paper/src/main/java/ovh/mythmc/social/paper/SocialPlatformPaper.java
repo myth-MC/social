@@ -72,6 +72,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
         // Command manager platform-specific adjustments
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier();
+            //commandManager.brigadierManager().registerMapping(new TypeToken<ChannelParser>() {}, builder -> builder.cloudSuggestions().toConstant(Score));
         } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             commandManager.registerAsynchronousCompletions();
         }
@@ -84,7 +85,6 @@ public final class SocialPlatformPaper extends SocialBootstrap {
 
         // Set platform wrapper
         PlatformAdapter.set(new BukkitPlatformAdapter());
-    
     }
 
     @Override

@@ -39,12 +39,12 @@ repositories {
     }
 
     maven {
-        url = uri("https://repo.papermc.io/repository/maven-public/")
+        url = uri("https://repo.papermc.io/repository/maven-snapshots/")
     }
 }
 
 dependencies {
-    api("ovh.mythmc:gestalt-loader:0.2.1")
+    api("ovh.mythmc:gestalt-loader:0.2.2")
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
     compileOnly("org.jetbrains:annotations:24.1.0")
@@ -52,7 +52,7 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
     compileOnly("net.kyori:adventure-text-serializer-plain:4.18.0")
     compileOnly("net.kyori:adventure-text-serializer-gson:4.18.0")
-    compileOnly("ovh.mythmc:gestalt-api:0.2.1")
+    compileOnly("ovh.mythmc:gestalt-api:0.2.2")
     compileOnly("ovh.mythmc:callbacks-lib:0.1.2")
     annotationProcessor("ovh.mythmc:callbacks-lib:0.1.2")
 }

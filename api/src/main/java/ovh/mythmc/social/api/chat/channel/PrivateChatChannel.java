@@ -55,7 +55,7 @@ public class PrivateChatChannel extends ChatChannelImpl {
     private final AbstractSocialUser participant2;
 
     private PrivateChatChannel(@NotNull AbstractSocialUser sender, @NotNull AbstractSocialUser recipient) {
-        super("PM-" + sender.name() + "-" + recipient.name(), Mutable.of("PM"), formattedPmIcon(), hoverText(), NamedTextColor.GREEN, ChatFormatBuilder.empty(), null, false, List.of());
+        super("PM-" + sender.name() + "-" + recipient.name(), Mutable.of("PM"), List.of(), formattedPmIcon(), hoverText(), NamedTextColor.GREEN, ChatFormatBuilder.empty(), null, false, List.of());
         this.participant1 = sender;
         this.participant2 = recipient;
         this.addMember(sender);

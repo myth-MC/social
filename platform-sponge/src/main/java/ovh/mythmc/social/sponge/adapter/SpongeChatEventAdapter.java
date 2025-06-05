@@ -16,7 +16,7 @@ public final class SpongeChatEventAdapter {
             if (Social.get().getConfig().getChat().getFilter().isEnabled() && Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
                 final int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
-                if (System.currentTimeMillis() - sender.latestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
+                if (System.currentTimeMillis() - sender.latestMessageInMilliseconds().get() < floodFilterCooldownInMilliseconds &&
                     sender.player().isPresent() && !sender.checkPermission("social.filter.bypass")) {
 
                     event.setCancelled(true);
@@ -41,7 +41,7 @@ public final class SpongeChatEventAdapter {
             if (Social.get().getConfig().getChat().getFilter().isEnabled() && Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
                 final int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
-                if (System.currentTimeMillis() - sender.latestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
+                if (System.currentTimeMillis() - sender.latestMessageInMilliseconds().get() < floodFilterCooldownInMilliseconds &&
                     sender.player().isPresent() && !sender.checkPermission("social.filter.bypass")) {
 
                 }

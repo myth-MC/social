@@ -12,7 +12,6 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.defaults.ConsoleChatRenderer;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
@@ -38,13 +37,8 @@ public final class ChatFeature {
 
         // Register channel commands
         SocialScheduler.get().runAsyncTaskLater(() -> {
-            if (Social.get().getConfig().getChat().isCreateChannelCommands()) {
-                final SocialCommandProvider commandProvider = ((SocialBootstrap) Social.get()).getCommandProvider();
-
-                Social.registries().channels().values().stream()
-                    .filter(channel -> channel instanceof SimpleChatChannel)
-                    .forEach(commandProvider::registerChannelCommand);
-            }
+            final SocialCommandProvider commandProvider = ((SocialBootstrap) Social.get()).getCommandProvider();
+            Social.registries().channels().values().forEach(commandProvider::registerChannelCommand);
         }, 40);
 
         // Assign channels to every user
@@ -78,9 +72,7 @@ public final class ChatFeature {
 
         // Unregister channel commands
         final SocialCommandProvider commandProvider = ((SocialBootstrap) Social.get()).getCommandProvider();
-        Social.registries().channels().values().stream()
-            .filter(channel -> channel instanceof SimpleChatChannel)
-            .forEach(commandProvider::unregisterChannelCommand);
+        Social.registries().channels().values().forEach(commandProvider::unregisterChannelCommand);
 
         // Remove channels
         List.copyOf(Social.registries().channels().keys())

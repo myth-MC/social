@@ -53,7 +53,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         if (Social.get().getConfig().getChat().getFilter().isEnabled() && Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
             int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
 
-            if (System.currentTimeMillis() - sender.latestMessageInMilliseconds() < floodFilterCooldownInMilliseconds &&
+            if (System.currentTimeMillis() - sender.latestMessageInMilliseconds().get() < floodFilterCooldownInMilliseconds &&
                     sender.player().isPresent() && !sender.checkPermission("social.filter.bypass")) {
 
                 Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
@@ -144,7 +144,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         );
 
         // Update sender's latest message
-        Social.get().getUserManager().setLatestMessage(sender, System.currentTimeMillis());
+        sender.latestMessageInMilliseconds().set(System.currentTimeMillis());
     }
 
     private static Integer tryParse(String text) {

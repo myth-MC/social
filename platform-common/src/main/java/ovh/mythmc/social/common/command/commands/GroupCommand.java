@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.UserParser;
 
@@ -120,7 +121,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
             .handler(ctx -> {
                 if (ctx.flags().hasFlag("c")) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
-                    Social.get().getChatManager().unregisterChatChannel(ctx.sender().group().get());
+                    Social.registries().channels().unregister(RegistryKey.identified(ctx.sender().group().get().name()));
                     return;
                 }
         
@@ -135,14 +136,15 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
             .permission(Permission.allOf(Permission.of("social.use.group.join"), Requirements.NOT_IN_GROUP))
             .required("code", IntegerParser.integerParser(0, 999999))
             .handler(ctx -> {
-                final Integer code = ctx.get("code");
+                final int code = ctx.get("code");
 
-                final GroupChatChannel chatChannel = Social.get().getChatManager().getGroupChannelByCode(code);
-                if (chatChannel == null) {
+                final var optionalGroupChannel = Social.get().getChatManager().groupChannelByCode(code);
+                if (optionalGroupChannel.isEmpty()) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getGroupDoesNotExist(), Social.get().getConfig().getMessages().getChannelType());
                     return;
                 }
 
+                final var chatChannel = optionalGroupChannel.get();
                 if (chatChannel.addMember(ctx.sender())) {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getJoinedGroup(), Social.get().getConfig().getMessages().getChannelType());
                     Social.get().getUserManager().setMainChannel(ctx.sender(), chatChannel, true);
@@ -206,7 +208,7 @@ public class GroupCommand implements MainCommand<AbstractSocialUser> {
 
                 if (group.leaderUuid().get().equals(ctx.sender().uuid())) {
                     if (group.members().size() < 2) {
-                        Social.get().getChatManager().unregisterChatChannel(group);
+                        Social.registries().channels().unregister(RegistryKey.identified(group.name()));
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getCommands().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
                         return;
                     }

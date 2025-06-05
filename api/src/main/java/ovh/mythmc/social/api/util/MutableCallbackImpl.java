@@ -6,7 +6,7 @@ import java.util.function.BiConsumer;
 
 class MutableCallbackImpl<T> extends MutableImpl<T> {
 
-    BiConsumer<T, T> callback;
+    final BiConsumer<T, T> callback;
 
     MutableCallbackImpl(T object, @NotNull BiConsumer<T, T> callback) {
         super(object);

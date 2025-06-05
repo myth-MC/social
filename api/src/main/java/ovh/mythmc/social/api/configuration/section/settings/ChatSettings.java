@@ -42,17 +42,9 @@ public class ChatSettings {
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
-            new Channel("global", null, null, "#FFFF55", null, "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
-            new Channel("staff", null, "global", "#FF5555", "social.admin", "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", null, List.of("This channel is restricted to staff members"), "#FFFF55", null, null, null)
+            new Channel("global", null, null, "#FFFF55", null, List.of("global", "g"), "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
+            new Channel("staff", null, "global", "#FF5555", "social.admin", List.of("staff", "s"), "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", null, List.of("This channel is restricted to staff members"), "#FFFF55", null, null, null)
     );
-
-    @Comment({
-        "When set to true, the plugin will automatically create commands that allow users to send messages through specific channels without switching their main one",
-        "For example:",
-        "- /global (switches to the global channel)",
-        "- /staff Hey! (sends 'Hey!' to the staff channel)"
-    })
-    private boolean createChannelCommands = false;
 
     @Comment("Whether mentions should be enabled or disabled")
     private boolean mentions = true;
@@ -74,6 +66,7 @@ public class ChatSettings {
                           String inherit,
                           String color,
                           String permission,
+                          List<String> commands,
                           String icon,
                           Boolean showHoverText,
                           List<String> hoverText,

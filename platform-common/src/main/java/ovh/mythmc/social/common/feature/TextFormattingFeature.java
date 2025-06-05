@@ -27,12 +27,14 @@ public final class TextFormattingFeature {
 
     @FeatureEnable
     public void enable() {
-        parsers.forEach(Social.get().getTextProcessor()::registerContextualParser);
+        //parsers.forEach(Social.get().getTextProcessor()::registerContextualParser);
+        parsers.forEach(Social.get().getTextProcessor().LATE_PARSERS::add);
     }
 
     @FeatureDisable
     public void disable() {
-        parsers.forEach(Social.get().getTextProcessor()::registerContextualParser);
+        //parsers.forEach(Social.get().getTextProcessor()::registerContextualParser);
+        parsers.forEach(Social.get().getTextProcessor().LATE_PARSERS::remove);
     }
     
 }

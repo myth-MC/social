@@ -15,16 +15,13 @@ import ovh.mythmc.social.api.util.Mutable;
 
 import java.util.*;
 
-public class ChatChannelImpl implements ChatChannel {
-
-    @Deprecated
-    public static ChatChannelBuilder builder(@NotNull String name, @NotNull ChatFormatBuilder formatBuilder) {
-        return ChatChannel.builder(name, formatBuilder);
-    }
+class ChatChannelImpl implements ChatChannel {
     
     private final String name;
 
     private final Mutable<String> alias;
+
+    private final Iterable<String> commands;
 
     private final Component icon;
 
@@ -42,9 +39,10 @@ public class ChatChannelImpl implements ChatChannel {
 
     private final Collection<ChatRendererFeature> supportedRendererFeatures;
 
-    protected ChatChannelImpl(@NotNull String name, @NotNull Mutable<String> alias, @NotNull Component icon, @NotNull Component description, @NotNull TextColor color, @NotNull ChatFormatBuilder formatBuilder, @Nullable String permission, boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
+    protected ChatChannelImpl(@NotNull String name, @NotNull Mutable<String> alias, @NotNull Iterable<String> commands, @NotNull Component icon, @NotNull Component description, @NotNull TextColor color, @NotNull ChatFormatBuilder formatBuilder, @Nullable String permission, boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
         this.name = name;
         this.alias = alias;
+        this.commands = commands;
         this.icon = icon;
         this.description = description;
         this.color = color;
@@ -62,6 +60,11 @@ public class ChatChannelImpl implements ChatChannel {
     @Override
     public @NotNull Mutable<String> alias() {
         return this.alias;
+    }
+
+    @Override
+    public @NotNull Iterable<String> commands() {
+        return this.commands;
     }
 
     @Override
@@ -135,7 +138,7 @@ public class ChatChannelImpl implements ChatChannel {
 
         @Override
         public ChatChannelImpl build() {
-            return new ChatChannelImpl(name, alias, icon, description, color, formatBuilder, permission, joinByDefault, supportedFeatures);
+            return new ChatChannelImpl(name, alias, commands, icon, description, color, formatBuilder, permission, joinByDefault, supportedFeatures);
         }
 
         @Override
@@ -144,13 +147,15 @@ public class ChatChannelImpl implements ChatChannel {
         }
     }
 
-    public static abstract class Builder<T extends Builder<T, R>, R extends ChatChannelImpl> {
+    static abstract class Builder<T extends Builder<T, R>, R extends ChatChannelImpl> {
 
         protected final String name;
 
         protected final Mutable<String> alias = Mutable.empty();
 
         protected final ChatFormatBuilder formatBuilder;
+
+        protected final List<String> commands = new ArrayList<>();
 
         protected Component icon;
 
@@ -178,6 +183,11 @@ public class ChatChannelImpl implements ChatChannel {
 
         public T alias(@NotNull String alias) {
             get().alias.set(alias);
+            return get();
+        }
+
+        public T commands(@NotNull String... commands) {
+            get().commands.addAll(List.of(commands));
             return get();
         }
 

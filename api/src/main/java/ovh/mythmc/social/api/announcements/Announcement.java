@@ -9,34 +9,17 @@ import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 import java.util.Arrays;
 
-public final class Announcement {
+public interface Announcement {
 
-    public static Announcement of(@NotNull Component message, @NotNull Iterable<ChatChannel> channels) {
-        return new Announcement(channels, message);
+    static Announcement of(@NotNull Component message, @NotNull Iterable<ChatChannel> channels) {
+        return new AnnouncementImpl(channels, message);
     }
 
-    public static Announcement of(@NotNull Component message, @NotNull ChatChannel... channels) {
-        return new Announcement(Arrays.asList(channels), message);
+    static Announcement of(@NotNull Component message, @NotNull ChatChannel... channels) {
+        return new AnnouncementImpl(Arrays.asList(channels), message);
     }
 
-    private final Iterable<ChatChannel> channels;
-
-    private final Component message;
-
-    private Announcement(@NotNull Iterable<ChatChannel> channels, @NotNull Component message) {
-        this.channels = channels;
-        this.message = message;
-    }
-
-    public Iterable<ChatChannel> channels() {
-        return this.channels;
-    }
-
-    public Component message() {
-        return this.message;
-    }
-
-    public static Announcement fromConfigField(AnnouncementsSettings.Announcement announcementField) {
+    static Announcement fromConfigField(AnnouncementsSettings.Announcement announcementField) {
         return of(
             Component.text(announcementField.message()),
             announcementField.channels().stream()
@@ -44,5 +27,9 @@ public final class Announcement {
                 .toList()
         );
     }
+
+    @NotNull Iterable<ChatChannel> channels();
+
+    @NotNull Component message();
 
 }

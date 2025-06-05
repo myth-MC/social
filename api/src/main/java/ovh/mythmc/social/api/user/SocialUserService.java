@@ -26,11 +26,11 @@ public abstract class SocialUserService {
 
     public AbstractSocialUser register(@NotNull UUID uuid) {
         final AbstractSocialUser user = createUserInstance(uuid);
-        if (user.cachedDisplayName() == null)
-            user.setCachedDisplayName("");
+        if (user.cachedDisplayName().isEmpty())
+            user.cachedDisplayName().set("");
 
         final ChatChannel cachedOrDefaultChannel = Social.get().getChatManager().getCachedOrDefault(user);
-        user.setSocialSpy(false);
+        user.socialSpy().set(false);
 
         if (cachedOrDefaultChannel == null) {
             Social.get().getLogger().warn("Default channel '" + cachedOrDefaultChannel + "' is unavailable!");
@@ -55,13 +55,13 @@ public abstract class SocialUserService {
 
     public Collection<AbstractSocialUser> getSocialSpyUsers() {
         return get().stream()
-            .filter(SocialUser::socialSpy)
+            .filter(user -> user.socialSpy().get())
             .toList();
     }
 
-    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(SimpleChatChannel channel) {
+    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
         return get().stream()
-            .filter(user -> user.socialSpy() && user.mainChannel().equals(channel))
+            .filter(user -> user.socialSpy().get() && user.mainChannel() != null && user.mainChannel().equals(channel))
             .toList();
     }
     

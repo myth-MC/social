@@ -37,27 +37,31 @@ public class SocialUserManager {
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setLatestMessage(@NotNull AbstractSocialUser user, long latestMessageInMilliseconds) {
-        user.setLatestMessageInMilliseconds(latestMessageInMilliseconds);
+        user.latestMessageInMilliseconds().set(latestMessageInMilliseconds);
 
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setSocialSpy(@NotNull AbstractSocialUser user, boolean socialSpy) {
-        user.setSocialSpy(socialSpy);
+        user.socialSpy().set(socialSpy);
 
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setDisplayName(@NotNull AbstractSocialUser user, @NotNull String displayName) {
-        user.setCachedDisplayName(displayName);
+        user.cachedDisplayName().set(displayName);
         user.name(displayName);
 
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setDisplayNameStyle(@NotNull AbstractSocialUser user, @NotNull Style style) {
-        user.setDisplayNameStyle(style);
+        user.displayNameStyle().set(style);
 
         SocialDatabase.get().update(user);
     }

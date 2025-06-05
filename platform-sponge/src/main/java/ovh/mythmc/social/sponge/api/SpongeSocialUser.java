@@ -58,7 +58,7 @@ public final class SpongeSocialUser extends AbstractSocialUser {
     }
 
     @Override
-    public Class<? extends SocialUser> rendererClass() {
+    public @NotNull Class<? extends SocialUser> rendererClass() {
         return SpongeSocialUser.class;
     }
 
@@ -73,12 +73,12 @@ public final class SpongeSocialUser extends AbstractSocialUser {
     }
 
     @Override
-    public Audience audience() {
+    public @NotNull Audience audience() {
         return player().get();
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return player().get().name();
     }
 

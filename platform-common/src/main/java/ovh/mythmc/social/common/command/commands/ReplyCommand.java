@@ -40,10 +40,6 @@ public final class ReplyCommand implements MainCommand<AbstractSocialUser> {
                 Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
                 PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
                 Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
-
-                // Set latest private message recipient (necessary for the /reply command to work)
-                Social.get().getUserManager().setLatestPrivateMessageRecipient(ctx.sender(), optionalRecipient.get());
-                Social.get().getUserManager().setLatestPrivateMessageRecipient(optionalRecipient.get(), ctx.sender());
             })
         );
     }

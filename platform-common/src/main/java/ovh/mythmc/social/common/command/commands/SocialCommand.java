@@ -386,14 +386,14 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(), Social.get().getConfig().getMessages().getChannelType());
                         return;
                     }
-        
-                    Social.get().getUserManager().setDisplayName(target, nickname);
+
+                    target.cachedDisplayName().set(nickname);
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.name(), nickname), Social.get().getConfig().getMessages().getChannelType());
                 } else { // Sender's nickname
                     if (nickname.equalsIgnoreCase("reset"))
                         nickname = ctx.sender().name();
 
-                    Social.get().getUserManager().setDisplayName(ctx.sender(), nickname);
+                    ctx.sender().cachedDisplayName().set(nickname);
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
                 }
             })
@@ -417,10 +417,10 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                         return;
                     }
 
-                    Social.get().getUserManager().setDisplayNameStyle(target, Style.style(textColor));
+                    target.displayNameStyle().set(Style.style(textColor));
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), String.format(Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), target.name(), target.cachedDisplayName()), Social.get().getConfig().getMessages().getChannelType());
                 } else { // Sender's nickname color
-                    Social.get().getUserManager().setDisplayNameStyle(ctx.sender(), Style.style(textColor));
+                    ctx.sender().displayNameStyle().set(Style.style(textColor));
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel(), Social.get().getConfig().getMessages().getCommands().getNicknameChanged(), Social.get().getConfig().getMessages().getChannelType());
                 }
             })
@@ -573,7 +573,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             .commandDescription(Description.of("Toggles the socialspy status"))
             .permission("social.use.socialspy")
             .handler(ctx -> {
-                Social.get().getUserManager().setSocialSpy(ctx.sender(), !ctx.sender().socialSpy());
+                ctx.sender().socialSpy().set(!ctx.sender().socialSpy().get());
                 Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel(), Social.get().getConfig().getMessages().getCommands().getSocialSpyStatusChanged(), Social.get().getConfig().getMessages().getChannelType());
             })
         );

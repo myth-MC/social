@@ -16,6 +16,7 @@ import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class SimpleChatChannel extends ChatChannelImpl {
     protected SimpleChatChannel(@NotNull String name,
                                 @Nullable String alias,
                                 @NotNull TextColor color,
+                                @NotNull Iterable<String> commands,
                                 @NotNull Component icon,
                                 boolean showHoverText,
                                 @NotNull Component hoverText,
@@ -47,7 +49,7 @@ public class SimpleChatChannel extends ChatChannelImpl {
                                 @Nullable String permission,
                                 boolean joinByDefault) {
 
-        super(name, Mutable.of(alias), icon, hoverText, color, ChatFormatBuilder.empty(), permission, joinByDefault, supportedFeatures());
+        super(name, Mutable.of(alias), commands, icon, hoverText, color, ChatFormatBuilder.empty(), permission, joinByDefault, supportedFeatures());
         this.showHoverText = showHoverText;
         this.hoverText = hoverText;
         this.nicknameColor = nicknameColor;
@@ -80,6 +82,7 @@ public class SimpleChatChannel extends ChatChannelImpl {
         final String name = channelField.name();
         final String alias = channelField.alias();
         TextColor color = NamedTextColor.YELLOW;
+        final List<String> commands = new ArrayList<>();
         Component icon = Component.text("<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>");
         boolean showHoverText = false;
         Component hoverText = Component.empty();
@@ -107,6 +110,9 @@ public class SimpleChatChannel extends ChatChannelImpl {
 
         if (channelField.color() != null)
             color = TextColor.fromHexString(channelField.color());
+
+        if (channelField.commands() != null)
+            commands.addAll(channelField.commands());
 
         if (channelField.icon() != null)
             icon = Component.text(channelField.icon());
@@ -136,6 +142,7 @@ public class SimpleChatChannel extends ChatChannelImpl {
             name,
             alias,
             color,
+            commands,
             icon,
             showHoverText,
             hoverText,

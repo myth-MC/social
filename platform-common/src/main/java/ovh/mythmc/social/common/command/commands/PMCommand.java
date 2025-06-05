@@ -55,11 +55,6 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
                     userManager.setMainChannel(ctx.sender(), privateChannel, false);
                     PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
                     userManager.setMainChannel(ctx.sender(), previousChannel, false);
-
-                    // Set latest private message recipient (necessary for the /reply command to work)
-                    userManager.setLatestPrivateMessageRecipient(ctx.sender(), recipient);
-                    userManager.setLatestPrivateMessageRecipient(recipient, ctx.sender());
-
                     return;
                 }
 

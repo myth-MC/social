@@ -51,7 +51,7 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     }
 
     @Override
-    public Class<? extends SocialUser> rendererClass() {
+    public @NotNull Class<? extends SocialUser> rendererClass() {
         return BukkitSocialUser.class;
     }
 
@@ -61,7 +61,7 @@ public final class BukkitSocialUser extends AbstractSocialUser {
     }
 
     @Override
-    public String name() {
+    public @NotNull String name() {
         return player().get().getName();
     }
 

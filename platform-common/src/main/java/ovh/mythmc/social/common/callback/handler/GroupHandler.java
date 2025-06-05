@@ -9,6 +9,7 @@ import ovh.mythmc.social.api.callback.group.SocialGroupLeaderChangeCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaveCallback;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.callback.game.UserPresence;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 
@@ -86,7 +87,7 @@ public final class GroupHandler implements SocialCallbackHandler {
 
                     if (group.leaderUuid().get().equals(user.uuid())) {
                         if (group.members().isEmpty()) {
-                            Social.get().getChatManager().unregisterChatChannel(group);
+                            Social.registries().channels().unregister(RegistryKey.identified(group.name()));
                         } else {
                             group.leader(group.members().stream().findFirst().get());
                         }

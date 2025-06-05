@@ -1,87 +1,41 @@
 package ovh.mythmc.social.api.reaction;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.kyori.adventure.sound.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class Reaction {
+import java.util.Arrays;
+import java.util.List;
 
-    public static Builder builder(@NotNull String name, @NotNull String texture) {
-        return new Builder(name, texture);
+public interface Reaction {
+
+    static Reaction.Builder<?> builder(@NotNull String name, @NotNull String texture) {
+        return new ReactionImpl.BuilderImpl(name, texture);
     }
 
-    private final @NotNull String name;
+    @NotNull String name();
 
-    private final @NotNull String texture;
+    @NotNull String texture();
 
-    private final @Nullable Sound sound;
+    @Nullable Sound sound();
 
-    private final @Nullable String particle;
+    @Nullable String particle();
 
-    private final @NotNull List<String> triggerWords;
+    @NotNull List<String> triggerWords();
 
-    private Reaction(@NotNull String name, @NotNull String texture, @Nullable Sound sound, @Nullable String particle, @NotNull List<String> triggerWords) {
-        this.name = name;
-        this.texture = texture;
-        this.sound = sound;
-        this.particle = particle;
-        this.triggerWords = triggerWords;
-    }
+    interface Builder<T extends Builder<T>> {
 
-    public String name() { return this.name; }
+        @NotNull T sound(@Nullable Sound sound);
 
-    public String texture() { return this.texture; }
+        @NotNull T particle(@Nullable String particle);
 
-    public Sound sound() { return this.sound; }
+        @NotNull T triggerWords(@NotNull List<String> triggerWords);
 
-    public String particle() { return this.particle; }
-
-    public List<String> triggerWords() { return this.triggerWords; }
-
-    public static final class Builder {
-
-        private final String name;
-
-        private final String texture;
-
-        private Sound sound;
-
-        private String particle;
-
-        private List<String> triggerWords;
-
-        private Builder(@NotNull String name, @NotNull String texture) {
-            this.name = name;
-            this.texture = texture;
-            this.triggerWords = new ArrayList<>();
+        default @NotNull T triggerWords(String... triggerWords) {
+            return triggerWords(Arrays.asList(triggerWords));
         }
 
-        public Builder sound(@Nullable Sound sound) {
-            this.sound = sound;
-            return this;
-        }
-
-        public Builder particle(@Nullable String particle) {
-            this.particle = particle;
-            return this;
-        }
-
-        public Builder triggerWords(@NotNull List<String> triggerWords) {
-            this.triggerWords = triggerWords;
-            return this;
-        }
-
-        public Builder triggerWord(@NotNull String triggerWord) {
-            this.triggerWords.add(triggerWord);
-            return this;
-        }
-
-        public Reaction build() {
-            return new Reaction(name, texture, sound, particle, triggerWords);
-        }
+        @NotNull Reaction build();
 
     }
 

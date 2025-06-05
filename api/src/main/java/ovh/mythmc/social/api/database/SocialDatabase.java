@@ -26,7 +26,7 @@ import com.j256.ormlite.table.TableUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
+import ovh.mythmc.social.api.database.persister.AdventureMutableStylePersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
@@ -79,7 +79,8 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
 
         // Custom persisters
-        final var adventureStylePersister = AdventureStylePersister.getSingleton();
+        final var adventureStylePersister = AdventureMutableStylePersister.getSingleton();
+
         DataPersisterManager.registerDataPersisters(adventureStylePersister);
 
         // Users table

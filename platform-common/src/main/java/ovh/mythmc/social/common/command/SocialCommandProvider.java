@@ -3,7 +3,6 @@ package ovh.mythmc.social.common.command;
 import java.util.Collection;
 import java.util.List;
 
-import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 
 import lombok.RequiredArgsConstructor;
@@ -61,48 +60,40 @@ public final class SocialCommandProvider {
     }
 
     public void registerChannelCommand(@NotNull ChatChannel channel) {
-        commandManager.command(channelCommandBuilder(commandManager, channel));
+        channel.commands().forEach(command -> {
+            commandManager.command(
+                commandManager.commandBuilder(command)
+                    .commandDescription(Description.of("Switches your main channel to " + channel.name() + " or sends a message without having to switch"))
+                    .permission(PredicatePermission.of(user -> {
+                        if (channel.permission().isEmpty())
+                            return true;
+
+                        return user.checkPermission(channel.permission().get());
+                    }))
+                    .optional("message", StringParser.greedyStringParser())
+                    .handler(ctx -> {
+                        // Send a message without switching channel
+                        if (ctx.contains("message")) {
+                            // Define variables
+                            final String message = ctx.get("message");
+                            final ChatChannel previousChannel = ctx.sender().mainChannel();
+
+                            // Quickly switch channel and return after sending message
+                            Social.get().getUserManager().setMainChannel(ctx.sender(), channel, false);
+                            PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
+                            Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
+                            return;
+                        }
+
+                        // Switch channel
+                        Social.get().getUserManager().setMainChannel(ctx.sender(), channel, true);
+                    })
+            );
+        });
     }
 
     public void unregisterChannelCommand(@NotNull ChatChannel channel) {
-        commandManager.deleteRootCommand(channel.name());
-    }
-
-    private static Command.Builder<AbstractSocialUser> channelCommandBuilder(@NotNull CommandManager<AbstractSocialUser> commandManager, @NotNull ChatChannel channel) {
-        Command.Builder<AbstractSocialUser> commandBuilder;
-
-        if (channel.alias().isPresent()) {
-            commandBuilder = commandManager.commandBuilder(channel.name(), channel.alias().get());
-        } else {
-            commandBuilder = commandManager.commandBuilder(channel.name());
-        }
-
-        return commandBuilder
-            .commandDescription(Description.of("Switches your main channel to " + channel.name() + " or sends a message without having to switch"))
-            .permission(PredicatePermission.of(user -> {
-                if (channel.permission().isEmpty())
-                    return true;
-
-                return user.checkPermission(channel.permission().get());
-            }))
-            .optional("message", StringParser.greedyStringParser())
-            .handler(ctx -> {
-                // Send a message without switching channel
-                if (ctx.contains("message")) {
-                    // Define variables
-                    final String message = ctx.get("message");
-                    final ChatChannel previousChannel = ctx.sender().mainChannel();
-
-                    // Quickly switch channel and return after sending message
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), channel, false);
-                    PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
-                    return;
-                }
-
-                // Switch channel
-                Social.get().getUserManager().setMainChannel(ctx.sender(), channel, true);
-            });
+        channel.commands().forEach(commandManager::deleteRootCommand);
     }
     
 }

@@ -8,7 +8,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ovh.mythmc.social.api.chat.channel.ChatChannelImpl;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.text.injection.conditional.SocialInjectedConditionalValue;
@@ -117,8 +117,8 @@ public class ChannelsSettings {
                                    @Nullable List<ConfiguredInjectableValue> injections,
                                    @Nullable List<BuildableComponent> builder) {
 
-        public ChatChannelImpl toChannel() {
-            return ChatChannelImpl.builder(name, toFormatBuilder())
+        public ChatChannel toChannel() {
+            return ChatChannel.builder(name, toFormatBuilder())
                 .icon(icon)
                 .description(description)
                 .color(Objects.requireNonNull(TextColor.fromHexString(color)))

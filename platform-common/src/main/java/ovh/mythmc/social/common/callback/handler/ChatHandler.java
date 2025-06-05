@@ -12,6 +12,7 @@ import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.callback.game.UserPresence;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 
@@ -20,6 +21,7 @@ public final class ChatHandler implements SocialCallbackHandler {
     private static class IdentifierKeys {
 
         static final String PRIVATE_MESSAGE_CHANNEL_INFO = "social:private-message-channel-info";
+        static final String PRIVATE_MESSAGE_REPLY_UPDATER = "social:private-message-reply-updater";
         static final String REPLY_CHANNEL_SWITCHER = "social:reply-channel-switcher";
         static final String CHAT_PERMISSION_CHECKER = "social:chat-permission-checker";
         static final String CHANNEL_PREPARE_MEMBER = "social:channel-prepare-member";
@@ -37,6 +39,15 @@ public final class ChatHandler implements SocialCallbackHandler {
                     .build();
 
                 privateChatChannel.getParticipant1().sendParsableMessage(context);
+            }
+        });
+
+        SocialMessagePrepareCallback.INSTANCE.registerHandler(IdentifierKeys.PRIVATE_MESSAGE_REPLY_UPDATER, ctx -> {
+            if (ctx.channel() instanceof PrivateChatChannel privateChatChannel) {
+                final AbstractSocialUser recipient = privateChatChannel.getRecipientForSender(ctx.sender());
+
+                Social.get().getUserManager().setLatestPrivateMessageRecipient(ctx.sender(), recipient);
+                Social.get().getUserManager().setLatestPrivateMessageRecipient(recipient, ctx.sender());
             }
         });
 
@@ -113,7 +124,7 @@ public final class ChatHandler implements SocialCallbackHandler {
                     .channel(channel)
                     .build();
 
-                Social.get().getTextProcessor().parseAndSend(context);
+                user.sendParsableMessage(context);
                 return;
             }
             
@@ -164,6 +175,7 @@ public final class ChatHandler implements SocialCallbackHandler {
         );
 
         SocialChannelCreateCallback.INSTANCE.unregisterHandlers(IdentifierKeys.PRIVATE_MESSAGE_CHANNEL_INFO);
+        SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKeys.PRIVATE_MESSAGE_REPLY_UPDATER);
         SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKeys.REPLY_CHANNEL_SWITCHER);
         SocialMessagePrepareCallback.INSTANCE.unregisterHandlers(IdentifierKeys.CHAT_PERMISSION_CHECKER);
         SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(IdentifierKeys.CHAT_PERMISSION_CHECKER);

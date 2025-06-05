@@ -28,6 +28,8 @@ public interface ChatChannel {
         return alias().isPresent() ? alias().get() : name();
     }
 
+    @NotNull Iterable<String> commands();
+
     @NotNull Component icon();
 
     @NotNull Component description();
