@@ -37,17 +37,17 @@ public final class AdventureMutableStylePersister extends StringType {
 
     @Override
     public Object sqlArgToJava(FieldType fieldType, Object sqlArg, int columnPos) {
-        return sqlArg != null ? getMutableStyleFromString((String) sqlArg) : null;
+        return sqlArg != null ? getMutableStyleFromString((String) sqlArg) : Mutable.of(Style.empty());
     }
 
-    private String getStringFromMutableStyle(Mutable<Style> style) {
+    private static String getStringFromMutableStyle(Mutable<Style> style) {
         final var dummyComponent = Component.empty()
             .style(style.get());
 
         return GsonComponentSerializer.gson().serialize(dummyComponent);
     }
 
-    private Mutable<Style> getMutableStyleFromString(String string) {
+    private static Mutable<Style> getMutableStyleFromString(String string) {
         return Mutable.of(GsonComponentSerializer.gson().deserialize(string)
             .style());
     }

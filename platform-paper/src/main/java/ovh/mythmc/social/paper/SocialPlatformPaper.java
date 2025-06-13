@@ -1,7 +1,10 @@
 package ovh.mythmc.social.paper;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import io.leangen.geantyref.TypeToken;
 import org.incendo.cloud.setting.ManagerSetting;
 import ovh.mythmc.social.api.bukkit.BukkitUUIDResolver;
+import ovh.mythmc.social.common.command.parser.ChannelParser;
 import ovh.mythmc.social.libs.org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -72,7 +75,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
         // Command manager platform-specific adjustments
         if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
             commandManager.registerBrigadier();
-            //commandManager.brigadierManager().registerMapping(new TypeToken<ChannelParser>() {}, builder -> builder.cloudSuggestions().toConstant(Score));
+            commandManager.brigadierManager().registerMapping(TypeToken.get(ChannelParser.class), builder -> builder.toConstant(StringArgumentType.string()).cloudSuggestions());
         } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             commandManager.registerAsynchronousCompletions();
         }

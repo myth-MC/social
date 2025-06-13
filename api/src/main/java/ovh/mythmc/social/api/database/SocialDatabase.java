@@ -27,6 +27,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.database.persister.AdventureMutableStylePersister;
+import ovh.mythmc.social.api.database.persister.MutableStringPersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
@@ -80,8 +81,9 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
 
         // Custom persisters
         final var adventureStylePersister = AdventureMutableStylePersister.getSingleton();
+        final var mutableStringPersister = MutableStringPersister.getSingleton();
 
-        DataPersisterManager.registerDataPersisters(adventureStylePersister);
+        DataPersisterManager.registerDataPersisters(adventureStylePersister, mutableStringPersister);
 
         // Users table
         TableUtils.createTableIfNotExists(connectionSource, type);
@@ -240,15 +242,11 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
             final int currentVersion = Social.get().getConfig().getDatabaseSettings().getDatabaseVersion();
             try {
                 if (currentVersion < 1) {
-                    logger.info("Upgrading database...");
-                    usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN displayNameStyle STRING;");
-                    logger.info("Done!");
+                    addColumn("displayNameStyle", "STRING");
                 }
 
                 if (currentVersion < 2) {
-                    logger.info("Upgrading database...");
-                    usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN cachedMainChannel STRING;");
-                    logger.info("Done!");
+                    addColumn("cachedMainChannel", "STRING");
                 }
             } catch (SQLException e) {
                 logger.error("Exception while upgrading database: {}", e);
@@ -257,6 +255,12 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
         }
 
         Social.get().getConfig().updateDatabaseVersion(2);
+    }
+
+    private void addColumn(@NotNull String columnName, @NotNull String columnType) throws SQLException {
+        logger.info("Upgrading database...");
+        usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN " + columnName + " " + columnType + ";");
+        logger.info("Done!");
     }
     
 }

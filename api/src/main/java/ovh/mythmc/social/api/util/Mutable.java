@@ -35,4 +35,8 @@ public interface Mutable<T> extends Serializable {
 
     void ifPresent(@NotNull Consumer<T> object);
 
+    default @NotNull Mutable<T> or(@NotNull Mutable<T> other) {
+        return isPresent() ? this : other;
+    }
+
 }

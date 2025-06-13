@@ -11,6 +11,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.database.persister.AdventureMutableStylePersister;
+import ovh.mythmc.social.api.database.persister.MutableStringPersister;
 import ovh.mythmc.social.api.util.Mutable;
 
 @DatabaseTable(tableName = "users")
@@ -22,12 +23,10 @@ public abstract class DatabaseUser {
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     protected ArrayList<String> blockedChannels = new ArrayList<>();
 
-    //@DatabaseField(columnName = "cachedMainChannel", persisterClass = MutableStringPersister.class)
     @DatabaseField(columnName = "cachedMainChannel", dataType = DataType.SERIALIZABLE)
     protected Mutable<String> cachedMainChannelName = Mutable.empty();
 
-    //@DatabaseField(columnName = "cachedNickname", persisterClass = MutableStringPersister.class)
-    @DatabaseField(columnName = "cachedNickname", dataType = DataType.SERIALIZABLE)
+    @DatabaseField(columnName = "cachedNickname", persisterClass = MutableStringPersister.class)
     protected Mutable<String> cachedDisplayName = Mutable.empty();
 
     @DatabaseField(persisterClass = AdventureMutableStylePersister.class)
@@ -51,14 +50,23 @@ public abstract class DatabaseUser {
     }
 
     public @NotNull Mutable<String> cachedMainChannelName() {
+        if (this.cachedMainChannelName == null)
+            this.cachedMainChannelName = Mutable.empty();
+
         return this.cachedMainChannelName;
     }
 
     public @NotNull Mutable<String> cachedDisplayName() {
+        if (this.cachedDisplayName == null)
+            this.cachedDisplayName = Mutable.empty();
+
         return this.cachedDisplayName;
     }
 
     public @NotNull Mutable<Style> displayNameStyle() {
+        if (this.displayNameStyle == null)
+            this.displayNameStyle = Mutable.of(Style.empty());
+
         return this.displayNameStyle;
     }
     
