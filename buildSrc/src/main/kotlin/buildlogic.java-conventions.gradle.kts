@@ -94,6 +94,8 @@ publishing {
 }
 
 tasks.shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     minimize()
     for (relocation in Relocations.relocations) {
         relocate(relocation.key, relocation.value)
