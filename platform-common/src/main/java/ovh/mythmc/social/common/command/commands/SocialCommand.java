@@ -167,6 +167,7 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
             })
         );
 
+        /*
         // /social history
         commandManager.command(socialCommand
             .literal("history")
@@ -259,6 +260,8 @@ public final class SocialCommand implements MainCommand<AbstractSocialUser> {
                 playerInfo.open(context);
             })
         );
+
+         */
 
         // /social mute
         commandManager.command(socialCommand
