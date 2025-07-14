@@ -17,6 +17,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUserService;
+import ovh.mythmc.social.api.bukkit.BukkitUUIDResolver;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
@@ -61,12 +62,15 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
                     return Social.get().getUserService().getByUuid(player.getUniqueId()).orElse(null);
 
                 return AbstractSocialUser.dummy();
-            }, user -> Bukkit.getPlayer(user.uuid())));
+            }, user -> {
+                if (user instanceof AbstractSocialUser.Dummy)
+                    return Bukkit.getConsoleSender();
+
+                return Bukkit.getPlayer(user.uuid());
+            }));
 
         // Command manager platform-specific adjustments
-        if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-            commandManager.registerBrigadier();
-        } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+        if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
             commandManager.registerAsynchronousCompletions();
         }
 
@@ -106,6 +110,9 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     }
 
     private void registerListeners() {
+        // Platform UUID resolver
+        Bukkit.getPluginManager().registerEvents((BukkitUUIDResolver) Social.get().getUserService().uuidResolver(), plugin);
+
         // Invokers
         Bukkit.getPluginManager().registerEvents(new AnvilRenameInvoker(), plugin);
         Bukkit.getPluginManager().registerEvents(new BookEditInvoker(), plugin);

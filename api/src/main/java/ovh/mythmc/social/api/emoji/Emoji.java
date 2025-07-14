@@ -1,37 +1,37 @@
 package ovh.mythmc.social.api.emoji;
 
-import java.util.List;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import ovh.mythmc.social.api.Social;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public record Emoji(String name, List<String> aliases, String unicodeCharacter) { 
+import java.util.Arrays;
+import java.util.List;
 
-    public Component asDescription(TextColor primaryColor, TextColor secondaryColor, boolean showClickToInsert) {
-        Component description = Component.text(unicodeCharacter, primaryColor)
-            .append(Component.text(" - ", secondaryColor))
-            .append(Component.text("꞉" + name + "꞉", primaryColor));
+public interface Emoji {
 
-        if (!aliases.isEmpty()) {
-            String aliasesHoverText = String.format(
-                Social.get().getConfig().getEmojis().getHoverTextAliases(),
-                aliases.toString().replace("[", "").replace("]", ""));
+    static Builder<?> builder(@NotNull String name, @NotNull String unicodeCharacter) {
+        return new EmojiImpl.BuilderImpl(name, unicodeCharacter);
+    }
 
-            description = description
-                .appendNewline()
-                .append(MiniMessage.miniMessage().deserialize(aliasesHoverText));
+    @NotNull String name();
+
+    List<String> aliases();
+
+    @NotNull String unicodeCharacter();
+
+    @NotNull Component asDescription(@NotNull TextColor primaryColor, @NotNull TextColor secondaryColor, boolean showClickToInsert);
+
+    interface Builder<T extends Builder<T>> {
+
+        @NotNull T aliases(@Nullable List<String> aliases);
+
+        default @NotNull T aliases(String... aliases) {
+            return aliases(Arrays.asList(aliases));
         }
 
-        if (showClickToInsert) {
-            description = description
-                .appendNewline()
-                .appendNewline()
-                .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getEmojis().getHoverTextInsertion()));
-        }
+        @NotNull Emoji build();
 
-        return description;
     }
 
 }

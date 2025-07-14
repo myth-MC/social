@@ -5,10 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.announcements.AnnouncementManager;
 import ovh.mythmc.social.api.chat.ChatManager;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
-import ovh.mythmc.social.api.emoji.EmojiManager;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
-import ovh.mythmc.social.api.reaction.ReactionManager;
 import ovh.mythmc.social.api.text.GlobalTextProcessor;
 import ovh.mythmc.social.api.user.SocialUserManager;
 import ovh.mythmc.social.api.user.SocialUserService;
@@ -16,6 +14,8 @@ import ovh.mythmc.social.api.user.SocialUserService;
 public interface Social {
 
     @NotNull static Social get() { return SocialSupplier.get(); }
+
+    @NotNull static SocialRegistries registries() { return SocialRegistries.INSTANCE; }
 
     @ApiStatus.Internal
     void reload(ReloadType type);
@@ -38,11 +38,7 @@ public interface Social {
 
     @NotNull default GlobalTextProcessor getTextProcessor() { return GlobalTextProcessor.instance; }
 
-    @NotNull default ReactionManager getReactionManager() { return ReactionManager.instance; }
-
-    @NotNull default EmojiManager getEmojiManager() { return EmojiManager.instance; }
-
-    public enum ReloadType {
+    enum ReloadType {
         ALL,
         ADDONS,
         SETTINGS,

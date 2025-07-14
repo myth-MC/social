@@ -4,12 +4,11 @@
 
 plugins {
     id("buildlogic.java-conventions")
-    id("com.gradleup.shadow") version "9.0.0-beta10"
 }
 
 dependencies {
-    api(project(":social-api-bukkit"))
-    api(project(path = ":social-common", configuration = "shadow"))
+    api(project(path = ":social-api-bukkit"))
+    api(project(path = ":social-common"))
     api(libs.org.bstats.bstats.bukkit)
     api(libs.com.github.imdanix.minitranslator) // Used for PlaceholderAPI legacy codes
     compileOnly(libs.org.incendo.cloud.paper)
@@ -29,11 +28,6 @@ tasks {
             expand(replacements)
         }
     }
-}
-
-tasks.shadowJar {
-    relocate("org.bstats", "ovh.mythmc.social.libs.org.bstats")
-    relocate("com.github.imdanix", "ovh.mythmc.social.libs.com.github.imdanix")
 }
 
 description = "social-bukkit"

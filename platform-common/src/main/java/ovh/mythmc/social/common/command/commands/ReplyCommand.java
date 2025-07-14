@@ -6,6 +6,7 @@ import org.incendo.cloud.description.Description;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
@@ -34,7 +35,7 @@ public final class ReplyCommand implements MainCommand<AbstractSocialUser> {
 
                 final String message = ctx.get("message");
                 final var previousChannel = ctx.sender().mainChannel();
-                final var privateChannel = Social.get().getChatManager().privateChatChannel(ctx.sender(), optionalRecipient.get());
+                final var privateChannel = PrivateChatChannel.getOrCreate(ctx.sender(), optionalRecipient.get());
 
                 Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
                 PlatformAdapter.get().sendChatMessage(ctx.sender(), message);

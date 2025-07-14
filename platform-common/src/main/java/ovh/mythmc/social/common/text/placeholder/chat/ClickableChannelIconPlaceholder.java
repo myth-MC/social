@@ -6,6 +6,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
+import ovh.mythmc.social.common.boot.SocialBootstrap;
 import ovh.mythmc.social.common.text.parser.MiniMessageParser;
 
 public final class ClickableChannelIconPlaceholder extends SocialContextualPlaceholder {
@@ -17,9 +18,13 @@ public final class ClickableChannelIconPlaceholder extends SocialContextualPlace
 
     @Override
     public Component get(SocialParserContext context) {
+        final String command = SocialBootstrap.isBrigadierAvailable()
+            ? "/social:social channel \"" + context.channel().name() + "\""
+            : "/social:social channel " + context.channel().name();
+
         return context.channel().icon()
             .hoverEvent(getChannelHoverText(context))
-            .clickEvent(ClickEvent.runCommand("/social:social channel " + context.channel().name()));
+            .clickEvent(ClickEvent.runCommand(command));
     }
 
     private static Component getChannelHoverText(SocialParserContext context) {

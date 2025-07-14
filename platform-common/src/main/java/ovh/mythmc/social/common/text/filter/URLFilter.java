@@ -6,6 +6,10 @@ public final class URLFilter extends SocialFilterRegex {
 
     @Override
     public String regex() {
+        return regexString();
+    }
+
+    public static String regexString() {
         return "[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
     }
 

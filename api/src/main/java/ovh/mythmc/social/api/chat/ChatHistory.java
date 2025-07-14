@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.context.SocialMessageContext;
@@ -97,11 +98,6 @@ public final class ChatHistory {
                 )
                 .limit(limit)
                 .toList();
-    }
-
-    @Deprecated(forRemoval = true, since = "v0.3")
-    public boolean isThread(final @NotNull SocialRegisteredMessageContext messageContext) {
-        return getThread(messageContext, 3).size() > 2;
     }
 
 }

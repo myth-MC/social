@@ -32,6 +32,16 @@ import org.incendo.cloud.CommandManager;
 @RequiredArgsConstructor
 public abstract class SocialBootstrap implements Social {
 
+    public static boolean isBrigadierAvailable() {
+        try {
+            Class.forName("com.mojang.brigadier.arguments.StringArgumentType");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+
+        return true;
+    }
+
     private final SocialConfigProvider config;
 
     private final File dataDirectory;

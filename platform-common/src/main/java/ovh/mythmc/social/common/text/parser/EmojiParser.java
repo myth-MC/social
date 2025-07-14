@@ -22,7 +22,7 @@ public final class EmojiParser implements SocialUserInputParser {
     public Component parse(SocialParserContext context) {
         Component message = context.message();
 
-        for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
+        for (Emoji emoji : Social.registries().emojis().values()) {
             StringBuilder aliases = new StringBuilder();
             for (String alias : emoji.aliases()) {
                 aliases.append(formattedRegex(alias, true));
@@ -31,14 +31,14 @@ public final class EmojiParser implements SocialUserInputParser {
             Pattern regex = Pattern.compile("(" + formattedRegex(emoji.name(), false) + aliases + ")");
 
             message = message.replaceText(TextReplacementConfig
-                    .builder()
-                    .match(regex)
-                    .replacement(
-                            Component.text(emoji.unicodeCharacter())
-                                    .insertion(":" + emoji.name() + ": ")
-                                    .hoverEvent(HoverEvent.showText(emoji.asDescription(NamedTextColor.YELLOW, NamedTextColor.DARK_GRAY, true)))
-                    )
-                    .build());
+                .builder()
+                .match(regex)
+                .replacement(
+                    Component.text(emoji.unicodeCharacter())
+                        .insertion(":" + emoji.name() + ": ")
+                        .hoverEvent(HoverEvent.showText(emoji.asDescription(NamedTextColor.YELLOW, NamedTextColor.DARK_GRAY, true)))
+                )
+                .build());
         }
 
         return message;

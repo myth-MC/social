@@ -4,20 +4,12 @@
 
 plugins {
     id("buildlogic.java-conventions")
-    id("com.gradleup.shadow") version "9.0.0-beta10"
 }
 
 dependencies {
     api(libs.de.exlll.configlib.yaml)
     api(libs.com.j256.ormlite.ormlite.core)
     api(libs.com.j256.ormlite.ormlite.jdbc)
-}
-
-tasks.shadowJar {
-    minimize()
-    relocate("de.exlll", "ovh.mythmc.social.libs.de.exlll")
-    relocate("org.snakeyaml", "ovh.mythmc.social.libs.org.snakeyaml")
-    relocate("com.j256", "ovh.mythmc.social.libs.com.j256")
 }
 
 description = "social-api"

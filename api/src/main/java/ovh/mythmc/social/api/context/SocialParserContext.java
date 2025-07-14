@@ -3,24 +3,24 @@ package ovh.mythmc.social.api.context;
 import java.util.*;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.injection.value.AbstractSocialInjectedValue;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 
-@Data
-@Setter(AccessLevel.PRIVATE)
+@Getter
 @Accessors(fluent = true)
 @With
+@EqualsAndHashCode
+@ToString
 public class SocialParserContext implements SocialContext {
     
     public static SocialParserContextBuilder builder(@NotNull AbstractSocialUser user, @NotNull Component message) {
@@ -33,7 +33,7 @@ public class SocialParserContext implements SocialContext {
 
     private final Component message;
 
-    private final ChannelType messageChannelType;
+    private final ChatChannel.ChannelType messageChannelType;
 
     @Experimental
     private final SocialParserGroup group;
@@ -46,7 +46,7 @@ public class SocialParserContext implements SocialContext {
         AbstractSocialUser user,
         ChatChannel channel,
         Component message,
-        ChannelType messageChannelType,
+        ChatChannel.ChannelType messageChannelType,
         SocialParserGroup group,
         List<SocialInjectedValue<?>> injectedValues) {
 
@@ -102,7 +102,7 @@ public class SocialParserContext implements SocialContext {
 
         protected ChatChannel channel;
 
-        protected ChannelType messageChannelType;
+        protected ChatChannel.ChannelType messageChannelType;
 
         protected SocialParserGroup group;
 
@@ -112,7 +112,7 @@ public class SocialParserContext implements SocialContext {
             this.user = user;
             this.message = message;
             this.channel = user.mainChannel();
-            this.messageChannelType = ChannelType.CHAT;
+            this.messageChannelType = ChatChannel.ChannelType.CHAT;
             this.injectedValues = new ArrayList<>();
         }
 
@@ -125,7 +125,7 @@ public class SocialParserContext implements SocialContext {
             return get();
         }
 
-        public T messageChannelType(@NotNull ChannelType channelType) {
+        public T messageChannelType(@NotNull ChatChannel.ChannelType channelType) {
             get().messageChannelType = channelType;
             return get();
         }

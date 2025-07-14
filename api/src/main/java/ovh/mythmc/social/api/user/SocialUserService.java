@@ -7,13 +7,16 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.SimpleChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
+import ovh.mythmc.social.api.database.reference.UUIDResolver;
 
 public abstract class SocialUserService {
 
     protected abstract AbstractSocialUser createUserInstance(@NotNull UUID uuid);
+
+    public abstract UUIDResolver uuidResolver();
 
     public abstract Collection<AbstractSocialUser> get();
 
@@ -22,23 +25,20 @@ public abstract class SocialUserService {
     }
 
     public AbstractSocialUser register(@NotNull UUID uuid) {
-        // Todo: recover data from last session
-        String defaultChatChannelName = Social.get().getConfig().getChat().getDefaultChannel();
-        ChatChannel defaultHybridChatChannel = Social.get().getChatManager().getDefaultChannel();
+        final AbstractSocialUser user = createUserInstance(uuid);
+        if (user.cachedDisplayName().isEmpty())
+            user.cachedDisplayName().set("");
 
-        AbstractSocialUser user = createUserInstance(uuid);
-        if (user.cachedDisplayName() == null)
-            user.setCachedDisplayName("");
+        final ChatChannel cachedOrDefaultChannel = Social.get().getChatManager().getCachedOrDefault(user);
+        user.socialSpy().set(false);
 
-        user.setSocialSpy(false);
-
-        if (defaultHybridChatChannel == null) {
-            Social.get().getLogger().warn("Default channel '" + defaultChatChannelName + "' is unavailable!");
+        if (cachedOrDefaultChannel == null) {
+            Social.get().getLogger().warn("Default channel '" + cachedOrDefaultChannel + "' is unavailable!");
         } else {
-            if (!defaultHybridChatChannel.members().contains(user))
-                defaultHybridChatChannel.addMember(user);
+            if (!cachedOrDefaultChannel.isMember(user))
+                cachedOrDefaultChannel.addMember(user);
 
-            user.setMainChannel(defaultHybridChatChannel);
+            user.setMainChannel(cachedOrDefaultChannel);
         }
 
         register(user);
@@ -55,13 +55,13 @@ public abstract class SocialUserService {
 
     public Collection<AbstractSocialUser> getSocialSpyUsers() {
         return get().stream()
-            .filter(SocialUser::socialSpy)
+            .filter(user -> user.socialSpy().get())
             .toList();
     }
 
-    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(SimpleChatChannel channel) {
+    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
         return get().stream()
-            .filter(user -> user.socialSpy() && user.mainChannel().equals(channel))
+            .filter(user -> user.socialSpy().get() && user.mainChannel() != null && user.mainChannel().equals(channel))
             .toList();
     }
     

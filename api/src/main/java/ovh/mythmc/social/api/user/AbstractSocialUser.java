@@ -1,5 +1,6 @@
 package ovh.mythmc.social.api.user;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,14 +13,16 @@ import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.database.model.DatabaseUser;
+import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
+import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
+import ovh.mythmc.social.api.util.Mutable;
 
 @DatabaseTable(tableName = "users")
 @Setter(AccessLevel.PROTECTED)
@@ -29,15 +32,15 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
 
     public static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
 
-    protected abstract void sendCustomPayload(String channel, byte[] payload);
+    public abstract <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(final @NotNull S2CNetworkChannelWrapper<T> channel, final @NotNull T payload);
 
     public abstract void playReaction(@NotNull Reaction reaction);
 
-    private long latestMessageInMilliseconds = 0L;
+    private final Mutable<Long> latestMessageInMilliseconds = Mutable.of(0L);
 
     private ChatChannel mainChannel;
 
-    private boolean socialSpy = false;
+    private final Mutable<Boolean> socialSpy = Mutable.of(false);
 
     private SocialUserCompanion companion;
 
@@ -61,13 +64,18 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
     }
 
     @Override
-    public boolean socialSpy() {
-        return socialSpy;
+    public @NotNull Mutable<Boolean> socialSpy() {
+        return this.socialSpy;
     }
 
     @Override
-    public long latestMessageInMilliseconds() {
-        return latestMessageInMilliseconds;
+    public @NotNull ArrayList<String> blockedChannels() {
+        return this.blockedChannels;
+    }
+
+    @Override
+    public @NotNull Mutable<Long> latestMessageInMilliseconds() {
+        return this.latestMessageInMilliseconds;
     }
 
     @Override
@@ -76,25 +84,19 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
     }
 
     @Override
-    public Optional<SocialUserCompanion> companion() {
+    public @NotNull Optional<SocialUserCompanion> companion() {
         return Optional.ofNullable(companion);
     }
 
     @Override
-    public Optional<GroupChatChannel> group() {
-        return Optional.ofNullable(Social.get().getChatManager().getGroupChannelByUser(this));
+    public @NotNull Optional<GroupChatChannel> group() {
+        return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
+            .filter(group -> group.isMember(this.uuid))
+            .findAny();
     }
 
     public Optional<AbstractSocialUser> latestPrivateMessageRecipient() {
         return Social.get().getUserService().getByUuid(latestPrivateMessageRecipient);
-    }
-
-    protected void setCachedDisplayName(String cachedDisplayName) {
-        this.cachedDisplayName = cachedDisplayName;
-    }
-
-    protected void setDisplayNameStyle(Style style) {
-        this.displayNameStyle = style;
     }
 
     protected void setLatestPrivateMessageRecipient(UUID recipientUuid) {
@@ -103,7 +105,7 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
 
     // Send social messages
     public void sendParsableMessage(@NotNull SocialParserContext context, boolean playerInput) {
-        Component parsedMessage = null;
+        Component parsedMessage;
 
         if (playerInput) {
             parsedMessage = Social.get().getTextProcessor().parsePlayerInput(context);
@@ -143,6 +145,11 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         }
 
         @Override
+        public @NotNull Class<? extends SocialUser> rendererClass() {
+            return Dummy.class;
+        }
+
+        @Override
         public @NotNull Audience audience() {
             return SocialAdventureProvider.get().console();
         }
@@ -162,17 +169,12 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
         }
 
         @Override
-        public String name() {
+        public @NotNull String name() {
             return "Dummy";
         }
 
         @Override
-        public String cachedDisplayName() {
-            return name();
-        }
-
-        @Override
-        protected void sendCustomPayload(String channel, byte[] payload) {
+        public <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(@NotNull S2CNetworkChannelWrapper<T> channel, @NotNull T payload) {
         }
 
         @Override

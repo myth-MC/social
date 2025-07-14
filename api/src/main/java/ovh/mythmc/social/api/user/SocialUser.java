@@ -10,32 +10,36 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.chat.GroupChatChannel;
+import org.jetbrains.annotations.Nullable;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.util.Mutable;
 
 public interface SocialUser {
 
-    Audience audience();
+    @NotNull Class<? extends SocialUser> rendererClass();
 
-    UUID uuid();
+    @NotNull Audience audience();
 
-    ChatChannel mainChannel();
+    @NotNull UUID uuid();
 
-    boolean socialSpy();
+    @Nullable ChatChannel mainChannel();
 
-    List<String> blockedChannels();
+    @NotNull Mutable<Boolean> socialSpy();
 
-    long latestMessageInMilliseconds();
+    @NotNull List<String> blockedChannels();
 
-    Style displayNameStyle();
+    @NotNull Mutable<Long> latestMessageInMilliseconds();
 
-    Optional<SocialUserCompanion> companion();
+    @NotNull Mutable<Style> displayNameStyle();
 
-    Optional<GroupChatChannel> group();
+    @NotNull Optional<SocialUserCompanion> companion();
 
-    String name();
+    @NotNull Optional<GroupChatChannel> group();
 
-    String cachedDisplayName();
+    @NotNull String name();
+
+    @NotNull Mutable<String> cachedDisplayName();
 
     void name(@NotNull String name);
 
@@ -44,10 +48,10 @@ public interface SocialUser {
     boolean isOnline();
 
     default @NotNull TextComponent displayName() {
-        final var displayName = Component.text(cachedDisplayName());
+        final var displayName = Component.text(cachedDisplayName().get());
 
-        if (displayNameStyle() != null)
-            return displayName.style(displayNameStyle());
+        if (displayNameStyle().isPresent())
+            return displayName.style(displayNameStyle().get());
 
         return displayName;
     }

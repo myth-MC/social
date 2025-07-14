@@ -22,7 +22,8 @@ public class UserChatInvoker implements Listener {
 
         UserChatCallback.INSTANCE.invoke(new UserChat(user, Component.text(event.getMessage())), result -> {
             event.setMessage(LegacyComponentSerializer.legacySection().serialize(result.message()));
-            event.setCancelled(result.cancelled());
+            if (result.cancelled())
+                event.setCancelled(true);
         });
     }
     

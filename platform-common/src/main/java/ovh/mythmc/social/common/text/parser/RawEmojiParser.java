@@ -20,7 +20,7 @@ public final class RawEmojiParser implements SocialContextualParser {
     public Component parse(SocialParserContext context) {
         Component message = context.message();
 
-        for (Emoji emoji : Social.get().getEmojiManager().getEmojis()) {
+        for (Emoji emoji : Social.registries().emojis().values()) {
             StringBuilder aliases = new StringBuilder();
             for (String alias : emoji.aliases()) {
                 aliases.append(formattedRegex("raw_" + alias, true));

@@ -26,7 +26,8 @@ import com.j256.ormlite.table.TableUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.database.persister.AdventureStylePersister;
+import ovh.mythmc.social.api.database.persister.AdventureMutableStylePersister;
+import ovh.mythmc.social.api.database.persister.MutableStringPersister;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
@@ -79,8 +80,10 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
 
         // Custom persisters
-        final var adventureStylePersister = AdventureStylePersister.getSingleton();
-        DataPersisterManager.registerDataPersisters(adventureStylePersister);
+        final var adventureStylePersister = AdventureMutableStylePersister.getSingleton();
+        final var mutableStringPersister = MutableStringPersister.getSingleton();
+
+        DataPersisterManager.registerDataPersisters(adventureStylePersister, mutableStringPersister);
 
         // Users table
         TableUtils.createTableIfNotExists(connectionSource, type);
@@ -145,11 +148,20 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
                 // Schedule next task
                 scheduleAutoSaver();
             }
-        }, 5, TimeUnit.MINUTES);
+        }, Social.get().getConfig().getDatabaseSettings().getCacheClearInterval(), TimeUnit.MINUTES);
     }
 
     private void updateAllEntries() {
+        final boolean debug = Social.get().getConfig().getGeneral().isDebug();
+        final var startTime = System.currentTimeMillis();
+
+        if (debug)
+            logger.info("Updating " + usersCache.size() + " cached users...");
+
         Map.copyOf(usersCache).values().forEach(this::updateEntry);
+
+        if (debug)
+            logger.info("Done! (took " + (System.currentTimeMillis() - startTime) + "ms)");
     }
 
     private void updateEntry(final @NotNull T user) {
@@ -228,18 +240,27 @@ public final class SocialDatabase<T extends AbstractSocialUser> {
     private void upgrade() {
         if (!firstBoot) {
             final int currentVersion = Social.get().getConfig().getDatabaseSettings().getDatabaseVersion();
-            if (currentVersion < 1) {
-                try {
-                    logger.info("Upgrading database...");
-                    usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN displayNameStyle STRING;");
-                    logger.info("Done!");
-                } catch (SQLException e) {
-                    logger.error("Exception while upgrading database: {}", e);
+            try {
+                if (currentVersion < 1) {
+                    addColumn("displayNameStyle", "STRING");
                 }
+
+                if (currentVersion < 2) {
+                    addColumn("cachedMainChannel", "STRING");
+                }
+            } catch (SQLException e) {
+                logger.error("Exception while upgrading database: {}", e);
+                e.printStackTrace(System.err);
             }
         }
 
-        Social.get().getConfig().updateDatabaseVersion(1);
+        Social.get().getConfig().updateDatabaseVersion(2);
+    }
+
+    private void addColumn(@NotNull String columnName, @NotNull String columnType) throws SQLException {
+        logger.info("Upgrading database...");
+        usersDao.executeRaw("ALTER TABLE `users` ADD COLUMN " + columnName + " " + columnType + ";");
+        logger.info("Done!");
     }
     
 }

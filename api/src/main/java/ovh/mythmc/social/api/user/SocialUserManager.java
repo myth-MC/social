@@ -12,7 +12,7 @@ import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitch;
 import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitchCallback;
 import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChange;
 import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChangeCallback;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.database.SocialDatabase;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -37,27 +37,31 @@ public class SocialUserManager {
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setLatestMessage(@NotNull AbstractSocialUser user, long latestMessageInMilliseconds) {
-        user.setLatestMessageInMilliseconds(latestMessageInMilliseconds);
+        user.latestMessageInMilliseconds().set(latestMessageInMilliseconds);
 
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setSocialSpy(@NotNull AbstractSocialUser user, boolean socialSpy) {
-        user.setSocialSpy(socialSpy);
+        user.socialSpy().set(socialSpy);
 
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setDisplayName(@NotNull AbstractSocialUser user, @NotNull String displayName) {
-        user.setCachedDisplayName(displayName);
+        user.cachedDisplayName().set(displayName);
         user.name(displayName);
 
         SocialDatabase.get().update(user);
     }
 
+    @Deprecated
     public void setDisplayNameStyle(@NotNull AbstractSocialUser user, @NotNull Style style) {
-        user.setDisplayNameStyle(style);
+        user.displayNameStyle().set(style);
 
         SocialDatabase.get().update(user);
     }
@@ -67,7 +71,7 @@ public class SocialUserManager {
     }
 
     public boolean isGloballyMuted(final @NotNull AbstractSocialUser user) {
-        return user.blockedChannels().containsAll(Social.get().getChatManager().getChannels().stream().map(ChatChannel::name).toList());
+        return user.blockedChannels().containsAll(Social.registries().channels().values().stream().map(ChatChannel::name).toList());
     }
 
     public boolean isMuted(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {

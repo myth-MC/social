@@ -4,7 +4,6 @@
 
 plugins {
     id("buildlogic.java-conventions")
-    id("com.gradleup.shadow") version "9.0.0-beta10"
 }
 
 dependencies {
@@ -26,8 +25,5 @@ tasks {
     }
 }
 
-tasks.shadowJar {
-    minimize()
-}
-
 description = "social-paper"
+java.sourceCompatibility = JavaVersion.VERSION_21

@@ -75,11 +75,11 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
     @Override
     public void render(AsyncChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
         event.renderer((source, sourceDisplayName, component, viewer) -> {
-            var renderer = Social.get().getChatManager().getRegisteredRenderer(viewer);
+            final var renderer = Social.get().getChatManager().getRegisteredRenderer(viewer);
             if (renderer == null)
                 return Component.empty();
 
-            var context = renderer.render(viewer, messageContext);
+            final var context = renderer.render(viewer, messageContext);
             if (context == null)
                 return Component.empty();
 
@@ -88,7 +88,7 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
                 return Component.empty();
 
             // Define variables
-            var prefix = context.prefix();
+            final var prefix = context.prefix();
             var message = context.message();
 
             // Trigger message receive event if recipient is a SocialUser
