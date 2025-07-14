@@ -8,6 +8,8 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.text.parser.EmojiParser;
 import ovh.mythmc.social.common.text.parser.RawEmojiParser;
 
+import java.util.List;
+
 @Feature(group = "social", identifier = "EMOJIS")
 public final class EmojiFeature {
 
@@ -27,7 +29,8 @@ public final class EmojiFeature {
     @FeatureDisable
     public void disable() {
         Social.get().getTextProcessor().LATE_PARSERS.remove(emojiParser, rawEmojiParser);
-        Social.get().getEmojiManager().unregisterAll();
+        List.copyOf(Social.registries().emojis().keys())
+            .forEach(key -> Social.registries().emojis().unregister(key));
     }
 
 }

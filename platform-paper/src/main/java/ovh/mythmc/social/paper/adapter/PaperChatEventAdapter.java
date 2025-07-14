@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -13,11 +15,11 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.bukkit.adapter.ChatEventAdapter;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceive;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.SocialUser;
-import ovh.mythmc.social.common.adapter.ChatEventAdapter;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent> {
 
@@ -43,27 +45,41 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
                 .map(audience -> audience.get(Identity.UUID).get())
                 .toList();
 
-            if (viewerUuids.contains(viewerUuid))
-                return false;
-
-            return true;
+            return !viewerUuids.contains(viewerUuid);
         });
+    }
+
+    @Override
+    public void cancel(AsyncChatEvent event) {
+        // I know this sucks, but for some reason AsyncChatEvent is not cancellable?
+        event.viewers().clear();
+        event.setCancelled(true);
     }
 
     @Override
     @EventHandler
     public void on(AsyncChatEvent event) {
-        super.on(event);
+        final boolean isCancelled = event.viewers().stream()
+            .noneMatch(audience -> audience instanceof Player);
+
+        if (!isCancelled)
+            super.on(event);
+    }
+
+    @EventHandler
+    public void cancellationWorkaround(AsyncPlayerChatEvent event) {
+        if (event.isCancelled())
+            event.getRecipients().clear();
     }
 
     @Override
     public void render(AsyncChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
         event.renderer((source, sourceDisplayName, component, viewer) -> {
-            var renderer = Social.get().getChatManager().getRegisteredRenderer(viewer);
+            final var renderer = Social.get().getChatManager().getRegisteredRenderer(viewer);
             if (renderer == null)
                 return Component.empty();
 
-            var context = renderer.render(viewer, messageContext);
+            final var context = renderer.render(viewer, messageContext);
             if (context == null)
                 return Component.empty();
 
@@ -72,12 +88,12 @@ public final class PaperChatEventAdapter extends ChatEventAdapter<AsyncChatEvent
                 return Component.empty();
 
             // Define variables
-            var prefix = context.prefix();
+            final var prefix = context.prefix();
             var message = context.message();
 
             // Trigger message receive event if recipient is a SocialUser
             var mapResult = renderer.mapFromAudience(viewer);
-            if (mapResult.isSuccess() && mapResult.result() instanceof SocialUser recipient) {
+            if (mapResult.isSuccess() && mapResult.result() instanceof AbstractSocialUser recipient) {
                 // Trigger message receive event
                 var callback = new SocialMessageReceive(
                     context.sender(), 

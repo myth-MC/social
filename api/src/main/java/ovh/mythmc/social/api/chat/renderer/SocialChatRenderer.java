@@ -3,8 +3,6 @@ package ovh.mythmc.social.api.chat.renderer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javax.annotation.Nullable;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;
 
@@ -21,10 +19,10 @@ public interface SocialChatRenderer<T> {
 
     static <T> SocialChatRenderer.Builder<T> builder(@NotNull SocialChatRenderer<T> renderer) { return new Builder<T>(renderer); }
 
-    @Nullable SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context);
+    SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context);
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    static final class Builder<T> {
+    final class Builder<T> {
 
         private final SocialChatRenderer<T> renderer;
 
@@ -49,7 +47,7 @@ public interface SocialChatRenderer<T> {
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    static final class Registered<T> {
+    final class Registered<T> {
 
         private final SocialChatRenderer<T> renderer;
 
@@ -61,16 +59,15 @@ public interface SocialChatRenderer<T> {
             if (map == null)
                 return MapResult.failure("This renderer cannot map objects!");
 
-            var result = map.apply(audience);
-            return result;
+            return map.apply(audience);
         }
 
-        public @Nullable SocialRendererContext render(@NotNull Audience audience, @NotNull SocialRegisteredMessageContext context) {
+        public SocialRendererContext render(@NotNull Audience audience, @NotNull SocialRegisteredMessageContext context) {
             var result = mapFromAudience(audience);
             if (result.isIgnored())
                 return null;
 
-            if (result instanceof MapResult.Failure failure) {
+            if (result instanceof MapResult.Failure<?> failure) {
                 Social.get().getLogger().error(failure.debugMessage);
 
                 return null;
@@ -79,7 +76,7 @@ public interface SocialChatRenderer<T> {
             return render(result.result(), context);
         }
 
-        public @Nullable SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context) {
+        public SocialRendererContext render(@NotNull T target, @NotNull SocialRegisteredMessageContext context) {
             if (renderIf != null && !renderIf.test(context))
                 return null;
 
@@ -89,7 +86,7 @@ public interface SocialChatRenderer<T> {
     }
 
     @NonExtendable
-    static abstract class MapResult<T> {
+    abstract class MapResult<T> {
 
         public abstract T result();
 
@@ -101,7 +98,7 @@ public interface SocialChatRenderer<T> {
             return new Ignore<T>(null);
         }
 
-        public static <T> MapResult.Failure<T> failure(String debugMessage) {
+        static <T> MapResult.Failure<T> failure(@NotNull String debugMessage) {
             return new Failure<>(null, debugMessage);
         }
 

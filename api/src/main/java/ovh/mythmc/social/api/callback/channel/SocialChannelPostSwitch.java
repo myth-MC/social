@@ -1,10 +1,10 @@
 package ovh.mythmc.social.api.callback.channel;
 
 import ovh.mythmc.callbacks.annotations.v1.Callback;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Callback
-public final record SocialChannelPostSwitch(SocialUser user, ChatChannel previousChannel, ChatChannel channel) {
+public record SocialChannelPostSwitch(AbstractSocialUser user, boolean informUser, ChatChannel previousChannel, ChatChannel channel) {
     
 }

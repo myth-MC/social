@@ -1,36 +1,31 @@
 package ovh.mythmc.social.common.adapter;
 
-import java.net.URI;
+import java.util.Collection;
 
-import org.bukkit.Location;
-import org.bukkit.ServerLinks;
-import org.bukkit.entity.Entity;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import net.kyori.adventure.text.Component;
+import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings.ServerLink;
+import ovh.mythmc.social.api.network.channel.NetworkChannelWrapper;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
-// This class adapts methods for different platform implementations
-public abstract class PlatformAdapter { 
+public abstract class PlatformAdapter {
 
     private static PlatformAdapter instance;
 
-    public static @NotNull PlatformAdapter get() { return instance; }
-
-    public static void set(@NotNull PlatformAdapter p) {
+    public static void set(PlatformAdapter p) {
         instance = p;
     }
 
-    public abstract void runGlobalTask(@NotNull JavaPlugin plugin, @NotNull Runnable runnable);
+    public static PlatformAdapter get() {
+        return instance;
+    }
 
-    public abstract void runAsyncTaskLater(@NotNull JavaPlugin plugin, @NotNull Runnable runnable, int ticks);
+    public abstract void registerPayloadChannel(final @NotNull NetworkChannelWrapper channel);
 
-    public abstract void runRegionTask(@NotNull JavaPlugin plugin, @NotNull Location location, @NotNull Runnable runnable);
+    public abstract void sendServerLinks(@NotNull AbstractSocialUser user, @NotNull Collection<ServerLink> links);
 
-    public abstract void runAsyncTask(@NotNull JavaPlugin plugin, @NotNull Runnable runnable);
+    public abstract void sendAutoCompletions(@NotNull AbstractSocialUser user, @NotNull Collection<String> autoCompletions);
 
-    public abstract void runEntityTask(@NotNull JavaPlugin plugin, @NotNull Entity entity, @NotNull Runnable runnable);
-
-    public abstract void sendLink(@NotNull ServerLinks serverLinks, @NotNull Component displayName, @NotNull URI uri);
+    public abstract void sendChatMessage(@NotNull AbstractSocialUser user, @NotNull String message);
 
 }

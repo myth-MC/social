@@ -78,7 +78,7 @@ public class UpdateChecker {
 
             if (!Social.get().version().equals(latest)) {
                 logger.info("A new update has been found: v" + latest + " (currently running v" + Social.get().version() + ")");
-                logger.info("https://github.com/myth-MC/social/releases/v" + latest);
+                logger.info("https://github.com/myth-MC/social/releases/" + latest);
                 return;
             }
 

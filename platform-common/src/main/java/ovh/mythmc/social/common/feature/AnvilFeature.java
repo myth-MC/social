@@ -1,29 +1,18 @@
 package ovh.mythmc.social.common.feature;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionVersion;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.common.listener.AnvilListener;
+import ovh.mythmc.social.common.callback.handler.AnvilRenameHandler;
 
 @Feature(group = "social", identifier = "EMOJIS")
 @FeatureConditionVersion(versions = "1.21")
 public final class AnvilFeature {
 
-    private final JavaPlugin plugin;
-
-    private final AnvilListener anvilListener = new AnvilListener();
-
-    public AnvilFeature(@NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    private final AnvilRenameHandler anvilRenameHandler = new AnvilRenameHandler();
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
@@ -33,12 +22,12 @@ public final class AnvilFeature {
 
     @FeatureEnable
     public void enable() {
-        Bukkit.getPluginManager().registerEvents(anvilListener, plugin);
+        anvilRenameHandler.register();
     }
 
     @FeatureDisable
     public void disable() {
-        HandlerList.unregisterAll(anvilListener);
+        anvilRenameHandler.unregister();
     }
 
 }

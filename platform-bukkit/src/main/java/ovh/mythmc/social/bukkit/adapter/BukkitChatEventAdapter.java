@@ -14,10 +14,10 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.bukkit.adapter.ChatEventAdapter;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceive;
 import ovh.mythmc.social.api.callback.message.SocialMessageReceiveCallback;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.common.adapter.ChatEventAdapter;
 
 public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerChatEvent> {
 
@@ -33,13 +33,18 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 
     @Override
     public void viewers(AsyncPlayerChatEvent event, Set<Audience> viewers) {
-        Collection<Player> players = viewers.stream()
+        final Collection<Player> players = viewers.stream()
             .filter(audience -> audience.get(Identity.UUID).isPresent())
             .map(audience -> Bukkit.getPlayer(audience.get(Identity.UUID).get()))
             .toList();
         
         event.getRecipients().clear();
         event.getRecipients().addAll(players);
+    }
+
+    @Override
+    protected void cancel(AsyncPlayerChatEvent event) {
+        event.setCancelled(true);
     }
 
     @Override
@@ -51,7 +56,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 	@Override
 	public void render(AsyncPlayerChatEvent event, @NotNull SocialRegisteredMessageContext messageContext) {
         event.getRecipients().forEach(player -> {
-            var recipient = Social.get().getUserManager().getByUuid(player.getUniqueId());
+            final var recipient = Social.get().getUserService().getByUuid(player.getUniqueId()).get();
             
             var renderer = Social.get().getChatManager().getRegisteredRenderer(recipient);
             if (renderer == null)
@@ -95,7 +100,7 @@ public final class BukkitChatEventAdapter extends ChatEventAdapter<AsyncPlayerCh
 
         // This allows the message to be logged in console and sent to plugins such as DiscordSRV
         event.getRecipients().clear();
-        event.setFormat("(" + messageContext.channel().getName() + ") %s: %s");
+        event.setFormat("(" + messageContext.channel().name() + ") %s: %s");
 	}
     
 }

@@ -9,8 +9,8 @@ import lombok.experimental.Accessors;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @RequiredArgsConstructor
 @Getter
@@ -20,13 +20,16 @@ import ovh.mythmc.social.api.user.SocialUser;
 @CallbackFields({
     @CallbackField(field = "user", getter = "user()"),
     @CallbackField(field = "channel", getter = "channel()"),
+    @CallbackField(field = "informUser", getter = "informUser()"),
     @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
 })
 public final class SocialChannelPreSwitch {
 
-    private @NotNull SocialUser user;
+    private @NotNull AbstractSocialUser user;
 
     private @NotNull ChatChannel channel;
+
+    private @NotNull boolean informUser;
 
     private boolean cancelled = false;
     

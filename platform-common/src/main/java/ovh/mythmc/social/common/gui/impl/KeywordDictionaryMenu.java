@@ -3,7 +3,6 @@ package ovh.mythmc.social.common.gui.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
@@ -39,10 +38,10 @@ public final class KeywordDictionaryMenu implements SimpleBookMenu {
         List<SocialContextualKeyword> keywords = Social.get().getTextProcessor().getContextualParsers().stream()
             .filter(parser -> parser instanceof SocialContextualKeyword)
             .map(parser -> (SocialContextualKeyword) parser)
-            .collect(Collectors.toList());
+            .toList();
 
         for (SocialContextualKeyword keyword : keywords) {
-            if (pages.size() > 0 && pages.get(pages.size() -1).keywords.size() < Social.get().getConfig().getMenus().getKeywordDictionary().getMaxKeywordsPerPage()) {
+            if (!pages.isEmpty() && pages.get(pages.size() -1).keywords.size() < Social.get().getConfig().getMenus().getKeywordDictionary().getMaxKeywordsPerPage()) {
                 pages.get(pages.size() -1).keywords.add(keyword);
                 continue;
             }

@@ -32,9 +32,9 @@ public final class GroupCodePlaceholder extends SocialContextualPlaceholder {
             MiniMessageParser.class
         );
         
-        return Component.text(optionalGroup.get().getCode())
+        return Component.text(optionalGroup.get().code())
             .hoverEvent(HoverEvent.showText(hoverText))
-            .clickEvent(ClickEvent.copyToClipboard(optionalGroup.get().getCode() + ""));
+            .clickEvent(ClickEvent.copyToClipboard(optionalGroup.get().code() + ""));
     }
 
 }

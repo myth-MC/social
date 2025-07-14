@@ -1,10 +1,10 @@
 name: social
 authors: [myth-MC, U8092]
-version: '${project.version}'
+version: '$version'
 api-version: 1.19
 
-main: ovh.mythmc.social.bukkit.SocialBukkitPlugin
-softdepend: [ PlaceholderAPI, DiscordSRV, packetevents, gestalt ]
+main: ovh.mythmc.social.bukkit.SocialPlatformBukkitPlugin
+softdepend: [ PlaceholderAPI, DiscordSRV, gestalt ]
 
 libraries:
   - net.kyori:adventure-api:4.18.0
@@ -12,11 +12,114 @@ libraries:
   - net.kyori:adventure-text-minimessage:4.18.0
   - net.kyori:adventure-text-serializer-plain:4.18.0
   - net.kyori:adventure-text-serializer-gson:4.18.0
+  - org.incendo:cloud-core:2.0.0
+  - org.incendo:cloud-minecraft-extras:2.0.0-beta.10
+  - org.incendo:cloud-paper:2.0.0-beta.10
 
 permissions:
-  social.use.nickname.others:
-    description: Allows users to change other player's nicknames
+
+  #
+  # Commands
+  #
+
+  # /group
+  social.use.group.alias:
+    description: Allows users to set the description of their group
+    default: true
+  social.use.group.chat:
+    description: Allows users to use their group's chat channel
+    default: true
+  social.use.group.code:
+    description: Allows users to see their group's invite code
+    default: true
+  social.use.group.create:
+    description: Allows users to create their own group
+    default: true
+  social.use.group.disband:
+    description: Allows users to disband their group
+    default: true
+  social.use.group.join:
+    description: Allows users to join a group
+    default: true
+  social.use.group.kick:
+    description: Allows group leaders to kick members from their group
+    default: true
+  social.use.group.leader:
+    description: Allows group leaders to set their group's leader
+    default: true
+  social.use.group.leave:
+    description: Allows users to leave their group
+    default: true
+
+  # Private messages
+  social.use.pm:
+    description: Allows users to send private messages
+    default: true
+  social.use.reply:
+    description: Allows users to reply to private messages
+    default: true
+
+  # Reactions
+  social.use.reaction:
+    description: Allows users to use the reaction command
+    default: true
+
+  # Main command
+  social.use.announce:
+    description: Allows users to broadcast messages
     default: op
+  social.use.announcement:
+    description: Allows users to broadcast a configured message
+    default: op
+  social.use.channel:
+    description: Allows users to switch their main channel
+    default: true
+  social.use.dictionary:
+    description: Allows users to use the dictionary
+    default: true
+  social.use.history:
+    description: Allows users to view the message history
+    default: op
+  social.use.info:
+    description: Allows users to view information about a user
+    default: op
+  social.use.mute:
+    description: Allows users to mute other users
+    default: op
+  social.use.unmute:
+    description: Allows users to unmute other users
+    default: op
+  social.use.nickname.set:
+    description: Allows users to set their own nickname
+    default: true
+  social.use.nickname.set.others:
+    description: Allows users to set other user's nicknames
+    default: op
+  social.use.nickname.color:
+    description: Allows users to set their own nickname color
+    default: op
+  social.use.nickname.color.others:
+    description: Allows users to set other user's nickname color
+    default: op
+  social.use.processor.info:
+    description: Allows users to view information about social's text processor
+    default: op
+  social.use.processor.parse:
+    description: Allows users to manipulate messages using social's text processor
+    default: op
+  social.use.processor.get.placeholder:
+    description: Allows users to get a configured placeholder's result
+    default: op
+  social.use.processor.get.keyword:
+    description: Allows users to get a configured keyword's result
+    default: op
+  social.use.reload:
+    description: Allows users to reload global or specific modules of the plugin
+    default: op
+
+  #
+  # Other permissions
+  #
   social.filter.bypass:
     description: Allows users to bypass filter settings
     default: op
@@ -27,11 +130,5 @@ permissions:
     description: Allows users to mention other users
     default: true
   social.text-formatting:
-    description: Allows users to format text
+    description: Allows users to format text using MiniMessage tags
     default: true
-  social.delete-messages.self:
-    description: Allows users to delete their own messages
-    default: op
-  social.delete-messages.others:
-    description: Allows users to delete other users' messages
-    default: op

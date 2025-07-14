@@ -1,8 +1,6 @@
 package ovh.mythmc.social.api.context;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -11,12 +9,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.text.CustomTextProcessor;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(fluent = true)
@@ -27,16 +25,17 @@ public class SocialProcessorContext extends SocialParserContext {
     private final CustomTextProcessor processor;
 
     private final List<Class<? extends SocialContextualParser>> appliedParsers;
-    
+
     SocialProcessorContext(
-        SocialUser user, 
-        ChatChannel channel, 
+        AbstractSocialUser user, 
+        ChatChannel channel,
         Component message, 
-        ChannelType messageChannelType,
-        Optional<SocialParserGroup> group,
+        ChatChannel.ChannelType messageChannelType,
+        SocialParserGroup group,
+        List<SocialInjectedValue<?>> injectedValues,
         CustomTextProcessor processor) {
 
-        super(user, channel, message, messageChannelType, group);
+        super(user, channel, message, messageChannelType, group, injectedValues);
         this.processor = processor;
         this.appliedParsers = new ArrayList<>();
     }
@@ -56,7 +55,8 @@ public class SocialProcessorContext extends SocialParserContext {
             context.channel(), 
             context.message(), 
             context.messageChannelType(), 
-            context.group(),
+            context.group().orElse(null),
+            context.injectedValues(),
             processor);
     }   
     

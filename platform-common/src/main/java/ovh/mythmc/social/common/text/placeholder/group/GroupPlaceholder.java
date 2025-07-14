@@ -19,13 +19,8 @@ public final class GroupPlaceholder extends SocialContextualPlaceholder {
     @Override
     public Component get(SocialParserContext context) {
         final var optionalGroup = context.user().group();
-        if (optionalGroup.isEmpty())
-            return Component.empty();
+        return optionalGroup.map(groupChatChannel -> Component.text(groupChatChannel.aliasOrName())).orElseGet(Component::empty);
 
-        if (optionalGroup.get().getAlias() != null)
-            return Component.text(optionalGroup.get().getAlias());
-
-        return Component.text(optionalGroup.get().getName());
     }
 
 }

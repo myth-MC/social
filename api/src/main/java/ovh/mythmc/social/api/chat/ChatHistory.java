@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.context.SocialMessageContext;
@@ -15,6 +16,7 @@ import ovh.mythmc.social.api.context.SocialMessageContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class ChatHistory {
@@ -44,11 +46,11 @@ public final class ChatHistory {
     }
 
     public boolean canDelete(SocialMessageContext context) {
-        return context.signedMessage().isPresent() ? context.signedMessage().get().canDelete() : false;
+        return context.signedMessage().isPresent() && context.signedMessage().get().canDelete();
     }
 
     public void delete(SocialRegisteredMessageContext context) {
-        Social.get().getUserManager().get().forEach(user -> user.deleteMessage(context.signedMessage().get()));
+        Social.get().getUserService().get().forEach(user -> user.deleteMessage(context.signedMessage().get()));
 
         SocialRegisteredMessageContext newContext = new SocialRegisteredMessageContext(
             context.id(), 
@@ -68,15 +70,15 @@ public final class ChatHistory {
         return messages.values().stream().toList();
     }
 
-    public List<SocialRegisteredMessageContext> getByChannel(final @NotNull ChatChannel chatChannel) {
+    public List<SocialRegisteredMessageContext> getByChannel(final @NotNull ChatChannel channel) {
         return messages.values().stream()
-                .filter(message -> message.channel().equals(chatChannel))
+                .filter(message -> message.channel().equals(channel))
                 .toList();
     }
 
     public List<SocialRegisteredMessageContext> getByUser(final @NotNull SocialUser user) {
         return messages.values().stream()
-                .filter(message -> message.sender().getUuid().equals(user.getUuid()))
+                .filter(message -> message.sender().uuid().equals(user.uuid()))
                 .toList();
     }
 
@@ -89,18 +91,13 @@ public final class ChatHistory {
     public List<SocialRegisteredMessageContext> getThread(final @NotNull SocialRegisteredMessageContext messageContext, int limit) {
         return messages.values().stream()
                 .filter(value ->
-                        (value.isReply() && value.replyId() == messageContext.id()) ||
-                        (value.isReply() && value.replyId() == messageContext.replyId()) ||
+                        (value.isReply() && Objects.equals(value.replyId(), messageContext.id())) ||
+                        (value.isReply() && Objects.equals(value.replyId(), messageContext.replyId())) ||
                         value.id().equals(messageContext.id()) ||
                         value.id().equals(messageContext.replyId())
                 )
                 .limit(limit)
                 .toList();
-    }
-
-    @Deprecated(forRemoval = true, since = "v0.3")
-    public boolean isThread(final @NotNull SocialRegisteredMessageContext messageContext) {
-        return getThread(messageContext, 3).size() > 2;
     }
 
 }

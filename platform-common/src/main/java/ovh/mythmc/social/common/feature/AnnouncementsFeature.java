@@ -6,6 +6,8 @@ import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 
+import java.util.List;
+
 @Feature(group = "social", identifier = "ANNOUNCEMENTS")
 public final class AnnouncementsFeature {
 
@@ -21,7 +23,8 @@ public final class AnnouncementsFeature {
 
     @FeatureDisable
     public void disable() {
-        Social.get().getAnnouncementManager().getAnnouncements().clear();
+        List.copyOf(Social.registries().announcements().keys())
+            .forEach(key -> Social.registries().announcements().unregister(key));
     }
 
 }

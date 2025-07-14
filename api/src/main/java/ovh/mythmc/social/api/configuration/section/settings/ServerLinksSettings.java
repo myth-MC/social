@@ -17,13 +17,27 @@ public class ServerLinksSettings {
     private List<ServerLink> links = List.of(
             new ServerLink("<blue>:raw_comet:</blue> Website", null,"https://example.com"),
             new ServerLink("<yellow>:raw_heart:</yellow> Donations", null, "https://example.com"),
-            new ServerLink(null, "COMMUNITY_GUIDELINES", "https://example.com"),
-            new ServerLink(null, "COMMUNITY", "https://discord.com"),
-            new ServerLink(null, "SUPPORT", "https://example.com")
+            new ServerLink(null, ServerLink.Type.COMMUNITY_GUIDELINES, "https://example.com"),
+            new ServerLink(null, ServerLink.Type.COMMUNITY, "https://discord.com"),
+            new ServerLink(null, ServerLink.Type.SUPPORT, "https://example.com")
     );
 
-    public record ServerLink(String displayName,
-                             String type,
-                             String url) { }
+    public record ServerLink(String displayName, Type type, String url) { 
+
+        public enum Type {
+
+                REPORT_BUG,
+                COMMUNITY_GUIDELINES,
+                SUPPORT,
+                STATUS,
+                FEEDBACK,
+                COMMUNITY,
+                WEBSITE,
+                FORUMS,
+                NEWS,
+                ANNOUNCEMENTS;
+        }
+
+    }
 
 }
