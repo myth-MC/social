@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.common.context.SocialMenuContext;
 import ovh.mythmc.social.common.gui.SimpleBookMenu;
@@ -30,12 +30,12 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component alias = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getAlias()), 
-            Component.text(context.target().getCachedDisplayName())
+            context.target().displayName()
         );
 
         Component username = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getUsername()), 
-            Component.text(context.target().player().get().getName())
+            Component.text(context.target().name())
         );
 
         Component messageCount = getField(
@@ -45,7 +45,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component mainChannel = getField(
             MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMainChannel()),
-            Component.text(context.target().getMainChannel().getName())
+            Component.text(context.target().mainChannel().name())
         );
 
         Component visibleChannels = getField(
@@ -56,7 +56,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
         Component visibleChannelsHoverText = MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannelsHoverText());
 
         for (ChatChannel channel : Social.get().getChatManager().getVisibleChannels(context.target())) {
-            SocialParserContext parserContext = SocialParserContext.builder(context.target(), Component.text(channel.getIcon() + " " + channel.getName(), channel.getColor()))
+            SocialParserContext parserContext = SocialParserContext.builder(context.target(), channel.icon().append(Component.text(" " + channel.name(), channel.color())))
                 .build();
 
             visibleChannelsHoverText = visibleChannelsHoverText
@@ -76,7 +76,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
             .appendNewline()
             .append(messageCount
                 .hoverEvent(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getClickToSeeMessageHistory()).asHoverEvent())
-                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().player().get().getName()))
+                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().name()))
             )
             .appendNewline()
             .append(visibleChannels

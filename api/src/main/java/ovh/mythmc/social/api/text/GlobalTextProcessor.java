@@ -4,17 +4,17 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
-import ovh.mythmc.social.api.chat.ChannelType;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 import static net.kyori.adventure.text.Component.text;
@@ -25,8 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GlobalTextProcessor {
@@ -55,7 +53,7 @@ public final class GlobalTextProcessor {
     @Deprecated(forRemoval = true)
     public Collection<SocialContextualParser> getContextualParsersWithGroupMembers() {
         List<SocialContextualParser> contextualParsers = new ArrayList<>();
-        getContextualParsers().stream().forEach(contextualParser -> {
+        getContextualParsers().forEach(contextualParser -> {
             if (contextualParser instanceof SocialParserGroup group) {
                 contextualParsers.addAll(group.get());
                 return;
@@ -97,10 +95,12 @@ public final class GlobalTextProcessor {
         return getIdentifiedParser(SocialContextualKeyword.class, identifier);
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isContextualPlaceholder(final @NotNull String identifier) {
         return getContextualPlaceholder(identifier) != null;
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isContextualKeyword(final @NotNull String keyword) {
         return getContextualKeyword(keyword) != null;
     }
@@ -157,11 +157,11 @@ public final class GlobalTextProcessor {
     }
 
     public void unregisterContextualPlaceholder(final @NotNull String identifier) {
-        getContextualPlaceholder(identifier).ifPresent(placeholder -> unregisterContextualParser(placeholder));
+        getContextualPlaceholder(identifier).ifPresent(this::unregisterContextualParser);
     }
 
     public void unregisterContextualKeyword(final @NotNull String identifier) {
-        getContextualKeyword(identifier).ifPresent(keyword -> unregisterContextualParser(keyword));
+        getContextualKeyword(identifier).ifPresent(this::unregisterContextualParser);
     }
 
     public Component parsePlayerInput(@NotNull SocialParserContext context) {
@@ -181,7 +181,7 @@ public final class GlobalTextProcessor {
         return textProcessor.parse(context);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, Component message, ChannelType channelType) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, Component message, ChatChannel.ChannelType channelType) {
         return parse(SocialParserContext.builder(user, message)
             .channel(channel)
             .messageChannelType(channelType)
@@ -189,15 +189,15 @@ public final class GlobalTextProcessor {
         );
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, String message, ChannelType channelType) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, String message, ChatChannel.ChannelType channelType) {
         return parse(user, channel, text(message), channelType);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, Component message) {
-        return parse(user, channel, message, ChannelType.CHAT);
+    public Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {
+        return parse(user, channel, message, ChatChannel.ChannelType.CHAT);
     }
 
-    public Component parse(SocialUser user, ChatChannel channel, String message) {
+    public Component parse(AbstractSocialUser user, ChatChannel channel, String message) {
         return parse(user, channel, text(message));
     }
 
@@ -205,62 +205,60 @@ public final class GlobalTextProcessor {
         send(List.of(context.user()), parse(context), context.messageChannelType(), context.channel());
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message, ChannelType channelType) {
+    public void parseAndSend(AbstractSocialUser user, ChatChannel ChatChannel, Component message, ChatChannel.ChannelType channelType) {
         SocialParserContext context = SocialParserContext.builder(user, message)
-            .channel(chatChannel)
+            .channel(ChatChannel)
             .messageChannelType(channelType)
             .build();
 
         parseAndSend(context);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message, ChannelType channelType) {
-        parseAndSend(user, chatChannel, text(message), channelType);
+    public void parseAndSend(AbstractSocialUser user, ChatChannel ChatChannel, String message, ChatChannel.ChannelType channelType) {
+        parseAndSend(user, ChatChannel, text(message), channelType);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, Component message) {
-        parseAndSend(user, chatChannel, message, ChannelType.CHAT);
+    public void parseAndSend(AbstractSocialUser user, ChatChannel ChatChannel, Component message) {
+        parseAndSend(user, ChatChannel, message, ovh.mythmc.social.api.chat.channel.ChatChannel.ChannelType.CHAT);
     }
 
-    public void parseAndSend(SocialUser user, ChatChannel chatChannel, String message) {
-        parseAndSend(user, chatChannel, text(message));
+    public void parseAndSend(AbstractSocialUser user, ChatChannel ChatChannel, String message) {
+        parseAndSend(user, ChatChannel, text(message));
     }
 
-    public void parseAndSend(SocialUser user, Component message, ChannelType type) {
-        parseAndSend(user, user.getMainChannel(), message, type);
+    public void parseAndSend(AbstractSocialUser user, Component message, ChatChannel.ChannelType type) {
+        parseAndSend(user, user.mainChannel(), message, type);
     }
 
-    public void parseAndSend(SocialUser user, String message, ChannelType type) {
+    public void parseAndSend(AbstractSocialUser user, String message, ChatChannel.ChannelType type) {
         parseAndSend(user, text(message), type);
     }
 
     @Internal
-    public void send(final @NotNull Collection<SocialUser> members, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
-        if (message == null || message.equals(Component.empty()))
+    public void send(final @NotNull Collection<AbstractSocialUser> members, @NotNull Component message, final @NotNull ChatChannel.ChannelType type, final @Nullable ChatChannel channel) {
+        if (message.equals(Component.empty()))
             return;
 
         switch (type) {
-            case ACTION_BAR -> members.forEach(user -> user.sendActionBar(message));
-            case CHAT -> {
-                members.forEach(user -> {
-                    Component userMessage = message;
+            case ACTION_BAR -> members.forEach(user -> user.audience().sendActionBar(message));
+            case CHAT -> members.forEach(user -> {
+                Component userMessage = message;
 
-                    if (user.companion().isPresent()) {
-                        if (channel == null) {
-                            userMessage = CompanionModUtils.asBroadcast(message);
-                        } else {
-                            userMessage = CompanionModUtils.asChannelable(message, channel);
-                        }
+                if (user.companion().isPresent()) {
+                    if (channel == null) {
+                        userMessage = CompanionModUtils.asBroadcast(message);
+                    } else {
+                        userMessage = CompanionModUtils.asChannelable(message, channel);
                     }
+                }
 
-                    user.sendMessage(userMessage);
-                });
-            }
+                user.audience().sendMessage(userMessage);
+            });
         }
     }
 
     @Internal
-    public void send(final @NotNull SocialUser recipient, @NotNull Component message, final @NotNull ChannelType type, final @Nullable ChatChannel channel) {
+    public void send(final @NotNull AbstractSocialUser recipient, @NotNull Component message, final @NotNull ChatChannel.ChannelType type, final @Nullable ChatChannel channel) {
         send(List.of(recipient), message, type, channel);
     }
 

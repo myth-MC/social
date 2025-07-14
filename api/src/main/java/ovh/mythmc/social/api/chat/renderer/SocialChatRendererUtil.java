@@ -1,51 +1,24 @@
 package ovh.mythmc.social.api.chat.renderer;
 
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.context.SocialParserContext;
+import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
+import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @UtilityClass
 public class SocialChatRendererUtil {
 
-    public Component getClickableChannelIcon(SocialUser user, ChatChannel channel) {
-        Component channelIcon = Component.text(channel.getIcon())
-            .hoverEvent(getChannelHoverText(user, channel))
-            .clickEvent(ClickEvent.runCommand("/social:social channel " + channel.getName()));
+    public @NotNull TextComponent getReplyIcon(AbstractSocialUser sender, SocialRegisteredMessageContext message) {
+        TextComponent replyIcon = Component.empty();
 
-        return channelIcon;
-    }
-
-    private Component getChannelHoverText(SocialUser user, ChatChannel channel) {
-        Component channelHoverText = Component.empty();
-        if (channel.isShowHoverText())
-            channelHoverText = channelHoverText
-                .append(Component.text(Social.get().getConfig().getChat().getChannelHoverText()))
-                .appendNewline()
-                .append(channel.getHoverText());
-
-        return Social.get().getTextProcessor().parse(SocialParserContext.builder(user, channelHoverText).channel(channel).build());
-    }
-
-    public Component getNicknameWithColor(SocialUser user, ChatChannel channel) {
-        Component nickname = Component.empty()
-            .append(Component.text(Social.get().getConfig().getChat().getPlayerNicknameFormat()))
-            .colorIfAbsent(channel.getNicknameColor());
-
-        return nickname;
-    }
-
-    public Component getReplyIcon(SocialUser sender, SocialRegisteredMessageContext message) {
-        Component replyIcon = Component.empty();
-        
         // Check that message is a reply
         if (!message.isReply())
             return replyIcon;
@@ -55,7 +28,7 @@ public class SocialChatRendererUtil {
             return replyIcon;
 
         // Get the reply context
-        SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
+        final SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
 
         // Icon hover text
         Component hoverText = Component.empty();
@@ -84,11 +57,15 @@ public class SocialChatRendererUtil {
             );
 
         // Set icon
-        replyIcon = Component.text(Social.get().getConfig().getChat().getReplyFormat())
+        replyIcon = (TextComponent) Component.text(Social.get().getConfig().getChat().getReplyIcon())
             .hoverEvent(hoverText)
             .clickEvent(ClickEvent.suggestCommand("(re:#" + reply.id() + ") "))
             .appendSpace()
-            .append(Component.text("(#" + reply.id() + ")", NamedTextColor.DARK_GRAY))
+            .append(Social.get().getTextProcessor().parse(SocialParserContext.builder(sender, Component.text(Social.get().getConfig().getChat().getReplyDescriptor()))
+                .injectValue(SocialInjectedValue.placeholder("reply_id", Component.text(reply.id())))
+                .injectValue(SocialInjectedValue.placeholder("reply_sender", reply.sender().displayName()))
+                .build()
+            ))
             .appendSpace();
 
         return replyIcon;
@@ -96,7 +73,7 @@ public class SocialChatRendererUtil {
 
     public Component trim(final @NotNull Component component) {
         if (component instanceof TextComponent textComponent) {
-            textComponent.content(textComponent.content().trim());
+            textComponent = textComponent.content(textComponent.content().trim());
             return textComponent;
         }
 

@@ -2,20 +2,12 @@ package ovh.mythmc.social.api.reaction;
 
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 public abstract class ReactionFactory {
 
-    public static ReactionFactory reactionFactory;
+    protected abstract void displayReaction(@NotNull AbstractSocialUser user, @NotNull Reaction reaction);
 
-    public static void set(final @NotNull ReactionFactory r) {
-        reactionFactory = r;
-    }
-
-    public static @NotNull ReactionFactory get() { return reactionFactory; }
-
-    protected abstract void displayReaction(SocialUser user, Reaction reaction);
-
-    public abstract void scheduleReaction(SocialUser user, Reaction reaction);
+    public abstract void play(@NotNull AbstractSocialUser user, @NotNull Reaction reaction);
 
 }

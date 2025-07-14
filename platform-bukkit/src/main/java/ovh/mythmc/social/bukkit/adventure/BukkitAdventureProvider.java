@@ -2,13 +2,19 @@ package ovh.mythmc.social.bukkit.adventure;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.command.CommandSender;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 public class BukkitAdventureProvider extends SocialAdventureProvider {
+
+    public static @NotNull BukkitAdventureProvider get() {
+        return (BukkitAdventureProvider) SocialAdventureProvider.get();
+    }
 
     private final BukkitAudiences adventure;
 
@@ -17,8 +23,8 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
     }
 
     @Override
-    public Audience player(final @NotNull Player player) {
-        return adventure.player(player);
+    public Audience user(@NotNull AbstractSocialUser user) {
+        return adventure.player(Bukkit.getPlayer(user.uuid()));
     }
 
     @Override
@@ -26,9 +32,8 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
         return adventure.console();
     }
 
-    @Override
-    public Audience sender(final @NotNull CommandSender sender) {
-        return adventure.sender(sender);
+    public Audience player(final @NotNull Player player) {
+        return adventure.player(player);
     }
 
 }

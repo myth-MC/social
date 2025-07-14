@@ -9,8 +9,8 @@ import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @AllArgsConstructor
 @Getter
@@ -22,11 +22,12 @@ import ovh.mythmc.social.api.user.SocialUser;
     @CallbackField(field = "channel", getter = "channel()"),
     @CallbackField(field = "message", getter = "message()"),
     @CallbackField(field = "messageId", getter = "messageId()"),
-    @CallbackField(field = "replyId", getter = "replyId()")
+    @CallbackField(field = "replyId", getter = "replyId()"),
+    @CallbackField(field = "cancelled", getter = "cancelled()")
 })
 public final class SocialMessageSend {
 
-    private final SocialUser sender;
+    private final AbstractSocialUser sender;
 
     private final ChatChannel channel;
 
@@ -35,6 +36,8 @@ public final class SocialMessageSend {
     private final int messageId;
 
     private final Integer replyId;
+
+    private final boolean cancelled;
 
     public boolean isReply() {
         if (replyId == null)

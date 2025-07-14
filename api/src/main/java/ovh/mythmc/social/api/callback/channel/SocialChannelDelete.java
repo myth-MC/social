@@ -1,9 +1,9 @@
 package ovh.mythmc.social.api.callback.channel;
 
 import ovh.mythmc.callbacks.annotations.v1.Callback;
-import ovh.mythmc.social.api.chat.ChatChannel;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
 
 @Callback
-public final record SocialChannelDelete(ChatChannel channel) {
+public record SocialChannelDelete(ChatChannel channel) {
     
 }

@@ -6,26 +6,20 @@ import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 
+import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.announcements.SocialAnnouncement;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.configuration.section.settings.AnnouncementsSettings;
-import ovh.mythmc.social.api.configuration.section.settings.ChatSettings;
-import ovh.mythmc.social.api.configuration.section.settings.CommandsSettings;
-import ovh.mythmc.social.api.configuration.section.settings.DatabaseSettings;
-import ovh.mythmc.social.api.configuration.section.settings.EmojiSettings;
-import ovh.mythmc.social.api.configuration.section.settings.GeneralSettings;
-import ovh.mythmc.social.api.configuration.section.settings.MOTDSettings;
-import ovh.mythmc.social.api.configuration.section.settings.ReactionsSettings;
-import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings;
-import ovh.mythmc.social.api.configuration.section.settings.SystemMessagesSettings;
-import ovh.mythmc.social.api.configuration.section.settings.TextReplacementSettings;
+import ovh.mythmc.social.api.announcements.Announcement;
+import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
+import ovh.mythmc.social.api.configuration.section.settings.*;
+import ovh.mythmc.social.api.configuration.serializer.TextComponentSerializer;
 import ovh.mythmc.social.api.emoji.Emoji;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.text.filter.SocialFilterLiteral;
 import ovh.mythmc.social.api.text.filter.SocialFilterRegex;
+import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +29,11 @@ import java.nio.file.Files;
 public final class SocialConfigProvider {
 
     private final File pluginFolder;
+
+    private final YamlConfigurationProperties properties = YamlConfigurationProperties.newBuilder()
+        .charset(StandardCharsets.UTF_8)
+        .addSerializer(TextComponent.class, new TextComponentSerializer())
+        .build();
 
     @Deprecated(since = "0.4", forRemoval = true) 
     private SocialSettings settings;
@@ -91,7 +90,7 @@ public final class SocialConfigProvider {
         return YamlConfigurations.update(
             new File(pluginFolder, "settings" + File.separator + fileName).toPath(),
             clazz,
-            YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+            properties
         );
     }
 
@@ -118,7 +117,7 @@ public final class SocialConfigProvider {
             settings = YamlConfigurations.update(
                 new File(pluginFolder, "settings.yml").toPath(),
                 LegacySocialSettings.class,
-                YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+                properties
             );
 
             general = settings.getGeneral();
@@ -156,7 +155,7 @@ public final class SocialConfigProvider {
         messages = YamlConfigurations.update(
                 new File(pluginFolder, "messages.yml").toPath(),
                 SocialMessages.class,
-                YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
+                properties
         );
     }
 
@@ -171,8 +170,11 @@ public final class SocialConfigProvider {
 
         // Register emojis
         settings.getEmojis().getEmojis().forEach(emojiField -> {
-            Emoji emoji = new Emoji(emojiField.name(), emojiField.aliases(), emojiField.unicodeCharacter());
-            Social.get().getEmojiManager().registerEmoji("server", emoji);
+            final var emoji = Emoji.builder(emojiField.name(), emojiField.unicodeCharacter())
+                .aliases(emojiField.aliases())
+                .build();
+
+            Social.registries().emojis().register(RegistryKey.namespaced("server", emoji.name()), emoji);
         });
 
         // Register custom placeholders
@@ -194,26 +196,29 @@ public final class SocialConfigProvider {
 
         // Register reactions
         settings.getReactions().getReactions().forEach(reactionField -> {
-            Reaction reaction;
-            if (reactionField.sound() != null) {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), getSoundByKey(reactionField.sound()), reactionField.triggerWords());
-            } else {
-                reaction = new Reaction(reactionField.name(), reactionField.texture(), null, reactionField.triggerWords());
-            }
-            Social.get().getReactionManager().registerReaction("SERVER", reaction);
+            final var reaction = Reaction.builder(reactionField.name(), reactionField.texture())
+                .sound(getSoundByKeyOrNull(reactionField.sound()))
+                .particle(reactionField.particle())
+                .triggerWords(reactionField.triggerWords())
+                .build();
+
+            Social.registries().reactions().register(RegistryKey.namespaced("social", reaction.name()), reaction);
         });
 
         // Register chat channels
-        settings.getChat().getChannels().forEach(channel -> Social.get().getChatManager().registerChatChannel(ChatChannel.fromConfigField(channel)));
+        settings.getChat().getChannels().forEach(channel -> Social.registries().channels().register(RegistryKey.identified(channel.name()), SimpleChatChannel.fromConfigField(channel)));
 
         // Register announcements
         settings.getAnnouncements().getMessages().forEach(announcementField -> {
-            SocialAnnouncement announcement = SocialAnnouncement.fromConfigField(announcementField);
-            Social.get().getAnnouncementManager().registerAnnouncement(announcement);
+            final Announcement announcement = Announcement.fromConfigField(announcementField);
+            Social.registries().announcements().register(RegistryKey.namespaced("server", announcement.hashCode() + ""), announcement);
         });
     }
 
-    private Sound getSoundByKey(String key) {
+    private Sound getSoundByKeyOrNull(@Nullable String key) {
+        if (key == null)
+            return null;
+
         if (!Key.parseable(key)) {
             logger.warn("reactions.yml contains an invalid key: " + key);
             return null;

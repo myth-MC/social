@@ -18,7 +18,7 @@ public final class ChannelIconPlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        return Component.text(context.channel().getIcon());
+        return context.channel().icon();
     }
 
 }

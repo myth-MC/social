@@ -31,16 +31,19 @@ public class ChatSettings {
     @Comment("You can add placeholders such as the player's rank")
     private String playerNicknameFormat = "$(clickable_nickname)";
 
-    @Comment("Message that appears when a player replies to a message")
-    private String replyFormat = "<blue>:raw_box_up_and_right:</blue>";
+    @Comment("Icon that appears when a player replies to a message")
+    private String replyIcon = "<blue>:raw_box_up_and_right:</blue>";
+
+    @Comment("Brief text that appears right after the reply icon")
+    private String replyDescriptor = "<dark_gray>(#$(reply_id))</dark_gray>";
 
     @Comment("Text that appears when hovering over a message reply")
     private String replyHoverText = "<dark_gray>Click here to reply to <gray>$(nickname)</gray>'s message</dark_gray>";
 
     @Comment("Add or remove channels according to your server's needs")
     private List<Channel> channels = List.of(
-            new Channel("global", null, "#FFFF55", null, "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
-            new Channel("staff", "global", "#FF5555", "social.admin", "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", null, List.of("This channel is restricted to staff members"), "#FFFF55", null, null, null)
+            new Channel("global", null, null, "#FFFF55", null, List.of("global", "g"), "<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>", true, List.of("This is the global channel"), "#D3D3D3", "<gray>:raw_divider:</gray>", "#FFFFFF", true),
+            new Channel("staff", null, "global", "#FF5555", "social.admin", List.of("staff", "s"), "<dark_gray>[<red>:raw_pencil:</red>]</dark_gray>", null, List.of("This channel is restricted to staff members"), "#FFFF55", null, null, null)
     );
 
     @Comment("Whether mentions should be enabled or disabled")
@@ -49,7 +52,7 @@ public class ChatSettings {
     @Comment("Sound that will be played to the mentioned player")
     private String mentionSound = "block.chain.place";
 
-    @Comment("Whether markdown-style text formatting options for players should be enabled or disabled")
+    @Comment({"Whether text formatting options for players should be enabled", "This will allow using colors and text decoration tags to players with permission social.text-formatting"})
     private boolean playerFormatOptions = true;
 
     @Comment("Groups module")
@@ -59,9 +62,11 @@ public class ChatSettings {
     private ChatFilterSettings filter = new ChatFilterSettings();
 
     public record Channel(String name,
+                          String alias,
                           String inherit,
                           String color,
                           String permission,
+                          List<String> commands,
                           String icon,
                           Boolean showHoverText,
                           List<String> hoverText,

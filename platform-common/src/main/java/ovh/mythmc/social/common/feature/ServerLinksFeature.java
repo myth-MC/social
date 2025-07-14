@@ -1,29 +1,18 @@
 package ovh.mythmc.social.common.feature;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionVersion;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.common.listener.ServerLinksListener;
+import ovh.mythmc.social.common.callback.handler.ServerLinksHandler;
 
 @Feature(group = "social", identifier = "SERVER_LINKS")
-@FeatureConditionVersion(versions = {"1.21"})
+@FeatureConditionVersion(versions = "1.21")
 public final class ServerLinksFeature {
 
-    private final JavaPlugin plugin;
-
-    private ServerLinksListener serverLinksListener;
-
-    public ServerLinksFeature(@NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
+    private final ServerLinksHandler serverLinksHandler = new ServerLinksHandler();
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
@@ -32,13 +21,12 @@ public final class ServerLinksFeature {
 
     @FeatureEnable
     public void enable() {
-        this.serverLinksListener = new ServerLinksListener();
-        Bukkit.getPluginManager().registerEvents(serverLinksListener, plugin);
+        serverLinksHandler.register();
     }
 
     @FeatureDisable
     public void disable() {
-        HandlerList.unregisterAll(serverLinksListener);
+        serverLinksHandler.unregister();
     }
-
+    
 }

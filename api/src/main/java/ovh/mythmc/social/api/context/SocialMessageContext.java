@@ -3,7 +3,7 @@ package ovh.mythmc.social.api.context;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -12,15 +12,15 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.ChatChannel;
-import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.user.AbstractSocialUser;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
 public class SocialMessageContext implements SocialContext {
 
-    private final SocialUser sender;
+    private final AbstractSocialUser sender;
 
     private final ChatChannel channel;
 

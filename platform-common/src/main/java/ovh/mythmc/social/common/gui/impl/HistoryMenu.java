@@ -33,11 +33,11 @@ public class HistoryMenu implements HistoryBookMenu {
         switch (context.headerType()) {
             case CHANNEL:
                 if (context.channel() != null) {
-                    TextColor channelColor = context.channel().getColor();
+                    TextColor channelColor = context.channel().color();
                     if (channelColor.equals(NamedTextColor.YELLOW))
                         channelColor = NamedTextColor.GOLD;
         
-                    scope = Component.text(context.channel().getName(), channelColor);
+                    scope = Component.text(context.channel().name(), channelColor);
                 }
                 break;
             case PLAYER:
@@ -79,7 +79,7 @@ public class HistoryMenu implements HistoryBookMenu {
         List<SocialRegisteredMessageContext> messages = new ArrayList<>(context.messages());
         Collections.reverse(messages);
         for (SocialRegisteredMessageContext message : messages) {
-            if (pages.size() > 0 && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
+            if (!pages.isEmpty() && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
                 pages.get(pages.size() -1).messages.add(message);
                 continue;
             }
@@ -102,13 +102,13 @@ public class HistoryMenu implements HistoryBookMenu {
             Component page = Component.empty();
 
             for (SocialRegisteredMessageContext message : messages) { 
-                Component hoverText = Component.text(message.sender().getCachedDisplayName() + ": ", NamedTextColor.GRAY)
+                Component hoverText = Component.text(message.sender().cachedDisplayName() + ": ", NamedTextColor.GRAY)
                     .append(message.message()).color(NamedTextColor.WHITE)
                     .appendNewline()
                     .appendNewline()
                     .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext()).colorIfAbsent(NamedTextColor.BLUE))
                     .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().getName(), message.channel().getColor())));
+                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().name(), message.channel().color())));
 
                 Component toAppend = Component.empty()
                     .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))
@@ -122,7 +122,7 @@ public class HistoryMenu implements HistoryBookMenu {
 
                     Component replyMessage = Component.text("#" + reply.id())
                         .appendSpace()
-                        .append(Component.text("(" + reply.sender().getCachedDisplayName() + ")", NamedTextColor.BLUE)
+                        .append(Component.text("(" + reply.sender().cachedDisplayName() + ")", NamedTextColor.BLUE)
                         .appendNewline()
                         .appendNewline()
                         .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getClickToOpenThreadHistory()))
