@@ -44,8 +44,8 @@ public final class GroupChatChannel extends SimpleChatChannel {
             SimpleChatChannel.getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),
             TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getNicknameColor()),
             Social.get().getConfig().getChat().getGroups().getTextDivider(),
-            TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getTextColor()),
             null,
+            TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getTextColor()),
             false
         );
 

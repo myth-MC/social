@@ -6,16 +6,16 @@ import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
-import ovh.mythmc.social.common.text.parser.TextFormattingParser;
+import ovh.mythmc.social.common.text.parser.URLParser;
 
-@Feature(group = "social", identifier = "TEXT_FORMATTING")
-public final class TextFormattingFeature {
+@Feature(group = "social", identifier = "CLICKABLE_URLS")
+public class ClickableURLFeature {
 
-    private final SocialContextualParser parser = new TextFormattingParser();
+    private final SocialContextualParser parser = new URLParser();
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Social.get().getConfig().getChat().isPlayerFormatOptions();
+        return Social.get().getConfig().getChat().isClickableUrls();
     }
 
     @FeatureEnable
@@ -27,5 +27,5 @@ public final class TextFormattingFeature {
     public void disable() {
         Social.get().getTextProcessor().LATE_PARSERS.remove(parser);
     }
-    
+
 }

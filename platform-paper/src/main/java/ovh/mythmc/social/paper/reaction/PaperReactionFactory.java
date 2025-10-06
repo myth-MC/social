@@ -94,9 +94,10 @@ public final class PaperReactionFactory extends ReactionFactory {
             itemDisplay.getWorld().spawnParticle(Particle.valueOf(particle), itemDisplay.getLocation().add(0, 2, 0), 3, 0.2, 0.2, 0.2);
         }
 
-        itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
-        if (reaction.sound() != null)
+        //itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
+        if (reaction.sound() != null) {
             user.playSound(reaction.sound());
+        }
 
         final ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
         final SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();

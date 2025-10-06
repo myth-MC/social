@@ -13,7 +13,7 @@ public final class URLParser implements SocialFilterLike {
 
     @Override
     public Component parse(SocialParserContext context) {
-        if (!context.user().checkPermission("social.text-formatting"))
+        if (!context.user().checkPermission("social.clickable-urls"))
             return context.message();
 
         return context.message().replaceText(TextReplacementConfig.builder()

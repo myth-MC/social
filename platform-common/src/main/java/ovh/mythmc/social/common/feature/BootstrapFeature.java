@@ -26,6 +26,7 @@ public class BootstrapFeature {
             AnvilFeature.class,
             BookFeature.class,
             ChatFeature.class,
+            ClickableURLFeature.class,
             CompanionFeature.class,
             EmojiFeature.class,
             GroupFeature.class,
