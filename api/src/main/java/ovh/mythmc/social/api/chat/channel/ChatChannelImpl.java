@@ -33,13 +33,15 @@ class ChatChannelImpl implements ChatChannel {
 
     private final String permission;
 
+    private final TextColor textColor;
+
     private final boolean joinByDefault;
 
     protected final LinkedHashSet<UUID> memberUuids = new LinkedHashSet<>();
 
     private final Collection<ChatRendererFeature> supportedRendererFeatures;
 
-    protected ChatChannelImpl(@NotNull String name, @NotNull Mutable<String> alias, @NotNull Iterable<String> commands, @NotNull Component icon, @NotNull Component description, @NotNull TextColor color, @NotNull ChatFormatBuilder formatBuilder, @Nullable String permission, boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
+    protected ChatChannelImpl(@NotNull String name, @NotNull Mutable<String> alias, @NotNull Iterable<String> commands, @NotNull Component icon, @NotNull Component description, @NotNull TextColor color, @NotNull ChatFormatBuilder formatBuilder, @Nullable String permission, @Nullable TextColor textColor, boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
         this.name = name;
         this.alias = alias;
         this.commands = commands;
@@ -48,6 +50,7 @@ class ChatChannelImpl implements ChatChannel {
         this.color = color;
         this.formatBuilder = formatBuilder;
         this.permission = permission;
+        this.textColor = textColor;
         this.joinByDefault = joinByDefault;
         this.supportedRendererFeatures = supportedRendererFeatures;
     }
@@ -89,6 +92,11 @@ class ChatChannelImpl implements ChatChannel {
     @Override
     public @NotNull Optional<String> permission() {
         return Optional.ofNullable(permission);
+    }
+
+    @Override
+    public @NotNull Optional<TextColor> textColor() {
+        return Optional.ofNullable(textColor);
     }
 
     @Override
@@ -138,7 +146,7 @@ class ChatChannelImpl implements ChatChannel {
 
         @Override
         public ChatChannelImpl build() {
-            return new ChatChannelImpl(name, alias, commands, icon, description, color, formatBuilder, permission, joinByDefault, supportedFeatures);
+            return new ChatChannelImpl(name, alias, commands, icon, description, color, formatBuilder, permission, textColor, joinByDefault, supportedFeatures);
         }
 
         @Override
@@ -164,6 +172,8 @@ class ChatChannelImpl implements ChatChannel {
         protected TextColor color = NamedTextColor.YELLOW;
 
         protected String permission;
+
+        protected TextColor textColor;
 
         protected boolean joinByDefault = false;
 
@@ -208,6 +218,11 @@ class ChatChannelImpl implements ChatChannel {
 
         public T permission(@NotNull String permission) {
             get().permission = permission;
+            return get();
+        }
+
+        public T textColor(@Nullable TextColor textColor) {
+            get().textColor = textColor;
             return get();
         }
 

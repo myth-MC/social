@@ -55,6 +55,9 @@ public class ChatSettings {
     @Comment({"Whether text formatting options for players should be enabled", "This will allow using colors and text decoration tags to players with permission social.text-formatting"})
     private boolean playerFormatOptions = true;
 
+    @Comment({"Whether sent URLs should be clickable", "Users will need permission social.clickable-urls"})
+    private boolean clickableUrls = true;
+
     @Comment("Groups module")
     private ChatGroupSettings groups = new ChatGroupSettings();
 

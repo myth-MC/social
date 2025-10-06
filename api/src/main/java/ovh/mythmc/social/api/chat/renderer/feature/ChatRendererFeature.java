@@ -2,7 +2,6 @@ package ovh.mythmc.social.api.chat.renderer.feature;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
@@ -27,7 +26,7 @@ public class ChatRendererFeature {
         })
         .decorator((context, component) -> {
             final int idToReply = context.isReply() ? context.replyId() : context.id();
-            return component.applyFallbackStyle(Style.style(ClickEvent.suggestCommand("(re:#" + idToReply + ") ")));
+            return component.applyFallbackStyle(ClickEvent.suggestCommand("(re:#" + idToReply + ") "));
         })
         .build();
     }

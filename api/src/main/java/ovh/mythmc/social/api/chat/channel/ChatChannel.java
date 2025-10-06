@@ -38,6 +38,8 @@ public interface ChatChannel {
 
     @NotNull Optional<String> permission();
 
+    @NotNull Optional<TextColor> textColor();
+
     boolean joinByDefault();
 
     @NotNull Iterable<ChatRendererFeature> supportedRendererFeatures();

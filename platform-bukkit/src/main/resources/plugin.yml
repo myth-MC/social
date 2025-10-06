@@ -132,3 +132,6 @@ permissions:
   social.text-formatting:
     description: Allows users to format text using MiniMessage tags
     default: true
+  social.clickable-urls:
+    description: Allows users to send clickable URLs
+    default: op

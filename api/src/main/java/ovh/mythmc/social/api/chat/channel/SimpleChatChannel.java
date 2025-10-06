@@ -34,8 +34,6 @@ public class SimpleChatChannel extends ChatChannelImpl {
 
     private final String textDivider;
 
-    private final TextColor textColor;
-
     protected SimpleChatChannel(@NotNull String name,
                                 @Nullable String alias,
                                 @NotNull TextColor color,
@@ -45,16 +43,15 @@ public class SimpleChatChannel extends ChatChannelImpl {
                                 @NotNull Component hoverText,
                                 @NotNull TextColor nicknameColor,
                                 @NotNull String textDivider,
-                                @NotNull TextColor textColor,
                                 @Nullable String permission,
+                                @Nullable TextColor textColor,
                                 boolean joinByDefault) {
 
-        super(name, Mutable.of(alias), commands, icon, hoverText, color, ChatFormatBuilder.empty(), permission, joinByDefault, supportedFeatures());
+        super(name, Mutable.of(alias), commands, icon, hoverText, color, ChatFormatBuilder.empty(), permission, textColor, joinByDefault, supportedFeatures());
         this.showHoverText = showHoverText;
         this.hoverText = hoverText;
         this.nicknameColor = nicknameColor;
         this.textDivider = textDivider;
-        this.textColor = textColor;
     }
 
     @Override
@@ -68,7 +65,7 @@ public class SimpleChatChannel extends ChatChannelImpl {
             .appendSpace()
             .append(text("<$(channel_text_color)>"))
             .injectValue(SocialInjectedValue.placeholder("channel_text_divider", text(this.getTextDivider())))
-            .injectValue(SocialInjectedValue.placeholder("channel_text_color", text(this.getTextColor().asHexString())));
+            .injectValue(SocialInjectedValue.placeholder("channel_text_color", text(this.textColor().orElse(NamedTextColor.WHITE).asHexString())));
     }
 
     private static Collection<ChatRendererFeature> supportedFeatures() {
@@ -101,7 +98,7 @@ public class SimpleChatChannel extends ChatChannelImpl {
                 hoverText = inherit.getHoverText();
                 nicknameColor = inherit.getNicknameColor();
                 textDivider = inherit.getTextDivider();
-                textColor = inherit.getTextColor();
+                textColor = inherit.textColor().orElse(null);
                 permission = inherit.permission().orElse(null);
                 joinByDefault = inherit.joinByDefault();
             }
@@ -148,8 +145,8 @@ public class SimpleChatChannel extends ChatChannelImpl {
             hoverText,
             nicknameColor,
             textDivider,
-            textColor,
             permission,
+            textColor,
             joinByDefault
         );
     }

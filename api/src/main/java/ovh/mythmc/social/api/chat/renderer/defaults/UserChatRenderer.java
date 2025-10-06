@@ -1,6 +1,7 @@
 package ovh.mythmc.social.api.chat.renderer.defaults;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
@@ -29,7 +30,8 @@ public class UserChatRenderer<U extends AbstractSocialUser> implements SocialCha
                 .channel(channel)
                 .build());
 
-        var decoratedMessage = context.message();
+        var decoratedMessage = context.message()
+            .applyFallbackStyle(channel.textColor().orElse(NamedTextColor.WHITE));
         for (ChatRendererFeature feature : channel.supportedRendererFeatures()) {
             if (feature.isApplicable(context))
                 decoratedMessage = feature.decorator().decorate(context, decoratedMessage);
