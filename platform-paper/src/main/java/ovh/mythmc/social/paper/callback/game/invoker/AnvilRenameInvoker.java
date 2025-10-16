@@ -16,7 +16,11 @@ public class AnvilRenameInvoker implements Listener {
     
     @EventHandler
     public void onAnvil(PrepareAnvilEvent event) {
-        final var user = BukkitSocialUser.from(event.getInventory().getViewers().getFirst().getUniqueId());
+        final var viewers = event.getInventory().getViewers();
+        if (viewers.isEmpty())
+            return;
+
+        final var user = BukkitSocialUser.from(viewers.getFirst().getUniqueId());
         if (user == null)
             return;
 
