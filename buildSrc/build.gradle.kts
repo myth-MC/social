@@ -16,3 +16,13 @@ repositories {
 dependencies {
     implementation("com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:9.0.0-beta11")
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+kotlin {
+    jvmToolchain(21)
+}

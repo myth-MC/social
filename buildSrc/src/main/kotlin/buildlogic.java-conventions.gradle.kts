@@ -77,17 +77,23 @@ publishing {
         }
     }
     repositories {
-        maven {
-            val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
-            val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
-            url = if (version.toString().contains("db") || version.toString().contains("rc")) snapshotsRepoUrl else releasesRepoUrl
+        val username = providers.gradleProperty("myth-mc-username").orNull
+        val password = providers.gradleProperty("myth-mc-password").orNull
 
-            credentials {
-                val usernameProvider = providers.gradleProperty("myth-mc-username")
-                val passwordProvider = providers.gradleProperty("myth-mc-password")
+        if (username != null && password != null) {
+            maven {
+                val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
+                val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
 
-                username = usernameProvider.get()
-                password = passwordProvider.get()
+                url = if (version.toString().contains("db") || version.toString().contains("rc"))
+                    snapshotsRepoUrl
+                else
+                    releasesRepoUrl
+
+                credentials {
+                    this.username = username
+                    this.password = password
+                }
             }
         }
     }
