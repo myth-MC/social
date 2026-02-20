@@ -15,6 +15,12 @@ import ovh.mythmc.social.api.emoji.Emoji;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.util.registry.*;
 
+/**
+ * Holds all object registries used by the social plugin.
+ *
+ * <p>
+ * Access the singleton via {@link Social#registries()}.
+ */
 public final class SocialRegistries {
 
     static final SocialRegistries INSTANCE = new SocialRegistries();
@@ -27,24 +33,50 @@ public final class SocialRegistries {
 
     private final NamespacedRegistry<Reaction> reactions = Registry.namespaced(Reaction.class);
 
-    private SocialRegistries() { }
+    private SocialRegistries() {
+    }
 
+    /**
+     * Returns the registry of all registered {@link Announcement} objects.
+     *
+     * @return the announcement registry
+     */
     public NamespacedRegistry<Announcement> announcements() {
         return this.announcements;
     }
 
+    /**
+     * Returns the registry of all registered {@link ChatChannel} objects.
+     *
+     * @return the channel registry
+     */
     public Channels channels() {
         return this.channels;
     }
 
+    /**
+     * Returns the registry of all registered
+     * {@link ovh.mythmc.social.api.emoji.Emoji} objects.
+     *
+     * @return the emoji registry
+     */
     public NamespacedRegistry<Emoji> emojis() {
         return this.emojis;
     }
 
+    /**
+     * Returns the registry of all registered {@link Reaction} objects.
+     *
+     * @return the reaction registry
+     */
     public NamespacedRegistry<Reaction> reactions() {
         return this.reactions;
     }
 
+    /**
+     * A specialised registry for {@link ChatChannel} objects that fires lifecycle
+     * callbacks on registration and unregistration.
+     */
     public static final class Channels extends AbstractRegistry.Identified<ChatChannel> {
 
         private Channels() {

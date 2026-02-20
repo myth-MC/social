@@ -13,6 +13,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Manages the automatic broadcast of registered {@link Announcement
+ * announcements}.
+ *
+ * <p>
+ * Announcements are cycled in registration order at the interval defined in the
+ * plugin configuration. Use {@link #restartTask()} to begin the scheduler.
+ * Access the singleton via
+ * {@link ovh.mythmc.social.api.Social#getAnnouncementManager()}.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AnnouncementManager {
 
@@ -31,38 +41,46 @@ public final class AnnouncementManager {
         asyncScheduler.schedule(new TimerTask() {
             @Override
             public void run() {
-            final var announcementRegistry = Social.registries().announcements();
-            final Announcement announcement = announcementRegistry.values().get(index);
+                final var announcementRegistry = Social.registries().announcements();
+                final Announcement announcement = announcementRegistry.values().get(index);
 
-            if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
-                Social.get().getUserService().get().forEach(user -> {
-                    final SocialParserContext context = SocialParserContext.builder(user, announcement.message())
-                        .messageChannelType(ChatChannel.ChannelType.ACTION_BAR)
-                        .build();
-
-                    Social.get().getTextProcessor().parseAndSend(context);
-                });
-            } else {
-                for (ChatChannel channel : announcement.channels()) {
-                    channel.members().forEach(user -> {
+                if (Social.get().getConfig().getAnnouncements().isUseActionBar()) {
+                    Social.get().getUserService().get().forEach(user -> {
                         final SocialParserContext context = SocialParserContext.builder(user, announcement.message())
-                            .build();
+                                .messageChannelType(ChatChannel.ChannelType.ACTION_BAR)
+                                .build();
 
-                        final Component component = Social.get().getTextProcessor().parse(context);
-                        Social.get().getTextProcessor().send(user, component, ChatChannel.ChannelType.CHAT, channel);
+                        Social.get().getTextProcessor().parseAndSend(context);
                     });
+                } else {
+                    for (ChatChannel channel : announcement.channels()) {
+                        channel.members().forEach(user -> {
+                            final SocialParserContext context = SocialParserContext
+                                    .builder(user, announcement.message())
+                                    .build();
+
+                            final Component component = Social.get().getTextProcessor().parse(context);
+                            Social.get().getTextProcessor().send(user, component, ChatChannel.ChannelType.CHAT,
+                                    channel);
+                        });
+                    }
                 }
-            }
 
-            index++;
-            if (index >= announcementRegistry.values().size())
-                index = 0;
+                index++;
+                if (index >= announcementRegistry.values().size())
+                    index = 0;
 
-            performTask();
+                performTask();
             }
         }, Social.get().getConfig().getAnnouncements().getFrequency(), TimeUnit.SECONDS);
     }
 
+    /**
+     * Starts the announcement scheduler if it is not already running.
+     *
+     * <p>
+     * Calling this method while the scheduler is active has no effect.
+     */
     public void restartTask() {
         if (running)
             return;
