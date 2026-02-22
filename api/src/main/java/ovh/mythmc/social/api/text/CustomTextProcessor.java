@@ -1,11 +1,15 @@
 package ovh.mythmc.social.api.text;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -54,13 +58,13 @@ public class CustomTextProcessor {
     private final List<SocialContextualParser> parsers = new ArrayList<>();
 
     @Builder.Default
-    private final Collection<Class<? extends SocialContextualParser>> exclusions = new ArrayList<>();
+    private final Set<Class<? extends SocialContextualParser>> exclusions = new HashSet<>();
 
     @Builder.Default
-    private boolean playerInput = false;
+    private boolean restrictToPlayerInputParsers = false;
 
     @Getter(AccessLevel.PRIVATE)
-    private final List<SocialContextualParser> parserQueue = new ArrayList<>();
+    private final Deque<SocialContextualParser> parserQueue = new ArrayDeque<>();
 
     /**
      * Creates a processor that uses the same parser list as
@@ -109,16 +113,16 @@ public class CustomTextProcessor {
         while (!parserQueue.isEmpty()) {
             final SocialContextualParser parser = parserQueue.removeFirst();
 
-            if (parser instanceof SocialFilterLike && !playerInput)
+            if (parser instanceof SocialFilterLike && !restrictToPlayerInputParsers)
                 continue;
-            if (!(parser instanceof SocialUserInputParser) && playerInput)
+            if (!(parser instanceof SocialUserInputParser) && restrictToPlayerInputParsers)
                 continue;
             if (!parser.supportsOfflinePlayers() && !context.user().isOnline())
                 continue;
 
             final Class<? extends SocialContextualParser> parserClass = parser.getClass();
             final int callCount = callCounts.getOrDefault(parserClass, 0);
-            if (callCount > 3) {
+            if (callCount >= 3) {
                 Social.get().getLogger().warn(
                         "Parser {} has been called too many times. This can potentially degrade performance. " +
                                 "Please, inform the author(s) of {} about this.",
@@ -132,9 +136,9 @@ public class CustomTextProcessor {
                 final Component parsed = parser.parse(processorContext);
                 final Component withHover = parseHoverText(parser, processorContext.withMessage(parsed));
                 processorContext = SocialProcessorContext.from(processorContext.withMessage(withHover), this);
-            } catch (Throwable t) {
-                Social.get().getLogger().error("Parser {} couldn't be applied: {}", parserClass.getSimpleName(), t);
-                t.printStackTrace(System.err);
+            } catch (Exception e) {
+                Social.get().getLogger().error("Parser {} couldn't be applied: {}", parserClass.getSimpleName(), e);
+                e.printStackTrace(System.err);
             }
         }
 
@@ -166,7 +170,7 @@ public class CustomTextProcessor {
                 result.addAll(group.getByType(type));
             }
         }
-        return result;
+        return List.copyOf(result);
     }
 
     /**
@@ -225,7 +229,7 @@ public class CustomTextProcessor {
     private static Component parseHoverText(@NotNull SocialContextualParser parser,
             @NotNull SocialParserContext context) {
         final var hoverEvent = context.message().hoverEvent();
-        if (hoverEvent != null && hoverEvent.action().equals(Action.SHOW_TEXT)) {
+        if (hoverEvent != null && hoverEvent.action() == Action.SHOW_TEXT) {
             @SuppressWarnings("unchecked")
             final Component hoverText = ((HoverEvent<Component>) hoverEvent).value();
             return context.message().hoverEvent(parser.parse(context.withMessage(hoverText)));

@@ -251,7 +251,7 @@ public final class GlobalTextProcessor {
     public Component parsePlayerInput(@NotNull SocialParserContext context) {
         return CustomTextProcessor.builder()
                 .parsers(getContextualParsers())
-                .playerInput(true)
+                .restrictToPlayerInputParsers(true)
                 .build()
                 .parse(context);
     }

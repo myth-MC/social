@@ -20,7 +20,8 @@ import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 @Builder
 public class SocialParserGroup implements SocialUserInputParser {
 
-    @Singular("parser") private final List<SocialContextualParser> content = new ArrayList<>();
+    @Singular("parser")
+    private final List<SocialContextualParser> content = new ArrayList<>();
 
     public List<SocialContextualParser> get() {
         return List.copyOf(content);
@@ -46,10 +47,10 @@ public class SocialParserGroup implements SocialUserInputParser {
     @Experimental
     public Component requestToGroup(@NotNull SocialContextualParser requester, @NotNull SocialParserContext context) {
         final CustomTextProcessor processor = CustomTextProcessor.builder()
-            .parsers(content.stream()
-                .filter(parser -> !parser.getClass().equals(requester.getClass()))
-                .toList())
-            .build();
+                .parsers(content.stream()
+                        .filter(parser -> !parser.getClass().equals(requester.getClass()))
+                        .toList())
+                .build();
 
         return processor.parse(context.withGroup(this));
     }
@@ -59,14 +60,14 @@ public class SocialParserGroup implements SocialUserInputParser {
         final List<T> typeParsers = new ArrayList<>();
 
         content.stream()
-            .filter(type::isInstance)
-            .map(parser -> (T) parser)
-            .forEach(typeParsers::add);
+                .filter(type::isInstance)
+                .map(parser -> (T) parser)
+                .forEach(typeParsers::add);
 
         content.stream() // Recursive search
-            .filter(parser -> parser instanceof SocialParserGroup)
-            .map(parser -> (SocialParserGroup) parser)
-            .forEach(group -> typeParsers.addAll(group.getByType(type)));
+                .filter(parser -> parser instanceof SocialParserGroup)
+                .map(parser -> (SocialParserGroup) parser)
+                .forEach(group -> typeParsers.addAll(group.getByType(type)));
 
         return typeParsers;
     }
@@ -75,9 +76,9 @@ public class SocialParserGroup implements SocialUserInputParser {
     public Component parse(SocialParserContext context) {
         if (context instanceof SocialProcessorContext processorContext) {
             final CustomTextProcessor processor = CustomTextProcessor.builder()
-                .parsers(content)
-                .playerInput(processorContext.processor().playerInput())
-                .build();
+                    .parsers(content)
+                    .restrictToPlayerInputParsers(processorContext.processor().restrictToPlayerInputParsers())
+                    .build();
 
             return processor.parse(processorContext.withGroup(this));
         }
