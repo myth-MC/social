@@ -2,10 +2,15 @@ package ovh.mythmc.social.api.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 class MutableImpl<T> implements Mutable<T> {
+
+    final List<BiConsumer<T, T>> listeners = new CopyOnWriteArrayList<>();
 
     T object;
 
@@ -20,7 +25,14 @@ class MutableImpl<T> implements Mutable<T> {
 
     @Override
     public void set(T object) {
+        if (Objects.equals(this.object, object))
+            return;
+
+        final T oldValue = this.object;
         this.object = object;
+        final T newValue = object;
+
+        this.listeners.forEach(listener -> listener.accept(oldValue, newValue));
     }
 
     @Override
@@ -40,8 +52,15 @@ class MutableImpl<T> implements Mutable<T> {
     }
 
     @Override
+    public @NotNull Mutable.Subscription onChange(@NotNull BiConsumer<T, T> onChange) {
+        listeners.add(onChange);
+        return new SubscriptionImpl(() -> listeners.remove(onChange));
+    }
+
+    @Override
     public boolean equals(Object object1) {
-        if (object1 == null || getClass() != object1.getClass()) return false;
+        if (object1 == null || getClass() != object1.getClass())
+            return false;
         MutableImpl<?> mutable = (MutableImpl<?>) object1;
         return Objects.equals(object, mutable.object);
     }
@@ -51,11 +70,19 @@ class MutableImpl<T> implements Mutable<T> {
         return Objects.hashCode(object);
     }
 
-    @Override
-    public String toString() {
-        return "MutableImpl{" +
-            "object=" + object +
-            '}';
+    final class SubscriptionImpl implements Mutable.Subscription {
+
+        private final Runnable unsubscribe;
+
+        SubscriptionImpl(Runnable unsubscribe) {
+            this.unsubscribe = unsubscribe;
+        }
+
+        @Override
+        public void unsubscribe() {
+            unsubscribe.run();
+        }
+
     }
 
 }

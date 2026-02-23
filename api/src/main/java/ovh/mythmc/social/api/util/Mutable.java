@@ -13,11 +13,8 @@ public interface Mutable<T> extends Serializable {
         return new MutableImpl<>(object);
     }
 
-    static <T> Mutable<T> callback(T object, @NotNull BiConsumer<T, T> callback) {
-        return new MutableCallbackImpl<>(object, callback);
-    }
-
-    static <T, R> Mutable<T> referable(T object, @NotNull Class<R> referenceType, @NotNull Function<R, @NotNull T> map, @NotNull Function<T, @NotNull R> reverse) {
+    static <T, R> Mutable<T> referable(T object, @NotNull Class<R> referenceType, @NotNull Function<R, @NotNull T> map,
+            @NotNull Function<T, @NotNull R> reverse) {
         return new MutableReferableImpl<>(object, map, reverse);
     }
 
@@ -35,8 +32,17 @@ public interface Mutable<T> extends Serializable {
 
     void ifPresent(@NotNull Consumer<T> object);
 
+    @NotNull
+    Mutable.Subscription onChange(@NotNull BiConsumer<T, T> onChange);
+
     default @NotNull Mutable<T> or(@NotNull Mutable<T> other) {
         return isPresent() ? this : other;
+    }
+
+    public sealed interface Subscription permits MutableImpl.SubscriptionImpl {
+
+        void unsubscribe();
+
     }
 
 }

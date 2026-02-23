@@ -29,33 +29,35 @@ public final class GroupChatChannel extends SimpleChatChannel {
         Social.registries().channels().register(registryKey, chatChannel);
     }
 
-    private final Mutable<UUID> leaderUuid;
+    private final Mutable<UUID> leaderUuid = Mutable.empty();
 
     private final int code;
 
     private GroupChatChannel(final @NotNull UUID leaderUuid, final @Nullable String alias, final int code) {
         super(
-            "G-" + code,
-            alias,
-            TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getColor()),
-            Collections.emptyList(),
-            Component.text(Social.get().getConfig().getChat().getGroups().getIcon()),
-            Social.get().getConfig().getChat().getGroups().isShowHoverText(),
-            SimpleChatChannel.getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),
-            TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getNicknameColor()),
-            Social.get().getConfig().getChat().getGroups().getTextDivider(),
-            null,
-            TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getTextColor()),
-            false
-        );
+                "G-" + code,
+                alias,
+                TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getColor()),
+                Collections.emptyList(),
+                Component.text(Social.get().getConfig().getChat().getGroups().getIcon()),
+                Social.get().getConfig().getChat().getGroups().isShowHoverText(),
+                SimpleChatChannel
+                        .getHoverTextAsComponent(Social.get().getConfig().getChat().getGroups().getHoverText()),
+                TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getNicknameColor()),
+                Social.get().getConfig().getChat().getGroups().getTextDivider(),
+                null,
+                TextColor.fromHexString(Social.get().getConfig().getChat().getGroups().getTextColor()),
+                false);
 
-        this.leaderUuid = Mutable.callback(leaderUuid, (value, newValue) -> {
-            final AbstractSocialUser previousLeader = Social.get().getUserService().getByUuid(value).orElse(null);
+        this.leaderUuid.set(leaderUuid);
+        this.leaderUuid.onChange((oldValue, newValue) -> {
+            final AbstractSocialUser previousLeader = Social.get().getUserService().getByUuid(oldValue).orElse(null);
             final AbstractSocialUser leader = Social.get().getUserService().getByUuid(newValue).orElse(null);
 
             final var socialGroupLeaderChange = new SocialGroupLeaderChange(this, previousLeader, leader);
             SocialGroupLeaderChangeCallback.INSTANCE.invoke(socialGroupLeaderChange);
         });
+
         this.code = code;
     }
 
