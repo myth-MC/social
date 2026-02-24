@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.group.*;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
@@ -51,8 +51,8 @@ public final class GroupChatChannel extends SimpleChatChannel {
 
         this.leaderUuid.set(leaderUuid);
         this.leaderUuid.onChange((oldValue, newValue) -> {
-            final AbstractSocialUser previousLeader = Social.get().getUserService().getByUuid(oldValue).orElse(null);
-            final AbstractSocialUser leader = Social.get().getUserService().getByUuid(newValue).orElse(null);
+            final SocialUser previousLeader = Social.get().getUserService().getByUuid(oldValue).orElse(null);
+            final SocialUser leader = Social.get().getUserService().getByUuid(newValue).orElse(null);
 
             final var socialGroupLeaderChange = new SocialGroupLeaderChange(this, previousLeader, leader);
             SocialGroupLeaderChangeCallback.INSTANCE.invoke(socialGroupLeaderChange);
@@ -89,11 +89,11 @@ public final class GroupChatChannel extends SimpleChatChannel {
         return this.code;
     }
 
-    public void leader(@NotNull AbstractSocialUser user) {
+    public void leader(@NotNull SocialUser user) {
         this.leaderUuid.set(user.uuid());
     }
 
-    public @NotNull AbstractSocialUser leader() {
+    public @NotNull SocialUser leader() {
         final var optionalUser = Social.get().getUserService().getByUuid(leaderUuid.get());
         Objects.requireNonNull(optionalUser.orElse(null), "leader cannot be null");
 

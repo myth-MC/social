@@ -16,7 +16,7 @@ import ovh.mythmc.social.api.network.payload.payloads.message.SocialMessagePrevi
 @Experimental
 public final class SocialUserCompanion {
 
-    private final AbstractSocialUser user;
+    private final SocialUser user;
 
     public void open(final @NotNull ChatChannel channel) {
         user.sendCustomPayload(SocialPayloadChannels.OPEN_CHANNEL, new SocialChannelOpenPayload(channel));
@@ -34,7 +34,7 @@ public final class SocialUserCompanion {
         user.sendCustomPayload(SocialPayloadChannels.SWITCH_CHANNEL, new SocialChannelSwitchPayload(channel));
     }
 
-    public void mention(final @NotNull ChatChannel channel, final @NotNull AbstractSocialUser sender) {
+    public void mention(final @NotNull ChatChannel channel, final @NotNull SocialUser sender) {
         user.sendCustomPayload(SocialPayloadChannels.MENTION, new SocialChannelMentionPayload(channel, sender));
     }
 
@@ -48,5 +48,5 @@ public final class SocialUserCompanion {
                 open(channel);
         });
     }
-    
+
 }

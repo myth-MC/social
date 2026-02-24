@@ -7,7 +7,7 @@ import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.Mutable;
 
 import java.util.Collection;
@@ -102,7 +102,7 @@ public interface ChatChannel {
      * @return the rendered prefix component
      */
     @NotNull
-    Component prefix(@NotNull AbstractSocialUser user, @NotNull SocialRegisteredMessageContext message,
+    Component prefix(@NotNull SocialUser user, @NotNull SocialRegisteredMessageContext message,
             @NotNull SocialParserContext parser);
 
     /**
@@ -119,7 +119,7 @@ public interface ChatChannel {
      * @param user the user to add
      * @return {@code true} if the user was not already a member
      */
-    default boolean addMember(@NotNull AbstractSocialUser user) {
+    default boolean addMember(@NotNull SocialUser user) {
         return addMember(user.uuid());
     }
 
@@ -137,7 +137,7 @@ public interface ChatChannel {
      * @param user the user to remove
      * @return {@code true} if the user was a member
      */
-    default boolean removeMember(@NotNull AbstractSocialUser user) {
+    default boolean removeMember(@NotNull SocialUser user) {
         return removeMember(user.uuid());
     }
 
@@ -147,7 +147,7 @@ public interface ChatChannel {
      * @return the current members
      */
     @NotNull
-    Collection<AbstractSocialUser> members();
+    Collection<SocialUser> members();
 
     /**
      * Returns {@code true} if the player with the given UUID is a member of this
@@ -164,7 +164,7 @@ public interface ChatChannel {
      * @param user the user to check
      * @return {@code true} if the user is a member
      */
-    default boolean isMember(@NotNull AbstractSocialUser user) {
+    default boolean isMember(@NotNull SocialUser user) {
         return isMember(user.uuid());
     }
 

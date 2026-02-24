@@ -9,42 +9,43 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.ConsoleSocialUser;
 
 @UtilityClass
 public class CompanionModUtils {
-    
+
     public @NotNull TextComponent asChannelable(Component component, ChatChannel channel) {
         return Component.text("#" + channel.name() + "#")
-            .append(component);
+                .append(component);
     }
 
     public Component asBroadcast(Component component) {
         return Component.text("#broadcast#")
-            .append(component);
+                .append(component);
     }
 
     public String getAliasWithPrefix(ChatChannel channel) {
         String alias = channel.aliasOrName();
         Component prefix = Component.text("#");
-        
+
         if (channel instanceof GroupChatChannel groupChatChannel) {
-            prefix = Social.get().getTextProcessor().parse(AbstractSocialUser.dummy(channel), groupChatChannel, ":raw_shield:");
+            prefix = Social.get().getTextProcessor().parse(ConsoleSocialUser.get(groupChatChannel), groupChatChannel,
+                    ":raw_shield:");
         }
 
         if (channel instanceof PrivateChatChannel privateChatChannel) {
-            prefix = Social.get().getTextProcessor().parse(AbstractSocialUser.dummy(channel), privateChatChannel, ":mail:");
+            prefix = Social.get().getTextProcessor().parse(ConsoleSocialUser.get(privateChatChannel), privateChatChannel, ":mail:");
         }
 
         return PlainTextComponentSerializer.plainText().serialize(prefix) + alias;
     }
 
     public String getIconWithoutBrackets(ChatChannel channel) {
-        Component icon = Social.get().getTextProcessor().parse(AbstractSocialUser.dummy(channel), channel, channel.icon());
-        
+        Component icon = Social.get().getTextProcessor().parse(ConsoleSocialUser.get(channel), channel, channel.icon());
+
         return PlainTextComponentSerializer.plainText().serialize(icon)
-            .replace("[", "")
-            .replace("]", "");
+                .replace("[", "")
+                .replace("]", "");
     }
 
 }

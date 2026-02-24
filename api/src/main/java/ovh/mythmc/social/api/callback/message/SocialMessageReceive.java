@@ -12,7 +12,7 @@ import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @RequiredArgsConstructor
 @Getter
@@ -20,19 +20,19 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "sender", getter = "sender()"),
-    @CallbackField(field = "recipient", getter = "recipient()"),
-    @CallbackField(field = "channel", getter = "channel()"),
-    @CallbackField(field = "message", getter = "message()"),
-    @CallbackField(field = "messageId", getter = "messageId()"),
-    @CallbackField(field = "replyId", getter = "replyId()"),
-    @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
+        @CallbackField(field = "sender", getter = "sender()"),
+        @CallbackField(field = "recipient", getter = "recipient()"),
+        @CallbackField(field = "channel", getter = "channel()"),
+        @CallbackField(field = "message", getter = "message()"),
+        @CallbackField(field = "messageId", getter = "messageId()"),
+        @CallbackField(field = "replyId", getter = "replyId()"),
+        @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
 })
 public class SocialMessageReceive {
 
-    private final AbstractSocialUser sender;
+    private final SocialUser sender;
 
-    private final AbstractSocialUser recipient;
+    private final SocialUser recipient;
 
     private final ChatChannel channel;
 
@@ -50,5 +50,5 @@ public class SocialMessageReceive {
 
         return Social.get().getChatManager().getHistory().getById(replyId) != null;
     }
-    
+
 }

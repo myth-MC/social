@@ -10,43 +10,42 @@ import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.context.SocialRendererContext;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
-public class UserChatRenderer<U extends AbstractSocialUser> implements SocialChatRenderer<U> {
+public class UserChatRenderer<U extends SocialUser> implements SocialChatRenderer<U> {
 
-    @Override
-    public SocialRendererContext render(@NotNull U target, @NotNull SocialRegisteredMessageContext context) {
-        // Set variables
-        final AbstractSocialUser sender = context.sender();
-        final ChatChannel channel = context.channel();
+        @Override
+        public SocialRendererContext render(@NotNull U target, @NotNull SocialRegisteredMessageContext context) {
+                // Set variables
+                final SocialUser sender = context.sender();
+                final ChatChannel channel = context.channel();
 
-        final var formatBuilderContext = SocialParserContext.builder(sender, Component.empty())
-            .build();
+                final var formatBuilderContext = SocialParserContext.builder(sender, Component.empty())
+                                .build();
 
-        final var formattedPrefix = context.channel().prefix(target, context, formatBuilderContext);
+                final var formattedPrefix = context.channel().prefix(target, context, formatBuilderContext);
 
-        var renderedPrefix = Social.get().getTextProcessor().parse(
-            SocialParserContext.builder(sender, formattedPrefix)
-                .channel(channel)
-                .build());
+                var renderedPrefix = Social.get().getTextProcessor().parse(
+                                SocialParserContext.builder(sender, formattedPrefix)
+                                                .channel(channel)
+                                                .build());
 
-        var decoratedMessage = context.message()
-            .applyFallbackStyle(channel.textColor().orElse(NamedTextColor.WHITE));
-        for (ChatRendererFeature feature : channel.supportedRendererFeatures()) {
-            if (feature.isApplicable(context))
-                decoratedMessage = feature.decorator().decorate(context, decoratedMessage);
+                var decoratedMessage = context.message()
+                                .applyFallbackStyle(channel.textColor().orElse(NamedTextColor.WHITE));
+                for (ChatRendererFeature feature : channel.supportedRendererFeatures()) {
+                        if (feature.isApplicable(context))
+                                decoratedMessage = feature.decorator().decorate(context, decoratedMessage);
+                }
+
+                return new SocialRendererContext(
+                                sender,
+                                channel,
+                                context.viewers(),
+                                renderedPrefix,
+                                context.rawMessage(),
+                                decoratedMessage,
+                                context.replyId(),
+                                context.id());
         }
-
-        return new SocialRendererContext(
-            sender, 
-            channel,
-            context.viewers(), 
-            renderedPrefix, 
-            context.rawMessage(),
-            decoratedMessage,
-            context.replyId(),
-            context.id()
-        );
-    }
 
 }

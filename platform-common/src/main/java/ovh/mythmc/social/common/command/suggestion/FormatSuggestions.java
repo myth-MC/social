@@ -6,12 +6,12 @@ import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public final class FormatSuggestions implements BlockingSuggestionProvider.Strings<AbstractSocialUser> {
+public final class FormatSuggestions implements BlockingSuggestionProvider.Strings<SocialUser> {
 
     public static FormatSuggestions formatSuggestions() {
         return new FormatSuggestions();
@@ -21,15 +21,16 @@ public final class FormatSuggestions implements BlockingSuggestionProvider.Strin
     }
 
     @Override
-    public @NonNull Iterable<@NonNull String> stringSuggestions(@NonNull CommandContext<AbstractSocialUser> commandContext, @NonNull CommandInput input) {
+    public @NonNull Iterable<@NonNull String> stringSuggestions(@NonNull CommandContext<SocialUser> commandContext,
+            @NonNull CommandInput input) {
         final Collection<String> suggestions = new ArrayList<>();
 
         Social.get().getTextProcessor().getContextualParsersByType(SocialContextualKeyword.class)
-            .forEach(keyword -> suggestions.add("[" + keyword.keyword() + "]"));
+                .forEach(keyword -> suggestions.add("[" + keyword.keyword() + "]"));
 
         Social.registries().emojis().registry().entrySet().stream()
-            .filter(entry -> !entry.getKey().namespace().equalsIgnoreCase("hidden"))
-            .forEach(entry -> suggestions.add(":" + entry.getValue().name() + ":"));
+                .filter(entry -> !entry.getKey().namespace().equalsIgnoreCase("hidden"))
+                .forEach(entry -> suggestions.add(":" + entry.getValue().name() + ":"));
 
         return suggestions;
     }

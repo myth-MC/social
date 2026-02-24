@@ -11,7 +11,7 @@ import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.Set;
 
@@ -20,16 +20,16 @@ import java.util.Set;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "sender", getter = "sender()"),
-    @CallbackField(field = "channel", getter = "channel()"),
-    @CallbackField(field = "viewers", getter = "viewers()"),
-    @CallbackField(field = "plainMessage", getter = "plainMessage()"),
-    @CallbackField(field = "replyId", getter = "replyId()"),
-    @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
+        @CallbackField(field = "sender", getter = "sender()"),
+        @CallbackField(field = "channel", getter = "channel()"),
+        @CallbackField(field = "viewers", getter = "viewers()"),
+        @CallbackField(field = "plainMessage", getter = "plainMessage()"),
+        @CallbackField(field = "replyId", getter = "replyId()"),
+        @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
 })
 public final class SocialMessagePrepare {
 
-    private final AbstractSocialUser sender;
+    private final SocialUser sender;
 
     private @NotNull ChatChannel channel;
 
@@ -41,7 +41,8 @@ public final class SocialMessagePrepare {
 
     private boolean cancelled = false;
 
-    public SocialMessagePrepare(AbstractSocialUser sender, ChatChannel channel, Set<Audience> viewers, String plainMessage, Integer replyId) {
+    public SocialMessagePrepare(SocialUser sender, ChatChannel channel, Set<Audience> viewers, String plainMessage,
+            Integer replyId) {
         this.sender = sender;
         this.channel = channel;
         this.viewers = viewers;
@@ -55,5 +56,5 @@ public final class SocialMessagePrepare {
 
         return Social.get().getChatManager().getHistory().getById(replyId) != null;
     }
-    
+
 }

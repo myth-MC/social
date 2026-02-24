@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
@@ -18,7 +18,7 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @RequiredArgsConstructor
 public class SocialRendererContext implements SocialContext {
 
-    private final AbstractSocialUser sender;
+    private final SocialUser sender;
 
     private final ChatChannel channel;
 
@@ -33,5 +33,5 @@ public class SocialRendererContext implements SocialContext {
     private final Integer replyId;
 
     private final int messageId;
-    
+
 }

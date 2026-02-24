@@ -13,14 +13,14 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
 public class SocialMessageContext implements SocialContext {
 
-    private final AbstractSocialUser sender;
+    private final SocialUser sender;
 
     private final ChatChannel channel;
 
@@ -47,5 +47,5 @@ public class SocialMessageContext implements SocialContext {
 
         return Social.get().getChatManager().getHistory().getById(replyId) != null;
     }
-    
+
 }

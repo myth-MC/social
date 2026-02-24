@@ -22,6 +22,7 @@ import ovh.mythmc.social.api.callback.message.SocialMessageSendCallback;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
+import ovh.mythmc.social.api.user.ConsoleSocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 @RequiredArgsConstructor
@@ -30,22 +31,25 @@ public final class DiscordSRVHook implements ChatHook {
     private final Plugin plugin;
 
     public void registerMessageCallbackHandler() {
-        SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv", (sender, channel, message, messageId, replyId, cancelled) -> {
-            if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channel.name()) == null) {
-                DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Tried looking up destination Discord channel for social channel " + channel.name() + " but none found");
-                return;
-            }
+        SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv",
+                (sender, channel, message, messageId, replyId, cancelled) -> {
+                    if (DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName(channel.name()) == null) {
+                        DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD,
+                                "Tried looking up destination Discord channel for social channel " + channel.name()
+                                        + " but none found");
+                        return;
+                    }
 
-            String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
-    
-            if (StringUtils.isBlank(plainMessage)) {
-                DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Received blank social message, not processing");
-                return;
-            }
+                    String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
 
-            final Player player = BukkitSocialUser.from(sender).player().orElse(null);
-            DiscordSRV.getPlugin().processChatMessage(player, plainMessage, channel.name(), cancelled, null);
-        });
+                    if (StringUtils.isBlank(plainMessage)) {
+                        DiscordSRV.debug(Debug.MINECRAFT_TO_DISCORD, "Received blank social message, not processing");
+                        return;
+                    }
+
+                    final Player player = BukkitSocialUser.from(sender).player().orElse(null);
+                    DiscordSRV.getPlugin().processChatMessage(player, plainMessage, channel.name(), cancelled, null);
+                });
     }
 
     public void unregisterMessageCallbackHandler() {
@@ -55,25 +59,28 @@ public final class DiscordSRVHook implements ChatHook {
     @Subscribe // compatibility with Bukkit
     public void onGameChatMessagePostProcess(GameChatMessagePostProcessEvent event) {
         if (event.getTriggeringBukkitEvent() instanceof AsyncPlayerChatEvent) {
-            //if (chatEvent.getRecipients().isEmpty())
+            // if (chatEvent.getRecipients().isEmpty())
             event.setCancelled(true);
         }
     }
 
     @Override
-    public void broadcastMessageToChannel(String channelName, github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component message) {
+    public void broadcastMessageToChannel(String channelName,
+            github.scarsz.discordsrv.dependencies.kyori.adventure.text.Component message) {
         ChatChannel channel = getChannelByCaseInsensitiveName(channelName);
         if (channel == null)
             return;
 
         String miniMessage = MessageUtil.toMiniMessage(message);
-        
-        // Workaround for placeholders
-        SocialParserContext context = SocialParserContext.builder(BukkitSocialUser.dummy(channel), net.kyori.adventure.text.Component.empty())
-            .channel(channel)
-            .build();
 
-        TextComponent channelIcon =  (TextComponent) Social.get().getTextProcessor().getIdentifiedParser(SocialContextualPlaceholder.class, "channel_icon").get().get(context);
+        // Workaround for placeholders
+        SocialParserContext context = SocialParserContext
+                .builder(ConsoleSocialUser.get(channel), net.kyori.adventure.text.Component.empty())
+                .channel(channel)
+                .build();
+
+        TextComponent channelIcon = (TextComponent) Social.get().getTextProcessor()
+                .getIdentifiedParser(SocialContextualPlaceholder.class, "channel_icon").get().get(context);
 
         miniMessage = miniMessage.replace("%channel%", channelIcon.content());
 
@@ -82,8 +89,10 @@ public final class DiscordSRVHook implements ChatHook {
             if (!Social.get().getChatManager().hasPermission(user, channel))
                 return;
 
-            // Parsing the message before sending it allows emojis to be shown (necessary for channel icon)
-            Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), finalMiniMessage, ChatChannel.ChannelType.CHAT);
+            // Parsing the message before sending it allows emojis to be shown (necessary
+            // for channel icon)
+            Social.get().getTextProcessor().parseAndSend(user, user.mainChannel().get(), finalMiniMessage,
+                    ChatChannel.ChannelType.CHAT);
         });
     }
 

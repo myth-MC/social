@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.audience.Audience;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 public final class PaperAdventureProvider extends SocialAdventureProvider {
 
     @Override
-    public Audience user(@NotNull AbstractSocialUser user) {
+    public Audience user(@NotNull SocialUser user) {
         return Bukkit.getPlayer(user.uuid());
     }
 
@@ -18,5 +18,5 @@ public final class PaperAdventureProvider extends SocialAdventureProvider {
     public Audience console() {
         return Bukkit.getConsoleSender();
     }
-    
+
 }

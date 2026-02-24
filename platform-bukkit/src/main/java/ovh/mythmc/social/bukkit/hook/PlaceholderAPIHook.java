@@ -46,10 +46,11 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                 if (params.startsWith("player_is_in_group_")) {
                     final String username = params.substring(params.lastIndexOf("_") + 1);
                     final Player target = Bukkit.getPlayerExact(username);
-                    if (target == null) 
+                    if (target == null)
                         return "false";
 
-                    return String.valueOf(Social.get().getChatManager().groupChannelByUser(BukkitSocialUser.from(player.getUniqueId())));
+                    return String.valueOf(Social.get().getChatManager()
+                            .groupChannelByUser(BukkitSocialUser.from(player.getUniqueId())));
                 }
             }
 
@@ -69,15 +70,15 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     return groupChatChannel.aliasOrName();
                 }
                 if (params.equalsIgnoreCase("group_leader")) {
-                    return groupChatChannel.leader().cachedDisplayName().get();
+                    return groupChatChannel.leader().displayName().get().content();
                 }
                 if (params.equalsIgnoreCase("group_leader_username")) {
-                    return groupChatChannel.leader().name();
+                    return groupChatChannel.leader().username();
                 }
                 if (params.equalsIgnoreCase("group_leader_uuid")) {
                     return groupChatChannel.leaderUuid().toString();
                 }
-                
+
                 if (params.startsWith("group_player_uuid_")) {
                     final Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
                     if (integer == null || integer >= groupChatChannel.members().size())
@@ -97,7 +98,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserService().getByUuid(uuid).get().name();
+                    return Social.get().getUserService().getByUuid(uuid).get().username();
                 }
                 if (params.startsWith("group_player_")) {
                     final Integer integer = tryParse(params.substring(params.lastIndexOf("_") + 1));
@@ -108,7 +109,7 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
                     if (uuid == null)
                         return null;
 
-                    return Social.get().getUserService().getByUuid(uuid).get().cachedDisplayName().get();
+                    return Social.get().getUserService().getByUuid(uuid).get().displayName().get().content();
                 }
             }
 

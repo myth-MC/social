@@ -1,41 +1,51 @@
 package ovh.mythmc.social.api.bukkit;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import ovh.mythmc.social.api.database.reference.UUIDResolver;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.identity.IdentityResolver;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.user.SocialUserService;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class BukkitSocialUserService extends SocialUserService {
+public class BukkitSocialUserService implements SocialUserService {
 
-    public static final BukkitSocialUserService instance = new BukkitSocialUserService();
+    public static final BukkitSocialUserService INSTANCE = new BukkitSocialUserService();
 
-    private final BukkitUUIDResolver uuidResolver = new BukkitUUIDResolver();
+    private BukkitSocialUserService() {
+    }
+
+    private final BukkitIdentityResolver identityResolver = new BukkitIdentityResolver();
+    private final Map<UUID, BukkitSocialUser> userMap = new ConcurrentHashMap<>();
 
     @Override
-    public UUIDResolver uuidResolver() {
-        return this.uuidResolver;
+    public @NotNull IdentityResolver identityResolver() {
+        return this.identityResolver;
     }
 
     @Override
-    public Collection<AbstractSocialUser> get() {
-        return Bukkit.getOnlinePlayers().stream()
-            .map(player -> getByUuid(player.getUniqueId()).orElse(null))
-            .filter(Objects::nonNull)
-            .toList();
+    public @NotNull Set<SocialUser> get() {
+        return userMap.values().stream().collect(Collectors.toSet());
     }
-    
+
     @Override
-    protected AbstractSocialUser createUserInstance(@NotNull UUID uuid) {
-        return new BukkitSocialUser(uuid);
+    public @NotNull BukkitSocialUser getOrCreate(@NotNull UUID uuid) {
+        return userMap.computeIfAbsent(uuid, userUuid -> {
+            final Player player = Bukkit.getPlayer(uuid);
+            return new BukkitSocialUser(player);
+        });
     }
-    
+
+    @Override
+    public @NotNull Optional<SocialUser> getByUuid(@NotNull UUID uuid) {
+        return Optional.ofNullable(userMap.get(uuid));
+    }
+
 }

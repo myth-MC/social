@@ -15,13 +15,14 @@ import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
+import ovh.mythmc.social.api.bukkit.BukkitIdentityResolver;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUserService;
-import ovh.mythmc.social.api.bukkit.BukkitUUIDResolver;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.ConsoleSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.user.SocialUserService;
 import ovh.mythmc.social.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.bukkit.adventure.BukkitAdventureProvider;
@@ -45,7 +46,7 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
 
     private final BukkitReactionFactory reactionFactory;
 
-    private final LegacyPaperCommandManager<AbstractSocialUser> commandManager;
+    private final LegacyPaperCommandManager<SocialUser> commandManager;
 
     private BukkitGestaltLoader gestalt;
 
@@ -54,20 +55,20 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
 
         this.plugin = plugin;
         this.reactionFactory = new BukkitReactionFactory(plugin);
-        this.commandManager = new LegacyPaperCommandManager<AbstractSocialUser>(
-            plugin, 
-            ExecutionCoordinator.simpleCoordinator(),
-            SenderMapper.<CommandSender, AbstractSocialUser>create(commandSender -> {
-                if (commandSender instanceof Player player)
-                    return Social.get().getUserService().getByUuid(player.getUniqueId()).orElse(null);
+        this.commandManager = new LegacyPaperCommandManager<SocialUser>(
+                plugin,
+                ExecutionCoordinator.simpleCoordinator(),
+                SenderMapper.<CommandSender, SocialUser>create(commandSender -> {
+                    if (commandSender instanceof Player player)
+                        return Social.get().getUserService().getByUuid(player.getUniqueId()).orElse(null);
 
-                return AbstractSocialUser.dummy();
-            }, user -> {
-                if (user instanceof AbstractSocialUser.Dummy)
-                    return Bukkit.getConsoleSender();
+                    return ConsoleSocialUser.get();
+                }, user -> {
+                    if (user instanceof ConsoleSocialUser)
+                        return Bukkit.getConsoleSender();
 
-                return Bukkit.getPlayer(user.uuid());
-            }));
+                    return Bukkit.getPlayer(user.uuid());
+                }));
 
         // Command manager platform-specific adjustments
         if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
@@ -85,8 +86,8 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     @Override
     public void initializeGestalt() {
         gestalt = BukkitGestaltLoader.builder()
-            .initializer(plugin)
-            .build();
+                .initializer(plugin)
+                .build();
 
         gestalt.initialize();
     }
@@ -110,8 +111,8 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     }
 
     private void registerListeners() {
-        // Platform UUID resolver
-        Bukkit.getPluginManager().registerEvents((BukkitUUIDResolver) Social.get().getUserService().uuidResolver(), plugin);
+        // Platform identity resolver
+        Bukkit.getPluginManager().registerEvents((BukkitIdentityResolver) Social.get().getUserService().identityResolver(), plugin);
 
         // Invokers
         Bukkit.getPluginManager().registerEvents(new AnvilRenameInvoker(), plugin);
@@ -125,9 +126,8 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     @Override
     public void registerPlatformFeatures() {
         Gestalt.get().register(
-            DiscordSRVFeature.class,
-            PlaceholderAPIFeature.class
-        );
+                DiscordSRVFeature.class,
+                PlaceholderAPIFeature.class);
 
         Gestalt.get().getListenerRegistry().register(new BukkitChatRendererListener());
     }
@@ -135,19 +135,18 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     @Override
     public void unregisterPlatformFeatures() {
         Gestalt.get().unregister(
-            DiscordSRVFeature.class,
-            PlaceholderAPIFeature.class
-        );
+                DiscordSRVFeature.class,
+                PlaceholderAPIFeature.class);
     }
 
     @Override
-    public Class<? extends AbstractSocialUser> userType() {
+    public Class<? extends SocialUser> userType() {
         return BukkitSocialUser.class;
     }
 
     @Override
     public @NotNull SocialUserService getUserService() {
-        return BukkitSocialUserService.instance;
+        return BukkitSocialUserService.INSTANCE;
     }
 
     @Override
@@ -156,7 +155,7 @@ public final class SocialPlatformBukkit extends SocialBootstrap {
     }
 
     @Override
-    public CommandManager<AbstractSocialUser> commandManager() {
+    public CommandManager<SocialUser> commandManager() {
         return commandManager;
     }
 

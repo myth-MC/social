@@ -37,21 +37,21 @@ public final class CompanionHandler implements SocialCallbackHandler {
             Social.get().getUserService().get().forEach(user -> {
                 if (user == null || user.companion().isEmpty())
                     return;
-    
+
                 if (ctx.channel() instanceof GroupChatChannel groupChannel &&
-                    !groupChannel.isMember(user))
+                        !groupChannel.isMember(user))
                     return;
-    
+
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel()))
                     user.companion().get().open(ctx.channel());
-            }); 
+            });
         });
 
         SocialChannelDeleteCallback.INSTANCE.registerHandler(IdentifierKeys.COMPANION_CHANNEL_DELETE, (ctx) -> {
             Social.get().getUserService().get().forEach(user -> {
                 if (user == null || user.companion().isEmpty())
                     return;
-    
+
                 if (Social.get().getChatManager().hasPermission(user, ctx.channel())) {
                     user.companion().get().close(ctx.channel());
                     if (user.mainChannel().equals(ctx.channel()))
@@ -69,14 +69,14 @@ public final class CompanionHandler implements SocialCallbackHandler {
             // Initialize companion
             ctx.user().ifPresent(user -> {
                 Social.get().getUserManager().disableCompanion(user);
-        
+
                 SocialScheduler.get().runAsyncTaskLater(() -> {
                     if (!user.isOnline() || user.companion().isEmpty())
                         return;
-        
+
                     user.companion().get().clear();
                     user.companion().get().refresh();
-                    user.companion().get().mainChannel(user.mainChannel());
+                    user.companion().get().mainChannel(user.mainChannel().get());
                 }, 15);
             });
         });
@@ -88,7 +88,9 @@ public final class CompanionHandler implements SocialCallbackHandler {
                 user.companion().ifPresent(SocialUserCompanion::refresh);
             } else if (ctx.channel() instanceof SocialBonjourChannel) {
                 if (Social.get().getConfig().getGeneral().isDebug())
-                    Social.get().getLogger().info("Received bonjour message from " + user.name() + "! Companion features will be enabled");
+                    Social.get().getLogger().info(
+                            "Received bonjour message from " + user.username()
+                                    + "! Companion features will be enabled");
 
                 Social.get().getUserManager().enableCompanion(user);
             } else if (ctx.channel() instanceof SocialChannelSwitchChannel) {
@@ -105,11 +107,14 @@ public final class CompanionHandler implements SocialCallbackHandler {
 
                 SocialScheduler.get().runAsyncTask(() -> {
                     final var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
-                        SocialParserContext.builder(user, ((SocialMessagePreviewPayload) ctx.payload()).message())
-                            .build());
+                            SocialParserContext.builder(user, ((SocialMessagePreviewPayload) ctx.payload()).message())
+                                    .build());
 
-                    final var context = new SocialRegisteredMessageContext(0, 0, user, user.mainChannel(), Set.of(user), filteredMessage, "", null, null);
-                    final var rendered = Social.get().getChatManager().getRegisteredRenderer(user.rendererClass()).render(user, context);
+                    final var context = new SocialRegisteredMessageContext(0, 0, user, user.mainChannel().get(),
+                            Set.of(user),
+                            filteredMessage, "", null, null);
+                    final var rendered = Social.get().getChatManager().getRegisteredRenderer(user.rendererClass())
+                            .render(user, context);
 
                     user.companion().get().preview(rendered.prefix().append(rendered.message()));
                 });
@@ -126,5 +131,5 @@ public final class CompanionHandler implements SocialCallbackHandler {
         SocialChannelDeleteCallback.INSTANCE.unregisterHandlers(IdentifierKeys.COMPANION_CHANNEL_DELETE);
         SocialChannelPostSwitchCallback.INSTANCE.unregisterHandlers(IdentifierKeys.COMPANION_CHANNEL_SWITCH);
     }
-    
+
 }

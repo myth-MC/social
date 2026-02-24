@@ -14,7 +14,7 @@ import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.injection.value.AbstractSocialInjectedValue;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Getter
 @Accessors(fluent = true)
@@ -22,12 +22,12 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @EqualsAndHashCode
 @ToString
 public class SocialParserContext implements SocialContext {
-    
-    public static SocialParserContextBuilder builder(@NotNull AbstractSocialUser user, @NotNull Component message) {
+
+    public static SocialParserContextBuilder builder(@NotNull SocialUser user, @NotNull Component message) {
         return new SocialParserContextBuilder(user, message);
     }
 
-    private final AbstractSocialUser user;
+    private final SocialUser user;
 
     private final ChatChannel channel;
 
@@ -43,12 +43,12 @@ public class SocialParserContext implements SocialContext {
     private final List<SocialInjectedValue<?>> injectedValues;
 
     SocialParserContext(
-        AbstractSocialUser user,
-        ChatChannel channel,
-        Component message,
-        ChatChannel.ChannelType messageChannelType,
-        SocialParserGroup group,
-        List<SocialInjectedValue<?>> injectedValues) {
+            SocialUser user,
+            ChatChannel channel,
+            Component message,
+            ChatChannel.ChannelType messageChannelType,
+            SocialParserGroup group,
+            List<SocialInjectedValue<?>> injectedValues) {
 
         this.user = user;
         this.channel = channel;
@@ -69,9 +69,9 @@ public class SocialParserContext implements SocialContext {
     @SuppressWarnings("unchecked")
     public <T extends SocialInjectedValue<?>> List<T> injectedValues(@NotNull Class<T> type) {
         return injectedValues().stream()
-            .filter(type::isInstance)
-            .map(injectedValue -> (T) injectedValue)
-            .toList();
+                .filter(type::isInstance)
+                .map(injectedValue -> (T) injectedValue)
+                .toList();
     }
 
     public void injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
@@ -89,14 +89,14 @@ public class SocialParserContext implements SocialContext {
     @SuppressWarnings("unchecked")
     public @Nullable <V> V getInjectedValue(@NotNull String identifier, V defaultValue) {
         return (V) injectedValues(AbstractSocialInjectedValue.Identified.class).stream()
-            .filter(injectedValue -> injectedValue.identifier().equals(identifier))
-            .map(AbstractSocialInjectedValue::value)
-            .findFirst().orElse(defaultValue);
+                .filter(injectedValue -> injectedValue.identifier().equals(identifier))
+                .map(AbstractSocialInjectedValue::value)
+                .findFirst().orElse(defaultValue);
     }
 
     public static abstract class Builder<T extends Builder<?, ?>, R> {
 
-        protected final AbstractSocialUser user;
+        protected final SocialUser user;
 
         protected final Component message;
 
@@ -108,10 +108,10 @@ public class SocialParserContext implements SocialContext {
 
         protected List<SocialInjectedValue<?>> injectedValues;
 
-        Builder(AbstractSocialUser user, Component message) {
+        Builder(SocialUser user, Component message) {
             this.user = user;
             this.message = message;
-            this.channel = user.mainChannel();
+            this.channel = user.mainChannel().get();
             this.messageChannelType = ChatChannel.ChannelType.CHAT;
             this.injectedValues = new ArrayList<>();
         }
@@ -149,7 +149,7 @@ public class SocialParserContext implements SocialContext {
 
     public static class SocialParserContextBuilder extends Builder<SocialParserContextBuilder, SocialParserContext> {
 
-        SocialParserContextBuilder(AbstractSocialUser user, Component message) {
+        SocialParserContextBuilder(SocialUser user, Component message) {
             super(user, message);
         }
 
@@ -157,18 +157,18 @@ public class SocialParserContext implements SocialContext {
         public SocialParserContextBuilder get() {
             return this;
         }
-        
+
         @Override
         public SocialParserContext build() {
             return new SocialParserContext(
-                user, 
-                channel, 
-                message, 
-                messageChannelType,
-                group,
-                injectedValues);
+                    user,
+                    channel,
+                    message,
+                    messageChannelType,
+                    group,
+                    injectedValues);
         }
 
     }
-    
+
 }

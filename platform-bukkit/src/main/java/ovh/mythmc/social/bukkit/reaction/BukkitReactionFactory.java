@@ -22,7 +22,7 @@ import ovh.mythmc.social.api.callback.reaction.SocialReactionTrigger;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -40,29 +40,29 @@ public final class BukkitReactionFactory extends ReactionFactory {
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction emoji) {
+    public void displayReaction(@NotNull SocialUser abstractSocialUser, @NotNull Reaction emoji) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
         user.player().ifPresent(player -> {
             if (player.hasPotionEffect(PotionEffectType.INVISIBILITY) || player.getGameMode() == GameMode.SPECTATOR) {
                 return;
             }
-    
+
             ItemDisplay itemDisplay = playerReaction.get(user.uuid());
             if (itemDisplay != null)
                 return;
-    
+
             itemDisplay = spawnItemDisplay(user, emoji);
             playerReaction.put(user.uuid(), itemDisplay);
-    
+
             scheduleItemDisplayUpdate(player, itemDisplay);
         });
     }
 
     @Override
-    public void play(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction reaction) {
+    public void play(@NotNull SocialUser abstractSocialUser, @NotNull Reaction reaction) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
         final var callback = new SocialReactionTrigger(user, reaction);
-        
+
         SocialReactionTriggerCallback.INSTANCE.invoke(callback, result -> {
             if (!result.cancelled()) {
                 BukkitSocialScheduler.get().runEntityTask(user.player().get(), () -> {
@@ -82,19 +82,20 @@ public final class BukkitReactionFactory extends ReactionFactory {
         final double offsetY = Social.get().getConfig().getReactions().getOffsetY();
         final ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
                 location,
-                EntityType.ITEM_DISPLAY
-        );
+                EntityType.ITEM_DISPLAY);
 
         if (reaction.particle() != null) {
             final String particle = reaction.particle()
-                .toUpperCase()
-                .replace(".", "_")
-                .replace("MINECRAFT:", "");
+                    .toUpperCase()
+                    .replace(".", "_")
+                    .replace("MINECRAFT:", "");
 
-            itemDisplay.getWorld().spawnParticle(Particle.valueOf(particle), itemDisplay.getLocation().add(0, 2, 0), 3, 0.2, 0.2, 0.2);
+            itemDisplay.getWorld().spawnParticle(Particle.valueOf(particle), itemDisplay.getLocation().add(0, 2, 0), 3,
+                    0.2, 0.2, 0.2);
         }
 
-        //itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
+        // itemDisplay.getWorld().playSound(itemDisplay.getLocation(),
+        // Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
         if (reaction.sound() != null)
             user.playSound(reaction.sound());
 
@@ -200,7 +201,8 @@ public final class BukkitReactionFactory extends ReactionFactory {
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {
-            urlObject = URI.create(textureUrl).toURL(); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+            urlObject = URI.create(textureUrl).toURL(); // The URL to the skin, for example:
+                                                        // https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
         } catch (MalformedURLException exception) {
             throw new RuntimeException("Invalid URL", exception);
         }

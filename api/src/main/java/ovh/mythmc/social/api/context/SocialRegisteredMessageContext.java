@@ -11,7 +11,7 @@ import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Getter
 @Accessors(fluent = true)
@@ -24,15 +24,15 @@ public class SocialRegisteredMessageContext extends SocialMessageContext {
     private final long timestamp;
 
     public SocialRegisteredMessageContext(
-        int id,
-        long timestamp,
-        AbstractSocialUser sender,
-        ChatChannel channel,
-        Set<Audience> viewers,
-        Component message,
-        String rawMessage,
-        Integer replyId,
-        SignedMessage signedMessage) {
+            int id,
+            long timestamp,
+            SocialUser sender,
+            ChatChannel channel,
+            Set<Audience> viewers,
+            Component message,
+            String rawMessage,
+            Integer replyId,
+            SignedMessage signedMessage) {
 
         super(sender, channel, viewers, rawMessage, replyId, signedMessage);
 

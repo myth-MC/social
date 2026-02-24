@@ -2,67 +2,39 @@ package ovh.mythmc.social.api.user;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
-import ovh.mythmc.social.api.database.SocialDatabase;
-import ovh.mythmc.social.api.database.reference.UUIDResolver;
+import ovh.mythmc.social.api.identity.IdentityResolver;
 
-public abstract class SocialUserService {
+public interface SocialUserService {
 
-    protected abstract AbstractSocialUser createUserInstance(@NotNull UUID uuid);
+    @NotNull
+    IdentityResolver identityResolver();
 
-    public abstract UUIDResolver uuidResolver();
+    @NotNull
+    Set<SocialUser> get();
 
-    public abstract Collection<AbstractSocialUser> get();
+    @NotNull
+    SocialUser getOrCreate(@NotNull UUID uuid);
 
-    public void register(@NotNull AbstractSocialUser user) {
-        SocialDatabase.get().create(user);
-    }
+    @NotNull
+    Optional<SocialUser> getByUuid(@NotNull UUID uuid);
 
-    public AbstractSocialUser register(@NotNull UUID uuid) {
-        final AbstractSocialUser user = createUserInstance(uuid);
-        if (user.cachedDisplayName().isEmpty())
-            user.cachedDisplayName().set("");
-
-        final ChatChannel cachedOrDefaultChannel = Social.get().getChatManager().getCachedOrDefault(user);
-        user.socialSpy().set(false);
-
-        if (cachedOrDefaultChannel == null) {
-            Social.get().getLogger().warn("Default channel '" + cachedOrDefaultChannel + "' is unavailable!");
-        } else {
-            if (!cachedOrDefaultChannel.isMember(user))
-                cachedOrDefaultChannel.addMember(user);
-
-            user.setMainChannel(cachedOrDefaultChannel);
-        }
-
-        register(user);
-        return user;
-    }
-
-    public Optional<AbstractSocialUser> getByName(@NotNull String name) {
-        return Optional.ofNullable(SocialDatabase.get().getUserByName(name));
-    }
-
-    public Optional<AbstractSocialUser> getByUuid(@NotNull UUID uuid) {
-        return Optional.ofNullable(SocialDatabase.get().getUserByUuid(uuid));
-    }
-
-    public Collection<AbstractSocialUser> getSocialSpyUsers() {
+    default Collection<SocialUser> getSocialSpyUsers() {
         return get().stream()
-            .filter(user -> user.socialSpy().get())
-            .toList();
+                .filter(user -> user.socialSpy().get())
+                .toList();
     }
 
-    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
+    default Collection<SocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
         return get().stream()
-            .filter(user -> user.socialSpy().get() && user.mainChannel() != null && user.mainChannel().equals(channel))
-            .toList();
+                .filter(user -> user.socialSpy().get() && user.mainChannel() != null
+                        && user.mainChannel().equals(channel))
+                .toList();
     }
-    
+
 }

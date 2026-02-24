@@ -8,7 +8,7 @@ import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @RequiredArgsConstructor
 @Getter
@@ -16,19 +16,19 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "user", getter = "user()"),
-    @CallbackField(field = "channel", getter = "channel()"),
-    @CallbackField(field = "status", getter = "status()"),
-    @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
+        @CallbackField(field = "user", getter = "user()"),
+        @CallbackField(field = "channel", getter = "channel()"),
+        @CallbackField(field = "status", getter = "status()"),
+        @CallbackField(field = "cancelled", getter = "cancelled()", isExtraParameter = true)
 })
 public final class SocialUserMuteStatusChange {
 
-    private final AbstractSocialUser user;
+    private final SocialUser user;
 
     private final ChatChannel channel;
 
     private final Boolean status;
 
     private boolean cancelled = false;
-    
+
 }

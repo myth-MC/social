@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +172,7 @@ public final class ChatFormatBuilder {
      *                          values
      * @return the fully resolved prefix component
      */
-    public Component preRenderPrefix(@NotNull AbstractSocialUser target,
+    public Component preRenderPrefix(@NotNull SocialUser target,
             @NotNull Iterable<? extends ChatRendererFeature> supportedFeatures,
             @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser) {
         // Inject values into context

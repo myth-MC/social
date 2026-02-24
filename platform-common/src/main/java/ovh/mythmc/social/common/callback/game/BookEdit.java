@@ -10,7 +10,7 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @AllArgsConstructor
 @Getter
@@ -18,13 +18,13 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "user", getter = "user()"),
-    @CallbackField(field = "pages", getter = "pages()")
+        @CallbackField(field = "user", getter = "user()"),
+        @CallbackField(field = "pages", getter = "pages()")
 })
 public class BookEdit {
 
-    private final AbstractSocialUser user;
+    private final SocialUser user;
 
     private List<Component> pages;
-    
+
 }

@@ -12,7 +12,7 @@ class MutableImpl<T> implements Mutable<T> {
 
     final List<BiConsumer<T, T>> listeners = new CopyOnWriteArrayList<>();
 
-    T object;
+    volatile T object;
 
     MutableImpl(T object) {
         this.object = object;
@@ -25,13 +25,19 @@ class MutableImpl<T> implements Mutable<T> {
 
     @Override
     public void set(T object) {
-        if (Objects.equals(this.object, object))
-            return;
+        final T oldValue;
+        final T newValue;
 
-        final T oldValue = this.object;
-        this.object = object;
-        final T newValue = object;
+        synchronized (this) {
+            if (Objects.equals(this.object, object))
+                return;
 
+            oldValue = this.object;
+            this.object = object;
+            newValue = object;
+        }
+
+        // Call listeners outside synchronized block
         this.listeners.forEach(listener -> listener.accept(oldValue, newValue));
     }
 
@@ -46,9 +52,9 @@ class MutableImpl<T> implements Mutable<T> {
     }
 
     @Override
-    public void ifPresent(@NotNull Consumer<T> object) {
+    public void ifPresent(@NotNull Consumer<T> consumer) {
         if (isPresent())
-            object.accept(this.object);
+            consumer.accept(this.object);
     }
 
     @Override

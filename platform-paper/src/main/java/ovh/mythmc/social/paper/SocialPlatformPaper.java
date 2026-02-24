@@ -3,9 +3,9 @@ package ovh.mythmc.social.paper;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.leangen.geantyref.TypeToken;
 import org.incendo.cloud.setting.ManagerSetting;
-import ovh.mythmc.social.api.bukkit.BukkitUUIDResolver;
+import ovh.mythmc.social.api.bukkit.BukkitIdentityResolver;
 import ovh.mythmc.social.common.command.parser.ChannelParser;
-import ovh.mythmc.social.libs.org.bstats.bukkit.Metrics;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.CommandManager;
@@ -25,6 +25,8 @@ import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.ConsoleSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.user.SocialUserService;
 import ovh.mythmc.social.bukkit.adapter.BukkitPlatformAdapter;
 import ovh.mythmc.social.bukkit.feature.hook.DiscordSRVFeature;
@@ -48,7 +50,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
 
     private final PaperReactionFactory reactionFactory;
 
-    private final LegacyPaperCommandManager<AbstractSocialUser> commandManager;
+    private final LegacyPaperCommandManager<SocialUser> commandManager;
 
     private PaperGestaltLoader gestalt;
 
@@ -64,9 +66,9 @@ public final class SocialPlatformPaper extends SocialBootstrap {
                 if (commandSender instanceof Player player)
                     return Social.get().getUserService().getByUuid(player.getUniqueId()).get();
 
-                return AbstractSocialUser.dummy();
+                return ConsoleSocialUser.get();
             }, user -> {
-                if (user instanceof AbstractSocialUser.Dummy)
+                if (user instanceof ConsoleSocialUser)
                     return Bukkit.getConsoleSender();
 
                 return Bukkit.getPlayer(user.uuid());
@@ -123,8 +125,8 @@ public final class SocialPlatformPaper extends SocialBootstrap {
     }
 
     private void registerListeners() {
-        // Platform UUID resolver
-        Bukkit.getPluginManager().registerEvents((BukkitUUIDResolver) Social.get().getUserService().uuidResolver(), plugin);
+        // Platform identity resolver
+        Bukkit.getPluginManager().registerEvents((BukkitIdentityResolver) Social.get().getUserService().identityResolver(), plugin);
 
         // Invokers
         Bukkit.getPluginManager().registerEvents(new AnvilRenameInvoker(), plugin);
@@ -155,7 +157,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
 
     @Override
     public @NotNull SocialUserService getUserService() {
-        return BukkitSocialUserService.instance;
+        return BukkitSocialUserService.INSTANCE;
     }
 
     @Override
@@ -164,7 +166,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
     }
 
     @Override
-    public CommandManager<AbstractSocialUser> commandManager() {
+    public CommandManager<SocialUser> commandManager() {
         return commandManager;
     }
 

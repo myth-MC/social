@@ -13,7 +13,7 @@ import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer;
 import ovh.mythmc.social.api.chat.renderer.SocialChatRenderer.Registered;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 import java.util.*;
@@ -132,14 +132,9 @@ public final class ChatManager {
      * @param user the user to look up
      * @return the resolved main channel
      */
-    public ChatChannel getCachedOrDefault(@NotNull AbstractSocialUser user) {
-        final String cachedMainChannelName = user.cachedMainChannelName().get();
-        if (cachedMainChannelName != null) {
-            final ChatChannel cachedMainChannel = Social.registries().channels()
-                    .value(RegistryKey.identified(cachedMainChannelName)).orElse(null);
-            if (cachedMainChannel != null)
-                return cachedMainChannel;
-        }
+    public ChatChannel getCachedOrDefault(@NotNull SocialUser user) {
+        if (user.mainChannel().isPresent())
+            return user.mainChannel().get();
 
         return Social.registries().channels()
                 .value(RegistryKey.identified(Social.get().getConfig().getChat().getDefaultChannel())).orElse(null);
@@ -170,14 +165,14 @@ public final class ChatManager {
      * @param user the user to look up
      * @return an optional containing the user's group channel
      */
-    public Optional<GroupChatChannel> groupChannelByUser(final @NotNull AbstractSocialUser user) {
+    public Optional<GroupChatChannel> groupChannelByUser(final @NotNull SocialUser user) {
         return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
                 .filter(channel -> channel.isMember(user))
                 .findAny();
     }
 
     @Deprecated
-    public GroupChatChannel getGroupChannelByUser(final @NotNull AbstractSocialUser user) {
+    public GroupChatChannel getGroupChannelByUser(final @NotNull SocialUser user) {
         return groupChannelByUser(user).orElse(null);
     }
 
@@ -208,7 +203,7 @@ public final class ChatManager {
      * @param user the user to filter channels for
      * @return the list of visible channels
      */
-    public List<ChatChannel> getVisibleChannels(final @NotNull AbstractSocialUser user) {
+    public List<ChatChannel> getVisibleChannels(final @NotNull SocialUser user) {
         return channels().stream()
                 .filter(channel -> hasPermission(user, channel))
                 .collect(Collectors.toList());
@@ -221,7 +216,7 @@ public final class ChatManager {
      *
      * @param user the user to assign channels to
      */
-    public void assignChannelsToPlayer(final @NotNull AbstractSocialUser user) {
+    public void assignChannelsToPlayer(final @NotNull SocialUser user) {
         channels().stream()
                 .filter(ChatChannel::joinByDefault)
                 .filter(channel -> channel.permission().isEmpty() || hasPermission(user, channel))
@@ -234,7 +229,7 @@ public final class ChatManager {
      * @param user the user to check
      * @return {@code true} if the user is in a group
      */
-    public boolean hasGroup(final @NotNull AbstractSocialUser user) {
+    public boolean hasGroup(final @NotNull SocialUser user) {
         return groupChannelByUser(user).isPresent();
     }
 
@@ -247,7 +242,7 @@ public final class ChatManager {
      * @param channel the channel to check against
      * @return {@code true} if the user has access
      */
-    public boolean hasPermission(final @NotNull AbstractSocialUser user, final @NotNull ChatChannel channel) {
+    public boolean hasPermission(final @NotNull SocialUser user, final @NotNull ChatChannel channel) {
         if (channel.permission().isEmpty())
             return true;
 

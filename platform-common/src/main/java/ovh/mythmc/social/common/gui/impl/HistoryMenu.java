@@ -20,7 +20,7 @@ import ovh.mythmc.social.common.context.SocialHistoryMenuContext.HeaderType;
 import ovh.mythmc.social.common.gui.HistoryBookMenu;
 
 public class HistoryMenu implements HistoryBookMenu {
-    
+
     @Override
     public Component header(SocialHistoryMenuContext context) {
         Component headerFromConfig = Component.empty();
@@ -36,16 +36,16 @@ public class HistoryMenu implements HistoryBookMenu {
                     TextColor channelColor = context.channel().color();
                     if (channelColor.equals(NamedTextColor.YELLOW))
                         channelColor = NamedTextColor.GOLD;
-        
+
                     scope = Component.text(context.channel().name(), channelColor);
                 }
                 break;
             case PLAYER:
                 if (context.target() != null) {
                     scope = Social.get().getTextProcessor().parse(
-                        SocialParserContext.builder(context.target(), Component.text("$(nickname)", NamedTextColor.BLUE))
-                            .build()
-                    );
+                            SocialParserContext
+                                    .builder(context.target(), Component.text("$(nickname)", NamedTextColor.BLUE))
+                                    .build());
                 }
                 break;
             case THREAD:
@@ -57,18 +57,20 @@ public class HistoryMenu implements HistoryBookMenu {
         }
 
         return headerFromConfig
-            .appendNewline()
-            .append(Component.empty()
-                .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getScope()).colorIfAbsent(NamedTextColor.DARK_GRAY))
-                .appendSpace()
-                .append(scope
-                    .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getClickToOpenGlobalHistory())))
-                    .clickEvent(ClickEvent.runCommand("/social:social history"))
-                )
-            )
-            .appendNewline()
-            .appendNewline();
-   }
+                .appendNewline()
+                .append(Component.empty()
+                        .append(MiniMessage.miniMessage()
+                                .deserialize(Social.get().getConfig().getMenus().getChatHistory().getScope())
+                                .colorIfAbsent(NamedTextColor.DARK_GRAY))
+                        .appendSpace()
+                        .append(scope
+                                .hoverEvent(HoverEvent.showText(MiniMessage.miniMessage()
+                                        .deserialize(Social.get().getConfig().getMenus().getChatHistory()
+                                                .getClickToOpenGlobalHistory())))
+                                .clickEvent(ClickEvent.runCommand("/social:social history"))))
+                .appendNewline()
+                .appendNewline();
+    }
 
     @Override
     public Book book(SocialHistoryMenuContext context) {
@@ -79,8 +81,9 @@ public class HistoryMenu implements HistoryBookMenu {
         List<SocialRegisteredMessageContext> messages = new ArrayList<>(context.messages());
         Collections.reverse(messages);
         for (SocialRegisteredMessageContext message : messages) {
-            if (!pages.isEmpty() && pages.get(pages.size() -1).messages.size() < Social.get().getConfig().getMenus().getChatHistory().getMaxMessagesPerPage()) {
-                pages.get(pages.size() -1).messages.add(message);
+            if (!pages.isEmpty() && pages.get(pages.size() - 1).messages.size() < Social.get().getConfig().getMenus()
+                    .getChatHistory().getMaxMessagesPerPage()) {
+                pages.get(pages.size() - 1).messages.add(message);
                 continue;
             }
 
@@ -101,36 +104,48 @@ public class HistoryMenu implements HistoryBookMenu {
         private Component asComponent(SocialHistoryMenuContext context) {
             Component page = Component.empty();
 
-            for (SocialRegisteredMessageContext message : messages) { 
-                Component hoverText = Component.text(message.sender().cachedDisplayName() + ": ", NamedTextColor.GRAY)
-                    .append(message.message()).color(NamedTextColor.WHITE)
-                    .appendNewline()
-                    .appendNewline()
-                    .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext()).colorIfAbsent(NamedTextColor.BLUE))
-                    .appendNewline()
-                    .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextChannel()), Component.text(message.channel().name(), message.channel().color())));
+            for (SocialRegisteredMessageContext message : messages) {
+                Component hoverText = message.sender().displayName().get().color(NamedTextColor.GRAY)
+                        .append(Component.text(": ", NamedTextColor.GRAY))
+                        .append(message.message().color(NamedTextColor.WHITE))
+                        .appendNewline()
+                        .appendNewline()
+                        .append(MiniMessage.miniMessage()
+                                .deserialize(Social.get().getConfig().getMenus().getChatHistory().getContext())
+                                .colorIfAbsent(NamedTextColor.BLACK))
+                        .appendNewline()
+                        .append(getField(
+                                MiniMessage.miniMessage().deserialize(
+                                        Social.get().getConfig().getMenus().getChatHistory().getContextChannel()),
+                                Component.text(message.channel().name(), message.channel().color())));
 
                 Component toAppend = Component.empty()
-                    .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))
-                    .appendSpace()
-                    .append(Component.text("(" + message.date() + ")", NamedTextColor.BLUE))
-                    .appendNewline();
+                        .append(Component.text("#" + message.id(), NamedTextColor.DARK_GRAY))
+                        .appendSpace()
+                        .append(Component.text("(" + message.date() + ")", NamedTextColor.BLUE))
+                        .appendNewline();
 
                 if (message.isReply() && context.headerType() != HeaderType.THREAD) {
-                    SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory().getById(message.replyId());
-                    toAppend = toAppend.clickEvent(ClickEvent.runCommand("/social:social history thread " + message.id()));
+                    SocialRegisteredMessageContext reply = Social.get().getChatManager().getHistory()
+                            .getById(message.replyId());
+                    toAppend = toAppend
+                            .clickEvent(ClickEvent.runCommand("/social:social history thread " + message.id()));
 
                     Component replyMessage = Component.text("#" + reply.id())
-                        .appendSpace()
-                        .append(Component.text("(" + reply.sender().cachedDisplayName() + ")", NamedTextColor.BLUE)
-                        .appendNewline()
-                        .appendNewline()
-                        .append(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getClickToOpenThreadHistory()))
-                    );
+                            .appendSpace()
+                            .append(reply.sender().displayName().get().color(NamedTextColor.BLUE)
+                                    .appendNewline()
+                                    .appendNewline()
+                                    .append(MiniMessage.miniMessage()
+                                            .deserialize(Social.get().getConfig().getMenus().getChatHistory()
+                                                    .getClickToOpenThreadHistory())));
 
                     hoverText = hoverText
-                        .appendNewline()
-                        .append(getField(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getChatHistory().getContextReplyTo()), replyMessage));
+                            .appendNewline()
+                            .append(getField(
+                                    MiniMessage.miniMessage().deserialize(
+                                            Social.get().getConfig().getMenus().getChatHistory().getContextReplyTo()),
+                                    replyMessage));
                 }
 
                 page = page.append(toAppend.hoverEvent(HoverEvent.showText(hoverText)));
@@ -140,5 +155,5 @@ public class HistoryMenu implements HistoryBookMenu {
         }
 
     }
-    
+
 }

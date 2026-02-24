@@ -7,7 +7,8 @@ plugins {
 }
 
 dependencies {
-    api(project(path = ":social-api-bukkit"))
+    api(project(":social-api"))
+    implementation(project(path = ":social-api-bukkit"))
     api(project(path = ":social-common"))
     api(libs.org.bstats.bstats.bukkit)
     api(libs.com.github.imdanix.minitranslator) // Used for PlaceholderAPI legacy codes

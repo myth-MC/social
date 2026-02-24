@@ -18,7 +18,7 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
         UserPresenceCallback.INSTANCE.registerHandler("social:legacy-settings-nagger", ctx -> {
             if (!ctx.type().equals(UserPresence.Type.JOIN))
                 return;
-                
+
             ctx.user().ifPresent(user -> {
                 if (!user.checkPermission("social.use.reload"))
                     return;
@@ -28,8 +28,10 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
                     if (!legacySettings.isNagAdmins())
                         return;
 
-                    user.sendParsableMessage("$(info_prefix) <yellow>This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");   
-                    user.sendParsableMessage("$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'nagAdmins' to false.</gray>");
+                    user.sendParsableMessage(
+                            "$(info_prefix) <yellow>This server is running an outdated settings file! Please, back up and delete your current settings.yml to regenerate a clean setup.</yellow>");
+                    user.sendParsableMessage(
+                            "$(info_prefix) <blue>Hint:</blue> <gray>You can disable this message by setting 'nagAdmins' to false.</gray>");
                 }
             });
         });
@@ -37,37 +39,23 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
         UserPresenceCallback.INSTANCE.registerHandler("social:completions", ctx -> {
             if (!ctx.type().equals(UserPresence.Type.JOIN))
                 return;
-            
+
             ctx.user().ifPresent(user -> {
                 // Emoji chat completions
-                if (Social.get().getConfig().getEmojis().isEnabled() && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
+                if (Social.get().getConfig().getEmojis().isEnabled()
+                        && Social.get().getConfig().getGeneral().isChatEmojiTabCompletion())
                     PlatformAdapter.get().sendAutoCompletions(user, Social.registries().emojis().values().stream()
-                        .map(emoji -> ":" + emoji.name() + ":")
-                        .toList());
+                            .map(emoji -> ":" + emoji.name() + ":")
+                            .toList());
 
                 // Keyword chat completions
                 if (Social.get().getConfig().getGeneral().isChatKeywordTabCompletion()) {
                     Collection<String> keywords = Social.get().getTextProcessor().getContextualParsers().stream()
-                        .filter(parser -> parser instanceof SocialContextualKeyword)
-                        .map(parser -> "[" + ((SocialContextualKeyword) parser).keyword() + "]")
-                        .toList();
+                            .filter(parser -> parser instanceof SocialContextualKeyword)
+                            .map(parser -> "[" + ((SocialContextualKeyword) parser).keyword() + "]")
+                            .toList();
 
                     PlatformAdapter.get().sendAutoCompletions(user, keywords);
-                }
-            });
-        });
-
-        UserPresenceCallback.INSTANCE.registerHandler("social:name-updater", ctx -> {
-            if (!ctx.type().equals(UserPresence.Type.JOIN))
-                return;
-
-            ctx.user().ifPresent(user -> {
-                final String cachedDisplayName = user.cachedDisplayName().get();
-
-                if (cachedDisplayName != null && !cachedDisplayName.isBlank()) { // Set display name from cached value
-                    user.name(cachedDisplayName);
-                } else { // Set cached value from display name
-                    user.cachedDisplayName().set(user.name());
                 }
             });
         });
@@ -76,10 +64,9 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
     @Override
     public void unregister() {
         UserPresenceCallback.INSTANCE.unregisterHandlers(
-            "social:legacy-settings-nagger",
-            "social:completions",
-            "social:name-updater"
-        );
+                "social:legacy-settings-nagger",
+                "social:completions",
+                "social:name-updater");
     }
-    
+
 }

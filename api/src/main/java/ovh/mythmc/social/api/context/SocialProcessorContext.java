@@ -17,7 +17,7 @@ import ovh.mythmc.social.api.text.exception.ParseExecutionNotAvailable;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @EqualsAndHashCode(callSuper = false)
 @Accessors(fluent = true)
@@ -32,7 +32,7 @@ public class SocialProcessorContext extends SocialParserContext {
     private final ParseExecution execution;
 
     SocialProcessorContext(
-            AbstractSocialUser user,
+            SocialUser user,
             ChatChannel channel,
             Component message,
             ChatChannel.ChannelType messageChannelType,

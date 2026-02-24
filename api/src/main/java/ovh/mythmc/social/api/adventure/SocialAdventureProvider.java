@@ -1,7 +1,7 @@
 package ovh.mythmc.social.api.adventure;
 
 import net.kyori.adventure.audience.Audience;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public abstract class SocialAdventureProvider {
      * @param user the social user
      * @return the corresponding audience
      */
-    public abstract Audience user(final @NotNull AbstractSocialUser user);
+    public abstract Audience user(final @NotNull SocialUser user);
 
     /**
      * Returns the audience that wraps the server console.

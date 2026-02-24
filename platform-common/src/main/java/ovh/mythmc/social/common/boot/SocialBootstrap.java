@@ -7,8 +7,7 @@ import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
 import ovh.mythmc.social.api.configuration.SocialConfigProvider;
-import ovh.mythmc.social.api.database.SocialDatabase;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.callback.handler.InternalFeatureHandler;
 import ovh.mythmc.social.common.command.SocialCommandProvider;
 import ovh.mythmc.social.common.feature.AddonFeature;
@@ -62,7 +61,8 @@ public abstract class SocialBootstrap implements Social {
         // Register bootstrap feature
         Gestalt.get().register(BootstrapFeature.class);
 
-        // Register add-on feature (add-ons can listen to this class to sync their state)
+        // Register add-on feature (add-ons can listen to this class to sync their
+        // state)
         Gestalt.get().register(AddonFeature.class);
 
         // Register platform features (chat renderer, hooks...)
@@ -83,19 +83,13 @@ public abstract class SocialBootstrap implements Social {
 
             // Register commands
             commandProvider.register();
-
-            // Instantiate database
-            SocialDatabase.newInstance(userType());
-
-            // Initialize database
-            SocialDatabase.get().initialize(dataDirectory.getAbsolutePath() + File.separator + "users.db");
         } catch (Throwable throwable) {
             Social.get().getLogger().error("An error has occurred while initializing social: {}", throwable);
             throwable.printStackTrace(System.err);
         }
     }
 
-    public abstract Class<? extends AbstractSocialUser> userType();
+    public abstract Class<? extends SocialUser> userType();
 
     public abstract void initializeGestalt();
 
@@ -105,10 +99,9 @@ public abstract class SocialBootstrap implements Social {
 
     public abstract void enable();
 
-    public abstract CommandManager<AbstractSocialUser> commandManager();
+    public abstract CommandManager<SocialUser> commandManager();
 
     public void shutdown() {
-        SocialDatabase.get().shutdown();
     }
 
     public final void reload(ReloadType type) {
@@ -143,18 +136,16 @@ public abstract class SocialBootstrap implements Social {
 
         // Register internal placeholders
         Social.get().getTextProcessor().EARLY_PARSERS.add(
-            new UsernamePlaceholder(),
-            new NicknamePlaceholder(),
-            new ClickableNicknamePlaceholder(),
-            new FormattedNicknamePlaceholder()
-        );
+                new UsernamePlaceholder(),
+                new NicknamePlaceholder(),
+                new ClickableNicknamePlaceholder(),
+                new FormattedNicknamePlaceholder());
 
         Social.get().getTextProcessor().registerContextualParser(
                 new ChannelPlaceholder(),
                 new ChannelIconPlaceholder(),
                 new ClickableChannelIconPlaceholder(),
-                new SocialSpyPlaceholder()
-        );
+                new SocialSpyPlaceholder());
 
         // Register internal non-contextual placeholders
         Social.get().getTextProcessor().registerContextualParser(
@@ -162,16 +153,15 @@ public abstract class SocialBootstrap implements Social {
                 new InfoPlaceholder(),
                 new PrivateMessagePlaceholder(),
                 new SuccessPlaceholder(),
-                new WarningPlaceholder()
-        );
+                new WarningPlaceholder());
 
         // Register parsers that do not necessarily belong to any feature group
         Social.get().getTextProcessor().LATE_PARSERS.add(
-            new MiniMessageParser()
-        );
+                new MiniMessageParser());
 
         // Enable Gestalt features
-        Gestalt.get().enableFeature(BootstrapFeature.class);;
+        Gestalt.get().enableFeature(BootstrapFeature.class);
+        ;
 
         // Enable add-ons
         Gestalt.get().enableFeature(AddonFeature.class);

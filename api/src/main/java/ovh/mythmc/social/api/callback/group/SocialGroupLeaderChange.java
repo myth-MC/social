@@ -2,9 +2,10 @@ package ovh.mythmc.social.api.callback.group;
 
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @Callback
-public final record SocialGroupLeaderChange(GroupChatChannel groupChatChannel, AbstractSocialUser previousLeader, AbstractSocialUser leader) {
-    
+public final record SocialGroupLeaderChange(GroupChatChannel groupChatChannel, SocialUser previousLeader,
+                SocialUser leader) {
+
 }

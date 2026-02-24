@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.scheduler.SocialScheduler;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.callback.game.UserDeathCallback;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 
@@ -23,23 +23,25 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
             String unformattedMessage = Social.get().getConfig().getSystemMessages().getDeathMessage();
             if (unformattedMessage == null || unformattedMessage.isEmpty())
                 return;
-        
-            unformattedMessage = String.format(unformattedMessage, "");
-        
-            Component deathMessage = parse(ctx.user(), ctx.user().mainChannel(), Component.text(unformattedMessage).append(ctx.deathMessage()));
-            
-            for (AbstractSocialUser user : Social.get().getUserService().get()) {
-                if (unformattedMessage.contains(user.name())) {
-                    deathMessage = deathMessage.replaceText(TextReplacementConfig.builder()
-                        .matchLiteral(user.name())
-                        .replacement(Social.get().getConfig().getChat().getPlayerNicknameFormat())
-                        .build());
 
-                    deathMessage = Social.get().getTextProcessor().parse(user, user.mainChannel(), deathMessage);
+            unformattedMessage = String.format(unformattedMessage, "");
+
+            Component deathMessage = parse(ctx.user(), ctx.user().mainChannel().get(),
+                    Component.text(unformattedMessage).append(ctx.deathMessage()));
+
+            for (SocialUser user : Social.get().getUserService().get()) {
+                if (unformattedMessage.contains(user.username())) {
+                    deathMessage = deathMessage.replaceText(TextReplacementConfig.builder()
+                            .matchLiteral(user.username())
+                            .replacement(Social.get().getConfig().getChat().getPlayerNicknameFormat())
+                            .build());
+
+                    deathMessage = Social.get().getTextProcessor().parse(user, user.mainChannel().get(), deathMessage);
                 }
             }
 
-            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType
+                    .valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
 
             Social.get().getTextProcessor().send(Social.get().getUserService().get(), deathMessage, channelType, null);
             ctx.deathMessage(Component.empty());
@@ -50,7 +52,7 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
                 case JOIN -> {
                     if (!Social.get().getConfig().getSystemMessages().isCustomizeJoinMessage())
                         return;
-    
+
                     if (ctx.message().isEmpty())
                         return;
 
@@ -59,14 +61,18 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
 
                     SocialScheduler.get().runAsyncTaskLater(() -> {
                         ctx.user().ifPresent(user -> {
-                            final String unformattedMessage = Social.get().getConfig().getSystemMessages().getJoinMessage();
+                            final String unformattedMessage = Social.get().getConfig().getSystemMessages()
+                                    .getJoinMessage();
                             if (unformattedMessage == null || unformattedMessage.isEmpty())
                                 return;
-            
-                            final Component parsedMessage = parse(user, user.mainChannel(), Component.text(unformattedMessage));
-                            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
-            
-                            Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage, channelType, null);
+
+                            final Component parsedMessage = parse(user, user.mainChannel().get(),
+                                    Component.text(unformattedMessage));
+                            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType
+                                    .valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+
+                            Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage,
+                                    channelType, null);
                         });
                     }, Social.get().getConfig().getSystemMessages().getJoinMessageDelayInTicks());
                 }
@@ -84,15 +90,20 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
                         final String unformattedMessage = Social.get().getConfig().getSystemMessages().getQuitMessage();
                         if (unformattedMessage == null || unformattedMessage.isEmpty())
                             return;
-        
-                        final Component parsedMessage = parse(user, user.mainChannel(), Component.text(unformattedMessage));
-                        final ChatChannel.ChannelType channelType = ChatChannel.ChannelType.valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
-        
-                        Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage, channelType, null);
+
+                        final Component parsedMessage = parse(user, user.mainChannel().get(),
+                                Component.text(unformattedMessage));
+                        final ChatChannel.ChannelType channelType = ChatChannel.ChannelType
+                                .valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+
+                        Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage,
+                                channelType, null);
                     });
                 }
-                default -> {}
-            };
+                default -> {
+                }
+            }
+            ;
         });
     }
 
@@ -101,12 +112,12 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
         UserPresenceCallback.INSTANCE.unregisterHandlers("social:presence-system-messages");
     }
 
-    private Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {
+    private Component parse(SocialUser user, ChatChannel channel, Component message) {
         SocialParserContext context = SocialParserContext.builder(user, message)
-            .channel(channel)
-            .build();
+                .channel(channel)
+                .build();
 
         return Social.get().getTextProcessor().parse(context);
     }
-    
+
 }

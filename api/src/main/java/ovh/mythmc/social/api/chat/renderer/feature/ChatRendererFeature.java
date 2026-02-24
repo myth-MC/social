@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.chat.renderer.SocialChatRendererUtil;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 import java.util.function.Predicate;
@@ -22,13 +22,14 @@ public class ChatRendererFeature {
     public static ChatRendererFeature replies(int injectionIndex) {
         return ChatRendererFeature.builder((target, format, message, parser) -> {
             if (message.isReply())
-                format.injectValue(SocialInjectedValue.literal(SocialChatRendererUtil.getReplyIcon(target, message)), injectionIndex);
+                format.injectValue(SocialInjectedValue.literal(SocialChatRendererUtil.getReplyIcon(target, message)),
+                        injectionIndex);
         })
-        .decorator((context, component) -> {
-            final int idToReply = context.isReply() ? context.replyId() : context.id();
-            return component.applyFallbackStyle(ClickEvent.suggestCommand("(re:#" + idToReply + ") "));
-        })
-        .build();
+                .decorator((context, component) -> {
+                    final int idToReply = context.isReply() ? context.replyId() : context.id();
+                    return component.applyFallbackStyle(ClickEvent.suggestCommand("(re:#" + idToReply + ") "));
+                })
+                .build();
     }
 
     public static ChatRendererFeature companion() {
@@ -36,7 +37,7 @@ public class ChatRendererFeature {
             if (target.companion().isPresent())
                 format.append(CompanionModUtils.asChannelable(Component.empty(), message.channel()), 0);
         })
-        .build();
+                .build();
     }
 
     private final Handler handler;
@@ -45,7 +46,8 @@ public class ChatRendererFeature {
 
     private final Predicate<SocialRegisteredMessageContext> condition;
 
-    private ChatRendererFeature(@NotNull Handler handler, @NotNull Decorator decorator, @NotNull Predicate<SocialRegisteredMessageContext> condition) {
+    private ChatRendererFeature(@NotNull Handler handler, @NotNull Decorator decorator,
+            @NotNull Predicate<SocialRegisteredMessageContext> condition) {
         this.handler = handler;
         this.decorator = decorator;
         this.condition = condition;
@@ -114,14 +116,16 @@ public class ChatRendererFeature {
     @FunctionalInterface
     public interface Handler {
 
-        void handle(@NotNull AbstractSocialUser target, @NotNull ChatFormatBuilder format, @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser);
+        void handle(@NotNull SocialUser target, @NotNull ChatFormatBuilder format,
+                @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser);
 
     }
 
     @FunctionalInterface
     public interface Decorator {
 
-        @NotNull Component decorate(@NotNull SocialRegisteredMessageContext context, @NotNull Component component);
+        @NotNull
+        Component decorate(@NotNull SocialRegisteredMessageContext context, @NotNull Component component);
 
     }
 

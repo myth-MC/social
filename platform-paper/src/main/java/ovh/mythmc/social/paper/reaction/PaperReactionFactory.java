@@ -22,7 +22,7 @@ import ovh.mythmc.social.api.callback.reaction.SocialReactionTrigger;
 import ovh.mythmc.social.api.callback.reaction.SocialReactionTriggerCallback;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -41,7 +41,7 @@ public final class PaperReactionFactory extends ReactionFactory {
     private final float scale = 0.7f;
 
     @Override
-    public void displayReaction(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction emoji) {
+    public void displayReaction(@NotNull SocialUser abstractSocialUser, @NotNull Reaction emoji) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
 
         if (user.player().isEmpty() || 
@@ -60,7 +60,7 @@ public final class PaperReactionFactory extends ReactionFactory {
     }
 
     @Override
-    public void play(@NotNull AbstractSocialUser abstractSocialUser, @NotNull Reaction reaction) {
+    public void play(@NotNull SocialUser abstractSocialUser, @NotNull Reaction reaction) {
         final var user = BukkitSocialUser.from(abstractSocialUser);
 
         var callback = new SocialReactionTrigger(user, reaction);

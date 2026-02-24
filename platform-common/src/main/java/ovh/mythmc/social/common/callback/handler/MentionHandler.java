@@ -32,23 +32,26 @@ public final class MentionHandler {
             if (!ctx.sender().checkPermission("social.mentions"))
                 return;
 
-            var wrapper = new Object() { boolean mentioned = false; };
-        
+            var wrapper = new Object() {
+                boolean mentioned = false;
+            };
+
             Component message = ctx.message();
 
             // Username
             message = message.replaceText((builder) -> {
                 builder
-                    .match(Pattern.quote("@" + ctx.recipient().name()) + "|" + Pattern.quote("@" + ctx.recipient().cachedDisplayName()))
-                    .replacement((match, textBuilder) -> {
-                        wrapper.mentioned = true;
-                        return Component.text(match.group()).color(ctx.channel().color());
-                    });
+                        .match(Pattern.quote("@" + ctx.recipient().username()) + "|"
+                                + Pattern.quote("@" + ctx.recipient().displayName().get().content()))
+                        .replacement((match, textBuilder) -> {
+                            wrapper.mentioned = true;
+                            return Component.text(match.group()).color(ctx.channel().color());
+                        });
             });
 
             if (wrapper.mentioned) {
                 ctx.recipient().playSound(getSoundByKey(Social.get().getConfig().getChat().getMentionSound()));
-                
+
                 ctx.recipient().companion().ifPresent(companion -> companion.mention(ctx.channel(), ctx.sender()));
             }
 
@@ -57,20 +60,22 @@ public final class MentionHandler {
 
         SocialMessageReceiveCallback.INSTANCE.registerHandler(IdentifierKeys.MENTIONS_REPLY_FORMATTER, (ctx) -> {
             if (ctx.isReply()) {
-                Component replyFormat = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(), Social.get().getConfig().getChat().getReplyIcon());
-                String replyFormatStripped = MiniMessage.miniMessage().stripTags(MiniMessage.miniMessage().serialize(replyFormat));
-    
+                Component replyFormat = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(),
+                        Social.get().getConfig().getChat().getReplyIcon());
+                String replyFormatStripped = MiniMessage.miniMessage()
+                        .stripTags(MiniMessage.miniMessage().serialize(replyFormat));
+
                 SocialMessageContext context = Social.get().getChatManager().getHistory().getById(ctx.replyId());
-    
+
                 if (context.sender().equals(ctx.recipient())) {
-                    Component replacement = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(), replyFormat);
+                    Component replacement = Social.get().getTextProcessor().parse(ctx.recipient(), ctx.channel(),
+                            replyFormat);
                     Component message = ctx.message().replaceText(TextReplacementConfig.builder()
                             .matchLiteral(replyFormatStripped)
                             .replacement(replacement.color(ctx.channel().color()))
                             .once()
-                            .build()
-                    );
-    
+                            .build());
+
                     ctx.message(message);
                 }
             }
@@ -79,9 +84,8 @@ public final class MentionHandler {
 
     public void unregisterCallbackHandlers() {
         SocialMessageReceiveCallback.INSTANCE.unregisterHandlers(
-            IdentifierKeys.MENTIONS,
-            IdentifierKeys.MENTIONS_REPLY_FORMATTER
-        );
+                IdentifierKeys.MENTIONS,
+                IdentifierKeys.MENTIONS_REPLY_FORMATTER);
     }
 
     private static Sound getSoundByKey(@NotNull String key) {

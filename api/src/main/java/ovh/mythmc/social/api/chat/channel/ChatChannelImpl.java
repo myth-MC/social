@@ -10,13 +10,13 @@ import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.Mutable;
 
 import java.util.*;
 
 class ChatChannelImpl implements ChatChannel {
-    
+
     private final String name;
 
     private final Mutable<String> alias;
@@ -41,7 +41,10 @@ class ChatChannelImpl implements ChatChannel {
 
     private final Collection<ChatRendererFeature> supportedRendererFeatures;
 
-    protected ChatChannelImpl(@NotNull String name, @NotNull Mutable<String> alias, @NotNull Iterable<String> commands, @NotNull Component icon, @NotNull Component description, @NotNull TextColor color, @NotNull ChatFormatBuilder formatBuilder, @Nullable String permission, @Nullable TextColor textColor, boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
+    protected ChatChannelImpl(@NotNull String name, @NotNull Mutable<String> alias, @NotNull Iterable<String> commands,
+            @NotNull Component icon, @NotNull Component description, @NotNull TextColor color,
+            @NotNull ChatFormatBuilder formatBuilder, @Nullable String permission, @Nullable TextColor textColor,
+            boolean joinByDefault, @NotNull Collection<ChatRendererFeature> supportedRendererFeatures) {
         this.name = name;
         this.alias = alias;
         this.commands = commands;
@@ -110,7 +113,8 @@ class ChatChannelImpl implements ChatChannel {
     }
 
     @Override
-    public @NotNull Component prefix(@NotNull AbstractSocialUser user, @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser) {
+    public @NotNull Component prefix(@NotNull SocialUser user, @NotNull SocialRegisteredMessageContext message,
+            @NotNull SocialParserContext parser) {
         return formatBuilder().preRenderPrefix(user, supportedRendererFeatures(), message, parser);
     }
 
@@ -125,12 +129,12 @@ class ChatChannelImpl implements ChatChannel {
     }
 
     @Override
-    public @NotNull List<AbstractSocialUser> members() {
+    public @NotNull List<SocialUser> members() {
         return memberUuids.stream()
-            .map(Social.get().getUserService()::getByUuid)
-            .map(o -> o.orElse(null))
-            .filter(Objects::nonNull)
-            .toList();
+                .map(Social.get().getUserService()::getByUuid)
+                .map(o -> o.orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Override
@@ -146,7 +150,8 @@ class ChatChannelImpl implements ChatChannel {
 
         @Override
         public ChatChannelImpl build() {
-            return new ChatChannelImpl(name, alias, commands, icon, description, color, formatBuilder, permission, textColor, joinByDefault, supportedFeatures);
+            return new ChatChannelImpl(name, alias, commands, icon, description, color, formatBuilder, permission,
+                    textColor, joinByDefault, supportedFeatures);
         }
 
         @Override
@@ -236,7 +241,7 @@ class ChatChannelImpl implements ChatChannel {
             return get();
         }
 
-        public T member(@NotNull AbstractSocialUser user) {
+        public T member(@NotNull SocialUser user) {
             return member(user.uuid());
         }
 
@@ -246,5 +251,5 @@ class ChatChannelImpl implements ChatChannel {
         }
 
     }
-    
+
 }
