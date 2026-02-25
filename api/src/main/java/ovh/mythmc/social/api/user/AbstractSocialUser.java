@@ -63,8 +63,8 @@ public abstract class AbstractSocialUser implements SocialUser {
     }
 
     @Override
-    public @NotNull Mutable<GroupChatChannel> groupChannel() {
-        return Mutable.of(Social.get().getChatManager().groupChannelByUser(this));
+    public @NotNull Optional<GroupChatChannel> groupChannel() {
+        return Social.get().getChatManager().groupChannelByUser(this);
     }
 
     @Override

@@ -97,17 +97,4 @@ public abstract class AbstractRegistry<R extends RegistryKey, T> implements Regi
         
     }
 
-    public static class Type<R, T> extends AbstractRegistry<TypeRegistryKey<R>, T> {
-
-        private final Map<TypeRegistryKey<R>, T> registry = new HashMap<>();
-
-        protected Type() { }
-
-        @Override
-        public @NotNull Map<TypeRegistryKey<R>, T> registry() {
-            return this.registry;
-        }
-
-    }
-
 }

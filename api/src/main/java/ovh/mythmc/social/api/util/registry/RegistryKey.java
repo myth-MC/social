@@ -16,8 +16,4 @@ public interface RegistryKey {
         return new NamespacedRegistryKey(namespacedKey);
     }
 
-    static <T> TypeRegistryKey<T> type(@NotNull Class<T> type) {
-        return new TypeRegistryKey<>(type);
-    }
-
 }

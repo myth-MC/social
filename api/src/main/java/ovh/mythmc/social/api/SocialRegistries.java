@@ -2,6 +2,7 @@ package ovh.mythmc.social.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import ovh.mythmc.social.api.announcements.Announcement;
 import ovh.mythmc.social.api.callback.channel.SocialChannelCreate;
 import ovh.mythmc.social.api.callback.channel.SocialChannelCreateCallback;
@@ -26,11 +27,8 @@ public final class SocialRegistries {
     static final SocialRegistries INSTANCE = new SocialRegistries();
 
     private final NamespacedRegistry<Announcement> announcements = Registry.namespaced(Announcement.class);
-
     private final Channels channels = new Channels();
-
     private final NamespacedRegistry<Emoji> emojis = Registry.namespaced(Emoji.class);
-
     private final NamespacedRegistry<Reaction> reactions = Registry.namespaced(Reaction.class);
 
     private SocialRegistries() {

@@ -1,5 +1,6 @@
 package ovh.mythmc.social.api.chat;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public interface ChatParticipant {
     Mutable<ChatChannel> mainChannel();
 
     @NotNull
-    Mutable<GroupChatChannel> groupChannel();
+    Optional<GroupChatChannel> groupChannel();
 
     @NotNull
     Set<String> blockedChannels();

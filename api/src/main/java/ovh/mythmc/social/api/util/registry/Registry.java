@@ -18,14 +18,6 @@ public interface Registry<R extends RegistryKey, T> extends Iterable<T> {
         return new AbstractRegistry.Namespaced<>();
     }
 
-    static <R, T> Registry<TypeRegistryKey<R>, T> type(@NotNull Class<R> registryKeyType, @NotNull Class<T> type) {
-        return new AbstractRegistry.Type<>();
-    }
-
-    static <T> Registry<TypeRegistryKey<T>, T> type(@NotNull Class<T> type) {
-        return new AbstractRegistry.Type<>();
-    }
-
     @NotNull Map<R, T> registry();
 
     void register(@NotNull R registryKey, @NotNull T value);

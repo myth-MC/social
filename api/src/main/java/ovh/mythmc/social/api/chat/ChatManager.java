@@ -114,12 +114,7 @@ public final class ChatManager {
                 .findFirst().orElse(null);
     }
 
-    @Deprecated
-    public @Nullable ChatChannel getChannel(final @NotNull String channelName) {
-        return Social.registries().channels().value(RegistryKey.identified(channelName)).orElse(null);
-    }
-
-    /** Returns the default channel as configured in {@code config.yml}. */
+    /** Returns the default channel as configured in {@code settings.yml}. */
     public ChatChannel getDefault() {
         return Social.registries().channels()
                 .value(RegistryKey.identified(Social.get().getConfig().getChat().getDefaultChannel())).orElse(null);
@@ -153,11 +148,6 @@ public final class ChatManager {
                 .findAny();
     }
 
-    @Deprecated
-    public GroupChatChannel getGroupChannelByCode(final int code) {
-        return groupChannelByCode(code).orElse(null);
-    }
-
     /**
      * Returns the {@link GroupChatChannel} the given user is currently a member of,
      * if any.
@@ -169,32 +159,6 @@ public final class ChatManager {
         return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
                 .filter(channel -> channel.isMember(user))
                 .findAny();
-    }
-
-    @Deprecated
-    public GroupChatChannel getGroupChannelByUser(final @NotNull SocialUser user) {
-        return groupChannelByUser(user).orElse(null);
-    }
-
-    @Deprecated
-    public boolean exists(final @NotNull String channelName) {
-        return getChannel(channelName) != null;
-    }
-
-    @Deprecated
-    public boolean registerChatChannel(final @NotNull ChatChannel channel) {
-        Social.registries().channels().register(RegistryKey.identified(channel.name()), channel);
-        return true;
-    }
-
-    @Deprecated
-    public boolean unregisterChatChannel(final @NotNull ChatChannel channel) {
-        final var key = RegistryKey.identified(channel.name());
-
-        if (Social.registries().channels().containsKey(key))
-            return Social.registries().channels().unregister(key) != null;
-
-        return false;
     }
 
     /**
