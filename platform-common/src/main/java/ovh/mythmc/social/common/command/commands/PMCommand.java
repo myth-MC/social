@@ -32,7 +32,7 @@ public final class PMCommand implements MainCommand<SocialUser> {
                     if (ctx.sender().mainChannel() instanceof PrivateChatChannel) {
                         final ChatChannel defaultChannel = Social.get().getChatManager()
                                 .getCachedOrDefault(ctx.sender());
-                        Social.get().getUserManager().setMainChannel(ctx.sender(), defaultChannel, true);
+                        Social.get().getUserManager().announceChannelSwitch(ctx.sender(), defaultChannel);
                     }
                 }));
 
@@ -54,15 +54,15 @@ public final class PMCommand implements MainCommand<SocialUser> {
                         final var previousChannel = ctx.sender().mainChannel().get();
 
                         // Quickly switch channels
-                        userManager.setMainChannel(ctx.sender(), privateChannel, false);
+                        ctx.sender().mainChannel().set(privateChannel);
                         PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
-                        userManager.setMainChannel(ctx.sender(), previousChannel, false);
+                        ctx.sender().mainChannel().set(previousChannel);
                         return;
                     }
 
                     // Open channel
                     final var privateChannel = PrivateChatChannel.getOrCreate(ctx.sender(), recipient);
-                    userManager.setMainChannel(ctx.sender(), privateChannel, true);
+                    userManager.announceChannelSwitch(ctx.sender(), privateChannel);
                 }));
     }
 

@@ -52,9 +52,9 @@ public final class ReplyCommand implements MainCommand<SocialUser> {
                     final var previousChannel = ctx.sender().mainChannel().get();
                     final var privateChannel = PrivateChatChannel.getOrCreate(ctx.sender(), optionalUser.get());
 
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), privateChannel, false);
+                    ctx.sender().mainChannel().set(privateChannel);
                     PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
+                    ctx.sender().mainChannel().set(previousChannel);
                 }));
     }
 

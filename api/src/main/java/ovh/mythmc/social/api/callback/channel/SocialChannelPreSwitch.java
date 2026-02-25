@@ -28,14 +28,11 @@ public final class SocialChannelPreSwitch {
 
     private @Nullable ChatChannel channel;
 
-    private @NotNull boolean informUser;
-
     private boolean cancelled = false;
 
-    public SocialChannelPreSwitch(@NotNull SocialUser user, @Nullable ChatChannel channel, boolean informUser) {
+    public SocialChannelPreSwitch(@NotNull SocialUser user, @Nullable ChatChannel channel) {
         this.user = user;
         this.channel = channel;
-        this.informUser = informUser;
     }
 
 }

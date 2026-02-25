@@ -130,7 +130,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                         return;
                     }
 
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), channel, true);
+                    Social.get().getUserManager().announceChannelSwitch(ctx.sender(), channel);
                 }));
 
         // /social dictionary

@@ -82,7 +82,7 @@ public class PrivateChatChannel extends ChatChannelImpl {
                 .appendSpace()
                 .append(text("<$(channel_text_color)>"))
                 .injectValue(SocialInjectedValue.placeholder("channel_text_divider",
-                        text(Social.get().getConfig().getCommands().getPrivateMessage().arrow())))
+                        text(divider())))
                 .injectValue(SocialInjectedValue.placeholder("channel_text_color", text("white")));
     }
 
@@ -107,10 +107,6 @@ public class PrivateChatChannel extends ChatChannelImpl {
             return participant2;
 
         return participant1;
-    }
-
-    private static String alias(@NotNull SocialUser sender, @NotNull SocialUser recipient) {
-        return "PM";
     }
 
     private static Component formattedPmIcon() {

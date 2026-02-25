@@ -100,7 +100,7 @@ public final class CompanionHandler implements SocialCallbackHandler {
                     return;
 
                 if (channel != null)
-                    Social.get().getUserManager().setMainChannel(user, channel, false);
+                    user.mainChannel().set(channel);
             } else if (ctx.channel() instanceof SocialMessagePreviewChannel) {
                 if (user.companion().isEmpty())
                     return;

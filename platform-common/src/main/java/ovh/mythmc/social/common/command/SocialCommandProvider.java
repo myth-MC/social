@@ -79,14 +79,14 @@ public final class SocialCommandProvider {
                                     final ChatChannel previousChannel = ctx.sender().mainChannel().get();
 
                                     // Quickly switch channel and return after sending message
-                                    Social.get().getUserManager().setMainChannel(ctx.sender(), channel, false);
+                                    ctx.sender().mainChannel().set(channel);
                                     PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
-                                    Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
+                                    ctx.sender().mainChannel().set(previousChannel);
                                     return;
                                 }
 
                                 // Switch channel
-                                Social.get().getUserManager().setMainChannel(ctx.sender(), channel, true);
+                                Social.get().getUserManager().announceChannelSwitch(ctx.sender(), channel);
                             }));
         });
     }

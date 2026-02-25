@@ -46,7 +46,7 @@ public final class ChatFeature {
         if (defaultChannel != null) {
             Social.get().getUserService().get().forEach(user -> {
                 Social.get().getChatManager().assignChannelsToPlayer(user);
-                Social.get().getUserManager().setMainChannel(user, defaultChannel, true);
+                Social.get().getUserManager().announceChannelSwitch(user, defaultChannel);
             });
         }
 

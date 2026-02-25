@@ -81,7 +81,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Switches to your group's chat channel"))
                 .permission(Permission.allOf(Permission.of("social.use.group.chat"), Requirements.HAS_GROUP))
                 .handler(ctx -> {
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), ctx.sender().groupChannel().get(), true);
+                    Social.get().getUserManager().announceChannelSwitch(ctx.sender(), ctx.sender().groupChannel().get());
                 }));
 
         // /group code
@@ -161,7 +161,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(),
                                 Social.get().getConfig().getMessages().getCommands().getJoinedGroup(),
                                 Social.get().getConfig().getMessages().getChannelType());
-                        Social.get().getUserManager().setMainChannel(ctx.sender(), chatChannel, true);
+                        Social.get().getUserManager().announceChannelSwitch(ctx.sender(), chatChannel);
                     } else {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(),
                                 Social.get().getConfig().getMessages().getErrors().getGroupIsFull(),

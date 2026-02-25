@@ -44,7 +44,7 @@ public abstract class AbstractSocialUser implements SocialUser {
         this.rendererClass = rendererClass;
 
         this.mainChannel.onChange((oldChannel, newChannel) -> {
-            final var preSwitchCallback = new SocialChannelPreSwitch(this, oldChannel, true);
+            final var preSwitchCallback = new SocialChannelPreSwitch(this, oldChannel);
             SocialChannelPreSwitchCallback.INSTANCE.invoke(preSwitchCallback);
 
             if (preSwitchCallback.cancelled()) {
@@ -52,7 +52,7 @@ public abstract class AbstractSocialUser implements SocialUser {
                 return;
             }
 
-            final var postSwitchCallback = new SocialChannelPostSwitch(this, preSwitchCallback.informUser(), oldChannel,
+            final var postSwitchCallback = new SocialChannelPostSwitch(this, oldChannel,
                     newChannel);
             SocialChannelPostSwitchCallback.INSTANCE.invoke(postSwitchCallback);
         });

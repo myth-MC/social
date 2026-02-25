@@ -56,7 +56,7 @@ public final class GroupHandler implements SocialCallbackHandler {
             var leader = ctx.groupChatChannel().leader();
 
             // Switch main channel
-            Social.get().getUserManager().setMainChannel(leader, ctx.groupChatChannel(), true);
+            Social.get().getUserManager().announceChannelSwitch(leader, ctx.groupChatChannel());
 
             // Message
             int groupCode = ctx.groupChatChannel().code();
@@ -125,7 +125,8 @@ public final class GroupHandler implements SocialCallbackHandler {
         if (defaultChannel == null)
             return;
 
-        Social.get().getUserManager().setMainChannel(user, defaultChannel, true);
+        Social.get().getUserManager().announceChannelSwitch(user, defaultChannel);
+
     }
 
 }
