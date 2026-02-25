@@ -5,14 +5,18 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.component.DefaultValue;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
+import org.incendo.cloud.minecraft.extras.parser.TextColorParser;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.Social.ReloadType;
 import ovh.mythmc.social.api.announcements.Announcement;
@@ -456,43 +460,55 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 }));
 
         // /social nickname color
-        /*
-         * commandManager.command(socialCommand
-         * .literal("nickname")
-         * .literal("color")
-         * .commandDescription(Description.of("Sets a nickname color"))
-         * .permission("social.use.nickname.color")
-         * .required("color", TextColorParser.textColorParser())
-         * .optional("user", UserParser.userParser())
-         * .handler(ctx -> {
-         * final TextColor textColor = ctx.get("color");
-         * final SocialUser target = ctx.getOrDefault("user", null);
-         * 
-         * if (target != null) { // Other user's nickname color
-         * if (!ctx.sender().checkPermission("social.use.nickname.color.others")) {
-         * Social.get().getTextProcessor().parseAndSend(ctx.sender(),
-         * Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(),
-         * Social.get().getConfig().getMessages().getChannelType());
-         * return;
-         * }
-         * 
-         * target.displayNameStyle().set(Style.style(textColor));
-         * Social.get().getTextProcessor().parseAndSend(ctx.sender(),
-         * String.format(
-         * Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers
-         * (),
-         * target.username(), target.cachedDisplayName()),
-         * Social.get().getConfig().getMessages().getChannelType());
-         * } else { // Sender's nickname color
-         * ctx.sender().displayNameStyle().set(Style.style(textColor));
-         * Social.get().getTextProcessor().parseAndSend(ctx.sender(),
-         * ctx.sender().mainChannel().get(),
-         * Social.get().getConfig().getMessages().getCommands().getNicknameChanged(),
-         * Social.get().getConfig().getMessages().getChannelType());
-         * }
-         * }));
-         */
+        commandManager.command(socialCommand
+                .literal("nickname")
+                .literal("color")
+                .commandDescription(Description.of("Sets a nickname color"))
+                .permission("social.use.nickname.color")
+                .required("color", TextColorParser.textColorParser())
+                .optional("user", UserParser.userParser())
+                .handler(ctx -> {
+                    TextColor textColor = ctx.get("color");
+                    SocialUser target = ctx.getOrDefault("user", null);
 
+                    if (target != null) {
+                        if (!ctx.sender().checkPermission("social.use.nickname.color.others")) {
+                            Social.get().getTextProcessor().parseAndSend(ctx.sender(),
+                                Social.get().getConfig().getMessages().getErrors().getNotEnoughPermission(),
+                                Social.get().getConfig().getMessages().getChannelType());
+                            return;
+                        }
+
+                        TextComponent displayName = target.displayNameOrUsername();
+                        
+                        // Apply style and update target display name
+                        displayName = displayName.style(Style.style(textColor));
+                        target.displayName().set(displayName);
+
+                        Social.get().getTextProcessor().parseAndSend(
+                                ctx.sender(),
+                                String.format(
+                                        Social.get().getConfig().getMessages().getCommands().getNicknameChangedOthers(), 
+                                        target.username(),
+                                        target.displayNameOrUsername().content()),
+                                Social.get().getConfig().getMessages().getChannelType());
+                    } else { // Sender's nickname color
+                        TextComponent displayName = ctx.sender().displayNameOrUsername();
+
+                        // Apply style and update target display name
+                        displayName = displayName.style(Style.style(textColor));
+                        ctx.sender().displayName().set(displayName);
+
+                        Social.get().getTextProcessor().parseAndSend(
+                                ctx.sender(),
+                                ctx.sender().mainChannel().get(),
+                                Social.get().getConfig().getMessages().getCommands().getNicknameChanged(),
+                                Social.get().getConfig().getMessages().getChannelType());
+                    }
+                    
+                }));
+
+        // /social processor info
         commandManager.command(socialCommand
                 .literal("processor")
                 .literal("info")
