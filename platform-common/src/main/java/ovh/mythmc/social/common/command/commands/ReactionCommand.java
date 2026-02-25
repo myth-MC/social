@@ -25,7 +25,7 @@ public final class ReactionCommand implements MainCommand<SocialUser> {
         final Command.Builder<InGameSocialUser> reactionCommand = commandManager.commandBuilder("reaction", "emote", "e")
                 .commandDescription(Description.of("Shows a reaction"))
                 .permission("social.use.reaction")
-                .required("reaction", ReactionParser.reactionParser())
+                .required("reaction", ReactionParser.reactionParser(), Description.of("The reaction to display"))
                 .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final Reaction reaction = ctx.get("reaction");

@@ -68,14 +68,14 @@ public final class SocialCommandProvider {
             commandManager.command(
                     commandManager.commandBuilder(command)
                             .commandDescription(Description.of("Switches your main channel to " + channel.name()
-                                    + " or sends a message without having to switch"))
+                                    + " or sends a message without manually switching"))
                             .permission(PredicatePermission.of(user -> {
                                 if (channel.permission().isEmpty())
                                     return true;
 
                                 return user.checkPermission(channel.permission().get());
                             }))
-                            .optional("message", StringParser.greedyStringParser())
+                            .optional("message", StringParser.greedyStringParser(), Description.of("The message that will be sent to " + channel.name()))
                             .senderType(InGameSocialUser.class)
                             .handler(ctx -> {
                                 // Send a message without switching channel

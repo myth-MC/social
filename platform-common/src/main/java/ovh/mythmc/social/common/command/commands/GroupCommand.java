@@ -61,7 +61,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.alias"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
-                .required("alias", StringParser.stringParser())
+                .required("alias", StringParser.stringParser(), Description.of("The new alias for your group"))
                 .handler(ctx -> {
                     final String alias = ctx.get("alias");
                     if (alias.length() > 16) {
@@ -105,7 +105,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Creates a new group"))
                 .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.create"), Requirements.NOT_IN_GROUP))
-                .optional("alias", StringParser.stringParser())
+                .optional("alias", StringParser.stringParser(), Description.of("The alias for your new group"))
                 .handler(ctx -> {
                     final String alias = ctx.getOrDefault("alias", null);
                     if (alias == null) {
@@ -128,7 +128,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Disbands your group"))
                 .permission(Permission.allOf(Permission.of("social.use.group.disband"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
-                .flag(commandManager.flagBuilder("confirm"))
+                .flag(commandManager.flagBuilder("confirm").withDescription(Description.of("Confirms the disbandment action")))
                 .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     if (ctx.flags().hasFlag("c")) {
@@ -151,7 +151,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Joins a group by its code"))
                 .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.join"), Requirements.NOT_IN_GROUP))
-                .required("code", IntegerParser.integerParser(0, 999999))
+                .required("code", IntegerParser.integerParser(0, 999999), Description.of("The code of the group to join"))
                 .handler(ctx -> {
                     final int code = ctx.get("code");
 
@@ -183,7 +183,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.kick"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
-                .required("user", UserParser.excludeSender()) // Todo: suggestions
+                .required("user", UserParser.excludeSender(), Description.of("Username of the member to kick")) // Todo: suggestions
                 .handler(ctx -> {
                     final SocialUser target = ctx.get("user");
                     if (target.groupChannel().isEmpty()
@@ -202,7 +202,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.leader"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
-                .required("user", UserParser.userParser()) // Todo: suggestions
+                .required("user", UserParser.userParser(), Description.of("Username of the member that will obtain the leadership")) // Todo: suggestions
                 .handler(ctx -> {
                     final SocialUser target = ctx.get("user");
                     if (ctx.sender().equals(target)) {
@@ -224,7 +224,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         // /group leave
         commandManager.command(groupCommand
                 .literal("leave")
-                .commandDescription(Description.of("Leaves your group"))
+                .commandDescription(Description.of("Leaves your current group"))
                 .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.leave"), Requirements.HAS_GROUP))
                 .handler(ctx -> {

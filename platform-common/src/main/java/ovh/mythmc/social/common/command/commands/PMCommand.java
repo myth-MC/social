@@ -41,8 +41,8 @@ public final class PMCommand implements MainCommand<SocialUser> {
         commandManager.command(pmCommand
                 .commandDescription(Description.of("Sends a private message to another user"))
                 .permission("social.use.pm")
-                .required("recipient", UserParser.excludeSender())
-                .optional("message", StringParser.greedyStringParser())
+                .required("recipient", UserParser.excludeSender(), Description.of("The recipient who will receive the <message>"))
+                .optional("message", StringParser.greedyStringParser(), Description.of("The message that will be sent"))
                 .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final SocialUserManager userManager = Social.get().getUserManager();

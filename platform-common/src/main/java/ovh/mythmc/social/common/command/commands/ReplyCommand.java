@@ -30,7 +30,7 @@ public final class ReplyCommand implements MainCommand<SocialUser> {
         commandManager.command(replyCommand
                 .commandDescription(Description.of("Replies to the latest private message"))
                 .permission("social.use.reply")
-                .required("message", StringParser.greedyStringParser())
+                .required("message", StringParser.greedyStringParser(), Description.of("The message that will be replied"))
                 .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final Mutable<UUID> recipientUuid = ctx.sender().lastPrivateMessageRecipient();

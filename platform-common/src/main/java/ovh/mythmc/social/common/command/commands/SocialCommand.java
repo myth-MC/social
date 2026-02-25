@@ -2,7 +2,9 @@ package ovh.mythmc.social.common.command.commands;
 
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.component.DefaultValue;
 import org.incendo.cloud.description.Description;
+import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.parser.standard.IntegerParser;
 import org.incendo.cloud.parser.standard.StringParser;
@@ -42,6 +44,16 @@ public final class SocialCommand implements MainCommand<SocialUser> {
     public void register(@NotNull CommandManager<SocialUser> commandManager) {
         final Command.Builder<SocialUser> socialCommand = commandManager.commandBuilder("social");
 
+        MinecraftHelp<SocialUser> help = MinecraftHelp.createNative("/social help", commandManager);
+        commandManager.command(socialCommand
+                .literal("help", "?")
+                .commandDescription(Description.of("Shows information about /social and its subcommands"))
+                .optional("query", StringParser.greedyStringParser(), DefaultValue.constant(""))
+                .handler(ctx -> {
+                    help.queryCommands(ctx.get("query"), ctx.sender());
+                })
+        );
+
         // /social announce
         commandManager.command(socialCommand
                 .literal("announce")
@@ -77,7 +89,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Announces a configured message"))
                 .permission("social.use.announcement")
                 .required("id",
-                        IntegerParser.integerParser(0, Social.registries().announcements().registry().size() - 1))
+                        IntegerParser.integerParser(0, Social.registries().announcements().registry().size() - 1), Description.of("Identifier of the announcement in the settings file"))
                 .flag(commandManager.flagBuilder("self")
                         .withDescription(Description.of("Shows this message to the sender only")))
                 .handler(ctx -> {
@@ -111,7 +123,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("channel")
                 .commandDescription(Description.of("Switches your main channel"))
                 .permission("social.use.channel")
-                .required("channel", ChannelParser.channelParser())
+                .required("channel", ChannelParser.channelParser(), Description.of("The channel to switch to"))
                 .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final ChatChannel channel = ctx.get("channel");
@@ -267,8 +279,8 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("mute")
                 .commandDescription(Description.of("Mutes a user"))
                 .permission("social.use.mute")
-                .required("user", UserParser.userParser())
-                .optional("channel", ChannelParser.channelParser())
+                .required("user", UserParser.userParser(), Description.of("Username of the player to mute"))
+                .optional("channel", ChannelParser.channelParser(), Description.of("Channel where <user> will be muted"))
                 .handler(ctx -> {
                     final SocialUser target = ctx.get("user");
 
@@ -337,8 +349,8 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("unmute")
                 .commandDescription(Description.of("Unmutes a user"))
                 .permission("social.use.unmute")
-                .required("user", UserParser.userParser())
-                .optional("channel", ChannelParser.channelParser())
+                .required("user", UserParser.userParser(), Description.of("Username of the player to unmute"))
+                .optional("channel", ChannelParser.channelParser(), Description.of("Channel where <user> will be unmuted"))
                 .handler(ctx -> {
                     final SocialUser target = ctx.get("user");
                     final ChatChannel channel = ctx.getOrDefault("channel", null);
@@ -394,8 +406,8 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("set")
                 .commandDescription(Description.of("Sets a nickname"))
                 .permission("social.use.nickname.set")
-                .required("nickname", StringParser.quotedStringParser())
-                .optional("user", UserParser.userParser())
+                .required("nickname", StringParser.quotedStringParser(), Description.of("The new nickname"))
+                .optional("user", UserParser.userParser(), Description.of("Username of the player to rename"))
                 .handler(ctx -> {
                     String nickname = ctx.get("nickname");
                     final SocialUser target = ctx.getOrDefault("user", null);
@@ -503,7 +515,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("parse")
                 .commandDescription(Description.of("Parses a message and returns the result"))
                 .permission("social.use.processor.parse")
-                .required("text", StringParser.greedyFlagYieldingStringParser())
+                .required("text", StringParser.greedyFlagYieldingStringParser(), Description.of("The text to process"))
                 .flag(commandManager.flagBuilder("user")
                         .withComponent(UserParser.userParser())
                         .withDescription(Description.of("User for the parser context")))
@@ -554,7 +566,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("placeholder")
                 .commandDescription(Description.of("Gets the value of a registered placeholder"))
                 .permission("social.use.processor.get.placeholder")
-                .required("placeholder", IdentifiedParserParser.of(SocialContextualPlaceholder.class))
+                .required("placeholder", IdentifiedParserParser.of(SocialContextualPlaceholder.class), Description.of("The contextual placeholder that will be resolved and parsed"))
                 .flag(commandManager.flagBuilder("user")
                         .withComponent(UserParser.userParser())
                         .withDescription(Description.of("User for the parser context")))
@@ -580,7 +592,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("keyword")
                 .commandDescription(Description.of("Gets the value of a registered keyword"))
                 .permission("social.use.processor.get.keyword")
-                .required("keyword", IdentifiedParserParser.of(SocialContextualKeyword.class))
+                .required("keyword", IdentifiedParserParser.of(SocialContextualKeyword.class), Description.of("The contextual keyword that will be resolved and parsed"))
                 .flag(commandManager.flagBuilder("user")
                         .withComponent(UserParser.userParser())
                         .withDescription(Description.of("User for the parser context")))
