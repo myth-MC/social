@@ -16,11 +16,12 @@ import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
+import static net.kyori.adventure.text.Component.text;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static net.kyori.adventure.text.Component.text;
+import java.util.Optional;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
@@ -47,7 +48,19 @@ public class SimpleChatChannel extends ChatChannelImpl {
                                 @Nullable TextColor textColor,
                                 boolean joinByDefault) {
 
-        super(name, Mutable.of(alias), commands, icon, hoverText, color, ChatFormatBuilder.empty(), permission, textColor, joinByDefault, supportedFeatures());
+        super(
+            name,
+            Mutable.of(alias),
+            commands,
+            icon,
+            hoverText,
+            color,
+            ChatFormatBuilder.empty(),
+            Optional.ofNullable(permission),
+            Optional.ofNullable(textColor),
+            joinByDefault,
+            supportedFeatures()
+        );
         this.showHoverText = showHoverText;
         this.hoverText = hoverText;
         this.nicknameColor = nicknameColor;

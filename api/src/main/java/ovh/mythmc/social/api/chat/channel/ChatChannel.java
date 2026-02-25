@@ -25,14 +25,14 @@ import java.util.UUID;
 public interface ChatChannel {
 
     /**
-     * Creates a new {@link ChatChannelImpl} builder.
+     * Creates a new {@link ChatChannel} builder.
      *
      * @param name          the unique identifier name for the channel
      * @param formatBuilder the format builder that defines the channel prefix
      * @return a new builder instance
      */
-    static ChatChannelImpl.ChatChannelBuilder builder(@NotNull String name, @NotNull ChatFormatBuilder formatBuilder) {
-        return new ChatChannelImpl.ChatChannelBuilder(name, formatBuilder);
+    static ChatChannelBuilder builder(@NotNull String name, @NotNull ChatFormatBuilder formatBuilder) {
+        return new ChatChannelBuilder(name, formatBuilder);
     }
 
     /** Returns the unique name that identifies this channel. */

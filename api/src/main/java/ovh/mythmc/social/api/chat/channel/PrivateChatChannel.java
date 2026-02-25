@@ -18,6 +18,7 @@ import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -59,31 +60,23 @@ public class PrivateChatChannel extends ChatChannelImpl {
     private final SocialUser participant2;
 
     private PrivateChatChannel(@NotNull SocialUser sender, @NotNull SocialUser recipient) {
-        super("PM-" + sender.username() + "-" + recipient.username(), Mutable.of("PM"), List.of(), formattedPmIcon(),
-                hoverText(), NamedTextColor.GREEN, ChatFormatBuilder.empty(), null, NamedTextColor.WHITE, false,
-                List.of());
+        super(
+            "PM-" + sender.username() + "-" + recipient.username(),
+            Mutable.of("PM"),
+            List.of(),
+            formattedPmIcon(),
+            hoverText(),
+            NamedTextColor.GREEN,
+            getFormatBuilder(),
+            Optional.empty(),
+            Optional.of(NamedTextColor.WHITE),
+            false,
+            List.of()
+        );
         this.participant1 = sender;
         this.participant2 = recipient;
         this.addMember(sender);
         this.addMember(recipient);
-    }
-
-    @Override
-    protected ChatFormatBuilder formatBuilder() {
-        return ChatFormatBuilder.empty()
-                .append(text("$(channel_icon)"))
-                .appendSpace()
-                .append(text("$(sender)"))
-                .appendSpace()
-                .append(text("$(channel_text_divider)"))
-                .appendSpace()
-                .append(text("$(recipient)"))
-                .append(text(":"))
-                .appendSpace()
-                .append(text("<$(channel_text_color)>"))
-                .injectValue(SocialInjectedValue.placeholder("channel_text_divider",
-                        text(divider())))
-                .injectValue(SocialInjectedValue.placeholder("channel_text_color", text("white")));
     }
 
     @Override
@@ -119,6 +112,23 @@ public class PrivateChatChannel extends ChatChannelImpl {
 
     private static Component hoverText() {
         return text(Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
+    }
+
+    private static ChatFormatBuilder getFormatBuilder() {
+        return ChatFormatBuilder.empty()
+                .append(text("$(channel_icon)"))
+                .appendSpace()
+                .append(text("$(sender)"))
+                .appendSpace()
+                .append(text("$(channel_text_divider)"))
+                .appendSpace()
+                .append(text("$(recipient)"))
+                .append(text(":"))
+                .appendSpace()
+                .append(text("<$(channel_text_color)>"))
+                .injectValue(SocialInjectedValue.placeholder("channel_text_divider",
+                        text(divider())))
+                .injectValue(SocialInjectedValue.placeholder("channel_text_color", text("white")));
     }
 
 }
