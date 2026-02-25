@@ -10,6 +10,7 @@ public class IdentifiedRegistryKey implements RegistryKey {
 
     IdentifiedRegistryKey(@NotNull String identifier) {
         this.identifier = identifier;
+        validate(identifier);
     }
 
     public @NotNull String identifier() {

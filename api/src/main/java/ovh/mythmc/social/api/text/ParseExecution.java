@@ -131,7 +131,7 @@ public class ParseExecution {
     }
 
     private void processInjections() {
-        for (SocialInjectedValue<?> injectedValue : context.injectedValues()) {
+        for (SocialInjectedValue<?, ?> injectedValue : context.injectedValues()) {
             final Component parsed = injectedValue.parse(context);
             context = SocialProcessorContext.from(context.withMessage(parsed), processor, this);
         }

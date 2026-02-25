@@ -40,7 +40,7 @@ public class SocialParserContext implements SocialContext {
 
     @ApiStatus.Experimental
     @With(AccessLevel.NONE)
-    private final List<SocialInjectedValue<?>> injectedValues;
+    private final List<SocialInjectedValue<?, ?>> injectedValues;
 
     SocialParserContext(
             SocialUser user,
@@ -48,7 +48,7 @@ public class SocialParserContext implements SocialContext {
             Component message,
             ChatChannel.ChannelType messageChannelType,
             SocialParserGroup group,
-            List<SocialInjectedValue<?>> injectedValues) {
+            List<SocialInjectedValue<?, ?>> injectedValues) {
 
         this.user = user;
         this.channel = channel;
@@ -62,23 +62,23 @@ public class SocialParserContext implements SocialContext {
         return Optional.ofNullable(group);
     }
 
-    public List<SocialInjectedValue<?>> injectedValues() {
+    public List<SocialInjectedValue<?, ?>> injectedValues() {
         return List.copyOf(injectedValues);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends SocialInjectedValue<?>> List<T> injectedValues(@NotNull Class<T> type) {
+    public <T extends SocialInjectedValue<?, ?>> List<T> injectedValues(@NotNull Class<T> type) {
         return injectedValues().stream()
                 .filter(type::isInstance)
                 .map(injectedValue -> (T) injectedValue)
                 .toList();
     }
 
-    public void injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
+    public void injectValue(@NotNull SocialInjectedValue<?, ?> injectedValue) {
         this.injectedValues.add(injectedValue);
     }
 
-    public void injectValues(@NotNull Iterable<? extends SocialInjectedValue<?>> injectedValues) {
+    public void injectValues(@NotNull Iterable<? extends SocialInjectedValue<?, ?>> injectedValues) {
         injectedValues.forEach(this.injectedValues::add);
     }
 
@@ -106,7 +106,7 @@ public class SocialParserContext implements SocialContext {
 
         protected SocialParserGroup group;
 
-        protected List<SocialInjectedValue<?>> injectedValues;
+        protected List<SocialInjectedValue<?, ?>> injectedValues;
 
         Builder(SocialUser user, Component message) {
             this.user = user;
@@ -135,12 +135,12 @@ public class SocialParserContext implements SocialContext {
             return get();
         }
 
-        public T injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
+        public T injectValue(@NotNull SocialInjectedValue<?, ?> injectedValue) {
             get().injectedValues.add(injectedValue);
             return get();
         }
 
-        public T injectValues(@NotNull Iterable<? extends SocialInjectedValue<?>> injectedValues) {
+        public T injectValues(@NotNull Iterable<? extends SocialInjectedValue<?, ?>> injectedValues) {
             injectedValues.forEach(get().injectedValues::add);
             return get();
         }

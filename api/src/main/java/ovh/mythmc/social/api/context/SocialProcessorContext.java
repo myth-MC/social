@@ -37,7 +37,7 @@ public class SocialProcessorContext extends SocialParserContext {
             Component message,
             ChatChannel.ChannelType messageChannelType,
             SocialParserGroup group,
-            List<SocialInjectedValue<?>> injectedValues,
+            List<SocialInjectedValue<?, ?>> injectedValues,
             CustomTextProcessor processor,
             ParseExecution execution) {
 

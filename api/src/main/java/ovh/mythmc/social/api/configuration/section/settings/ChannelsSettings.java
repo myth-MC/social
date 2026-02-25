@@ -12,7 +12,7 @@ import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.text.injection.conditional.SocialInjectedConditionalValue;
-import ovh.mythmc.social.api.text.injection.value.AbstractSocialInjectedValue;
+
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedLiteral;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedPlaceholder;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
@@ -87,7 +87,7 @@ public class ChannelsSettings {
                                 @Nullable String identifier,
                                 @NotNull TextComponent value) {
 
-        public SocialInjectedValue<?> toValue() {
+        public SocialInjectedValue<?, ?> toValue() {
             switch (type) {
                 case PLACEHOLDER -> {
                     return SocialInjectedValue.placeholder(Objects.requireNonNull(identifier), value);
@@ -126,7 +126,7 @@ public class ChannelsSettings {
         }
 
         public ChatFormatBuilder toFormatBuilder() {
-            final List<SocialInjectedValue<?>> injectedValues = new ArrayList<>();
+            final List<SocialInjectedValue<?, ?>> injectedValues = new ArrayList<>();
             if (injections != null) {
                 for (ConfiguredInjectableValue injectedValue : injections) {
                     injectedValues.add(injectedValue.toValue());
@@ -158,7 +158,7 @@ public class ChannelsSettings {
 
             }
 
-            final List<? extends AbstractSocialInjectedValue<?>> injectableBuilder = buildableComponent.get().stream()
+            final List<? extends SocialInjectedValue<?, ?>> injectableBuilder = buildableComponent.get().stream()
                 .map(BuildableComponent::toInjectableValue)
                 .toList();
 
@@ -195,7 +195,7 @@ public class ChannelsSettings {
 
     public record BuildableComponent(@NotNull Type type, @Nullable TextComponent text, @Nullable Condition condition) {
 
-        public AbstractSocialInjectedValue<?> toInjectableValue() {
+        public SocialInjectedValue<?, ?> toInjectableValue() {
             SocialInjectedLiteral literal = SocialInjectedLiteral.of(Component.empty());
             switch (type) {
                 case LITERAL -> literal = SocialInjectedLiteral.of(text);

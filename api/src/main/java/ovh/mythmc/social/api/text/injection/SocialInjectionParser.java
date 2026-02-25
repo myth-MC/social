@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 
 @ApiStatus.Experimental
 @FunctionalInterface
-public interface SocialInjectionParser<V extends SocialInjectedValue<?>> {
+public interface SocialInjectionParser<V extends SocialInjectedValue<?, V>> {
 
     Component parse(@NotNull SocialParserContext context, @NotNull V value);
 

@@ -12,9 +12,19 @@ import ovh.mythmc.social.api.text.injection.defaults.SocialInjectionEmptyParser;
 
 import java.util.function.Predicate;
 
-public interface SocialInjectedValue<T> {
+/**
+ * A typed value that can be injected into a chat format and parsed into a {@link Component}.
+ *
+ * <p>The {@code T} parameter is the raw value type (e.g. {@link TextComponent}, {@link TagResolver}).
+ * The {@code Self} parameter is the concrete subtype, used so that {@link #parser()} can return a
+ * {@link SocialInjectionParser} typed to the exact subclass without any unchecked cast.</p>
+ *
+ * @param <T>    the type of the wrapped value
+ * @param <Self> the concrete implementing subtype (F-bounded self-type)
+ */
+public interface SocialInjectedValue<T, Self extends SocialInjectedValue<T, Self>> {
 
-    static <T extends SocialInjectedValue<?>, P extends SocialInjectionParser<T>> SocialInjectedConditionalValue<T, P> conditional(@NotNull T value, @NotNull P conditionalParser, @NotNull Predicate<SocialParserContext> predicate) {
+    static <T extends SocialInjectedValue<?, T>, P extends SocialInjectionParser<T>> SocialInjectedConditionalValue<T, P> conditional(@NotNull T value, @NotNull P conditionalParser, @NotNull Predicate<SocialParserContext> predicate) {
         return SocialInjectedConditionalValue.of(value, conditionalParser, predicate);
     }
 
@@ -23,7 +33,7 @@ public interface SocialInjectedValue<T> {
     }
 
     static SocialInjectedLiteral literal(@NotNull String valueAsString) {
-        return literal(Component.text(valueAsString));
+        return SocialInjectedLiteral.of(Component.text(valueAsString));
     }
 
     static SocialInjectedObject object(@NotNull String identifier, @NotNull Object value) {
@@ -42,12 +52,13 @@ public interface SocialInjectedValue<T> {
         return SocialInjectedTag.of(identifier, value);
     }
 
+    /** Returns the raw wrapped value. */
     @NotNull T value();
 
-    @NotNull SocialInjectionParser<SocialInjectedValue<T>> parser();
+    /** Returns the parser for this exact concrete type — no cast required. */
+    @NotNull SocialInjectionParser<Self> parser();
 
-    default Component parse(@NotNull SocialParserContext context) {
-        return this.parser().parse(context, this);
-    }
+    /** Parses this value into a {@link Component} using the provided context. */
+    @NotNull Component parse(@NotNull SocialParserContext context);
 
 }

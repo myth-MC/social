@@ -41,7 +41,7 @@ public abstract class AbstractRegistry<R extends RegistryKey, T> implements Regi
     public @NotNull <V extends T> List<V> valuesByType(@NotNull Class<V> type) {
         return registry().values().stream()
             .filter(type::isInstance)
-            .map(value -> (V) value)
+            .map(type::cast)
             .toList();
     }
 
