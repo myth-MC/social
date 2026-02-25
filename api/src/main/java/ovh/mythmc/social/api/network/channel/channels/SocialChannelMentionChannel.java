@@ -16,7 +16,7 @@ public final class SocialChannelMentionChannel extends AbstractNetworkChannelWra
     public @NotNull SocialPayloadEncoder encode(@NotNull SocialChannelMentionPayload payload) {
         return SocialPayloadEncoder.of(
                 payload.channel().name(),
-                payload.sender().displayName().get().content(),
+                payload.sender().displayNameOrUsername().content(),
                 payload.sender().uuid().toString());
     }
 

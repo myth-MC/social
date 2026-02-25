@@ -28,4 +28,8 @@ public abstract class PlatformAdapter {
 
     public abstract void sendChatMessage(@NotNull SocialUser user, @NotNull String message);
 
+    public abstract void storePreferences(@NotNull SocialUser user);
+
+    public abstract void restorePreferences(@NotNull SocialUser user);
+
 }

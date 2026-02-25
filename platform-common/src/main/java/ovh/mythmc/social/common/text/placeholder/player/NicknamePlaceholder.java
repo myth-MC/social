@@ -18,7 +18,7 @@ public final class NicknamePlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        return context.user().displayName().get();
+        return context.user().displayNameOrUsername();
     }
 
 }

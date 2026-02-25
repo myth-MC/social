@@ -26,7 +26,7 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
         final SocialUser user = context.user();
 
         String hoverTextAsString = Social.get().getConfig().getChat().getClickableNicknameHoverText();
-        if (!user.displayName().get().content().equals(user.username())) {
+        if (!user.displayNameOrUsername().content().equals(user.username())) {
             hoverTextAsString = hoverTextAsString + "\n"
                     + Social.get().getConfig().getChat().getPlayerAliasWarningHoverText();
         }
@@ -42,10 +42,10 @@ public final class ClickableNicknamePlaceholder extends SocialContextualPlacehol
                 MiniMessageParser.class);
 
         if (commandAsString.isEmpty())
-            return user.displayName().get()
+            return user.displayNameOrUsername()
                     .hoverEvent(hoverText);
 
-        return user.displayName().get()
+        return user.displayNameOrUsername()
                 .clickEvent(ClickEvent.suggestCommand("/" + commandAsString))
                 .hoverEvent(hoverText);
     }

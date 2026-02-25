@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitch;
@@ -80,7 +79,7 @@ public abstract class AbstractSocialUser implements SocialUser {
 
     @Override
     public @NotNull Mutable<TextComponent> displayName() {
-        return this.displayName.or(Mutable.of(Component.text(username)));
+        return this.displayName;
     }
 
     @Override

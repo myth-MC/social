@@ -40,8 +40,8 @@ public interface Mutable<T> extends Serializable {
     @NotNull
     Mutable.Subscription onChange(@NotNull BiConsumer<T, T> onChange);
 
-    default @NotNull Mutable<T> or(@NotNull Mutable<T> other) {
-        return isPresent() ? this : other;
+    default @NotNull T or(@NotNull T other) {
+        return isPresent() ? get() : other;
     }
 
     public sealed interface Subscription permits MutableImpl.SubscriptionImpl {

@@ -116,6 +116,9 @@ permissions:
   social.use.reload:
     description: Allows users to reload global or specific modules of the plugin
     default: op
+  social.use.spy:
+    description: Allows users to spy private conversations
+    default: op
 
   #
   # Other permissions

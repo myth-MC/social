@@ -25,7 +25,7 @@ public final class GroupLeaderPlaceholder extends SocialContextualPlaceholder {
             return Component.empty();
         }
 
-        return groupChannel.get().leader().displayName().get();
+        return groupChannel.get().leader().displayNameOrUsername();
     }
 
 }

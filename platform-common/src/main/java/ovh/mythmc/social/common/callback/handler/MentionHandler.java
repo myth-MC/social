@@ -42,7 +42,7 @@ public final class MentionHandler {
             message = message.replaceText((builder) -> {
                 builder
                         .match(Pattern.quote("@" + ctx.recipient().username()) + "|"
-                                + Pattern.quote("@" + ctx.recipient().displayName().get().content()))
+                                + Pattern.quote("@" + ctx.recipient().displayNameOrUsername().content()))
                         .replacement((match, textBuilder) -> {
                             wrapper.mentioned = true;
                             return Component.text(match.group()).color(ctx.channel().color());

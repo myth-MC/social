@@ -297,7 +297,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                         // Command sender
                         String successMessage = String.format(
                                 Social.get().getConfig().getMessages().getCommands().getUserMuted(),
-                                target.displayName().get().content());
+                                target.displayNameOrUsername().content());
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), channel, successMessage,
                                 Social.get().getConfig().getMessages().getChannelType());
 
@@ -319,7 +319,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                         // Command sender
                         String successMessage = String.format(
                                 Social.get().getConfig().getMessages().getCommands().getUserMutedGlobally(),
-                                target.displayName().get().content());
+                                target.displayNameOrUsername().content());
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel().get(),
                                 successMessage, Social.get().getConfig().getMessages().getChannelType());
 
@@ -353,7 +353,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                         // Command sender
                         String successMessage = String.format(
                                 Social.get().getConfig().getMessages().getCommands().getUserUnmuted(),
-                                target.displayName().get().content());
+                                target.displayNameOrUsername().content());
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(), channel, successMessage,
                                 Social.get().getConfig().getMessages().getChannelType());
 
@@ -408,6 +408,8 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(),
                                 Social.get().getConfig().getMessages().getErrors().getNicknameAlreadyInUse(),
                                 Social.get().getConfig().getMessages().getChannelType());
+
+                        return;
                     }
 
                     if (target != null) { // Other user's nickname
@@ -611,11 +613,11 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                             Social.get().getConfig().getMessages().getChannelType());
                 }));
 
-        // /social socialspy
+        // /social spy
         commandManager.command(socialCommand
-                .literal("socialspy")
+                .literal("spy")
                 .commandDescription(Description.of("Toggles the socialspy status"))
-                .permission("social.use.socialspy")
+                .permission("social.use.spy")
                 .handler(ctx -> {
                     ctx.sender().socialSpy().set(!ctx.sender().socialSpy().get());
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel().get(),

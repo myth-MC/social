@@ -36,7 +36,7 @@ public class SocialChatRendererUtil {
         for (SocialRegisteredMessageContext threadReply : Social.get().getChatManager().getHistory().getThread(reply,
                 8)) {
             hoverText = hoverText
-                    .append(threadReply.sender().displayName().get())
+                    .append(threadReply.sender().displayNameOrUsername())
                     .append(Component.text(": ", NamedTextColor.GRAY))
                     .append(threadReply.message())
                     .appendNewline();
@@ -67,7 +67,7 @@ public class SocialChatRendererUtil {
                         .builder(sender, Component.text(Social.get().getConfig().getChat().getReplyDescriptor()))
                         .injectValue(SocialInjectedValue.placeholder("reply_id", Component.text(reply.id())))
                         .injectValue(
-                                SocialInjectedValue.placeholder("reply_sender", reply.sender().displayName().get()))
+                                SocialInjectedValue.placeholder("reply_sender", reply.sender().displayNameOrUsername()))
                         .build()))
                 .appendSpace();
 

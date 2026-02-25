@@ -30,7 +30,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
 
         Component alias = getField(
                 MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getAlias()),
-                context.target().displayName().get());
+                context.target().displayNameOrUsername());
 
         Component username = getField(
                 MiniMessage.miniMessage()

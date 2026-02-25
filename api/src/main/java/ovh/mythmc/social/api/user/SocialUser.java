@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.ChatParticipant;
 import ovh.mythmc.social.api.context.SocialParserContext;
@@ -57,6 +58,10 @@ public interface SocialUser extends
 
     default void sendParsableMessage(@NotNull String message) {
         sendParsableMessage(message, false);
+    }
+
+    default @NotNull TextComponent displayNameOrUsername() {
+        return displayName().or(Component.text(username()));
     }
 
 }
