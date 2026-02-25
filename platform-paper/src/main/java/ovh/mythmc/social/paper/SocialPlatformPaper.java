@@ -64,7 +64,7 @@ public final class SocialPlatformPaper extends SocialBootstrap {
             ExecutionCoordinator.simpleCoordinator(),
             SenderMapper.create(commandSender -> {
                 if (commandSender instanceof Player player)
-                    return Social.get().getUserService().getByUuid(player.getUniqueId()).get();
+                    return Social.get().getUserService().getOrCreate(player.getUniqueId());
 
                 return ConsoleSocialUser.get();
             }, user -> {

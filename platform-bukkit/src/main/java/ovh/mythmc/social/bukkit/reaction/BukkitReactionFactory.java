@@ -121,12 +121,12 @@ public final class BukkitReactionFactory extends ReactionFactory {
     }
 
     private void playAnimation(ItemDisplay itemDisplay, float targetScale) {
-        Transformation transformation = itemDisplay.getTransformation();
         float growth = 0.15f;
 
         new BukkitRunnable() {
             @Override
             public void run() {
+                Transformation transformation = itemDisplay.getTransformation();
                 float currentScale = transformation.getScale().get(1);
 
                 if (currentScale + growth >= targetScale) {

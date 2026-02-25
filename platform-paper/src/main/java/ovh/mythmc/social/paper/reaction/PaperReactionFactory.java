@@ -1,6 +1,13 @@
 package ovh.mythmc.social.paper.reaction;
 
-import org.bukkit.*;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
@@ -10,10 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.profile.PlayerTextures;
 import org.bukkit.util.Transformation;
-
-import com.destroystokyo.paper.profile.PlayerProfile;
-
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
@@ -27,181 +30,239 @@ import ovh.mythmc.social.api.user.SocialUser;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 public final class PaperReactionFactory extends ReactionFactory {
 
+    private static final float DEFAULT_SCALE = 0.7f;
+
     private final JavaPlugin plugin;
 
-    private final HashMap<UUID, ItemDisplay> playerReaction = new HashMap<>();
-    //private final String itemDisplayMetadataKey = "socialReaction";
-
-    private final float scale = 0.7f;
+    private final Map<UUID, ItemDisplay> playerReactions = new ConcurrentHashMap<>();
 
     @Override
-    public void displayReaction(@NotNull SocialUser abstractSocialUser, @NotNull Reaction emoji) {
-        final var user = BukkitSocialUser.from(abstractSocialUser);
+    public void displayReaction(@NotNull SocialUser abstractSocialUser, @NotNull Reaction reaction) {
+        BukkitSocialUser user = BukkitSocialUser.from(abstractSocialUser);
+        Player player = user.player().orElse(null);
 
-        if (user.player().isEmpty() || 
-            user.player().get().hasPotionEffect(PotionEffectType.INVISIBILITY) || 
-            user.player().get().getGameMode() == GameMode.SPECTATOR)
+        if (!canDisplayReaction(player)) {
             return;
+        }
 
-        ItemDisplay itemDisplay = playerReaction.get(user.uuid());
-        if (itemDisplay != null)
+        if (playerReactions.containsKey(user.uuid())) {
             return;
+        }
 
-        itemDisplay = spawnItemDisplay(user, emoji);
-        playerReaction.put(user.uuid(), itemDisplay);
+        ItemDisplay itemDisplay = spawnItemDisplay(user, reaction);
+        playerReactions.put(user.uuid(), itemDisplay);
 
-        scheduleItemDisplayUpdate(user.player().get(), itemDisplay);
+        scheduleItemDisplayUpdate(player, itemDisplay);
     }
 
     @Override
     public void play(@NotNull SocialUser abstractSocialUser, @NotNull Reaction reaction) {
-        final var user = BukkitSocialUser.from(abstractSocialUser);
+        BukkitSocialUser user = BukkitSocialUser.from(abstractSocialUser);
+        SocialReactionTrigger trigger = new SocialReactionTrigger(user, reaction);
 
-        var callback = new SocialReactionTrigger(user, reaction);
-        SocialReactionTriggerCallback.INSTANCE.invoke(callback, result -> {
-            if (!result.cancelled())
-                    BukkitSocialScheduler.get().runEntityTask(user.player().get(), () -> {
-                        displayReaction(result.user(), result.reaction());
-            });
+        SocialReactionTriggerCallback.INSTANCE.invoke(trigger, result -> {
+            if (result.cancelled()) {
+                return;
+            }
+
+            user.player().ifPresent(player ->
+                    BukkitSocialScheduler.get().runEntityTask(player, () ->
+                            displayReaction(result.user(), result.reaction())
+                    )
+            );
         });
     }
 
-    private ItemDisplay spawnItemDisplay(BukkitSocialUser user, Reaction reaction) {
-        final Player player = user.player().get();
+    private boolean canDisplayReaction(Player player) {
+        if (player == null) {
+            return false;
+        }
 
-        final Location location = player.getLocation();
+        if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            return false;
+        }
+
+        return player.getGameMode() != GameMode.SPECTATOR;
+    }
+
+    private ItemDisplay spawnItemDisplay(BukkitSocialUser user, Reaction reaction) {
+        Player player = user.player()
+                .orElseThrow(() -> new IllegalStateException("Player must be online to display a reaction."));
+
+        Location location = player.getLocation();
         location.setPitch(0);
         location.setYaw(location.getYaw() - 180);
 
-        final double offsetY = Social.get().getConfig().getReactions().getOffsetY();
-        final ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(
-                location,
-                EntityType.ITEM_DISPLAY
-        );
+        double offsetY = Social.get().getConfig().getReactions().getOffsetY();
+        ItemDisplay itemDisplay = (ItemDisplay) player.getWorld().spawnEntity(location, EntityType.ITEM_DISPLAY);
 
         if (reaction.particle() != null) {
-            final String particle = reaction.particle()
-                .toUpperCase()
-                .replace(".", "_")
-                .replace("MINECRAFT:", "");
-
-            itemDisplay.getWorld().spawnParticle(Particle.valueOf(particle), itemDisplay.getLocation().add(0, 2, 0), 3, 0.2, 0.2, 0.2);
+            spawnParticleEffect(reaction, itemDisplay);
         }
 
-        //itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 1.7F);
         if (reaction.sound() != null) {
             user.playSound(reaction.sound());
         }
 
-        final ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
-        final SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
-        skullMeta.setPlayerProfile(getProfile(reaction.texture()));
-        itemStack.setItemMeta(skullMeta);
-
+        ItemStack itemStack = createReactionHead(reaction);
         itemDisplay.setItemStack(itemStack);
-
         itemDisplay.setPersistent(false);
 
-        final Transformation transformation = itemDisplay.getTransformation();
+        Transformation transformation = itemDisplay.getTransformation();
         transformation.getScale().set(0);
         transformation.getTranslation().set(0, offsetY, 0);
         itemDisplay.setTransformation(transformation);
 
         player.addPassenger(itemDisplay);
 
-        playAnimation(itemDisplay, scale);
+        playAppearingAnimation(itemDisplay, DEFAULT_SCALE);
 
         return itemDisplay;
     }
 
-    private void playAnimation(ItemDisplay itemDisplay, float targetScale) {
-        Transformation transformation = itemDisplay.getTransformation();
-        float growth = 0.15f;
+    private void spawnParticleEffect(Reaction reaction, ItemDisplay itemDisplay) {
+        String rawParticle = reaction.particle();
+        if (rawParticle == null) {
+            return;
+        }
 
+        String particleName = rawParticle
+                .toUpperCase(Locale.ROOT)
+                .replace(".", "_")
+                .replace("MINECRAFT:", "");
+
+        try {
+            Particle particle = Particle.valueOf(particleName);
+            itemDisplay.getWorld().spawnParticle(
+                    particle,
+                    itemDisplay.getLocation().add(0, 2, 0),
+                    3,
+                    0.2,
+                    0.2,
+                    0.2
+            );
+        } catch (IllegalArgumentException exception) {
+            plugin.getLogger().warning("Unknown particle '" + rawParticle + "' for reaction.");
+        }
+    }
+
+    private ItemStack createReactionHead(Reaction reaction) {
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+
+        if (skullMeta == null) {
+            return itemStack;
+        }
+
+        skullMeta.setPlayerProfile(getProfile(reaction.texture()));
+        itemStack.setItemMeta(skullMeta);
+
+        return itemStack;
+    }
+
+    private void playAppearingAnimation(ItemDisplay itemDisplay, float targetScale) {
         itemDisplay.getScheduler().runAtFixedRate(plugin, scheduledTask -> {
-            float currentScale = transformation.getScale().get(1);
+            itemDisplay.setInterpolationDuration(3);
+            itemDisplay.setInterpolationDelay(0);
 
-            if (currentScale + growth >= targetScale) {
-                transformation.getScale().set(targetScale);
-                scheduledTask.cancel();
-                return;
-            }
+            Transformation grow = itemDisplay.getTransformation();
+            grow.getScale().set(targetScale + 0.15f);
+            itemDisplay.setTransformation(grow);
 
-            transformation.getScale().set(currentScale + growth);
-            itemDisplay.setTransformation(transformation);  
-        }, null, 3l, 1l);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                itemDisplay.setInterpolationDuration(6);
+                Transformation settle = itemDisplay.getTransformation();
+                settle.getScale().set(targetScale);
+                itemDisplay.setTransformation(settle);
+            }, 4L);
 
+            scheduledTask.cancel();
+        }, null, 1L, 1L);
     }
 
     private void playDisappearingAnimation(Player player, ItemDisplay itemDisplay) {
-        itemDisplay.getWorld().playSound(itemDisplay.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.25F, 0.6F);
+        itemDisplay.getWorld().playSound(
+                itemDisplay.getLocation(),
+                Sound.ENTITY_ITEM_PICKUP,
+                0.25F,
+                0.6F
+        );
 
-        itemDisplay.getScheduler().runAtFixedRate(plugin, scheduledTask -> {
-            Transformation itemTransformation = itemDisplay.getTransformation();
+        itemDisplay.setInterpolationDuration(2);
+        itemDisplay.setInterpolationDelay(0);
 
-            if (itemTransformation.getTranslation().y() < 0) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            itemDisplay.setInterpolationDuration(4);
+            itemDisplay.setInterpolationDelay(0);
+
+            Transformation disappear = itemDisplay.getTransformation();
+            disappear.getScale().set(0f);
+            disappear.getTranslation().set(0, -0.1f, 0);
+            itemDisplay.setTransformation(disappear);
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 itemDisplay.remove();
-                playerReaction.remove(player.getUniqueId());
-                scheduledTask.cancel();
-            }
-
-            float currentScale = itemTransformation.getScale().get(1);
-            if (currentScale > 0) {
-                itemTransformation.getScale().set(currentScale - 0.2F);
-            } else {
-                itemTransformation.getScale().set(0);
-            }
-
-            itemTransformation.getTranslation().set(0, itemTransformation.getScale().y() - 0.1, 0);
-            itemDisplay.setTransformation(itemTransformation);
-        }, null, 1, 1);
+                playerReactions.remove(player.getUniqueId());
+            }, 10L);
+        }, 2L);
     }
 
     private void scheduleItemDisplayUpdate(Player player, ItemDisplay itemDisplay) {
         int durationInSeconds = Social.get().getConfig().getReactions().getDurationInSeconds();
         int updateIntervalInTicks = Social.get().getConfig().getReactions().getUpdateIntervalInTicks();
 
-        //int remainingTicks = durationInSeconds * 20;
-        var remainingTicks = new Object() { int ticks = durationInSeconds * 20; };
+        AtomicInteger remainingTicks = new AtomicInteger(durationInSeconds * 20);
 
         itemDisplay.getScheduler().runAtFixedRate(plugin, scheduledTask -> {
-            if (itemDisplay != null && player.isOnline()) {
-                if (itemDisplay.isValid() && !itemDisplay.isDead()) {
-                    itemDisplay.setRotation(player.getLocation().getYaw() - 180, 0);
-                }
-
-                remainingTicks.ticks -= updateIntervalInTicks;
-                if (remainingTicks.ticks <= 0) {
-                    playDisappearingAnimation(player, itemDisplay);
-                    scheduledTask.cancel();
-                }
-            } else {
-                if (itemDisplay != null)
-                    itemDisplay.remove();
+            if (!player.isOnline()) {
+                cleanupItemDisplay(player, itemDisplay);
                 scheduledTask.cancel();
-
-                playerReaction.remove(player.getUniqueId());
+                return;
             }
-        }, null, 1, updateIntervalInTicks);
+
+            if (!itemDisplay.isValid() || itemDisplay.isDead()) {
+                cleanupItemDisplay(player, itemDisplay);
+                scheduledTask.cancel();
+                return;
+            }
+
+            itemDisplay.setRotation(player.getLocation().getYaw() - 180, 0);
+
+            if (remainingTicks.addAndGet(-updateIntervalInTicks) <= 0) {
+                playDisappearingAnimation(player, itemDisplay);
+                scheduledTask.cancel();
+            }
+        }, null, 1L, updateIntervalInTicks);
     }
 
-    private PlayerProfile getProfile(String textureUrl) {
+    private void cleanupItemDisplay(Player player, ItemDisplay itemDisplay) {
+        if (itemDisplay != null) {
+            itemDisplay.remove();
+        }
+
+        playerReactions.remove(player.getUniqueId());
+    }
+
+    private static PlayerProfile getProfile(String textureUrl) {
         PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {
-            urlObject = URI.create(textureUrl).toURL(); // The URL to the skin, for example: https://textures.minecraft.net/texture/18813764b2abc94ec3c3bc67b9147c21be850cdf996679703157f4555997ea63a
+            urlObject = URI.create(textureUrl).toURL();
         } catch (MalformedURLException exception) {
             throw new RuntimeException("Invalid URL", exception);
         }
-        textures.setSkin(urlObject); // Set the skin of the player profile to the URL
-        profile.setTextures(textures); // Set the textures back to the profile
+        textures.setSkin(urlObject);
+        profile.setTextures(textures);
         return profile;
     }
 
