@@ -14,9 +14,10 @@ import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
 import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
 import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper.ServerToClient;
 import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 
-public class BukkitSocialUser extends AbstractSocialUser {
+public class BukkitSocialUser extends AbstractSocialUser implements InGameSocialUser {
 
     public static BukkitSocialUser from(@NotNull Player player) {
         return from(player.getUniqueId());

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
+import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.user.SocialUserManager;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
@@ -34,13 +35,15 @@ public final class PMCommand implements MainCommand<SocialUser> {
                                 .getCachedOrDefault(ctx.sender());
                         Social.get().getUserManager().announceChannelSwitch(ctx.sender(), defaultChannel);
                     }
-                }));
+                })
+                .senderType(InGameSocialUser.class));
 
         commandManager.command(pmCommand
                 .commandDescription(Description.of("Sends a private message to another user"))
                 .permission("social.use.pm")
-                .required("recipient", UserParser.userParser())
+                .required("recipient", UserParser.excludeSender())
                 .optional("message", StringParser.greedyStringParser())
+                .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final SocialUserManager userManager = Social.get().getUserManager();
                     final SocialUser recipient = ctx.get("recipient");

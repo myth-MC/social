@@ -14,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
+import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.commands.*;
@@ -52,6 +53,10 @@ public final class SocialCommandProvider {
                 CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_MESSAGE,
                         "Could not find any registered message identified by '<input>'"));
 
+        commandManager.captionRegistry().registerProvider(
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_SUBJECT_IS_SENDER, 
+                        "The subject of this action cannot be the sender"));
+
         commands.forEach(command -> {
             if (command.canRegister())
                 command.register(commandManager);
@@ -71,6 +76,7 @@ public final class SocialCommandProvider {
                                 return user.checkPermission(channel.permission().get());
                             }))
                             .optional("message", StringParser.greedyStringParser())
+                            .senderType(InGameSocialUser.class)
                             .handler(ctx -> {
                                 // Send a message without switching channel
                                 if (ctx.contains("message")) {

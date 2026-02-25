@@ -21,6 +21,7 @@ import ovh.mythmc.social.api.text.group.SocialParserGroup;
 import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
+import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.ChannelParser;
@@ -111,6 +112,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Switches your main channel"))
                 .permission("social.use.channel")
                 .required("channel", ChannelParser.channelParser())
+                .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final ChatChannel channel = ctx.get("channel");
                     if (channel instanceof GroupChatChannel && !channel.members().contains(ctx.sender())) {
@@ -139,6 +141,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Opens the dictionary"))
                 .permission("social.use.dictionary")
                 .required("type", EnumParser.enumParser(DictionaryType.class))
+                .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final DictionaryType type = ctx.get("type");
                     switch (type) {
@@ -481,7 +484,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
         commandManager.command(socialCommand
                 .literal("processor")
                 .literal("info")
-                .commandDescription(Description.of("Shows information about social's built-in processor"))
+                .commandDescription(Description.of("Shows information about social's text processor"))
                 .permission("social.use.processor.info")
                 .handler(ctx -> {
                     final String registeredParsers = String.format(
@@ -618,6 +621,7 @@ public final class SocialCommand implements MainCommand<SocialUser> {
                 .literal("spy")
                 .commandDescription(Description.of("Toggles the socialspy status"))
                 .permission("social.use.spy")
+                .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     ctx.sender().socialSpy().set(!ctx.sender().socialSpy().get());
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(), ctx.sender().mainChannel().get(),

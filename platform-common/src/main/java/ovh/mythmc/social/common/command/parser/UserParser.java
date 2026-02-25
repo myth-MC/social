@@ -13,16 +13,24 @@ import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import io.leangen.geantyref.TypeToken;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.user.SocialUser;
+import ovh.mythmc.social.common.command.exception.SubjectIsSenderException;
 import ovh.mythmc.social.common.command.exception.UnknownUserException;
 
 public final class UserParser implements ArgumentParser<SocialUser, SocialUser>,
         BlockingSuggestionProvider.Strings<SocialUser>, ParserDescriptor<SocialUser, SocialUser> {
 
-    private UserParser() {
+    private final boolean excludeSender;
+
+    private UserParser(boolean excludeSender) {
+        this.excludeSender = excludeSender;
     }
 
     public static UserParser userParser() {
-        return new UserParser();
+        return new UserParser(false);
+    }
+
+    public static UserParser excludeSender() {
+        return new UserParser(true);
     }
 
     @Override
@@ -52,6 +60,10 @@ public final class UserParser implements ArgumentParser<SocialUser, SocialUser>,
         final Optional<SocialUser> optionalUser = Social.get().getUserService().get().stream()
                 .filter(user -> user.username().equals(input))
                 .findAny();
+
+        final SocialUser sender = commandContext.sender();
+        if (excludeSender && optionalUser.isPresent() && optionalUser.get().uuid().equals(sender.uuid()))
+            return ArgumentParseResult.failure(new SubjectIsSenderException(this, commandContext));
 
         return optionalUser.map(ArgumentParseResult::success)
                 .orElseGet(() -> ArgumentParseResult.failure(new UnknownUserException(input, this, commandContext)));

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.command.MainCommand;
@@ -57,6 +58,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("alias")
                 .commandDescription(Description.of("Sets the description of your group"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.alias"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
                 .required("alias", StringParser.stringParser())
@@ -79,6 +81,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("chat")
                 .commandDescription(Description.of("Switches to your group's chat channel"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.chat"), Requirements.HAS_GROUP))
                 .handler(ctx -> {
                     Social.get().getUserManager().announceChannelSwitch(ctx.sender(), ctx.sender().groupChannel().get());
@@ -88,6 +91,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("code")
                 .commandDescription(Description.of("Displays your group's invite code"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.code"), Requirements.HAS_GROUP))
                 .handler(ctx -> {
                     Social.get().getTextProcessor().parseAndSend(ctx.sender(),
@@ -99,6 +103,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("create")
                 .commandDescription(Description.of("Creates a new group"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.create"), Requirements.NOT_IN_GROUP))
                 .optional("alias", StringParser.stringParser())
                 .handler(ctx -> {
@@ -124,6 +129,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
                 .permission(Permission.allOf(Permission.of("social.use.group.disband"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
                 .flag(commandManager.flagBuilder("confirm"))
+                .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     if (ctx.flags().hasFlag("c")) {
                         Social.get().getTextProcessor().parseAndSend(ctx.sender(),
@@ -143,6 +149,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("join")
                 .commandDescription(Description.of("Joins a group by its code"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.join"), Requirements.NOT_IN_GROUP))
                 .required("code", IntegerParser.integerParser(0, 999999))
                 .handler(ctx -> {
@@ -173,18 +180,12 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("kick")
                 .commandDescription(Description.of("Kicks a member from your group"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.kick"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
-                .required("user", UserParser.userParser()) // Todo: suggestions
+                .required("user", UserParser.excludeSender()) // Todo: suggestions
                 .handler(ctx -> {
                     final SocialUser target = ctx.get("user");
-                    if (ctx.sender().equals(target)) {
-                        Social.get().getTextProcessor().parseAndSend(ctx.sender(),
-                                Social.get().getConfig().getMessages().getErrors().getChooseAnotherPlayer(),
-                                Social.get().getConfig().getMessages().getChannelType());
-                        return;
-                    }
-
                     if (target.groupChannel().isEmpty()
                             || target.groupChannel().get().equals(ctx.sender().groupChannel().get())) {
                         // user isn't a member of your group
@@ -198,6 +199,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("leader")
                 .commandDescription(Description.of("Passes the leadership of your group to another member"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.leader"), Requirements.HAS_GROUP,
                         Requirements.IS_GROUP_LEADER))
                 .required("user", UserParser.userParser()) // Todo: suggestions
@@ -223,6 +225,7 @@ public class GroupCommand implements MainCommand<SocialUser> {
         commandManager.command(groupCommand
                 .literal("leave")
                 .commandDescription(Description.of("Leaves your group"))
+                .senderType(InGameSocialUser.class)
                 .permission(Permission.allOf(Permission.of("social.use.group.leave"), Requirements.HAS_GROUP))
                 .handler(ctx -> {
                     final var group = ctx.sender().groupChannel().get();

@@ -10,6 +10,7 @@ import org.incendo.cloud.parser.standard.StringParser;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
+import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
@@ -30,6 +31,7 @@ public final class ReplyCommand implements MainCommand<SocialUser> {
                 .commandDescription(Description.of("Replies to the latest private message"))
                 .permission("social.use.reply")
                 .required("message", StringParser.greedyStringParser())
+                .senderType(InGameSocialUser.class)
                 .handler(ctx -> {
                     final Mutable<UUID> recipientUuid = ctx.sender().lastPrivateMessageRecipient();
                     if (recipientUuid.isEmpty()) {
