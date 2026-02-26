@@ -61,38 +61,34 @@ group = "ovh.mythmc"
 version = providers.gradleProperty("version").get()
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-        pom {
-            name = "social"
-            description = "Enhance your server's communication with social. Modular, customizable and feature-packed."
-            url = "https://github.com/myth-MC/social"
-            licenses {
-                license {
-                    name = "GNU General Public License v3.0"
-                    url = "https://www.gnu.org/licenses/gpl-3.0.html#license-text"
+afterEvaluate {
+
+    if (project.name == "social-api" ||
+        project.name == "social-api-bukkit") {
+
+        extensions.configure<PublishingExtension>("publishing") {
+
+            publications {
+                create<MavenPublication>("maven") {
+                    from(components["java"])
                 }
             }
-        }
-    }
-    repositories {
-        val username = providers.gradleProperty("myth-mc-username").orNull
-        val password = providers.gradleProperty("myth-mc-password").orNull
 
-        if (username != null && password != null) {
-            maven {
-                val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
-                val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
+            repositories {
+                maven {
+                    val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
+                    val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
 
-                url = if (version.toString().contains("db") || version.toString().contains("rc"))
-                    snapshotsRepoUrl
-                else
-                    releasesRepoUrl
+                    url = if (project.version.toString().contains("db") ||
+                              project.version.toString().contains("rc"))
+                        snapshotsRepoUrl
+                    else
+                        releasesRepoUrl
 
-                credentials {
-                    this.username = username
-                    this.password = password
+                    credentials {
+                        username = findProperty("mythMcUser") as String?
+                        password = findProperty("mythMcPassword") as String?
+                    }
                 }
             }
         }

@@ -161,7 +161,7 @@ public final class ChatFormatBuilder {
      * Evaluates all renderer features and then renders the full prefix component.
      *
      * <p>
-     * This is called internally by {@link ChatChannel#prefix} implementations and
+     * This is called internally by {@link ovh.mythmc.social.api.chat.channel.ChatChannel#prefix(SocialUser, SocialRegisteredMessageContext, SocialParserContext)} implementations and
      * should
      * not normally be invoked directly from plugin code.
      *
