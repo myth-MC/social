@@ -95,6 +95,20 @@ afterEvaluate {
     }
 }
 
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).apply {
+
+        // Java standard library
+        links("https://docs.oracle.com/en/java/javase/17/docs/api/")
+
+        // Adventure API
+        links("https://jd.advntr.dev/api/4.26.1/")
+
+        // JetBrains annotations
+        links("https://javadoc.io/doc/org.jetbrains/annotations/26.1.0/")
+    }
+}
+
 tasks.shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

@@ -76,7 +76,7 @@ public interface Social {
 
     /**
      * Returns the service used to retrieve all currently tracked
-     * {@link ovh.mythmc.social.api.user.AbstractSocialUser} instances.
+     * {@link ovh.mythmc.social.api.user.SocialUser} instances.
      *
      * @return the user service
      */
