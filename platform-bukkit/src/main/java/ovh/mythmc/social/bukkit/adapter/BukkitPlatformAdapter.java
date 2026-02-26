@@ -3,6 +3,7 @@ package ovh.mythmc.social.bukkit.adapter;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -33,6 +34,7 @@ public class BukkitPlatformAdapter extends PlatformAdapter {
     private final CustomPayloadReceiveInvoker listener = new CustomPayloadReceiveInvoker();
 
     // PDC Keys
+    private static NamespacedKey BLOCKED_CHANNELS = new NamespacedKey("social", "blocked-channels");
     private static NamespacedKey DISPLAY_NAME = new NamespacedKey("social", "display-name");
     private static NamespacedKey SOCIAL_SPY = new NamespacedKey("social", "social-spy");
 
@@ -95,8 +97,11 @@ public class BukkitPlatformAdapter extends PlatformAdapter {
 
         
         boolean socialSpy = bukkitUser.socialSpy().get();
+        Set<String> blockedChannels = bukkitUser.blockedChannels();
 
         bukkitUser.player().ifPresent(player -> {
+            player.getPersistentDataContainer().set(BLOCKED_CHANNELS, PersistentDataType.LIST.listTypeFrom(PersistentDataType.STRING), List.copyOf(blockedChannels));
+
             if (bukkitUser.displayName().isPresent()) {
                 String serializedDisplayName = MiniMessage.miniMessage().serialize(bukkitUser.displayName().get());
                 player.getPersistentDataContainer().set(DISPLAY_NAME, PersistentDataType.STRING, serializedDisplayName);
@@ -114,6 +119,14 @@ public class BukkitPlatformAdapter extends PlatformAdapter {
 
         bukkitUser.player().ifPresent(player -> {
             PersistentDataContainer pdc = player.getPersistentDataContainer();
+            if (pdc.has(BLOCKED_CHANNELS)) {
+                List<String> blockedChannels = pdc.get(BLOCKED_CHANNELS, PersistentDataType.LIST.listTypeFrom(PersistentDataType.STRING));
+                
+                // Clear before updating
+                bukkitUser.blockedChannels().clear();
+                bukkitUser.blockedChannels().addAll(blockedChannels);
+            }
+
             if (pdc.has(DISPLAY_NAME)) {
                 String serializedDisplayName = pdc.get(DISPLAY_NAME, PersistentDataType.STRING);
                 Component displayName = MiniMessage.miniMessage().deserialize(serializedDisplayName);
