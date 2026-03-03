@@ -10,12 +10,21 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * An abstract implementation of {@link IdentityResolver} used by platforms to
+ * provide identities.
+ */
 public abstract class AbstractIdentityResolver implements IdentityResolver {
 
     private final Map<UUID, Identified> identitiesByUuid = new ConcurrentHashMap<>();
 
     private final Map<String, UUID> uuidByUsername = new ConcurrentHashMap<>();
 
+    /**
+     * Gets all identities present in the server.
+     * @return an {@link Iterable} with every {@link Identified} identity present
+     *         in the server
+     */
     protected abstract Iterable<Identified> serverIdentities();
 
     protected AbstractIdentityResolver() {

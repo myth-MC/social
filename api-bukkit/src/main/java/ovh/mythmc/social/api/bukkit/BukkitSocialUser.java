@@ -17,12 +17,25 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 import ovh.mythmc.social.api.user.InGameSocialUser;
 import ovh.mythmc.social.api.user.SocialUser;
 
+/**
+ * The {@link SocialUser} implementation for the Bukkit platform.
+ */
 public class BukkitSocialUser extends AbstractSocialUser implements InGameSocialUser {
 
+    /**
+     * Gets the {@link BukkitSocialUser} instance for a specific {@link Player}.
+     * @param player the {@link Player} to get the {@link BukkitSocialUser} instance from
+     * @return       the {@link BukkitSocialUser} instance matching the {@link Player}
+     */
     public static BukkitSocialUser from(@NotNull Player player) {
         return from(player.getUniqueId());
     }
 
+    /**
+     * Gets the {@link BukkitSocialUser} instance for a specific {@link SocialUser}.
+     * @param user the {@link SocialUser} to get the {@link BukkitSocialUser} from
+     * @return     the {@link BukkitSocialUser} instance matching the {@link SocialUser}
+     */
     public static BukkitSocialUser from(@NotNull SocialUser user) {
         if (user instanceof BukkitSocialUser bukkitSocialUser)
             return bukkitSocialUser;
@@ -30,6 +43,11 @@ public class BukkitSocialUser extends AbstractSocialUser implements InGameSocial
         return null;
     }
 
+    /**
+     * Gets the {@link BukkitSocialUser} instance for a specific {@link UUID}.
+     * @param uuid the {@link UUID} to get the {@link BukkitSocialUser} from
+     * @return     the {@link BukkitSocialUser} instance matching the {@link UUID}
+     */
     public static BukkitSocialUser from(@NotNull UUID uuid) {
         assert uuid != null;
         return BukkitSocialUserService.INSTANCE.getOrCreate(uuid);

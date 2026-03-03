@@ -15,6 +15,7 @@ import java.util.UUID;
  * </p>
  *
  * @see Identified
+ * @see AbstractIdentityResolver
  */
 public interface IdentityResolver {
 

@@ -33,10 +33,10 @@ import static net.kyori.adventure.text.Component.text;
  * <p>
  * Parsers are divided into three ordered groups:
  * <ol>
- * <li>{@link #EARLY_PARSERS} – run before the main parser list</li>
- * <li>The main parser list – registered via
+ * <li>{@link #EARLY_PARSERS} run before the main parser list</li>
+ * <li>The main parser list registered via
  * {@link #registerContextualParser}</li>
- * <li>{@link #LATE_PARSERS} – run after the main parser list</li>
+ * <li>{@link #LATE_PARSERS} run after the main parser list</li>
  * </ol>
  *
  * <p>

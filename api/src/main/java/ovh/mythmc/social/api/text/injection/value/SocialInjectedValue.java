@@ -40,8 +40,8 @@ public interface SocialInjectedValue<T, Self extends SocialInjectedValue<T, Self
     /**
      * Creates a new {@link SocialInjectedLiteral} wrapping a {@link TextComponent} built
      * from the given {@link String}.
-     * @param value the {@link String} to build into a {@link TextComponent} and wrap
-     * @return      a {@link SocialInjectedLiteral} wrapping {@code value}
+     * @param valueAsString the {@link String} to build into a {@link TextComponent} and wrap
+     * @return              a {@link SocialInjectedLiteral} wrapping {@code value}
      */
     static SocialInjectedLiteral literal(@NotNull String valueAsString) {
         return literal(Component.text(valueAsString));

@@ -65,10 +65,10 @@ public interface SocialUserService {
 
     /**
      * Gets all {@link SocialUser}s with the spy feature on in a specific
-     * {@link ChatChannel}.
-     * @param channel the {@link ChatChannel} to get the users from
+     * {@link SimpleChatChannel}.
+     * @param channel the {@link SimpleChatChannel} to get the users from
      * @return        a {@link Collection} with every {@link SocialUser} with
-     *                the spy feature on in the {@link ChatChannel}
+     *                the spy feature on in the {@link SimpleChatChannel}
      */
     default Collection<SocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
         return get().stream()
