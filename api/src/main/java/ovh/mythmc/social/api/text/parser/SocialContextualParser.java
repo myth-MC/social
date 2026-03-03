@@ -60,7 +60,7 @@ public interface SocialContextualParser {
 
     /**
      * Processes a list of parsers provided by their class types, retrieving the first available parser
-     * from the {@link Social} instance's {@link ovh.mythmc.social.api.text.CustomTextProcessor}. 
+     * from the {@link Social} instance's {@link ovh.mythmc.social.api.text.TextProcessor}. 
      * This allows parsing to be performed based on specific parser types passed as class references.
      * 
      * @param context          the context to parse the message within.

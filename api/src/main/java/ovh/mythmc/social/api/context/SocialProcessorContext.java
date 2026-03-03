@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.text.CustomTextProcessor;
+import ovh.mythmc.social.api.text.TextProcessor;
 import ovh.mythmc.social.api.text.ParseExecution;
 import ovh.mythmc.social.api.text.exception.ParseExecutionNotAvailable;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
@@ -32,13 +32,13 @@ import ovh.mythmc.social.api.user.SocialUser;
  * In addition to all parsing context data, this context includes:
  * </p>
  * <ul>
- *     <li>The active {@link CustomTextProcessor}</li>
+ *     <li>The active {@link TextProcessor}</li>
  *     <li>The {@link ParseExecution} controlling the current parse lifecycle</li>
  *     <li>A list of applied {@link SocialContextualParser parsers}</li>
  * </ul>
  *
  * @see SocialParserContext
- * @see CustomTextProcessor
+ * @see TextProcessor
  * @see ParseExecution
  * @see SocialContextualParser
  */
@@ -51,7 +51,7 @@ public class SocialProcessorContext extends SocialParserContext {
      * The processor responsible for handling the current message transformation.
      */
     @Getter
-    private final CustomTextProcessor processor;
+    private final TextProcessor processor;
 
     private final List<Class<? extends SocialContextualParser>> appliedParsers;
 
@@ -64,7 +64,7 @@ public class SocialProcessorContext extends SocialParserContext {
             ChatChannel.ChannelType messageChannelType,
             SocialParserGroup group,
             List<SocialInjectedValue<?, ?>> injectedValues,
-            CustomTextProcessor processor,
+            TextProcessor processor,
             ParseExecution execution) {
 
         super(user, channel, message, messageChannelType, group, injectedValues);
@@ -126,7 +126,7 @@ public class SocialProcessorContext extends SocialParserContext {
      * @param execution the current parse execution
      * @return a new processor context instance
      */
-    public static SocialProcessorContext from(SocialParserContext context, CustomTextProcessor processor,
+    public static SocialProcessorContext from(SocialParserContext context, TextProcessor processor,
             ParseExecution execution) {
         return new SocialProcessorContext(
                 context.user(),

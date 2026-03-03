@@ -24,7 +24,7 @@ import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 
 public class ParseExecution {
 
-    private final CustomTextProcessor processor;
+    private final TextProcessor processor;
     private SocialProcessorContext context;
 
     private final Deque<SocialContextualParser> queue;
@@ -33,7 +33,7 @@ public class ParseExecution {
     private final long timeoutMillis;
     private boolean timeoutExceeded = false;
 
-    ParseExecution(@NotNull CustomTextProcessor processor, @NotNull SocialParserContext baseContext,
+    ParseExecution(@NotNull TextProcessor processor, @NotNull SocialParserContext baseContext,
             long timeoutMillis) {
         this.processor = processor;
         this.context = SocialProcessorContext.from(baseContext, processor, this);

@@ -13,7 +13,7 @@ import lombok.Singular;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialProcessorContext;
-import ovh.mythmc.social.api.text.CustomTextProcessor;
+import ovh.mythmc.social.api.text.TextProcessor;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
 
@@ -76,7 +76,7 @@ public class SocialParserGroup implements SocialUserInputParser {
      */
     @Experimental
     public Component requestToGroup(@NotNull SocialContextualParser requester, @NotNull SocialParserContext context) {
-        final CustomTextProcessor processor = CustomTextProcessor.builder()
+        final TextProcessor processor = TextProcessor.builder()
                 .parsers(content.stream()
                         .filter(parser -> !parser.getClass().equals(requester.getClass()))
                         .toList())
@@ -117,7 +117,7 @@ public class SocialParserGroup implements SocialUserInputParser {
     @Override
     public Component parse(SocialParserContext context) {
         if (context instanceof SocialProcessorContext processorContext) {
-            final CustomTextProcessor processor = CustomTextProcessor.builder()
+            final TextProcessor processor = TextProcessor.builder()
                     .parsers(content)
                     .restrictToPlayerInputParsers(processorContext.processor().restrictToPlayerInputParsers())
                     .build();

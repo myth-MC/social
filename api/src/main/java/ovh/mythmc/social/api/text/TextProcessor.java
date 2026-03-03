@@ -38,7 +38,7 @@ import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
 @With
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
-public class CustomTextProcessor {
+public class TextProcessor {
 
     @Builder.Default
     private final List<SocialContextualParser> parsers = new ArrayList<>();
@@ -49,8 +49,8 @@ public class CustomTextProcessor {
     @Builder.Default
     private boolean restrictToPlayerInputParsers = false;
 
-    public static CustomTextProcessorBuilder builder() {
-        return new CustomTextProcessorBuilder();
+    public static TextProcessorBuilder builder() {
+        return new TextProcessorBuilder();
     }
 
     /**
@@ -59,8 +59,8 @@ public class CustomTextProcessor {
      *
      * @return a default processor
      */
-    public static CustomTextProcessor defaultProcessor() {
-        return CustomTextProcessor.builder()
+    public static TextProcessor defaultProcessor() {
+        return TextProcessor.builder()
                 .parsers(Social.get().getTextProcessor().getContextualParsers())
                 .build();
     }
@@ -152,7 +152,7 @@ public class CustomTextProcessor {
                 .toList();
     }
 
-    public static class CustomTextProcessorBuilder {
+    public static class TextProcessorBuilder {
 
     }
 

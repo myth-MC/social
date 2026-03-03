@@ -64,7 +64,8 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 afterEvaluate {
 
     if (project.name == "social-api" ||
-        project.name == "social-api-bukkit") {
+        project.name == "social-api-bukkit" ||
+        project.name == "social-common") {
 
         extensions.configure<PublishingExtension>("publishing") {
 

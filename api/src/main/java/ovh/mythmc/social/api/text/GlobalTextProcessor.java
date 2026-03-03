@@ -249,7 +249,7 @@ public final class GlobalTextProcessor {
      * @return the parsed component
      */
     public Component parsePlayerInput(@NotNull SocialParserContext context) {
-        return CustomTextProcessor.builder()
+        return TextProcessor.builder()
                 .parsers(getContextualParsers())
                 .restrictToPlayerInputParsers(true)
                 .build()
@@ -264,7 +264,7 @@ public final class GlobalTextProcessor {
      * @return the parsed component
      */
     public Component parse(@NotNull SocialParserContext context) {
-        return CustomTextProcessor.builder()
+        return TextProcessor.builder()
                 .parsers(getContextualParsers())
                 .build()
                 .parse(context);
