@@ -59,6 +59,9 @@ public abstract class AbstractSocialUser implements SocialUser {
 
     @Override
     public @NotNull Mutable<ChatChannel> mainChannel() {
+        if (this.mainChannel.isEmpty()) {
+            this.mainChannel.set(Social.get().getChatManager().getDefault());
+        }
         return this.mainChannel;
     }
 
