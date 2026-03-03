@@ -14,7 +14,6 @@ import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.text.injection.conditional.SocialInjectedConditionalValue;
 
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedLiteral;
-import ovh.mythmc.social.api.text.injection.value.SocialInjectedPlaceholder;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 
 import java.util.ArrayList;
@@ -134,9 +133,9 @@ public class ChannelsSettings {
             }
 
             // Default injected placeholders
-            injectedValues.add(SocialInjectedPlaceholder.of("channel_name", Component.text(name)));
-            injectedValues.add(SocialInjectedPlaceholder.of("channel_color", Component.text(color)));
-            injectedValues.add(SocialInjectedPlaceholder.of("channel_icon", icon));
+            injectedValues.add(SocialInjectedValue.placeholder("channel_name", Component.text(name)));
+            injectedValues.add(SocialInjectedValue.placeholder("channel_color", Component.text(color)));
+            injectedValues.add(SocialInjectedValue.placeholder("channel_icon", icon));
 
             AtomicReference<List<BuildableComponent>> buildableComponent = new AtomicReference<>(builder);
 
@@ -196,10 +195,10 @@ public class ChannelsSettings {
     public record BuildableComponent(@NotNull Type type, @Nullable TextComponent text, @Nullable Condition condition) {
 
         public SocialInjectedValue<?, ?> toInjectableValue() {
-            SocialInjectedLiteral literal = SocialInjectedLiteral.of(Component.empty());
+            SocialInjectedLiteral literal = SocialInjectedValue.literal(Component.empty());
             switch (type) {
-                case LITERAL -> literal = SocialInjectedLiteral.of(text);
-                case SPACE -> literal = SocialInjectedLiteral.of(Component.space());
+                case LITERAL -> literal = SocialInjectedValue.literal(text);
+                case SPACE -> literal = SocialInjectedValue.literal(Component.space());
             }
 
             if (condition == null)

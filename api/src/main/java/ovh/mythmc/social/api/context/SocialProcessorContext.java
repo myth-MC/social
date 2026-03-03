@@ -19,11 +19,37 @@ import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.user.SocialUser;
 
+/**
+ * Represents a processing-phase context for a social message.
+ *
+ * <p>
+ * {@code SocialProcessorContext} extends {@link SocialParserContext} and is used
+ * during active message processing. It provides additional state and utilities
+ * required while parsers are being executed.
+ * </p>
+ *
+ * <p>
+ * In addition to all parsing context data, this context includes:
+ * </p>
+ * <ul>
+ *     <li>The active {@link CustomTextProcessor}</li>
+ *     <li>The {@link ParseExecution} controlling the current parse lifecycle</li>
+ *     <li>A list of applied {@link SocialContextualParser parsers}</li>
+ * </ul>
+ *
+ * @see SocialParserContext
+ * @see CustomTextProcessor
+ * @see ParseExecution
+ * @see SocialContextualParser
+ */
 @EqualsAndHashCode(callSuper = false)
 @Accessors(fluent = true)
 @Experimental
 public class SocialProcessorContext extends SocialParserContext {
 
+    /**
+     * The processor responsible for handling the current message transformation.
+     */
     @Getter
     private final CustomTextProcessor processor;
 
@@ -47,11 +73,26 @@ public class SocialProcessorContext extends SocialParserContext {
         this.execution = execution;
     }
 
+    /**
+     * Adds a parser class to the list of applied parsers.
+     *
+     * <p>
+     * This method is intended for internal use only.
+     * </p>
+     *
+     * @param appliedParser the parser class that was executed
+     */
     @Internal
     public void addAppliedParser(Class<? extends SocialContextualParser> appliedParser) {
         this.appliedParsers.add(appliedParser);
     }
 
+    /**
+     * Returns an immutable copy of all parser classes that have been
+     * applied during this processing cycle.
+     *
+     * @return an unmodifiable list of applied parser classes
+     */
     public List<Class<? extends SocialContextualParser>> appliedParsers() {
         return List.copyOf(appliedParsers);
     }
@@ -71,6 +112,20 @@ public class SocialProcessorContext extends SocialParserContext {
         execution.inject(parser);
     }
 
+    /**
+     * Creates a {@link SocialProcessorContext} from an existing
+     * {@link SocialParserContext}.
+     *
+     * <p>
+     * All base parsing data is copied from the provided context, and the
+     * supplied processor and execution are attached.
+     * </p>
+     *
+     * @param context   the base parser context
+     * @param processor the active text processor
+     * @param execution the current parse execution
+     * @return a new processor context instance
+     */
     public static SocialProcessorContext from(SocialParserContext context, CustomTextProcessor processor,
             ParseExecution execution) {
         return new SocialProcessorContext(

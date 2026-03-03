@@ -10,6 +10,18 @@ import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.user.SocialUser;
 
+/**
+ * Event fired before a {@link SocialUser}'s mute status changes in a {@link ChatChannel}.
+ *
+ * <p>
+ * For global mute status changes, an independent {@link SocialUserMuteStatusChange} event
+ * will be fired for each channel.
+ * 
+ * @param user      the {@link SocialUser} whose mute status is changing
+ * @param channel   the {@link ChatChannel} where the mute status will change
+ * @param status    {@code true} if the user will be muted, {@code false} if the user will be unmuted
+ * @param cancelled whether this event has been cancelled, preventing the mute status change
+ */
 @RequiredArgsConstructor
 @Getter
 @Setter

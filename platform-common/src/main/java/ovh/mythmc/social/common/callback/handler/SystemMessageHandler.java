@@ -7,7 +7,6 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.scheduler.SocialScheduler;
 import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.callback.game.UserDeathCallback;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
@@ -59,22 +58,20 @@ public final class SystemMessageHandler implements SocialCallbackHandler {
                     // Cancel original message
                     ctx.message(Optional.empty());
 
-                    SocialScheduler.get().runAsyncTaskLater(() -> {
-                        ctx.user().ifPresent(user -> {
-                            final String unformattedMessage = Social.get().getConfig().getSystemMessages()
-                                    .getJoinMessage();
-                            if (unformattedMessage == null || unformattedMessage.isEmpty())
-                                return;
+                    ctx.user().ifPresent(user -> {
+                        final String unformattedMessage = Social.get().getConfig().getSystemMessages()
+                                .getJoinMessage();
+                        if (unformattedMessage == null || unformattedMessage.isEmpty())
+                            return;
 
-                            final Component parsedMessage = parse(user, user.mainChannel().get(),
-                                    Component.text(unformattedMessage));
-                            final ChatChannel.ChannelType channelType = ChatChannel.ChannelType
-                                    .valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
+                        final Component parsedMessage = parse(user, user.mainChannel().get(),
+                                Component.text(unformattedMessage));
+                        final ChatChannel.ChannelType channelType = ChatChannel.ChannelType
+                                .valueOf(Social.get().getConfig().getSystemMessages().getChannelType());
 
-                            Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage,
-                                    channelType, null);
-                        });
-                    }, Social.get().getConfig().getSystemMessages().getJoinMessageDelayInTicks());
+                        Social.get().getTextProcessor().send(Social.get().getUserService().get(), parsedMessage,
+                                channelType, null);
+                    });
                 }
                 case QUIT -> {
                     if (!Social.get().getConfig().getSystemMessages().isCustomizeQuitMessage())

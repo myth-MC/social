@@ -14,6 +14,17 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.user.SocialUser;
 
+/**
+ * Event fired before a message is delivered to a specific {@link SocialUser}.
+ *
+ * @param sender     the {@link SocialUser} who sent the original message
+ * @param recipient  the {@link SocialUser} who will receive the message
+ * @param channel    the {@link ChatChannel} the message was sent in
+ * @param message    the {@link Component} representing the message content
+ * @param messageId  the unique identifier of the message
+ * @param replyId    the identifier of the message being replied to, or {@code null} if this is not a reply
+ * @param cancelled  whether this event has been cancelled, preventing the message from being delivered
+ */
 @RequiredArgsConstructor
 @Getter
 @Setter

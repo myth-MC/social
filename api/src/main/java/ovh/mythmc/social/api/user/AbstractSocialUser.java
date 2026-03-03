@@ -88,7 +88,7 @@ public abstract class AbstractSocialUser implements SocialUser {
     }
 
     @Override
-    public boolean canClearFromCache() {
+    public boolean isExpired() {
         return !isOnline();
     }
 

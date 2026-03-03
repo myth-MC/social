@@ -22,10 +22,26 @@ public interface SocialUser extends
         UserPreferences,
         ForwardingAudience.Single {
 
+    /**
+     * Gets the {@link Class} that {@link ovh.mythmc.social.api.chat.renderer.SocialChatRenderer}
+     * will use as a reference to render messages.
+     * @return the {@link Class} subtype of {@link SocialUser} to use as a reference for the renderer
+     */
     Class<? extends SocialUser> rendererClass();
 
+    /**
+     * Checks if this {@link SocialUser} has a specific permission node.
+     * @param permission the permission node to check
+     * @return           {@code true} if the user has the specific permission node, {@code false}
+     *                   otherwise
+     */
     boolean checkPermission(@NotNull String permission);
 
+    /**
+     * Parses and sends a given message to this {@link SocialUser}.
+     * @param context     the {@link SocialParserContext} to parse
+     * @param playerInput whether the text processor should use the player input mode
+     */
     default void sendParsableMessage(@NotNull SocialParserContext context, boolean playerInput) {
         Component parsedMessage;
 
@@ -38,28 +54,76 @@ public interface SocialUser extends
         Social.get().getTextProcessor().send(this, parsedMessage, context.messageChannelType(), context.channel());
     }
 
+    /**
+     * Parses and sends a given message to this {@link SocialUser}.
+     * @param context the {@link SocialParserContext} to parse
+     */
     default void sendParsableMessage(@NotNull SocialParserContext context) {
         sendParsableMessage(context, false);
     }
 
+    /**
+     * Parses and sends a given message to this {@link SocialUser}.
+     * 
+     * <p>
+     * This method builds a {@link SocialParserContext} with the provided
+     * {@link Component}.
+     * </p>
+     * @param component   the {@link Component} to parse
+     * @param playerInput whether the text processor should use the player input mode
+     */
     default void sendParsableMessage(@NotNull Component component, boolean playerInput) {
         SocialParserContext context = SocialParserContext.builder(this, component).build();
 
         sendParsableMessage(context, playerInput);
     }
 
+    /**
+     * Parses and sends a given message to this {@link SocialUser}.
+     * 
+     * <p>
+     * This method builds a {@link SocialParserContext} with the provided
+     * {@link Component}.
+     * </p>
+     * @param component   the {@link Component} to parse
+     */
     default void sendParsableMessage(@NotNull Component component) {
         sendParsableMessage(component, false);
     }
 
+    /**
+     * Parses and sends a given message to this {@link SocialUser}.
+     * 
+     * <p>
+     * This method builds a {@link SocialParserContext} with the provided
+     * {@link String} wrapped in a {@link Component}.
+     * </p>
+     * @param message     the message to parse
+     * @param playerInput whether the text processor should use the player input mode
+     */
     default void sendParsableMessage(@NotNull String message, boolean playerInput) {
         sendParsableMessage(Component.text(message), playerInput);
     }
 
+    /**
+     * Parses and sends a given message to this {@link SocialUser}.
+     * 
+     * <p>
+     * This method builds a {@link SocialParserContext} with the provided
+     * {@link String} wrapped in a {@link Component}.
+     * </p>
+     * @param message     the message to parse
+     */
     default void sendParsableMessage(@NotNull String message) {
         sendParsableMessage(message, false);
     }
 
+    /**
+     * Gets the display name of this {@link SocialUser} if present, or its
+     * username otherwise.
+     * @return a {@link TextComponent} with the display name of this user if
+     *                                 present or its username otherwise
+     */
     default @NotNull TextComponent displayNameOrUsername() {
         return displayName().or(Component.text(username()));
     }

@@ -4,11 +4,10 @@ import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 
+/**
+ * A {@link SocialInjectedValue} that wraps a specific {@link TextComponent}.
+ */
 public class SocialInjectedLiteral extends AbstractSocialInjectedValue<TextComponent, SocialInjectedLiteral> {
-
-    public static SocialInjectedLiteral of(@NotNull TextComponent value) {
-        return new SocialInjectedLiteral(value);
-    }
 
     protected SocialInjectedLiteral(@NotNull TextComponent value) {
         super(value, SocialInjectionParsers.LITERAL);

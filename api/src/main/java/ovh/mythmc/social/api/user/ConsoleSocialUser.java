@@ -11,6 +11,10 @@ import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
 import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper.ServerToClient;
 
+/**
+ * {@link AbstractSocialUser} implementation which represents the console as a
+ * {@link SocialUser}.
+ */
 public class ConsoleSocialUser extends AbstractSocialUser {
 
     private static ConsoleSocialUser INSTANCE = new ConsoleSocialUser();

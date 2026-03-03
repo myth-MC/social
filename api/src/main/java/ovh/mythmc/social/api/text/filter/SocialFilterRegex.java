@@ -6,6 +6,14 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 
 import java.util.regex.Pattern;
 
+/**
+ * Abstract parser capable of censoring text by matching a given regular expression.
+ * 
+ * <p>
+ * Any text matching {@code regex()} will be filtered out and replaced
+ * with {@code ***}.
+ * </p>
+ */
 public abstract class SocialFilterRegex implements SocialFilterLike {
 
     public abstract String regex();

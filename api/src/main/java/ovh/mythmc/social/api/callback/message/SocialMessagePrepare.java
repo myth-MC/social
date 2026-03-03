@@ -15,6 +15,16 @@ import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.Set;
 
+/**
+ * Event fired before a message is sent, allowing modification or cancellation.
+ *
+ * @param sender       the {@link SocialUser} who sent the original message
+ * @param channel      the {@link ChatChannel} the message will be sent to
+ * @param viewers      the {@link Set} of {@link Audience Audiences} that will receive the message
+ * @param plainMessage the original, unformatted {@link String} message content
+ * @param replyId      the identifier of the message being replied to, or {@code null} if this is not a reply
+ * @param cancelled    whether this event has been cancelled, preventing the message from being sent
+ */
 @Getter
 @Setter
 @Accessors(fluent = true)
