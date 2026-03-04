@@ -91,10 +91,19 @@ public class BukkitSocialUser extends AbstractSocialUser implements InGameSocial
         return SocialAdventureProvider.get().user(this);
     }
 
+    /**
+     * Gets the {@link OfflinePlayer} instance of the user.
+     * @return the {@link OfflinePlayer} instance of this user
+     */
     public @NotNull OfflinePlayer offlinePlayer() {
         return this.offlinePlayer;
     }
 
+    /**
+     * Gets the optional {@link Player} instance of the user.
+     * @return an {@link Optional} containing the {@link Player} instance if available,
+     *         or an empty {@link Optional} otherwise
+     */
     public @NotNull Optional<Player> player() {
         return Optional.ofNullable(this.offlinePlayer.getPlayer());
     }
