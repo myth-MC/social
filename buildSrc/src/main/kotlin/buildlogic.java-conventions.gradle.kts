@@ -8,41 +8,6 @@ plugins {
     id("com.gradleup.shadow")
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url = uri("https://jitpack.io")
-    }
-
-    maven {
-        url = uri("https://repo.codemc.io/repository/maven-releases/")
-    }
-
-    maven {
-        url = uri("https://repo.mythmc.ovh/releases/")
-    }
-
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
-    }
-
-    maven {
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    }
-
-    maven {
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    }
-
-    maven {
-        url = uri("https://nexus.scarsz.me/content/groups/public/")
-    }
-
-    maven {
-        url = uri("https://repo.papermc.io/repository/maven-snapshots/")
-    }
-}
-
 dependencies {
     api("ovh.mythmc:gestalt-loader:0.2.2")
     compileOnly("org.projectlombok:lombok:1.18.36")
@@ -56,10 +21,6 @@ dependencies {
     compileOnly("ovh.mythmc:callbacks-lib:0.1.2")
     annotationProcessor("ovh.mythmc:callbacks-lib:0.1.2")
 }
-
-group = "ovh.mythmc"
-version = providers.gradleProperty("version").get()
-java.sourceCompatibility = JavaVersion.VERSION_17
 
 afterEvaluate {
 
@@ -96,20 +57,6 @@ afterEvaluate {
     }
 }
 
-tasks.withType<Javadoc>().configureEach {
-    (options as StandardJavadocDocletOptions).apply {
-
-        // Java standard library
-        links("https://docs.oracle.com/en/java/javase/17/docs/api/")
-
-        // Adventure API
-        links("https://jd.advntr.dev/api/4.26.1/")
-
-        // JetBrains annotations
-        links("https://javadoc.io/doc/org.jetbrains/annotations/26.1.0/")
-    }
-}
-
 tasks.shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -117,12 +64,4 @@ tasks.shadowJar {
     for (relocation in Relocations.relocations) {
         relocate(relocation.key, relocation.value)
     }
-}
-
-tasks.withType<JavaCompile>() {
-    options.encoding = "UTF-8"
-}
-
-tasks.withType<Javadoc>() {
-    options.encoding = "UTF-8"
 }
