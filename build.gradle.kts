@@ -56,17 +56,7 @@ subprojects {
 
     tasks.withType<Javadoc>().configureEach {
         options.encoding = "UTF-8"
-
-        (options as StandardJavadocDocletOptions).apply {
-            // Java standard library
-            links("https://docs.oracle.com/en/java/javase/17/docs/api/")
-
-            // Adventure API
-            links("https://jd.advntr.dev/api/4.26.1/")
-
-            // JetBrains annotations
-            links("https://javadoc.io/doc/org.jetbrains/annotations/26.1.0/")
-        }
+        (options as StandardJavadocDocletOptions).applyExternalLinks()
     }
 }
 
@@ -86,4 +76,14 @@ tasks.register<Javadoc>("javadocMerged") {
 
     source = apiMain.allJava + apiBukkitMain.allJava
     classpath = apiMain.compileClasspath + apiBukkitMain.compileClasspath
+
+    options.encoding = "UTF-8"
+    (options as StandardJavadocDocletOptions).applyExternalLinks()
+}
+
+fun StandardJavadocDocletOptions.applyExternalLinks() {
+    links("https://docs.oracle.com/en/java/javase/17/docs/api/")
+    links("https://jd.advntr.dev/api/4.26.1/")
+    links("https://javadoc.io/doc/org.jetbrains/annotations/26.1.0/")
+    links("https://jd.papermc.io/paper/1.21.11/")
 }
