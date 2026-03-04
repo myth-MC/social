@@ -384,6 +384,13 @@ public final class GlobalTextProcessor {
 
     // -- deprecated --
 
+    /**
+     * Gets a {@link SocialContextualParser}s matching a specific class.
+     * @param clazz the class to match
+     * @return      a {@link SocialContextualParser} matching the given class, or
+     *              {@code null} otherwise
+     * @deprecated  Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
         return getContextualParsersWithGroupMembers().stream()
@@ -405,21 +412,50 @@ public final class GlobalTextProcessor {
         return result;
     }
 
+    /**
+     * Gets a specific {@link SocialContextualPlaceholder} by its identifier.
+     * @param identifier the identifier of the {@link SocialContextualPlaceholder}
+     * @return           a {@link Optional} wrapping the {@link SocialContextualPlaceholder} if
+     *                   available, or an empty {@link Optional} otherwise
+     */
     @Deprecated(forRemoval = true)
     public Optional<SocialContextualPlaceholder> getContextualPlaceholder(@NotNull String identifier) {
         return getIdentifiedParser(SocialContextualPlaceholder.class, identifier);
     }
 
+    /**
+     * Gets a specific {@link SocialContextualKeyword} by its identifier.
+     * @param identifier the identifier of the {@link SocialContextualKeyword}
+     * @return           a {@link Optional} wrapping the {@link SocialContextualKeyword} if
+     *                   available, or an empty {@link Optional} otherwise
+     * @deprecated       Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public Optional<SocialContextualKeyword> getContextualKeyword(@NotNull String identifier) {
         return getIdentifiedParser(SocialContextualKeyword.class, identifier);
     }
 
+    /**
+     * Determines whether the text processor has a {@link SocialContextualPlaceholder}
+     * matching the given {@code identifier}.
+     * @param identifier the identifier of the {@link SocialContextualPlaceholder} to check
+     * @return           {@code true} if the {@link SocialContextualPlaceholder} exists,
+     *                   {@code false} otherwise
+     * @deprecated       Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public boolean isContextualPlaceholder(@NotNull String identifier) {
         return getContextualPlaceholder(identifier).isPresent();
     }
 
+    /**
+     * Determines whether the text processor has a {@link SocialContextualKeyword}
+     * matching the given {@code identifier}.
+     * @param keyword the identifier of the {@link SocialContextualKeyword} to check
+     * @return        {@code true} if the {@link SocialContextualKeyword} exists,
+     *                {@code false} otherwise
+     * @deprecated    Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public boolean isContextualKeyword(@NotNull String keyword) {
         return getContextualKeyword(keyword).isPresent();
