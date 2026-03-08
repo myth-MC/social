@@ -128,10 +128,3 @@ We have a simple guide on using **social** in our docs website: https://social.m
 | [@U8092](https://github.com/U8092) |                 | Lead developer       |
 
 <hr>
-
-<a href="https://sponsor.mythmc.ovh/">
-  <img src="https://assets.mythmc.ovh/banner_godlike.png" />
-</a>
-<div align="center">
-  <p>We're sponsored by <a href="https://sponsor.mythmc.ovh/">Godlike</a>, a high performance game server hosting. Check them out!</p>
-</div>
