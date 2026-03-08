@@ -1,11 +1,11 @@
 <div align="center">
+  <img src="https://assets.mythmc.ovh/social/logo-small.png?1" width="256">
+  <h1>social</h1>
+  <a href="https://github.com/myth-MC/social/releases/latest"><img src="https://img.shields.io/github/v/release/myth-MC/social" alt="Latest release" /></a>
+  <a href="https://github.com/myth-MC/social/pulls"><img src="https://img.shields.io/github/issues-pr/myth-MC/social" alt="Pull requests" /></a>
+  <a href="https://github.com/myth-MC/social/issues"><img src="https://img.shields.io/github/issues/myth-MC/social" alt="Issues" /></a>
+  <a href="https://github.com/myth-MC/social/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License" /></a>
   <p>
-    <img src="https://assets.mythmc.ovh/social/logo-small.png?1">
-    <h1>social</h1>
-    <a href="https://github.com/myth-MC/social/releases/latest"><img src="https://img.shields.io/github/v/release/myth-MC/social" alt="Latest release" /></a>
-    <a href="https://github.com/myth-MC/social/pulls"><img src="https://img.shields.io/github/issues-pr/myth-MC/social" alt="Pull requests" /></a>
-    <a href="https://github.com/myth-MC/social/issues"><img src="https://img.shields.io/github/issues/myth-MC/social" alt="Issues" /></a>
-    <a href="https://github.com/myth-MC/social/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License" /></a>
     <br>
     Enhance your server's communication.
     <br>
