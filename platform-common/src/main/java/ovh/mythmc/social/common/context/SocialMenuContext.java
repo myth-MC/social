@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import ovh.mythmc.social.api.context.SocialContext;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import lombok.Data;
 import lombok.Setter;
 
@@ -13,9 +13,9 @@ import lombok.Setter;
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
 public class SocialMenuContext implements SocialContext {
-    
-    private final AbstractSocialUser viewer;
 
-    private final AbstractSocialUser target;
+    private final SocialUser viewer;
+
+    private final SocialUser target;
 
 }

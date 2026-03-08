@@ -4,11 +4,13 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 
-public class SocialInjectedTag extends AbstractSocialInjectedValue.Identified<TagResolver> {
-
-    public static SocialInjectedTag of(@NotNull String identifier, @NotNull TagResolver value) {
-        return new SocialInjectedTag(identifier, value);
-    }
+/**
+ * A {@link SocialInjectedValue} wrapping a specific {@link TagResolver} applied
+ * at runtime.
+ * 
+ * @see TagResolver
+ */
+public class SocialInjectedTag extends AbstractSocialInjectedValue.Identified<TagResolver, SocialInjectedTag> {
 
     protected SocialInjectedTag(@NotNull String identifier, @NotNull TagResolver value) {
         super(identifier, value, SocialInjectionParsers.TAG);

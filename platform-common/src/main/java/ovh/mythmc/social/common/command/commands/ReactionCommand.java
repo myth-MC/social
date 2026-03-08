@@ -7,30 +7,32 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.reaction.Reaction;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.InGameSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.ReactionParser;
 
-public final class ReactionCommand implements MainCommand<AbstractSocialUser> {
+public final class ReactionCommand implements MainCommand<SocialUser> {
 
     @Override
     public boolean canRegister() {
         return Social.get().getConfig().getReactions().isEnabled() &&
-            Social.get().getConfig().getCommands().getReaction().enabled();
+                Social.get().getConfig().getCommands().getReaction().enabled();
     }
 
     @Override
-    public void register(@NotNull CommandManager<AbstractSocialUser> commandManager) {
-        final Command.Builder<AbstractSocialUser> reactionCommand = commandManager.commandBuilder("reaction", "emote", "e")
-            .commandDescription(Description.of("Shows a reaction"))
-            .permission("social.use.reaction")
-            .required("reaction", ReactionParser.reactionParser())
-            .handler(ctx -> {
-                final Reaction reaction = ctx.get("reaction");
-                Social.get().getReactionFactory().play(ctx.sender(), reaction);
-            });
+    public void register(@NotNull CommandManager<SocialUser> commandManager) {
+        final Command.Builder<InGameSocialUser> reactionCommand = commandManager.commandBuilder("reaction", "emote", "e")
+                .commandDescription(Description.of("Shows a reaction"))
+                .permission("social.use.reaction")
+                .required("reaction", ReactionParser.reactionParser(), Description.of("The reaction to display"))
+                .senderType(InGameSocialUser.class)
+                .handler(ctx -> {
+                    final Reaction reaction = ctx.get("reaction");
+                    Social.get().getReactionFactory().play(ctx.sender(), reaction);
+                });
 
         commandManager.command(reactionCommand);
     }
-    
+
 }

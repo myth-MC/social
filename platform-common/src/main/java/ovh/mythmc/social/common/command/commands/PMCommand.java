@@ -9,13 +9,14 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.PrivateChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.InGameSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.user.SocialUserManager;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.MainCommand;
 import ovh.mythmc.social.common.command.parser.UserParser;
 
-public final class PMCommand implements MainCommand<AbstractSocialUser> {
+public final class PMCommand implements MainCommand<SocialUser> {
 
     @Override
     public boolean canRegister() {
@@ -23,46 +24,49 @@ public final class PMCommand implements MainCommand<AbstractSocialUser> {
     }
 
     @Override
-    public void register(@NotNull CommandManager<AbstractSocialUser> commandManager) {
-        final Command.Builder<AbstractSocialUser> pmCommand = commandManager.commandBuilder("pm", "msg", "w", "whisper", "tell");
+    public void register(@NotNull CommandManager<SocialUser> commandManager) {
+        final Command.Builder<SocialUser> pmCommand = commandManager.commandBuilder("pm", "msg", "w", "whisper",
+                "tell");
 
         commandManager.command(pmCommand
-            .handler(ctx -> {
-                if (ctx.sender().mainChannel() instanceof PrivateChatChannel) {
-                    final ChatChannel defaultChannel = Social.get().getChatManager().getCachedOrDefault(ctx.sender());
-                    Social.get().getUserManager().setMainChannel(ctx.sender(), defaultChannel, true);
-                }
-            })
-        );
+                .handler(ctx -> {
+                    if (ctx.sender().mainChannel() instanceof PrivateChatChannel) {
+                        final ChatChannel defaultChannel = Social.get().getChatManager()
+                                .getCachedOrDefault(ctx.sender());
+                        Social.get().getUserManager().announceChannelSwitch(ctx.sender(), defaultChannel);
+                    }
+                })
+                .senderType(InGameSocialUser.class));
 
         commandManager.command(pmCommand
-            .commandDescription(Description.of("Sends a private message to another user"))
-            .permission("social.use.pm")
-            .required("recipient", UserParser.userParser())
-            .optional("message", StringParser.greedyStringParser())
-            .handler(ctx -> {
-                final SocialUserManager userManager = Social.get().getUserManager();
-                final AbstractSocialUser recipient = ctx.get("recipient");
+                .commandDescription(Description.of("Sends a private message to another user"))
+                .permission("social.use.pm")
+                .required("recipient", UserParser.excludeSender(), Description.of("The recipient who will receive the <message>"))
+                .optional("message", StringParser.greedyStringParser(), Description.of("The message that will be sent"))
+                .senderType(InGameSocialUser.class)
+                .handler(ctx -> {
+                    final SocialUserManager userManager = Social.get().getUserManager();
+                    final SocialUser recipient = ctx.get("recipient");
 
-                // Send message
-                if (ctx.contains("message")) {
-                    final String message = ctx.get("message");;
+                    // Send message
+                    if (ctx.contains("message")) {
+                        final String message = ctx.get("message");
+                        ;
 
+                        final var privateChannel = PrivateChatChannel.getOrCreate(ctx.sender(), recipient);
+                        final var previousChannel = ctx.sender().mainChannel().get();
+
+                        // Quickly switch channels
+                        ctx.sender().mainChannel().set(privateChannel);
+                        PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
+                        ctx.sender().mainChannel().set(previousChannel);
+                        return;
+                    }
+
+                    // Open channel
                     final var privateChannel = PrivateChatChannel.getOrCreate(ctx.sender(), recipient);
-                    final var previousChannel = ctx.sender().mainChannel();
-
-                    // Quickly switch channels
-                    userManager.setMainChannel(ctx.sender(), privateChannel, false);
-                    PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
-                    userManager.setMainChannel(ctx.sender(), previousChannel, false);
-                    return;
-                }
-
-                // Open channel
-                final var privateChannel = PrivateChatChannel.getOrCreate(ctx.sender(), recipient);
-                userManager.setMainChannel(ctx.sender(), privateChannel, true);
-            })
-        );
+                    userManager.announceChannelSwitch(ctx.sender(), privateChannel);
+                }));
     }
-    
+
 }

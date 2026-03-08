@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(path = ":social-api", configuration = "shadow"))
+    api(project(":social-api"))
     compileOnly(libs.org.spigotmc.spigot.api)
 }
 

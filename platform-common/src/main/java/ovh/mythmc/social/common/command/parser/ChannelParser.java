@@ -14,7 +14,7 @@ import org.incendo.cloud.util.StringUtils;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.command.exception.UnauthorizedChannelException;
 import ovh.mythmc.social.common.command.exception.UnknownChannelException;
@@ -22,7 +22,8 @@ import ovh.mythmc.social.common.command.exception.UnknownChannelException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class ChannelParser implements ArgumentParser<AbstractSocialUser, ChatChannel>, BlockingSuggestionProvider.Strings<AbstractSocialUser>, ParserDescriptor<AbstractSocialUser, ChatChannel> {
+public final class ChannelParser implements ArgumentParser<SocialUser, ChatChannel>,
+        BlockingSuggestionProvider.Strings<SocialUser>, ParserDescriptor<SocialUser, ChatChannel> {
 
     private static final Pattern QUOTED_DOUBLE = Pattern.compile("\"(?<inner>(?:[^\"\\\\]|\\\\.)*)\"");
     private static final Pattern QUOTED_SINGLE = Pattern.compile("'(?<inner>(?:[^'\\\\]|\\\\.)*)'");
@@ -32,7 +33,7 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
     }
 
     @Override
-    public @NonNull ArgumentParser<AbstractSocialUser, ChatChannel> parser() {
+    public @NonNull ArgumentParser<SocialUser, ChatChannel> parser() {
         return this;
     }
 
@@ -43,17 +44,18 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
 
     @Override
     public @NonNull Iterable<@NonNull String> stringSuggestions(
-            @NonNull CommandContext<AbstractSocialUser> commandContext, @NonNull CommandInput input) {
+            @NonNull CommandContext<SocialUser> commandContext, @NonNull CommandInput input) {
 
         return Social.registries().channels().values().stream()
-            .filter(channel -> channel instanceof SimpleChatChannel && Social.get().getChatManager().hasPermission(commandContext.sender(), channel))
-            .map(ChatChannel::name)
-            .toList();
+                .filter(channel -> channel instanceof SimpleChatChannel
+                        && Social.get().getChatManager().hasPermission(commandContext.sender(), channel))
+                .map(ChatChannel::name)
+                .toList();
     }
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull ChatChannel> parse(
-            @NonNull CommandContext<@NonNull AbstractSocialUser> commandContext, @NonNull CommandInput commandInput) {
+            @NonNull CommandContext<@NonNull SocialUser> commandContext, @NonNull CommandInput commandInput) {
 
         final String input = parseQuoted(commandContext, commandInput).parsedValue().orElse(null);
         final ChatChannel channel = Social.registries().channels().value(RegistryKey.identified(input)).orElse(null);
@@ -68,9 +70,8 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
     }
 
     private @NonNull ArgumentParseResult<String> parseQuoted(
-        final @NonNull CommandContext<AbstractSocialUser> commandContext,
-        final @NonNull CommandInput commandInput
-    ) {
+            final @NonNull CommandContext<SocialUser> commandContext,
+            final @NonNull CommandInput commandInput) {
         final char peek = commandInput.peek();
         if (peek != '\'' && peek != '"') {
             return ArgumentParseResult.success(commandInput.readString());
@@ -109,9 +110,8 @@ public final class ChannelParser implements ArgumentParser<AbstractSocialUser, C
             inner = commandInput.peekString();
             if (inner.startsWith("\"") || inner.startsWith("'")) {
                 return ArgumentParseResult.failure(new StringParser.StringParseException(
-                    commandInput.remainingInput(),
-                    StringParser.StringMode.QUOTED, commandContext
-                ));
+                        commandInput.remainingInput(),
+                        StringParser.StringMode.QUOTED, commandContext));
             } else {
                 commandInput.readString();
             }

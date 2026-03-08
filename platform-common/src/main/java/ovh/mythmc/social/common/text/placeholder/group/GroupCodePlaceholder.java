@@ -23,18 +23,17 @@ public final class GroupCodePlaceholder extends SocialContextualPlaceholder {
 
     @Override
     public Component get(SocialParserContext context) {
-        final var optionalGroup = context.user().group();
+        final var optionalGroup = context.user().groupChannel();
         if (optionalGroup.isEmpty())
             return Component.empty();
 
         Component hoverText = Component.text(Social.get().getConfig().getChat().getGroups().getCodeHoverText());
-        hoverText = SocialContextualParser.request(context.withMessage(hoverText), 
-            MiniMessageParser.class
-        );
-        
+        hoverText = SocialContextualParser.request(context.withMessage(hoverText),
+                MiniMessageParser.class);
+
         return Component.text(optionalGroup.get().code())
-            .hoverEvent(HoverEvent.showText(hoverText))
-            .clickEvent(ClickEvent.copyToClipboard(optionalGroup.get().code() + ""));
+                .hoverEvent(HoverEvent.showText(hoverText))
+                .clickEvent(ClickEvent.copyToClipboard(optionalGroup.get().code() + ""));
     }
 
 }

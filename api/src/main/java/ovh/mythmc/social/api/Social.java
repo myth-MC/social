@@ -8,8 +8,8 @@ import ovh.mythmc.social.api.configuration.SocialConfigProvider;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 import ovh.mythmc.social.api.reaction.ReactionFactory;
 import ovh.mythmc.social.api.text.GlobalTextProcessor;
-import ovh.mythmc.social.api.user.SocialUserManager;
 import ovh.mythmc.social.api.user.SocialUserService;
+import ovh.mythmc.social.api.user.SocialUserManager;
 
 /**
  * The central entry-point for the social plugin API.
@@ -76,7 +76,7 @@ public interface Social {
 
     /**
      * Returns the service used to retrieve all currently tracked
-     * {@link ovh.mythmc.social.api.user.AbstractSocialUser} instances.
+     * {@link ovh.mythmc.social.api.user.SocialUser} instances.
      *
      * @return the user service
      */

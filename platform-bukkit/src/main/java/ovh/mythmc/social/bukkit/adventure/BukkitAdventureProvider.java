@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 public class BukkitAdventureProvider extends SocialAdventureProvider {
 
@@ -23,7 +23,7 @@ public class BukkitAdventureProvider extends SocialAdventureProvider {
     }
 
     @Override
-    public Audience user(@NotNull AbstractSocialUser user) {
+    public Audience user(@NotNull SocialUser user) {
         return adventure.player(Bukkit.getPlayer(user.uuid()));
     }
 

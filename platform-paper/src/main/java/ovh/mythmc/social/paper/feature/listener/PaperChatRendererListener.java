@@ -23,20 +23,21 @@ public class PaperChatRendererListener {
     public void enable() {
         Bukkit.getPluginManager().registerEvents(chatEventAdapter, Bukkit.getPluginManager().getPlugin("social"));
 
-        renderer = Social.get().getChatManager().registerRenderer(BukkitSocialUser.class, new UserChatRenderer<>(), options -> {
-            return options
-                .map(audience -> {
-                    final var uuid = audience.get(Identity.UUID);
-                    if (uuid.isEmpty())
-                        return SocialChatRenderer.MapResult.ignore();
+        renderer = Social.get().getChatManager().registerRenderer(BukkitSocialUser.class, new UserChatRenderer<>(),
+                options -> {
+                    return options
+                            .map(audience -> {
+                                final var uuid = audience.get(Identity.UUID);
+                                if (uuid.isEmpty())
+                                    return SocialChatRenderer.MapResult.ignore();
 
-                    final var user = BukkitSocialUser.from(uuid.get());
-                    if (user == null)
-                        return SocialChatRenderer.MapResult.ignore();
+                                final var user = BukkitSocialUser.from(uuid.get());
+                                if (user == null)
+                                    return SocialChatRenderer.MapResult.ignore();
 
-                    return SocialChatRenderer.MapResult.success(user);
+                                return SocialChatRenderer.MapResult.success(user);
+                            });
                 });
-        });
     }
 
     @FeatureListener(feature = ChatFeature.class, events = FeatureEvent.DISABLE)
@@ -44,5 +45,5 @@ public class PaperChatRendererListener {
         Social.get().getChatManager().unregisterRenderer(renderer);
         HandlerList.unregisterAll(chatEventAdapter);
     }
-    
+
 }

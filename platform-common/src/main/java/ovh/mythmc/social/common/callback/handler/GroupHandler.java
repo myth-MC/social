@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.callback.group.SocialGroupJoinCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaderChangeCallback;
 import ovh.mythmc.social.api.callback.group.SocialGroupLeaveCallback;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.callback.game.UserPresence;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
@@ -28,50 +28,62 @@ public final class GroupHandler implements SocialCallbackHandler {
     @Override
     public void register() {
         SocialGroupJoinCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_JOIN_MESSAGE, (ctx) -> {
-            Component joinMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().mainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerJoinedGroup());
+            Component joinMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().mainChannel().get(),
+                    Social.get().getConfig().getMessages().getInfo().getPlayerJoinedGroup());
 
             ctx.groupChatChannel().members().forEach(user -> {
-                if (user.uuid().equals(ctx.user().uuid())) return;
-    
-                Social.get().getTextProcessor().send(user, joinMessage, Social.get().getConfig().getMessages().getChannelType(), ctx.groupChatChannel());
+                if (user.uuid().equals(ctx.user().uuid()))
+                    return;
+
+                Social.get().getTextProcessor().send(user, joinMessage,
+                        Social.get().getConfig().getMessages().getChannelType(), ctx.groupChatChannel());
             });
         });
 
         SocialGroupLeaveCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_LEAVE_MESSAGE, (ctx) -> {
             setDefaultChannel(ctx.user());
 
-            Component leftMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().mainChannel(), Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
-    
+            Component leftMessage = Social.get().getTextProcessor().parse(ctx.user(), ctx.user().mainChannel().get(),
+                    Social.get().getConfig().getMessages().getInfo().getPlayerLeftGroup());
+
             ctx.groupChatChannel().members().forEach(user -> {
-                Social.get().getTextProcessor().send(user, leftMessage, Social.get().getConfig().getMessages().getChannelType(), ctx.groupChatChannel());
+                Social.get().getTextProcessor().send(user, leftMessage,
+                        Social.get().getConfig().getMessages().getChannelType(), ctx.groupChatChannel());
             });
         });
 
         SocialGroupCreateCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_CREATE_MESSAGE, (ctx) -> {
             var leader = ctx.groupChatChannel().leader();
-        
+
             // Switch main channel
-            Social.get().getUserManager().setMainChannel(leader, ctx.groupChatChannel(), true);
-    
+            Social.get().getUserManager().announceChannelSwitch(leader, ctx.groupChatChannel());
+
             // Message
             int groupCode = ctx.groupChatChannel().code();
-            String createdMessage = String.format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
-            Social.get().getTextProcessor().parseAndSend(leader, createdMessage, Social.get().getConfig().getMessages().getChannelType());
+            String createdMessage = String
+                    .format(Social.get().getConfig().getMessages().getCommands().getCreatedGroup(), groupCode);
+            Social.get().getTextProcessor().parseAndSend(leader, createdMessage,
+                    Social.get().getConfig().getMessages().getChannelType());
         });
 
         SocialGroupDisbandCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_DISBAND_MESSAGE, (ctx) -> {
             ctx.groupChatChannel().members().forEach(user -> {
-                Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(), Social.get().getConfig().getMessages().getChannelType());
-    
+                Social.get().getTextProcessor().parseAndSend(user, user.mainChannel().get(),
+                        Social.get().getConfig().getMessages().getInfo().getGroupDisbanded(),
+                        Social.get().getConfig().getMessages().getChannelType());
+
                 setDefaultChannel(user);
             });
         });
 
         SocialGroupLeaderChangeCallback.INSTANCE.registerHandler(IdentifierKeys.GROUP_LEADER_CHANGE_MESSAGE, (ctx) -> {
-            Component leaderChangeMessage = Social.get().getTextProcessor().parse(ctx.leader(), ctx.leader().mainChannel(), Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
+            Component leaderChangeMessage = Social.get().getTextProcessor().parse(ctx.leader(),
+                    ctx.leader().mainChannel().get(),
+                    Social.get().getConfig().getMessages().getInfo().getGroupLeaderChange());
 
             ctx.groupChatChannel().members().forEach(user -> {
-                Social.get().getTextProcessor().parseAndSend(user, user.mainChannel(), leaderChangeMessage, ChatChannel.ChannelType.CHAT);
+                Social.get().getTextProcessor().parseAndSend(user, user.mainChannel().get(), leaderChangeMessage,
+                        ChatChannel.ChannelType.CHAT);
             });
         });
 
@@ -81,7 +93,7 @@ public final class GroupHandler implements SocialCallbackHandler {
 
             // Remove user from group and change its leader if necessary
             ctx.user().ifPresent(user -> {
-                user.group().ifPresent(group -> {
+                user.groupChannel().ifPresent(group -> {
                     // Not necessary since ChatListener already takes care of this
                     group.removeMember(user);
 
@@ -108,11 +120,13 @@ public final class GroupHandler implements SocialCallbackHandler {
         SocialGroupLeaderChangeCallback.INSTANCE.unregisterHandlers(IdentifierKeys.GROUP_LEADER_CHANGE_MESSAGE);
     }
 
-    private static void setDefaultChannel(AbstractSocialUser user) {
+    private static void setDefaultChannel(SocialUser user) {
         final ChatChannel defaultChannel = Social.get().getChatManager().getCachedOrDefault(user);
-        if (defaultChannel == null) return;
+        if (defaultChannel == null)
+            return;
 
-        Social.get().getUserManager().setMainChannel(user, defaultChannel, true);
+        Social.get().getUserManager().announceChannelSwitch(user, defaultChannel);
+
     }
-    
+
 }

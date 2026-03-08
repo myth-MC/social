@@ -41,7 +41,7 @@ public abstract class AbstractRegistry<R extends RegistryKey, T> implements Regi
     public @NotNull <V extends T> List<V> valuesByType(@NotNull Class<V> type) {
         return registry().values().stream()
             .filter(type::isInstance)
-            .map(value -> (V) value)
+            .map(type::cast)
             .toList();
     }
 
@@ -95,19 +95,6 @@ public abstract class AbstractRegistry<R extends RegistryKey, T> implements Regi
                 .toList();
         }
         
-    }
-
-    public static class Type<R, T> extends AbstractRegistry<TypeRegistryKey<R>, T> {
-
-        private final Map<TypeRegistryKey<R>, T> registry = new HashMap<>();
-
-        protected Type() { }
-
-        @Override
-        public @NotNull Map<TypeRegistryKey<R>, T> registry() {
-            return this.registry;
-        }
-
     }
 
 }

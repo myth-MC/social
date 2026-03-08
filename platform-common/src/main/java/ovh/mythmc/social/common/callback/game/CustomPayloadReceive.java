@@ -9,7 +9,7 @@ import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.network.channel.C2SNetworkChannelWrapper;
 import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @AllArgsConstructor
 @Getter
@@ -17,16 +17,16 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "user", getter = "user()"),
-    @CallbackField(field = "channel", getter = "channel()"),
-    @CallbackField(field = "payload", getter = "payload()")
+        @CallbackField(field = "user", getter = "user()"),
+        @CallbackField(field = "channel", getter = "channel()"),
+        @CallbackField(field = "payload", getter = "payload()")
 })
 public final class CustomPayloadReceive {
 
-    private final AbstractSocialUser user;
+    private final SocialUser user;
 
     private final C2SNetworkChannelWrapper<?> channel;
 
     private final NetworkPayloadWrapper.ClientToServer payload;
-    
+
 }

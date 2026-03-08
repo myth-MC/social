@@ -21,7 +21,7 @@ import ovh.mythmc.social.api.text.parser.SocialContextualKeyword;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 import static net.kyori.adventure.text.Component.text;
@@ -33,10 +33,10 @@ import static net.kyori.adventure.text.Component.text;
  * <p>
  * Parsers are divided into three ordered groups:
  * <ol>
- * <li>{@link #EARLY_PARSERS} – run before the main parser list</li>
- * <li>The main parser list – registered via
+ * <li>{@link #EARLY_PARSERS} run before the main parser list</li>
+ * <li>The main parser list registered via
  * {@link #registerContextualParser}</li>
- * <li>{@link #LATE_PARSERS} – run after the main parser list</li>
+ * <li>{@link #LATE_PARSERS} run after the main parser list</li>
  * </ol>
  *
  * <p>
@@ -249,7 +249,7 @@ public final class GlobalTextProcessor {
      * @return the parsed component
      */
     public Component parsePlayerInput(@NotNull SocialParserContext context) {
-        return CustomTextProcessor.builder()
+        return TextProcessor.builder()
                 .parsers(getContextualParsers())
                 .restrictToPlayerInputParsers(true)
                 .build()
@@ -264,7 +264,7 @@ public final class GlobalTextProcessor {
      * @return the parsed component
      */
     public Component parse(@NotNull SocialParserContext context) {
-        return CustomTextProcessor.builder()
+        return TextProcessor.builder()
                 .parsers(getContextualParsers())
                 .build()
                 .parse(context);
@@ -279,7 +279,7 @@ public final class GlobalTextProcessor {
      * @param channelType how the message will be delivered
      * @return the parsed component
      */
-    public Component parse(AbstractSocialUser user, ChatChannel channel, Component message,
+    public Component parse(SocialUser user, ChatChannel channel, Component message,
             ChatChannel.ChannelType channelType) {
         return parse(SocialParserContext.builder(user, message)
                 .channel(channel)
@@ -287,16 +287,16 @@ public final class GlobalTextProcessor {
                 .build());
     }
 
-    public Component parse(AbstractSocialUser user, ChatChannel channel, String message,
+    public Component parse(SocialUser user, ChatChannel channel, String message,
             ChatChannel.ChannelType channelType) {
         return parse(user, channel, text(message), channelType);
     }
 
-    public Component parse(AbstractSocialUser user, ChatChannel channel, Component message) {
+    public Component parse(SocialUser user, ChatChannel channel, Component message) {
         return parse(user, channel, message, ChatChannel.ChannelType.CHAT);
     }
 
-    public Component parse(AbstractSocialUser user, ChatChannel channel, String message) {
+    public Component parse(SocialUser user, ChatChannel channel, String message) {
         return parse(user, channel, text(message));
     }
 
@@ -312,7 +312,7 @@ public final class GlobalTextProcessor {
         send(List.of(context.user()), parse(context), context.messageChannelType(), context.channel());
     }
 
-    public void parseAndSend(AbstractSocialUser user, ChatChannel channel, Component message,
+    public void parseAndSend(SocialUser user, ChatChannel channel, Component message,
             ChatChannel.ChannelType channelType) {
         parseAndSend(SocialParserContext.builder(user, message)
                 .channel(channel)
@@ -320,24 +320,24 @@ public final class GlobalTextProcessor {
                 .build());
     }
 
-    public void parseAndSend(AbstractSocialUser user, ChatChannel channel, String message,
+    public void parseAndSend(SocialUser user, ChatChannel channel, String message,
             ChatChannel.ChannelType channelType) {
         parseAndSend(user, channel, text(message), channelType);
     }
 
-    public void parseAndSend(AbstractSocialUser user, ChatChannel channel, Component message) {
+    public void parseAndSend(SocialUser user, ChatChannel channel, Component message) {
         parseAndSend(user, channel, message, ChatChannel.ChannelType.CHAT);
     }
 
-    public void parseAndSend(AbstractSocialUser user, ChatChannel channel, String message) {
+    public void parseAndSend(SocialUser user, ChatChannel channel, String message) {
         parseAndSend(user, channel, text(message));
     }
 
-    public void parseAndSend(AbstractSocialUser user, Component message, ChatChannel.ChannelType type) {
-        parseAndSend(user, user.mainChannel(), message, type);
+    public void parseAndSend(SocialUser user, Component message, ChatChannel.ChannelType type) {
+        parseAndSend(user, user.mainChannel().get(), message, type);
     }
 
-    public void parseAndSend(AbstractSocialUser user, String message, ChatChannel.ChannelType type) {
+    public void parseAndSend(SocialUser user, String message, ChatChannel.ChannelType type) {
         parseAndSend(user, text(message), type);
     }
 
@@ -351,7 +351,7 @@ public final class GlobalTextProcessor {
      *                messages
      */
     @Internal
-    public void send(@NotNull Collection<AbstractSocialUser> members, @NotNull Component message,
+    public void send(@NotNull Collection<SocialUser> members, @NotNull Component message,
             @NotNull ChatChannel.ChannelType type, @Nullable ChatChannel channel) {
         if (message.equals(Component.empty()))
             return;
@@ -377,13 +377,20 @@ public final class GlobalTextProcessor {
      * @param channel   the originating channel, or {@code null}
      */
     @Internal
-    public void send(@NotNull AbstractSocialUser recipient, @NotNull Component message,
+    public void send(@NotNull SocialUser recipient, @NotNull Component message,
             @NotNull ChatChannel.ChannelType type, @Nullable ChatChannel channel) {
         send(List.of(recipient), message, type, channel);
     }
 
     // -- deprecated --
 
+    /**
+     * Gets a {@link SocialContextualParser}s matching a specific class.
+     * @param clazz the class to match
+     * @return      a {@link SocialContextualParser} matching the given class, or
+     *              {@code null} otherwise
+     * @deprecated  Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public SocialContextualParser getContextualParserByClass(@NotNull Class<?> clazz) {
         return getContextualParsersWithGroupMembers().stream()
@@ -405,21 +412,50 @@ public final class GlobalTextProcessor {
         return result;
     }
 
+    /**
+     * Gets a specific {@link SocialContextualPlaceholder} by its identifier.
+     * @param identifier the identifier of the {@link SocialContextualPlaceholder}
+     * @return           a {@link Optional} wrapping the {@link SocialContextualPlaceholder} if
+     *                   available, or an empty {@link Optional} otherwise
+     */
     @Deprecated(forRemoval = true)
     public Optional<SocialContextualPlaceholder> getContextualPlaceholder(@NotNull String identifier) {
         return getIdentifiedParser(SocialContextualPlaceholder.class, identifier);
     }
 
+    /**
+     * Gets a specific {@link SocialContextualKeyword} by its identifier.
+     * @param identifier the identifier of the {@link SocialContextualKeyword}
+     * @return           a {@link Optional} wrapping the {@link SocialContextualKeyword} if
+     *                   available, or an empty {@link Optional} otherwise
+     * @deprecated       Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public Optional<SocialContextualKeyword> getContextualKeyword(@NotNull String identifier) {
         return getIdentifiedParser(SocialContextualKeyword.class, identifier);
     }
 
+    /**
+     * Determines whether the text processor has a {@link SocialContextualPlaceholder}
+     * matching the given {@code identifier}.
+     * @param identifier the identifier of the {@link SocialContextualPlaceholder} to check
+     * @return           {@code true} if the {@link SocialContextualPlaceholder} exists,
+     *                   {@code false} otherwise
+     * @deprecated       Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public boolean isContextualPlaceholder(@NotNull String identifier) {
         return getContextualPlaceholder(identifier).isPresent();
     }
 
+    /**
+     * Determines whether the text processor has a {@link SocialContextualKeyword}
+     * matching the given {@code identifier}.
+     * @param keyword the identifier of the {@link SocialContextualKeyword} to check
+     * @return        {@code true} if the {@link SocialContextualKeyword} exists,
+     *                {@code false} otherwise
+     * @deprecated    Use {@link getIdentifiedParser(type, identifier)} instead
+     */
     @Deprecated(forRemoval = true)
     public boolean isContextualKeyword(@NotNull String keyword) {
         return getContextualKeyword(keyword).isPresent();

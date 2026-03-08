@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.network.channel.AbstractNetworkChannelWrapper;
 import ovh.mythmc.social.api.network.channel.identifier.NetworkChannelIdentifiers;
 import ovh.mythmc.social.api.network.payload.encoding.SocialPayloadEncoder;
 import ovh.mythmc.social.api.network.payload.payloads.channel.SocialChannelOpenPayload;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.ConsoleSocialUser;
 import ovh.mythmc.social.api.util.CompanionModUtils;
 
 public final class SocialChannelOpenChannel extends AbstractNetworkChannelWrapper.S2C<SocialChannelOpenPayload> {
@@ -23,17 +23,16 @@ public final class SocialChannelOpenChannel extends AbstractNetworkChannelWrappe
         final String alias = CompanionModUtils.getAliasWithPrefix(payload.channel());
         final String icon = CompanionModUtils.getIconWithoutBrackets(payload.channel());
         final String description = GsonComponentSerializer.gson().serialize(Social.get().getTextProcessor().parse(
-            SocialParserContext.builder(AbstractSocialUser.dummy(payload.channel()), payload.channel().description())
-                .channel(payload.channel())
-                .build()));
+                SocialParserContext.builder(ConsoleSocialUser.get(payload.channel()), payload.channel().description())
+                        .channel(payload.channel())
+                        .build()));
 
         return SocialPayloadEncoder.of(
-            name,
-            alias,
-            icon,
-            description,
-            String.valueOf(payload.channel().color().value())
-        );
+                name,
+                alias,
+                icon,
+                description,
+                String.valueOf(payload.channel().color().value()));
     }
 
 }

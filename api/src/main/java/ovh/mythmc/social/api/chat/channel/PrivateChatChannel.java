@@ -12,12 +12,13 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.format.ChatFormatBuilder;
 import ovh.mythmc.social.api.chat.renderer.feature.ChatRendererFeature;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -25,37 +26,53 @@ import static net.kyori.adventure.text.Component.text;
 @Setter(AccessLevel.PROTECTED)
 public class PrivateChatChannel extends ChatChannelImpl {
 
-    public static PrivateChatChannel getOrCreate(final @NotNull AbstractSocialUser sender, final @NotNull AbstractSocialUser recipient) {
+    public static PrivateChatChannel getOrCreate(final @NotNull SocialUser sender,
+            final @NotNull SocialUser recipient) {
         final var channels = Social.registries().channels().values();
 
         PrivateChatChannel privateChatChannel = channels.stream()
-            .filter(channel -> channel instanceof PrivateChatChannel)
-            .map(channel -> (PrivateChatChannel) channel)
-            .filter(channel -> {
-                if (channel.participant1.uuid().equals(sender.uuid()) && channel.participant2.uuid().equals(recipient.uuid()))
-                    return true;
+                .filter(channel -> channel instanceof PrivateChatChannel)
+                .map(channel -> (PrivateChatChannel) channel)
+                .filter(channel -> {
+                    if (channel.participant1.uuid().equals(sender.uuid())
+                            && channel.participant2.uuid().equals(recipient.uuid()))
+                        return true;
 
-                if (channel.participant1.uuid().equals(recipient.uuid()) && channel.participant2.uuid().equals(sender.uuid()))
-                    return true;
+                    if (channel.participant1.uuid().equals(recipient.uuid())
+                            && channel.participant2.uuid().equals(sender.uuid()))
+                        return true;
 
-                return false;
-            })
-            .findFirst().orElse(null);
+                    return false;
+                })
+                .findFirst().orElse(null);
 
         if (privateChatChannel == null) { // Register if null
             privateChatChannel = new PrivateChatChannel(sender, recipient);
-            Social.registries().channels().register(RegistryKey.identified(privateChatChannel.name()), privateChatChannel);
+            Social.registries().channels().register(RegistryKey.identified(privateChatChannel.name()),
+                    privateChatChannel);
         }
 
         return privateChatChannel;
     }
 
-    private final AbstractSocialUser participant1;
+    private final SocialUser participant1;
 
-    private final AbstractSocialUser participant2;
+    private final SocialUser participant2;
 
-    private PrivateChatChannel(@NotNull AbstractSocialUser sender, @NotNull AbstractSocialUser recipient) {
-        super("PM-" + sender.name() + "-" + recipient.name(), Mutable.of("PM"), List.of(), formattedPmIcon(), hoverText(), NamedTextColor.GREEN, ChatFormatBuilder.empty(), null, NamedTextColor.WHITE, false, List.of());
+    private PrivateChatChannel(@NotNull SocialUser sender, @NotNull SocialUser recipient) {
+        super(
+            "PM-" + sender.username() + "-" + recipient.username(),
+            Mutable.of("PM"),
+            List.of(),
+            formattedPmIcon(),
+            hoverText(),
+            NamedTextColor.GREEN,
+            getFormatBuilder(),
+            Optional.empty(),
+            Optional.of(NamedTextColor.WHITE),
+            false,
+            List.of()
+        );
         this.participant1 = sender;
         this.participant2 = recipient;
         this.addMember(sender);
@@ -63,46 +80,26 @@ public class PrivateChatChannel extends ChatChannelImpl {
     }
 
     @Override
-    protected ChatFormatBuilder formatBuilder() {
-        return ChatFormatBuilder.empty()
-            .append(text("$(channel_icon)"))
-            .appendSpace()
-            .append(text("$(sender)"))
-            .appendSpace()
-            .append(text("$(channel_text_divider)"))
-            .appendSpace()
-            .append(text("$(recipient)"))
-            .append(text(":"))
-            .appendSpace()
-            .append(text("<$(channel_text_color)>"))
-            .injectValue(SocialInjectedValue.placeholder("channel_text_divider", text(Social.get().getConfig().getCommands().getPrivateMessage().arrow())))
-            .injectValue(SocialInjectedValue.placeholder("channel_text_color", text("white")));
-    }
-
-    @Override
     public @NotNull Collection<ChatRendererFeature> supportedRendererFeatures() {
         return List.of(
-            ChatRendererFeature.builder((target, format, message, parser) -> {
-                final TextComponent senderFormattedNickname = (TextComponent) Social.get().getTextProcessor().parse(message.sender(), message.channel(), "$(formatted_nickname)");
-                final TextComponent recipientFormattedNickname = (TextComponent) Social.get().getTextProcessor().parse(getRecipientForSender(message.sender()), message.channel(), "$(formatted_nickname)");
+                ChatRendererFeature.builder((target, format, message, parser) -> {
+                    final TextComponent senderFormattedNickname = (TextComponent) Social.get().getTextProcessor()
+                            .parse(message.sender(), message.channel(), "$(formatted_nickname)");
+                    final TextComponent recipientFormattedNickname = (TextComponent) Social.get().getTextProcessor()
+                            .parse(getRecipientForSender(message.sender()), message.channel(), "$(formatted_nickname)");
 
-                format.injectValue(SocialInjectedValue.placeholder("sender", senderFormattedNickname));
-                format.injectValue(SocialInjectedValue.placeholder("recipient", recipientFormattedNickname));
+                    format.injectValue(SocialInjectedValue.placeholder("sender", senderFormattedNickname));
+                    format.injectValue(SocialInjectedValue.placeholder("recipient", recipientFormattedNickname));
 
-            }).build()
-        );
+                }).build());
     }
 
     @ApiStatus.Internal
-    public AbstractSocialUser getRecipientForSender(@NotNull AbstractSocialUser user) {
+    public SocialUser getRecipientForSender(@NotNull SocialUser user) {
         if (participant1.uuid().equals(user.uuid()))
             return participant2;
 
         return participant1;
-    }
-
-    private static String alias(@NotNull AbstractSocialUser sender, @NotNull AbstractSocialUser recipient) {
-        return "PM";
     }
 
     private static Component formattedPmIcon() {
@@ -115,6 +112,23 @@ public class PrivateChatChannel extends ChatChannelImpl {
 
     private static Component hoverText() {
         return text(Social.get().getConfig().getCommands().getPrivateMessage().hoverText());
+    }
+
+    private static ChatFormatBuilder getFormatBuilder() {
+        return ChatFormatBuilder.empty()
+                .append(text("$(channel_icon)"))
+                .appendSpace()
+                .append(text("$(sender)"))
+                .appendSpace()
+                .append(text("$(channel_text_divider)"))
+                .appendSpace()
+                .append(text("$(recipient)"))
+                .append(text(":"))
+                .appendSpace()
+                .append(text("<$(channel_text_color)>"))
+                .injectValue(SocialInjectedValue.placeholder("channel_text_divider",
+                        text(divider())))
+                .injectValue(SocialInjectedValue.placeholder("channel_text_color", text("white")));
     }
 
 }

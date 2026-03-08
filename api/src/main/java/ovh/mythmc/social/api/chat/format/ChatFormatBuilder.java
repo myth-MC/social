@@ -8,7 +8,7 @@ import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
 import ovh.mythmc.social.api.text.injection.SocialInjectionParsers;
 import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public final class ChatFormatBuilder {
     private ChatFormatBuilder() {
     }
 
-    private final List<SocialInjectedValue<?>> injectedValues = new ArrayList<>();
+    private final List<SocialInjectedValue<?, ?>> injectedValues = new ArrayList<>();
 
     /**
      * Appends each of the given injected values to this format.
@@ -60,8 +60,8 @@ public final class ChatFormatBuilder {
      * @param injectedValues the values to append
      * @return this builder
      */
-    public ChatFormatBuilder injectValues(@NotNull Iterable<? extends SocialInjectedValue<?>> injectedValues) {
-        for (SocialInjectedValue<?> injectedValue : injectedValues) {
+    public ChatFormatBuilder injectValues(@NotNull Iterable<? extends SocialInjectedValue<?, ?>> injectedValues) {
+        for (SocialInjectedValue<?, ?> injectedValue : injectedValues) {
             this.injectedValues.add(injectedValue);
         }
 
@@ -74,7 +74,7 @@ public final class ChatFormatBuilder {
      * @param injectedValue the value to append
      * @return this builder
      */
-    public ChatFormatBuilder injectValue(@NotNull SocialInjectedValue<?> injectedValue) {
+    public ChatFormatBuilder injectValue(@NotNull SocialInjectedValue<?, ?> injectedValue) {
         this.injectedValues.add(injectedValue);
         return this;
     }
@@ -86,7 +86,7 @@ public final class ChatFormatBuilder {
      * @param index         the position to insert at
      * @return this builder
      */
-    public ChatFormatBuilder injectValue(@NotNull SocialInjectedValue<?> injectedValue, int index) {
+    public ChatFormatBuilder injectValue(@NotNull SocialInjectedValue<?, ?> injectedValue, int index) {
         this.injectedValues.add(index, injectedValue);
         return this;
     }
@@ -161,7 +161,7 @@ public final class ChatFormatBuilder {
      * Evaluates all renderer features and then renders the full prefix component.
      *
      * <p>
-     * This is called internally by {@link ChatChannel#prefix} implementations and
+     * This is called internally by {@link ovh.mythmc.social.api.chat.channel.ChatChannel#prefix(SocialUser, SocialRegisteredMessageContext, SocialParserContext)} implementations and
      * should
      * not normally be invoked directly from plugin code.
      *
@@ -172,7 +172,7 @@ public final class ChatFormatBuilder {
      *                          values
      * @return the fully resolved prefix component
      */
-    public Component preRenderPrefix(@NotNull AbstractSocialUser target,
+    public Component preRenderPrefix(@NotNull SocialUser target,
             @NotNull Iterable<? extends ChatRendererFeature> supportedFeatures,
             @NotNull SocialRegisteredMessageContext message, @NotNull SocialParserContext parser) {
         // Inject values into context
@@ -185,7 +185,7 @@ public final class ChatFormatBuilder {
                 feature.handler().handle(target, this, message, parser);
         }
 
-        for (SocialInjectedValue<?> injectedValue : this.injectedValues) {
+        for (SocialInjectedValue<?, ?> injectedValue : this.injectedValues) {
             component = injectedValue.parse(parser.withMessage(component));
         }
 

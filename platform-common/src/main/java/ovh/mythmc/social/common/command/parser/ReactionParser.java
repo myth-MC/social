@@ -14,16 +14,16 @@ import org.incendo.cloud.suggestion.SuggestionProvider;
 import io.leangen.geantyref.TypeToken;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.reaction.Reaction;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 import ovh.mythmc.social.common.command.exception.UnknownReactionException;
 
-public final class ReactionParser implements AggregateParser<AbstractSocialUser, Reaction> {
+public final class ReactionParser implements AggregateParser<SocialUser, Reaction> {
 
     public static ReactionParser reactionParser() {
         return new ReactionParser();
     }
-    
+
     ReactionParser() {
     }
 
@@ -33,45 +33,46 @@ public final class ReactionParser implements AggregateParser<AbstractSocialUser,
     }
 
     @Override
-    public @NonNull List<@NonNull CommandComponent<AbstractSocialUser>> components() {
-        final List<@NonNull CommandComponent<AbstractSocialUser>> components = new ArrayList<>();
+    public @NonNull List<@NonNull CommandComponent<SocialUser>> components() {
+        final List<@NonNull CommandComponent<SocialUser>> components = new ArrayList<>();
 
-        components.add(CommandComponent.<AbstractSocialUser, String>builder()
-            .name("category")
-            .parser(StringParser.stringParser())
-            .suggestionProvider(SuggestionProvider.blockingStrings((ctx, input) -> Social.registries().reactions().namespaceComponents().stream()
-                .filter(namespace -> !namespace.equalsIgnoreCase("hidden"))
-                .toList()))
-            .build()
-        );
+        components.add(CommandComponent.<SocialUser, String>builder()
+                .name("category")
+                .parser(StringParser.stringParser())
+                .suggestionProvider(SuggestionProvider
+                        .blockingStrings((ctx, input) -> Social.registries().reactions().namespaceComponents().stream()
+                                .filter(namespace -> !namespace.equalsIgnoreCase("hidden"))
+                                .toList()))
+                .build());
 
-        components.add(CommandComponent.<AbstractSocialUser, String>builder()
-            .name("identifier")
-            .parser(StringParser.stringParser())
-            .suggestionProvider(SuggestionProvider.blockingStrings((ctx, input) -> {
-                final String category = ctx.get("category");
-                return Social.registries().reactions().valuesByNamespaceComponent(category).stream()
-                    .map(Reaction::name)
-                    .toList();
-            }))
-            .build()
-        );
+        components.add(CommandComponent.<SocialUser, String>builder()
+                .name("identifier")
+                .parser(StringParser.stringParser())
+                .suggestionProvider(SuggestionProvider.blockingStrings((ctx, input) -> {
+                    final String category = ctx.get("category");
+                    return Social.registries().reactions().valuesByNamespaceComponent(category).stream()
+                            .map(Reaction::name)
+                            .toList();
+                }))
+                .build());
 
         return components;
     }
 
     @Override
-    public @NonNull AggregateResultMapper<AbstractSocialUser, Reaction> mapper() {
+    public @NonNull AggregateResultMapper<SocialUser, Reaction> mapper() {
         return (commandContext, aggregateCommandContext) -> {
             final String category = aggregateCommandContext.get("category");
             final String identifier = aggregateCommandContext.get("identifier");
 
-            final Reaction reaction = Social.registries().reactions().value(RegistryKey.namespaced(category, identifier)).orElse(null);
+            final Reaction reaction = Social.registries().reactions()
+                    .value(RegistryKey.namespaced(category, identifier)).orElse(null);
             if (reaction == null)
-                return ArgumentParseResult.failureFuture(new UnknownReactionException(category, identifier, this, commandContext));
+                return ArgumentParseResult
+                        .failureFuture(new UnknownReactionException(category, identifier, this, commandContext));
 
             return ArgumentParseResult.successFuture(reaction);
         };
     }
-    
+
 }

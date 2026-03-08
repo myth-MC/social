@@ -8,8 +8,6 @@ plugins {
 
 dependencies {
     api(libs.de.exlll.configlib.yaml)
-    api(libs.com.j256.ormlite.ormlite.core)
-    api(libs.com.j256.ormlite.ormlite.jdbc)
 }
 
 description = "social-api"

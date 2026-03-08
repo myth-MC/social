@@ -10,7 +10,7 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @AllArgsConstructor
 @Getter
@@ -18,22 +18,22 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "user", getter = "user()"),
-    @CallbackField(field = "type", getter = "type()"),
-    @CallbackField(field = "message", getter = "message()")
+        @CallbackField(field = "user", getter = "user()"),
+        @CallbackField(field = "type", getter = "type()"),
+        @CallbackField(field = "message", getter = "message()")
 })
 public final class UserPresence {
 
-    private Optional<? extends AbstractSocialUser> user;
+    private Optional<? extends SocialUser> user;
 
     private final UserPresence.Type type;
 
     private Optional<Component> message;
 
     public enum Type {
-        LOGIN, 
-        JOIN, 
+        LOGIN,
+        JOIN,
         QUIT
     }
-    
+
 }

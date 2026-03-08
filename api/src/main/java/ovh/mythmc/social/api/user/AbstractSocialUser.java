@@ -1,66 +1,103 @@
 package ovh.mythmc.social.api.user;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.j256.ormlite.table.DatabaseTable;
-
-import lombok.AccessLevel;
-import lombok.Setter;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.audience.ForwardingAudience;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.adventure.SocialAdventureProvider;
-import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
+import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitch;
+import ovh.mythmc.social.api.callback.channel.SocialChannelPostSwitchCallback;
+import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitch;
+import ovh.mythmc.social.api.callback.channel.SocialChannelPreSwitchCallback;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.context.SocialParserContext;
-import ovh.mythmc.social.api.database.model.DatabaseUser;
-import ovh.mythmc.social.api.network.channel.S2CNetworkChannelWrapper;
-import ovh.mythmc.social.api.network.payload.NetworkPayloadWrapper;
+import ovh.mythmc.social.api.chat.channel.GroupChatChannel;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.util.Mutable;
 
-@DatabaseTable(tableName = "users")
-@Setter(AccessLevel.PROTECTED)
-public abstract class AbstractSocialUser extends DatabaseUser implements SocialUser, ForwardingAudience.Single {
+public abstract class AbstractSocialUser implements SocialUser {
 
-    public static Dummy dummy() { return new Dummy(null); }
+    protected final UUID uuid;
+    protected final String username;
+    protected final Class<? extends SocialUser> rendererClass;
 
-    public static Dummy dummy(ChatChannel channel) { return new Dummy(channel); }
+    protected final Set<String> blockedChannelNames = ConcurrentHashMap.newKeySet();
 
-    public abstract <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(final @NotNull S2CNetworkChannelWrapper<T> channel, final @NotNull T payload);
+    protected final Mutable<TextComponent> displayName = Mutable.empty();
+    protected final Mutable<ChatChannel> mainChannel = Mutable.empty();
+    protected final Mutable<Boolean> socialSpy = Mutable.of(false);
+    protected final Mutable<Long> lastMessageTimestamp = Mutable.of(0L);
+    protected final Mutable<UUID> lastPrivateMessageRecipient = Mutable.empty();
 
-    public abstract void playReaction(@NotNull Reaction reaction);
+    protected volatile SocialUserCompanion companion;
 
-    private final Mutable<Long> latestMessageInMilliseconds = Mutable.of(0L);
+    protected AbstractSocialUser(
+            @NotNull UUID uuid,
+            @NotNull String username,
+            @NotNull Class<? extends SocialUser> rendererClass) {
+        this.uuid = uuid;
+        this.username = username;
+        this.rendererClass = rendererClass;
 
-    private ChatChannel mainChannel;
+        this.mainChannel.onChange((oldChannel, newChannel) -> {
+            final var preSwitchCallback = new SocialChannelPreSwitch(this, oldChannel);
+            SocialChannelPreSwitchCallback.INSTANCE.invoke(preSwitchCallback);
 
-    private final Mutable<Boolean> socialSpy = Mutable.of(false);
+            if (preSwitchCallback.cancelled()) {
+                mainChannel.set(oldChannel);
+                return;
+            }
 
-    private SocialUserCompanion companion;
-
-    private UUID latestPrivateMessageRecipient;
-
-    protected AbstractSocialUser() {
-    }
-
-    protected AbstractSocialUser(final UUID uuid) {
-        super(uuid);
-    }
-
-    protected AbstractSocialUser(final UUID uuid, final ChatChannel channel) {
-        super(uuid);
-        this.mainChannel = channel;
+            final var postSwitchCallback = new SocialChannelPostSwitch(this, oldChannel,
+                    newChannel);
+            SocialChannelPostSwitchCallback.INSTANCE.invoke(postSwitchCallback);
+        });
     }
 
     @Override
-    public ChatChannel mainChannel() {
-        return mainChannel;
+    public @NotNull Mutable<ChatChannel> mainChannel() {
+        if (this.mainChannel.isEmpty()) {
+            this.mainChannel.set(Social.get().getChatManager().getDefault());
+        }
+        return this.mainChannel;
+    }
+
+    @Override
+    public @NotNull Optional<GroupChatChannel> groupChannel() {
+        return Social.get().getChatManager().groupChannelByUser(this);
+    }
+
+    @Override
+    public @NotNull UUID uuid() {
+        return this.uuid;
+    }
+
+    @Override
+    public @NotNull String username() {
+        return this.username;
+    }
+
+    @Override
+    public @NotNull Mutable<TextComponent> displayName() {
+        return this.displayName;
+    }
+
+    @Override
+    public @NotNull Optional<SocialUserCompanion> companion() {
+        return Optional.ofNullable(this.companion);
+    }
+
+    @Override
+    public boolean isExpired() {
+        return !isOnline();
+    }
+
+    @Override
+    public void playReaction(@NotNull Reaction reaction) {
+        Social.get().getReactionFactory().play(this, reaction);
     }
 
     @Override
@@ -69,118 +106,27 @@ public abstract class AbstractSocialUser extends DatabaseUser implements SocialU
     }
 
     @Override
-    public @NotNull ArrayList<String> blockedChannels() {
-        return this.blockedChannels;
+    public @NotNull Mutable<Long> lastMessageTimestamp() {
+        return this.lastMessageTimestamp;
     }
 
     @Override
-    public @NotNull Mutable<Long> latestMessageInMilliseconds() {
-        return this.latestMessageInMilliseconds;
+    public @NotNull Mutable<UUID> lastPrivateMessageRecipient() {
+        return this.lastPrivateMessageRecipient;
     }
 
     @Override
-    public boolean clearFromCache() {
-        return !isOnline();
+    public @NotNull Set<String> blockedChannels() {
+        return this.blockedChannelNames;
     }
 
     @Override
-    public @NotNull Optional<SocialUserCompanion> companion() {
-        return Optional.ofNullable(companion);
+    public Class<? extends SocialUser> rendererClass() {
+        return this.rendererClass;
     }
 
-    @Override
-    public @NotNull Optional<GroupChatChannel> group() {
-        return Social.registries().channels().valuesByType(GroupChatChannel.class).stream()
-            .filter(group -> group.isMember(this.uuid))
-            .findAny();
+    void setCompanion(@NotNull SocialUserCompanion companion) {
+        this.companion = companion;
     }
 
-    public Optional<AbstractSocialUser> latestPrivateMessageRecipient() {
-        return Social.get().getUserService().getByUuid(latestPrivateMessageRecipient);
-    }
-
-    protected void setLatestPrivateMessageRecipient(UUID recipientUuid) {
-        this.latestPrivateMessageRecipient = recipientUuid;
-    }
-
-    // Send social messages
-    public void sendParsableMessage(@NotNull SocialParserContext context, boolean playerInput) {
-        Component parsedMessage;
-
-        if (playerInput) {
-            parsedMessage = Social.get().getTextProcessor().parsePlayerInput(context);
-        } else {
-            parsedMessage = Social.get().getTextProcessor().parse(context);
-        }
-
-        Social.get().getTextProcessor().send(this, parsedMessage, context.messageChannelType(), context.channel());
-    }
-
-    public void sendParsableMessage(@NotNull SocialParserContext context) {
-        sendParsableMessage(context, false);
-    }
-
-    public void sendParsableMessage(@NotNull Component component, boolean playerInput) {
-        SocialParserContext context = SocialParserContext.builder(this, component).build();
-
-        sendParsableMessage(context, playerInput);
-    }
-
-    public void sendParsableMessage(@NotNull Component component) {
-        sendParsableMessage(component, false);
-    }
-
-    public void sendParsableMessage(@NotNull String message, boolean playerInput) {
-        sendParsableMessage(Component.text(message), playerInput);
-    }
-
-    public void sendParsableMessage(@NotNull String message) {
-        sendParsableMessage(message, false);
-    }
-
-    public static final class Dummy extends AbstractSocialUser {
-
-        private Dummy(ChatChannel channel) {
-            super(UUID.nameUUIDFromBytes("#Dummy".getBytes()), channel);
-        }
-
-        @Override
-        public @NotNull Class<? extends SocialUser> rendererClass() {
-            return Dummy.class;
-        }
-
-        @Override
-        public @NotNull Audience audience() {
-            return SocialAdventureProvider.get().console();
-        }
-
-        @Override
-        public void name(@NotNull String name) {
-        }
-
-        @Override
-        public boolean checkPermission(@NotNull String permission) {
-            return false;
-        }
-
-        @Override
-        public boolean isOnline() {
-            return false;
-        }
-
-        @Override
-        public @NotNull String name() {
-            return "Dummy";
-        }
-
-        @Override
-        public <T extends NetworkPayloadWrapper.ServerToClient> void sendCustomPayload(@NotNull S2CNetworkChannelWrapper<T> channel, @NotNull T payload) {
-        }
-
-        @Override
-        public void playReaction(@NotNull Reaction reaction) {
-        }
-
-    }
-    
 }

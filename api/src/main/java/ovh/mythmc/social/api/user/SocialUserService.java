@@ -2,67 +2,79 @@ package ovh.mythmc.social.api.user;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 
-import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.chat.channel.SimpleChatChannel;
-import ovh.mythmc.social.api.database.SocialDatabase;
-import ovh.mythmc.social.api.database.reference.UUIDResolver;
+import ovh.mythmc.social.api.identity.IdentityResolver;
 
-public abstract class SocialUserService {
+/**
+ * Represents a class capable of holding all {@link SocialUser}s present
+ * in the server.
+ */
+public interface SocialUserService {
 
-    protected abstract AbstractSocialUser createUserInstance(@NotNull UUID uuid);
+    /**
+     * Gets the {@link IdentityResolver} of this server
+     * @return the {@link IdentityResolver} of this server
+     */
+    @NotNull
+    IdentityResolver identityResolver();
 
-    public abstract UUIDResolver uuidResolver();
+    /**
+     * Gets all current {@link SocialUser}s in this server
+     * @return a {@link Set} with every {@link SocialUser} in the server
+     */
+    @NotNull
+    Set<SocialUser> get();
 
-    public abstract Collection<AbstractSocialUser> get();
+    /**
+     * Gets a specific {@link SocialUser} by its {@link UUID}.
+     * 
+     * <p>
+     * If the {@link SocialUser} doesn't exist, it will be created by the
+     * service.
+     * </p>
+     * @param uuid the {@link UUID} of the user
+     * @return     a {@link SocialUser} matching the {@link UUID}
+     */
+    @NotNull
+    SocialUser getOrCreate(@NotNull UUID uuid);
 
-    public void register(@NotNull AbstractSocialUser user) {
-        SocialDatabase.get().create(user);
-    }
+    /**
+     * Gets a specific {@link SocialUser} by its {@link UUID}.
+     * @param uuid the {@link UUID} of the user
+     * @return     an {@link Optional} containing the {@link SocialUser} if
+     *             present, or an empty {@link Optional} otherwise
+     */
+    @NotNull
+    Optional<SocialUser> getByUuid(@NotNull UUID uuid);
 
-    public AbstractSocialUser register(@NotNull UUID uuid) {
-        final AbstractSocialUser user = createUserInstance(uuid);
-        if (user.cachedDisplayName().isEmpty())
-            user.cachedDisplayName().set("");
-
-        final ChatChannel cachedOrDefaultChannel = Social.get().getChatManager().getCachedOrDefault(user);
-        user.socialSpy().set(false);
-
-        if (cachedOrDefaultChannel == null) {
-            Social.get().getLogger().warn("Default channel '" + cachedOrDefaultChannel + "' is unavailable!");
-        } else {
-            if (!cachedOrDefaultChannel.isMember(user))
-                cachedOrDefaultChannel.addMember(user);
-
-            user.setMainChannel(cachedOrDefaultChannel);
-        }
-
-        register(user);
-        return user;
-    }
-
-    public Optional<AbstractSocialUser> getByName(@NotNull String name) {
-        return Optional.ofNullable(SocialDatabase.get().getUserByName(name));
-    }
-
-    public Optional<AbstractSocialUser> getByUuid(@NotNull UUID uuid) {
-        return Optional.ofNullable(SocialDatabase.get().getUserByUuid(uuid));
-    }
-
-    public Collection<AbstractSocialUser> getSocialSpyUsers() {
+    /**
+     * Gets all {@link SocialUser}s with the spy feature on.
+     * @return a {@link Collection} with all {@link SocialUser}s with the
+     *         spy feature on
+     */
+    default Collection<SocialUser> getSocialSpyUsers() {
         return get().stream()
-            .filter(user -> user.socialSpy().get())
-            .toList();
+                .filter(user -> user.socialSpy().get())
+                .toList();
     }
 
-    public Collection<AbstractSocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
+    /**
+     * Gets all {@link SocialUser}s with the spy feature on in a specific
+     * {@link SimpleChatChannel}.
+     * @param channel the {@link SimpleChatChannel} to get the users from
+     * @return        a {@link Collection} with every {@link SocialUser} with
+     *                the spy feature on in the {@link SimpleChatChannel}
+     */
+    default Collection<SocialUser> getSocialSpyUsersInChannel(@NotNull SimpleChatChannel channel) {
         return get().stream()
-            .filter(user -> user.socialSpy().get() && user.mainChannel() != null && user.mainChannel().equals(channel))
-            .toList();
+                .filter(user -> user.socialSpy().get() && user.mainChannel() != null
+                        && user.mainChannel().equals(channel))
+                .toList();
     }
-    
+
 }

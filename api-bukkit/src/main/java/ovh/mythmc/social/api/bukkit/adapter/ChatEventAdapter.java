@@ -34,7 +34,7 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
     protected abstract void render(E event, @NotNull SocialRegisteredMessageContext messageContext);
 
     protected abstract void cancel(E event);
-    
+
     public void on(E event) {
         if (event.isCancelled())
             return;
@@ -46,17 +46,21 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
             return;
         }
 
-        var channel = sender.mainChannel();
+        var channel = sender.mainChannel().get();
         var plainMessage = PlainTextComponentSerializer.plainText().serialize(message(event));
 
         // Flood filter
-        if (Social.get().getConfig().getChat().getFilter().isEnabled() && Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
-            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter().getFloodFilterCooldownInMilliseconds();
+        if (Social.get().getConfig().getChat().getFilter().isEnabled()
+                && Social.get().getConfig().getChat().getFilter().isFloodFilter()) {
+            int floodFilterCooldownInMilliseconds = Social.get().getConfig().getChat().getFilter()
+                    .getFloodFilterCooldownInMilliseconds();
 
-            if (System.currentTimeMillis() - sender.latestMessageInMilliseconds().get() < floodFilterCooldownInMilliseconds &&
+            if (System.currentTimeMillis() - sender.lastMessageTimestamp().get() < floodFilterCooldownInMilliseconds &&
                     sender.player().isPresent() && !sender.checkPermission("social.filter.bypass")) {
 
-                Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getTypingTooFast(), Social.get().getConfig().getMessages().getChannelType());
+                Social.get().getTextProcessor().parseAndSend(sender, channel,
+                        Social.get().getConfig().getMessages().getErrors().getTypingTooFast(),
+                        Social.get().getConfig().getMessages().getChannelType());
                 cancel(event);
                 return;
             }
@@ -64,7 +68,9 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
 
         // Cancel and show error message if sender is muted
         if (Social.get().getUserManager().isMuted(sender, channel)) {
-            Social.get().getTextProcessor().parseAndSend(sender, channel, Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(), Social.get().getConfig().getMessages().getChannelType());
+            Social.get().getTextProcessor().parseAndSend(sender, channel,
+                    Social.get().getConfig().getMessages().getErrors().getCannotSendMessageWhileMuted(),
+                    Social.get().getConfig().getMessages().getChannelType());
             cancel(event);
             return;
         }
@@ -109,13 +115,14 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         plainMessage = preCallback.plainMessage();
 
         // Get message context
-        final var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.members()), plainMessage, replyId, signedMessage(event));
+        final var message = new SocialMessageContext(sender, channel, Set.copyOf(channel.members()), plainMessage,
+                replyId, signedMessage(event));
 
         // Filter message
         final var filteredMessage = Social.get().getTextProcessor().parsePlayerInput(
-            SocialParserContext.builder(sender, Component.text(plainMessage))
-                .channel(channel)
-                .build());
+                SocialParserContext.builder(sender, Component.text(plainMessage))
+                        .channel(channel)
+                        .build());
 
         // Register message in history
         final var registeredMessage = Social.get().getChatManager().getHistory().register(message, filteredMessage);
@@ -125,26 +132,26 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
         if (replyId != null)
             idToReply = Integer.min(replyId, idToReply);
 
-        final var postCallback = new SocialMessageSend(sender, channel, filteredMessage, registeredMessage.id(), idToReply, event.isCancelled());
+        final var postCallback = new SocialMessageSend(sender, channel, filteredMessage, registeredMessage.id(),
+                idToReply, event.isCancelled());
         SocialMessageSendCallback.INSTANCE.invoke(postCallback);
 
         // Let the impl handle the rest
         render(
-            event, 
-            new SocialRegisteredMessageContext(
-                registeredMessage.id(), 
-                registeredMessage.timestamp(), 
-                registeredMessage.sender(), 
-                registeredMessage.channel(), 
-                registeredMessage.viewers(),
-                registeredMessage.message(),
-                registeredMessage.rawMessage(), 
-                registeredMessage.replyId(),
-                registeredMessage.signedMessage().orElse(null))
-        );
+                event,
+                new SocialRegisteredMessageContext(
+                        registeredMessage.id(),
+                        registeredMessage.timestamp(),
+                        registeredMessage.sender(),
+                        registeredMessage.channel(),
+                        registeredMessage.viewers(),
+                        registeredMessage.message(),
+                        registeredMessage.rawMessage(),
+                        registeredMessage.replyId(),
+                        registeredMessage.signedMessage().orElse(null)));
 
         // Update sender's latest message
-        sender.latestMessageInMilliseconds().set(System.currentTimeMillis());
+        sender.lastMessageTimestamp().set(System.currentTimeMillis());
     }
 
     private static Integer tryParse(String text) {
@@ -154,5 +161,5 @@ public abstract class ChatEventAdapter<E extends PlayerEvent & Cancellable> impl
             return 0;
         }
     }
-    
+
 }

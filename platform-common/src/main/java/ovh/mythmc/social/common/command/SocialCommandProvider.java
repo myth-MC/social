@@ -14,44 +14,48 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.InGameSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.commands.*;
 
 @RequiredArgsConstructor
 public final class SocialCommandProvider {
 
-    private final CommandManager<AbstractSocialUser> commandManager;
+    private final CommandManager<SocialUser> commandManager;
 
-    private final Collection<MainCommand<AbstractSocialUser>> commands = List.of(
-        new GroupCommand(),
-        new PMCommand(),
-        new ReactionCommand(),
-        new ReplyCommand(),
-        new SocialCommand()
-    );
+    private final Collection<MainCommand<SocialUser>> commands = List.of(
+            new GroupCommand(),
+            new PMCommand(),
+            new ReactionCommand(),
+            new ReplyCommand(),
+            new SocialCommand());
 
     @ApiStatus.Internal
     public void register() {
         commandManager.captionRegistry().registerProvider(
-            CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_CHANNEL, "Could not find any channel matching '<input>'")
-        );
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_CHANNEL,
+                        "Could not find any channel matching '<input>'"));
 
         commandManager.captionRegistry().registerProvider(
-            CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_IDENTIFIED_PARSER, "Could not find any identified parser matching '<input>'")
-        );
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_IDENTIFIED_PARSER,
+                        "Could not find any identified parser matching '<input>'"));
 
         commandManager.captionRegistry().registerProvider(
-            CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_REACTION, "Could not find any reaction matching '<identifier>' belonging to category '<category>'")
-        );
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_REACTION,
+                        "Could not find any reaction matching '<identifier>' belonging to category '<category>'"));
 
         commandManager.captionRegistry().registerProvider(
-            CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_USER, "Could not find any user matching '<input>'")
-        );
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_USER,
+                        "Could not find any user matching '<input>'"));
 
         commandManager.captionRegistry().registerProvider(
-            CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_MESSAGE, "Could not find any registered message identified by '<input>'")
-        );
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_MESSAGE,
+                        "Could not find any registered message identified by '<input>'"));
+
+        commandManager.captionRegistry().registerProvider(
+                CaptionProvider.constantProvider(SocialCaptionKeys.ARGUMENT_PARSE_FAILURE_SUBJECT_IS_SENDER, 
+                        "The subject of this action cannot be the sender"));
 
         commands.forEach(command -> {
             if (command.canRegister())
@@ -62,38 +66,39 @@ public final class SocialCommandProvider {
     public void registerChannelCommand(@NotNull ChatChannel channel) {
         channel.commands().forEach(command -> {
             commandManager.command(
-                commandManager.commandBuilder(command)
-                    .commandDescription(Description.of("Switches your main channel to " + channel.name() + " or sends a message without having to switch"))
-                    .permission(PredicatePermission.of(user -> {
-                        if (channel.permission().isEmpty())
-                            return true;
+                    commandManager.commandBuilder(command)
+                            .commandDescription(Description.of("Switches your main channel to " + channel.name()
+                                    + " or sends a message without manually switching"))
+                            .permission(PredicatePermission.of(user -> {
+                                if (channel.permission().isEmpty())
+                                    return true;
 
-                        return user.checkPermission(channel.permission().get());
-                    }))
-                    .optional("message", StringParser.greedyStringParser())
-                    .handler(ctx -> {
-                        // Send a message without switching channel
-                        if (ctx.contains("message")) {
-                            // Define variables
-                            final String message = ctx.get("message");
-                            final ChatChannel previousChannel = ctx.sender().mainChannel();
+                                return user.checkPermission(channel.permission().get());
+                            }))
+                            .optional("message", StringParser.greedyStringParser(), Description.of("The message that will be sent to " + channel.name()))
+                            .senderType(InGameSocialUser.class)
+                            .handler(ctx -> {
+                                // Send a message without switching channel
+                                if (ctx.contains("message")) {
+                                    // Define variables
+                                    final String message = ctx.get("message");
+                                    final ChatChannel previousChannel = ctx.sender().mainChannel().get();
 
-                            // Quickly switch channel and return after sending message
-                            Social.get().getUserManager().setMainChannel(ctx.sender(), channel, false);
-                            PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
-                            Social.get().getUserManager().setMainChannel(ctx.sender(), previousChannel, false);
-                            return;
-                        }
+                                    // Quickly switch channel and return after sending message
+                                    ctx.sender().mainChannel().set(channel);
+                                    PlatformAdapter.get().sendChatMessage(ctx.sender(), message);
+                                    ctx.sender().mainChannel().set(previousChannel);
+                                    return;
+                                }
 
-                        // Switch channel
-                        Social.get().getUserManager().setMainChannel(ctx.sender(), channel, true);
-                    })
-            );
+                                // Switch channel
+                                Social.get().getUserManager().announceChannelSwitch(ctx.sender(), channel);
+                            }));
         });
     }
 
     public void unregisterChannelCommand(@NotNull ChatChannel channel) {
         channel.commands().forEach(commandManager::deleteRootCommand);
     }
-    
+
 }

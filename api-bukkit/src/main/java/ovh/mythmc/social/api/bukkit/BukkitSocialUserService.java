@@ -1,41 +1,82 @@
 package ovh.mythmc.social.api.bukkit;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import ovh.mythmc.social.api.database.reference.UUIDResolver;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.Social;
+import ovh.mythmc.social.api.identity.IdentityResolver;
+import ovh.mythmc.social.api.scheduler.SocialScheduler;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.api.user.SocialUserService;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class BukkitSocialUserService extends SocialUserService {
+public class BukkitSocialUserService implements SocialUserService {
 
-    public static final BukkitSocialUserService instance = new BukkitSocialUserService();
+    public static final BukkitSocialUserService INSTANCE = new BukkitSocialUserService();
 
-    private final BukkitUUIDResolver uuidResolver = new BukkitUUIDResolver();
+    private BukkitSocialUserService() {
+        SocialScheduler.get().runAsyncTaskLater(() -> {
+            int removed = clearCache();
+            if (Social.get().getConfig().getGeneral().isDebug())
+                Social.get().getLogger().info("{} users were cleared from the cache.", removed);
+        }, 60 * 20); // every minute
+    }
+
+    private final BukkitIdentityResolver identityResolver = new BukkitIdentityResolver();
+    private final Map<UUID, BukkitSocialUser> userMap = new ConcurrentHashMap<>();
 
     @Override
-    public UUIDResolver uuidResolver() {
-        return this.uuidResolver;
+    public @NotNull IdentityResolver identityResolver() {
+        return this.identityResolver;
     }
 
     @Override
-    public Collection<AbstractSocialUser> get() {
-        return Bukkit.getOnlinePlayers().stream()
-            .map(player -> getByUuid(player.getUniqueId()).orElse(null))
-            .filter(Objects::nonNull)
-            .toList();
+    public @NotNull Set<SocialUser> get() {
+        Set<SocialUser> resultSet = new HashSet<>();
+
+        for (BukkitSocialUser user : userMap.values()) {
+            if (!user.isExpired()) {
+                resultSet.add(user);
+            }
+        }
+
+        return Collections.unmodifiableSet(resultSet); 
     }
-    
+
     @Override
-    protected AbstractSocialUser createUserInstance(@NotNull UUID uuid) {
-        return new BukkitSocialUser(uuid);
+    public @NotNull BukkitSocialUser getOrCreate(@NotNull UUID uuid) {
+        return userMap.computeIfAbsent(uuid, userUuid -> {
+            final Player player = Bukkit.getPlayer(uuid);
+            return new BukkitSocialUser(player);
+        });
     }
-    
+
+    @Override
+    public @NotNull Optional<SocialUser> getByUuid(@NotNull UUID uuid) {
+        return Optional.ofNullable(userMap.get(uuid));
+    }
+
+    private int clearCache() {
+        AtomicInteger removed = new AtomicInteger();
+
+        userMap.entrySet().removeIf(entry -> {
+            if (entry.getValue().isExpired()) {
+                removed.incrementAndGet();
+                return true;
+            }
+            return false;
+        });
+
+        return removed.get();
+    }
+
 }

@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 @AllArgsConstructor
 @Getter
@@ -16,13 +16,13 @@ import ovh.mythmc.social.api.user.AbstractSocialUser;
 @Accessors(fluent = true)
 @Callback
 @CallbackFields({
-    @CallbackField(field = "user", getter = "user()"),
-    @CallbackField(field = "deathMessage", getter = "deathMessage()")
+        @CallbackField(field = "user", getter = "user()"),
+        @CallbackField(field = "deathMessage", getter = "deathMessage()")
 })
 public final class UserDeath {
 
-    private final AbstractSocialUser user;
+    private final SocialUser user;
 
     private Component deathMessage;
-    
+
 }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.configuration.section.settings.ServerLinksSettings.ServerLink;
 import ovh.mythmc.social.api.network.channel.NetworkChannelWrapper;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 
 public abstract class PlatformAdapter {
 
@@ -22,10 +22,14 @@ public abstract class PlatformAdapter {
 
     public abstract void registerPayloadChannel(final @NotNull NetworkChannelWrapper channel);
 
-    public abstract void sendServerLinks(@NotNull AbstractSocialUser user, @NotNull Collection<ServerLink> links);
+    public abstract void sendServerLinks(@NotNull SocialUser user, @NotNull Collection<ServerLink> links);
 
-    public abstract void sendAutoCompletions(@NotNull AbstractSocialUser user, @NotNull Collection<String> autoCompletions);
+    public abstract void sendAutoCompletions(@NotNull SocialUser user, @NotNull Collection<String> autoCompletions);
 
-    public abstract void sendChatMessage(@NotNull AbstractSocialUser user, @NotNull String message);
+    public abstract void sendChatMessage(@NotNull SocialUser user, @NotNull String message);
+
+    public abstract void storePreferences(@NotNull SocialUser user);
+
+    public abstract void restorePreferences(@NotNull SocialUser user);
 
 }

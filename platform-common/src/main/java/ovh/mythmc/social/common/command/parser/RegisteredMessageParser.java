@@ -10,13 +10,15 @@ import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
-import ovh.mythmc.social.api.user.AbstractSocialUser;
+import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.command.exception.UnknownMessageException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RegisteredMessageParser implements ArgumentParser<AbstractSocialUser, SocialRegisteredMessageContext>, BlockingSuggestionProvider.Strings<AbstractSocialUser>, ParserDescriptor<AbstractSocialUser, SocialRegisteredMessageContext> {
+public final class RegisteredMessageParser implements ArgumentParser<SocialUser, SocialRegisteredMessageContext>,
+        BlockingSuggestionProvider.Strings<SocialUser>,
+        ParserDescriptor<SocialUser, SocialRegisteredMessageContext> {
 
     public static RegisteredMessageParser registeredMessageParser() {
         return new RegisteredMessageParser();
@@ -26,7 +28,8 @@ public final class RegisteredMessageParser implements ArgumentParser<AbstractSoc
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull SocialRegisteredMessageContext> parse(@NonNull CommandContext<@NonNull AbstractSocialUser> commandContext, @NonNull CommandInput commandInput) {
+    public @NonNull ArgumentParseResult<@NonNull SocialRegisteredMessageContext> parse(
+            @NonNull CommandContext<@NonNull SocialUser> commandContext, @NonNull CommandInput commandInput) {
         final String input = commandInput.readInput();
         int id;
 
@@ -45,7 +48,7 @@ public final class RegisteredMessageParser implements ArgumentParser<AbstractSoc
     }
 
     @Override
-    public @NonNull ArgumentParser<AbstractSocialUser, SocialRegisteredMessageContext> parser() {
+    public @NonNull ArgumentParser<SocialUser, SocialRegisteredMessageContext> parser() {
         return this;
     }
 
@@ -55,7 +58,8 @@ public final class RegisteredMessageParser implements ArgumentParser<AbstractSoc
     }
 
     @Override
-    public @NonNull Iterable<@NonNull String> stringSuggestions(@NonNull CommandContext<AbstractSocialUser> commandContext, @NonNull CommandInput input) {
+    public @NonNull Iterable<@NonNull String> stringSuggestions(@NonNull CommandContext<SocialUser> commandContext,
+            @NonNull CommandInput input) {
         final List<String> suggestions = new ArrayList<>();
         for (int i = 0; i < Social.get().getChatManager().getHistory().get().size(); i++) {
             suggestions.add(String.valueOf(i));

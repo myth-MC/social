@@ -20,7 +20,7 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
         }
 
         return headerFromConfig
-            .appendNewline();
+                .appendNewline();
     }
 
     @Override
@@ -29,61 +29,64 @@ public final class PlayerInfoMenu implements SimpleBookMenu {
         Component author = Component.text("social (myth-MC)");
 
         Component alias = getField(
-            MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getAlias()), 
-            context.target().displayName()
-        );
+                MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getAlias()),
+                context.target().displayNameOrUsername());
 
         Component username = getField(
-            MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getUsername()), 
-            Component.text(context.target().name())
-        );
+                MiniMessage.miniMessage()
+                        .deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getUsername()),
+                Component.text(context.target().username()));
 
         Component messageCount = getField(
-            MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMessageCount()), 
-            Component.text(Social.get().getChatManager().getHistory().getByUser(context.target()).size())
-        );
+                MiniMessage.miniMessage()
+                        .deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMessageCount()),
+                Component.text(Social.get().getChatManager().getHistory().getByUser(context.target()).size()));
 
         Component mainChannel = getField(
-            MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMainChannel()),
-            Component.text(context.target().mainChannel().name())
-        );
+                MiniMessage.miniMessage()
+                        .deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getMainChannel()),
+                Component.text(context.target().mainChannel().get().name()));
 
         Component visibleChannels = getField(
-            MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannels()),
-            Component.empty()
-        );
+                MiniMessage.miniMessage()
+                        .deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannels()),
+                Component.empty());
 
-        Component visibleChannelsHoverText = MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannelsHoverText());
+        Component visibleChannelsHoverText = MiniMessage.miniMessage()
+                .deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getVisibleChannelsHoverText());
 
         for (ChatChannel channel : Social.get().getChatManager().getVisibleChannels(context.target())) {
-            SocialParserContext parserContext = SocialParserContext.builder(context.target(), channel.icon().append(Component.text(" " + channel.name(), channel.color())))
-                .build();
+            SocialParserContext parserContext = SocialParserContext
+                    .builder(context.target(),
+                            channel.icon().append(Component.text(" " + channel.name(), channel.color())))
+                    .build();
 
             visibleChannelsHoverText = visibleChannelsHoverText
-                .appendNewline()
-                .append(getField(
-                    Social.get().getTextProcessor().parse(parserContext), 
-                    null
-                ));
+                    .appendNewline()
+                    .append(getField(
+                            Social.get().getTextProcessor().parse(parserContext),
+                            null));
         }
 
         Component playerInfo = Component.empty()
-            .append(username)
-            .appendNewline()
-            .append(alias)
-            .appendNewline()
-            .append(mainChannel)
-            .appendNewline()
-            .append(messageCount
-                .hoverEvent(MiniMessage.miniMessage().deserialize(Social.get().getConfig().getMenus().getPlayerInfo().getClickToSeeMessageHistory()).asHoverEvent())
-                .clickEvent(ClickEvent.runCommand("/social:social history player " + context.target().name()))
-            )
-            .appendNewline()
-            .append(visibleChannels
-                .hoverEvent(visibleChannelsHoverText.asHoverEvent())
-            );
+                .append(username)
+                .appendNewline()
+                .append(alias)
+                .appendNewline()
+                .append(mainChannel)
+                .appendNewline()
+                .append(messageCount
+                        .hoverEvent(MiniMessage.miniMessage()
+                                .deserialize(Social.get().getConfig().getMenus().getPlayerInfo()
+                                        .getClickToSeeMessageHistory())
+                                .asHoverEvent())
+                        .clickEvent(
+                                ClickEvent.runCommand("/social:social history player " + context.target().username())))
+                .appendNewline()
+                .append(visibleChannels
+                        .hoverEvent(visibleChannelsHoverText.asHoverEvent()));
 
         return Book.book(title, author, playerInfo);
     }
-    
+
 }

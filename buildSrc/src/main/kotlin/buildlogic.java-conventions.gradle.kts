@@ -8,43 +8,8 @@ plugins {
     id("com.gradleup.shadow")
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url = uri("https://jitpack.io")
-    }
-
-    maven {
-        url = uri("https://repo.codemc.io/repository/maven-releases/")
-    }
-
-    maven {
-        url = uri("https://repo.mythmc.ovh/releases/")
-    }
-
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
-    }
-
-    maven {
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    }
-
-    maven {
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    }
-
-    maven {
-        url = uri("https://nexus.scarsz.me/content/groups/public/")
-    }
-
-    maven {
-        url = uri("https://repo.papermc.io/repository/maven-snapshots/")
-    }
-}
-
 dependencies {
-    api("ovh.mythmc:gestalt-loader:0.2.2")
+    api("ovh.mythmc:gestalt-loader:0.3.2")
     compileOnly("org.projectlombok:lombok:1.18.36")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
     compileOnly("org.jetbrains:annotations:24.1.0")
@@ -52,47 +17,40 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
     compileOnly("net.kyori:adventure-text-serializer-plain:4.18.0")
     compileOnly("net.kyori:adventure-text-serializer-gson:4.18.0")
-    compileOnly("ovh.mythmc:gestalt-api:0.2.2")
+    compileOnly("ovh.mythmc:gestalt-api:0.3.2")
     compileOnly("ovh.mythmc:callbacks-lib:0.1.2")
     annotationProcessor("ovh.mythmc:callbacks-lib:0.1.2")
 }
 
-group = "ovh.mythmc"
-version = providers.gradleProperty("version").get()
-java.sourceCompatibility = JavaVersion.VERSION_17
+afterEvaluate {
 
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-        pom {
-            name = "social"
-            description = "Enhance your server's communication with social. Modular, customizable and feature-packed."
-            url = "https://github.com/myth-MC/social"
-            licenses {
-                license {
-                    name = "GNU General Public License v3.0"
-                    url = "https://www.gnu.org/licenses/gpl-3.0.html#license-text"
+    if (project.name == "social-api" ||
+        project.name == "social-api-bukkit" ||
+        project.name == "social-common") {
+
+        extensions.configure<PublishingExtension>("publishing") {
+
+            publications {
+                create<MavenPublication>("maven") {
+                    from(components["java"])
                 }
             }
-        }
-    }
-    repositories {
-        val username = providers.gradleProperty("myth-mc-username").orNull
-        val password = providers.gradleProperty("myth-mc-password").orNull
 
-        if (username != null && password != null) {
-            maven {
-                val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
-                val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
+            repositories {
+                maven {
+                    val releasesRepoUrl = uri("https://repo.mythmc.ovh/releases/")
+                    val snapshotsRepoUrl = uri("https://repo.mythmc.ovh/snapshots")
 
-                url = if (version.toString().contains("db") || version.toString().contains("rc"))
-                    snapshotsRepoUrl
-                else
-                    releasesRepoUrl
+                    url = if (project.version.toString().contains("db") ||
+                              project.version.toString().contains("rc"))
+                        snapshotsRepoUrl
+                    else
+                        releasesRepoUrl
 
-                credentials {
-                    this.username = username
-                    this.password = password
+                    credentials {
+                        username = findProperty("mythMcUser") as String?
+                        password = findProperty("mythMcPassword") as String?
+                    }
                 }
             }
         }
@@ -106,12 +64,4 @@ tasks.shadowJar {
     for (relocation in Relocations.relocations) {
         relocate(relocation.key, relocation.value)
     }
-}
-
-tasks.withType<JavaCompile>() {
-    options.encoding = "UTF-8"
-}
-
-tasks.withType<Javadoc>() {
-    options.encoding = "UTF-8"
 }

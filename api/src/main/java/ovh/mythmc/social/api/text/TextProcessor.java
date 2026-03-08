@@ -26,7 +26,7 @@ import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
  * {@link ovh.mythmc.social.api.context.SocialParserContext}.
  *
  * <p>
- * Use the {@link #builder()} to create instances, or call
+ * Use the {@link #builder() } to create instances, or call
  * {@link #defaultProcessor()} for a processor that mirrors the global parser
  * configuration.
  * Parsers can be excluded individually via the {@code exclusions} builder
@@ -38,7 +38,7 @@ import ovh.mythmc.social.api.text.parser.SocialIdentifiedParser;
 @With
 @Setter(AccessLevel.PRIVATE)
 @Accessors(fluent = true)
-public class CustomTextProcessor {
+public class TextProcessor {
 
     @Builder.Default
     private final List<SocialContextualParser> parsers = new ArrayList<>();
@@ -49,14 +49,18 @@ public class CustomTextProcessor {
     @Builder.Default
     private boolean restrictToPlayerInputParsers = false;
 
+    public static TextProcessorBuilder builder() {
+        return new TextProcessorBuilder();
+    }
+
     /**
      * Creates a processor that uses the same parser list as
      * {@link ovh.mythmc.social.api.text.GlobalTextProcessor#getContextualParsers()}.
      *
      * @return a default processor
      */
-    public static CustomTextProcessor defaultProcessor() {
-        return CustomTextProcessor.builder()
+    public static TextProcessor defaultProcessor() {
+        return TextProcessor.builder()
                 .parsers(Social.get().getTextProcessor().getContextualParsers())
                 .build();
     }
@@ -140,14 +144,16 @@ public class CustomTextProcessor {
                 .findFirst();
     }
 
-    // -- private helpers --
-
-    public List<SocialContextualParser> getWithExclusions() {
+    List<SocialContextualParser> getWithExclusions() { // todo: move to ParseExecution?
         if (exclusions.isEmpty())
             return List.copyOf(parsers);
         return parsers.stream()
                 .filter(parser -> !exclusions.contains(parser.getClass()))
                 .toList();
+    }
+
+    public static class TextProcessorBuilder {
+
     }
 
 }
