@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img src="https://assets.mythmc.ovh/social/logo-small.png">
+    <img src="https://assets.mythmc.ovh/social/logo-small.png?1">
     <h1>social</h1>
     <a href="https://github.com/myth-MC/social/releases/latest"><img src="https://img.shields.io/github/v/release/myth-MC/social" alt="Latest release" /></a>
     <a href="https://github.com/myth-MC/social/pulls"><img src="https://img.shields.io/github/issues-pr/myth-MC/social" alt="Pull requests" /></a>
