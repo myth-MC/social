@@ -29,11 +29,9 @@ public class ConsoleSocialUser extends AbstractSocialUser {
         return console;
     }
 
-    private final static UUID uuid = UUID.nameUUIDFromBytes("#CONSOLE".getBytes(StandardCharsets.UTF_8));
-    private final static String username = "CONSOLE";
 
     protected ConsoleSocialUser() {
-        super(uuid, username, ConsoleSocialUser.class);
+        super(UUID.nameUUIDFromBytes("#CONSOLE".getBytes(StandardCharsets.UTF_8)), "CONSOLE", ConsoleSocialUser.class);
 
         // Configure extra parameters
         this.socialSpy.set(true);
