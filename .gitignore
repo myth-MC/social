@@ -37,6 +37,7 @@ build/
 
 ### Gradle ###
 /.gradle/
+*/bin/*
 buildSrc/.gradle
 
 ### Mac OS ###
