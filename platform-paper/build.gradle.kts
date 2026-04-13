@@ -15,6 +15,14 @@ dependencies {
     compileOnly(libs.io.papermc.paper.paper.api)
 }
 
+plugins.withType<JavaPlugin> {
+        the<JavaPluginExtension>().apply {
+            sourceCompatibility = JavaVersion.VERSION_25
+            targetCompatibility = JavaVersion.VERSION_25
+        }
+    }
+
+
 tasks {
     processResources {
         val replacements = mapOf(

@@ -40,6 +40,10 @@ allprojects {
         maven {
             url = uri("https://repo.papermc.io/repository/maven-snapshots/")
         }
+
+        maven {
+            url = uri("https://repo.papermc.io/repository/maven-public/")
+        }
     }
 }
 
