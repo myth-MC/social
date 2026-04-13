@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.callback.handler.AnvilRenameHandler;
 
 @Feature(group = "social", identifier = "EMOJIS")
-@FeatureConditionVersion(versions = "1.21")
+@FeatureConditionVersion(versions = { "1.21", "26.1" })
 public final class AnvilFeature {
 
     private final AnvilRenameHandler anvilRenameHandler = new AnvilRenameHandler();

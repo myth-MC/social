@@ -9,7 +9,7 @@ import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.common.callback.handler.ServerLinksHandler;
 
 @Feature(group = "social", identifier = "SERVER_LINKS")
-@FeatureConditionVersion(versions = "1.21")
+@FeatureConditionVersion(versions = { "1.21", "26.1" })
 public final class ServerLinksFeature {
 
     private final ServerLinksHandler serverLinksHandler = new ServerLinksHandler();

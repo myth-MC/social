@@ -11,7 +11,7 @@ import ovh.mythmc.social.common.callback.handler.ReactionHandler;
 import java.util.List;
 
 @Feature(group = "social", identifier = "REACTIONS")
-@FeatureConditionVersion(versions = "1.21")
+@FeatureConditionVersion(versions = { "1.21", "26.1" })
 public final class ReactionsFeature {
 
     private final ReactionHandler reactionHandler = new ReactionHandler();
