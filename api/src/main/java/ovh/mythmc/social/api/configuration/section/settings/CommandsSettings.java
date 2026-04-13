@@ -2,10 +2,12 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Settings for specific command behaviors.
+ */
 @Configuration
-@Getter
 public class CommandsSettings {
 
     @Comment("/pm")
@@ -13,6 +15,14 @@ public class CommandsSettings {
 
     @Comment("/reaction")
     private SimpleCommand reaction = new SimpleCommand(true);
+
+    public @NotNull PrivateMessageCommand getPrivateMessage() {
+        return privateMessage;
+    }
+
+    public @NotNull SimpleCommand getReaction() {
+        return reaction;
+    }
 
     public record PrivateMessageCommand(boolean enabled,
                                         String prefix,
@@ -22,3 +32,4 @@ public class CommandsSettings {
     public record SimpleCommand(boolean enabled) { }
 
 }
+

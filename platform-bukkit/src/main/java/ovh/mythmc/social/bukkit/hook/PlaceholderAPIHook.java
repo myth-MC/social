@@ -1,6 +1,5 @@
 package ovh.mythmc.social.bukkit.hook;
 
-import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.imdanix.text.MiniTranslator;
@@ -20,16 +19,32 @@ import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.parser.SocialContextualParser;
 
-@Getter
+/**
+ * Hook for PlaceholderAPI integration.
+ */
 public final class PlaceholderAPIHook implements SocialContextualParser, Listener {
 
     private final SocialPlaceholderExpansion expansion = new SocialPlaceholderExpansion();
 
-    @Getter
+    public @NotNull SocialPlaceholderExpansion getExpansion() {
+        return expansion;
+    }
+
     public class SocialPlaceholderExpansion extends PlaceholderExpansion {
-        private final String identifier = "social";
-        private final String author = "myth-MC";
-        private final String version = Social.get().version();
+        @Override
+        public @NotNull String getIdentifier() {
+            return "social";
+        }
+
+        @Override
+        public @NotNull String getAuthor() {
+            return "myth-MC";
+        }
+
+        @Override
+        public @NotNull String getVersion() {
+            return Social.get().version();
+        }
 
         @Override
         public String onRequest(OfflinePlayer player, @NotNull String params) {
@@ -137,3 +152,4 @@ public final class PlaceholderAPIHook implements SocialContextualParser, Listene
     }
 
 }
+

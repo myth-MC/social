@@ -1,10 +1,12 @@
 package ovh.mythmc.social.api.configuration.section.messages;
 
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Messages relating to errors.
+ */
 @Configuration
-@Getter
 public class ErrorsMessages {
 
     private String cannotBeRunFromConsole = "$(error_prefix) This command cannot be run from console.";
@@ -67,4 +69,125 @@ public class ErrorsMessages {
 
     private String cannotSendMessageWhileMuted = "$(error_prefix) <red>You cannot send messages in <yellow>$(channel)</yellow> since you have been muted.</red>";
 
+    public @NotNull String getCannotBeRunFromConsole() {
+        return cannotBeRunFromConsole;
+    }
+
+    public @NotNull String getFeatureNotAvailable() {
+        return featureNotAvailable;
+    }
+
+    public @NotNull String getUnexpectedError() {
+        return unexpectedError;
+    }
+
+    public @NotNull String getInvalidCommand() {
+        return invalidCommand;
+    }
+
+    public @NotNull String getInvalidArgument() {
+        return invalidArgument;
+    }
+
+    public @NotNull String getUnknownAnnouncement() {
+        return unknownAnnouncement;
+    }
+
+    public @NotNull String getNotEnoughPermission() {
+        return notEnoughPermission;
+    }
+
+    public @NotNull String getNotEnoughArguments() {
+        return notEnoughArguments;
+    }
+
+    public @NotNull String getTooManyArguments() {
+        return tooManyArguments;
+    }
+
+    public @NotNull String getNicknameAlreadyInUse() {
+        return nicknameAlreadyInUse;
+    }
+
+    public @NotNull String getNicknameTooLong() {
+        return nicknameTooLong;
+    }
+
+    public @NotNull String getTypingTooFast() {
+        return typingTooFast;
+    }
+
+    public @NotNull String getPlayerNotFound() {
+        return playerNotFound;
+    }
+
+    public @NotNull String getChooseAnotherPlayer() {
+        return chooseAnotherPlayer;
+    }
+
+    public @NotNull String getChannelDoesNotExist() {
+        return channelDoesNotExist;
+    }
+
+    public @NotNull String getUnknownReaction() {
+        return unknownReaction;
+    }
+
+    public @NotNull String getAlreadyBelongsToAGroup() {
+        return alreadyBelongsToAGroup;
+    }
+
+    public @NotNull String getDoesNotBelongToAGroup() {
+        return doesNotBelongToAGroup;
+    }
+
+    public @NotNull String getGroupDoesNotExist() {
+        return groupDoesNotExist;
+    }
+
+    public @NotNull String getGroupIsFull() {
+        return groupIsFull;
+    }
+
+    public @NotNull String getGroupAliasTooLong() {
+        return groupAliasTooLong;
+    }
+
+    public @NotNull String getUserIsAlreadyIgnored() {
+        return userIsAlreadyIgnored;
+    }
+
+    public @NotNull String getUserIsNotIgnored() {
+        return userIsNotIgnored;
+    }
+
+    public @NotNull String getCannotIgnoreYourself() {
+        return cannotIgnoreYourself;
+    }
+
+    public @NotNull String getUserHasIgnoredYou() {
+        return userHasIgnoredYou;
+    }
+
+    public @NotNull String getUserIsAlreadyMuted() {
+        return userIsAlreadyMuted;
+    }
+
+    public @NotNull String getCannotMuteYourself() {
+        return cannotMuteYourself;
+    }
+
+    public @NotNull String getUserExcemptFromMute() {
+        return userExcemptFromMute;
+    }
+
+    public @NotNull String getUserIsNotMuted() {
+        return userIsNotMuted;
+    }
+
+    public @NotNull String getCannotSendMessageWhileMuted() {
+        return cannotSendMessageWhileMuted;
+    }
+
 }
+

@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for the chat module.
+ */
 @Configuration
-@Getter
 public class ChatSettings {
 
     @Comment("Whether the chat module should be enabled")
@@ -64,6 +66,74 @@ public class ChatSettings {
     @Comment("Filter module")
     private ChatFilterSettings filter = new ChatFilterSettings();
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public @NotNull String getDefaultChannel() {
+        return defaultChannel;
+    }
+
+    public @NotNull String getChannelHoverText() {
+        return channelHoverText;
+    }
+
+    public @NotNull String getClickableNicknameCommand() {
+        return clickableNicknameCommand;
+    }
+
+    public @NotNull String getClickableNicknameHoverText() {
+        return clickableNicknameHoverText;
+    }
+
+    public @NotNull String getPlayerAliasWarningHoverText() {
+        return playerAliasWarningHoverText;
+    }
+
+    public @NotNull String getPlayerNicknameFormat() {
+        return playerNicknameFormat;
+    }
+
+    public @NotNull String getReplyIcon() {
+        return replyIcon;
+    }
+
+    public @NotNull String getReplyDescriptor() {
+        return replyDescriptor;
+    }
+
+    public @NotNull String getReplyHoverText() {
+        return replyHoverText;
+    }
+
+    public @NotNull List<Channel> getChannels() {
+        return channels;
+    }
+
+    public boolean isMentions() {
+        return mentions;
+    }
+
+    public @NotNull String getMentionSound() {
+        return mentionSound;
+    }
+
+    public boolean isPlayerFormatOptions() {
+        return playerFormatOptions;
+    }
+
+    public boolean isClickableUrls() {
+        return clickableUrls;
+    }
+
+    public @NotNull ChatGroupSettings getGroups() {
+        return groups;
+    }
+
+    public @NotNull ChatFilterSettings getFilter() {
+        return filter;
+    }
+
     public record Channel(String name,
                           String alias,
                           String inherit,
@@ -79,3 +149,4 @@ public class ChatSettings {
                           Boolean joinByDefault) { }
 
 }
+

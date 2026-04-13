@@ -2,10 +2,12 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Settings for customized system messages.
+ */
 @Configuration
-@Getter
 public class SystemMessagesSettings {
 
     @Comment("Whether customized system messages should be enabled")
@@ -32,4 +34,37 @@ public class SystemMessagesSettings {
     @Comment({"Message that will be sent to everyone when a player dies", "%s = Vanilla death message"})
     private String deathMessage = "<dark_gray>[<white>:skull:</white>]</dark_gray> %s";
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public @NotNull String getChannelType() {
+        return channelType;
+    }
+
+    public boolean isCustomizeJoinMessage() {
+        return customizeJoinMessage;
+    }
+
+    public @NotNull String getJoinMessage() {
+        return joinMessage;
+    }
+
+    public boolean isCustomizeQuitMessage() {
+        return customizeQuitMessage;
+    }
+
+    public @NotNull String getQuitMessage() {
+        return quitMessage;
+    }
+
+    public boolean isCustomizeDeathMessage() {
+        return customizeDeathMessage;
+    }
+
+    public @NotNull String getDeathMessage() {
+        return deathMessage;
+    }
+
 }
+

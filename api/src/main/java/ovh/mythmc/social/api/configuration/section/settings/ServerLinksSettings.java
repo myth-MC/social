@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for customized server links.
+ */
 @Configuration
-@Getter
 public class ServerLinksSettings {
 
     @Comment({"Whether custom server links should be enabled", "Server links are a feature introduced in snapshot 24w21a that adds custom links to the pause menu"})
@@ -21,6 +23,14 @@ public class ServerLinksSettings {
             new ServerLink(null, ServerLink.Type.COMMUNITY, "https://discord.com"),
             new ServerLink(null, ServerLink.Type.SUPPORT, "https://example.com")
     );
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public @NotNull List<ServerLink> getLinks() {
+        return links;
+    }
 
     public record ServerLink(String displayName, Type type, String url) { 
 
@@ -41,3 +51,4 @@ public class ServerLinksSettings {
     }
 
 }
+

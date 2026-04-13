@@ -1,7 +1,5 @@
 package ovh.mythmc.social.api.announcements;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 
 import ovh.mythmc.social.api.Social;
@@ -23,16 +21,16 @@ import java.util.concurrent.TimeUnit;
  * Access the singleton via
  * {@link ovh.mythmc.social.api.Social#getAnnouncementManager()}.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AnnouncementManager {
-
-    private final ScheduledExecutorService asyncScheduler = Executors.newScheduledThreadPool(1);
 
     public static final AnnouncementManager instance = new AnnouncementManager();
 
+    private final ScheduledExecutorService asyncScheduler = Executors.newScheduledThreadPool(1);
     private int index = 0;
-
     private boolean running = false;
+
+    private AnnouncementManager() {
+    }
 
     private void performTask() {
         if (!Social.get().getConfig().getAnnouncements().isEnabled())

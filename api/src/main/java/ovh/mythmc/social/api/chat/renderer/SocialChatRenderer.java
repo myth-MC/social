@@ -4,12 +4,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.context.SocialRegisteredMessageContext;
@@ -59,7 +56,6 @@ public interface SocialChatRenderer<T> {
      *
      * @param <T> the audience target type
      */
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     final class Builder<T> {
 
         private final SocialChatRenderer<T> renderer;
@@ -67,6 +63,10 @@ public interface SocialChatRenderer<T> {
         private Predicate<SocialRegisteredMessageContext> renderIf;
 
         private Function<Audience, MapResult<T>> map;
+
+        private Builder(SocialChatRenderer<T> renderer) {
+            this.renderer = renderer;
+        }
 
         /**
          * Sets a predicate that controls whether this renderer runs for a given
@@ -110,7 +110,6 @@ public interface SocialChatRenderer<T> {
      *
      * @param <T> the audience target type
      */
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     final class Registered<T> {
 
         private final SocialChatRenderer<T> renderer;
@@ -118,6 +117,12 @@ public interface SocialChatRenderer<T> {
         private final Predicate<SocialRegisteredMessageContext> renderIf;
 
         private final Function<Audience, MapResult<T>> map;
+
+        private Registered(SocialChatRenderer<T> renderer, Predicate<SocialRegisteredMessageContext> renderIf, Function<Audience, MapResult<T>> map) {
+            this.renderer = renderer;
+            this.renderIf = renderIf;
+            this.map = map;
+        }
 
         /**
          * Attempts to map the given audience to a target of type {@code T}.
@@ -147,7 +152,7 @@ public interface SocialChatRenderer<T> {
                 return null;
 
             if (result instanceof MapResult.Failure<?> failure) {
-                Social.get().getLogger().error(failure.debugMessage);
+                Social.get().getLogger().error(failure.getDebugMessage());
 
                 return null;
             }
@@ -187,7 +192,7 @@ public interface SocialChatRenderer<T> {
     abstract class MapResult<T> {
 
         /** Returns the mapped target, or {@code null} for ignore/failure results. */
-        public abstract T result();
+        public abstract @Nullable T result();
 
         /**
          * Creates a successful mapping result.
@@ -232,35 +237,58 @@ public interface SocialChatRenderer<T> {
             return this instanceof MapResult.Failure;
         }
 
-        @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-        @Getter
-        @Accessors(fluent = true)
         private final static class Success<T> extends MapResult<T> {
 
             private final T result;
 
+            private Success(T result) {
+                this.result = result;
+            }
+
+            @Override
+            public T result() {
+                return result;
+            }
+
         }
 
-        @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-        @Getter
-        @Accessors(fluent = true)
         private final static class Ignore<T> extends MapResult<T> {
 
             private final T result;
 
+            private Ignore(T result) {
+                this.result = result;
+            }
+
+            @Override
+            public T result() {
+                return result;
+            }
+
         }
 
-        @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-        @Getter
-        @Accessors(fluent = true)
         private final static class Failure<T> extends MapResult<T> {
 
             private final T result;
-
             private final String debugMessage;
+
+            private Failure(T result, String debugMessage) {
+                this.result = result;
+                this.debugMessage = debugMessage;
+            }
+
+            @Override
+            public T result() {
+                return result;
+            }
+
+            public String getDebugMessage() {
+                return debugMessage;
+            }
 
         }
 
     }
 
 }
+

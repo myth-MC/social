@@ -1,10 +1,12 @@
 package ovh.mythmc.social.api.configuration.section.messages;
 
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Messages relating to general information.
+ */
 @Configuration
-@Getter
 public class InfoMessages {
 
     private String playerJoinedGroup = "$(group_icon) <gray>$(clickable_nickname) has joined this group.</gray>";
@@ -25,4 +27,41 @@ public class InfoMessages {
 
     private String userOpenedPrivateChannel = "$(info_prefix) <gray>You have opened a <green>private channel</green> with $(formatted_nickname).</gray>";
 
+    public @NotNull String getPlayerJoinedGroup() {
+        return playerJoinedGroup;
+    }
+
+    public @NotNull String getPlayerLeftGroup() {
+        return playerLeftGroup;
+    }
+
+    public @NotNull String getGroupLeaderChange() {
+        return groupLeaderChange;
+    }
+
+    public @NotNull String getGroupDisbanded() {
+        return groupDisbanded;
+    }
+
+    public @NotNull String getUserMuted() {
+        return userMuted;
+    }
+
+    public @NotNull String getUserUnmuted() {
+        return userUnmuted;
+    }
+
+    public @NotNull String getUserMutedGlobally() {
+        return userMutedGlobally;
+    }
+
+    public @NotNull String getUserUnmutedGlobally() {
+        return userUnmutedGlobally;
+    }
+
+    public @NotNull String getUserOpenedPrivateChannel() {
+        return userOpenedPrivateChannel;
+    }
+
 }
+

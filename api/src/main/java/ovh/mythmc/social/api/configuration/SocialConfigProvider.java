@@ -2,7 +2,6 @@ package ovh.mythmc.social.api.configuration;
 
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
-import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 
@@ -25,7 +24,9 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-@Getter
+/**
+ * Provider for social system configuration.
+ */
 public final class SocialConfigProvider {
 
     private final File pluginFolder;
@@ -84,6 +85,71 @@ public final class SocialConfigProvider {
 
     public SocialConfigProvider(final @NotNull File pluginFolder) {
         this.pluginFolder = pluginFolder;
+    }
+
+    public @NotNull File getPluginFolder() {
+        return pluginFolder;
+    }
+
+    public @NotNull YamlConfigurationProperties getProperties() {
+        return properties;
+    }
+
+    @Deprecated(since = "0.4", forRemoval = true)
+    public SocialSettings getSettings() {
+        return settings;
+    }
+
+    public @NotNull SocialMessages getMessages() {
+        return messages;
+    }
+
+    public @NotNull SocialMenus getMenus() {
+        return menus;
+    }
+
+    public @NotNull GeneralSettings getGeneral() {
+        return general;
+    }
+
+    public @NotNull ChatSettings getChat() {
+        return chat;
+    }
+
+    public @NotNull ReactionsSettings getReactions() {
+        return reactions;
+    }
+
+    public @NotNull EmojiSettings getEmojis() {
+        return emojis;
+    }
+
+    public @NotNull MOTDSettings getMotd() {
+        return motd;
+    }
+
+    public @NotNull AnnouncementsSettings getAnnouncements() {
+        return announcements;
+    }
+
+    public @NotNull SystemMessagesSettings getSystemMessages() {
+        return systemMessages;
+    }
+
+    public @NotNull ServerLinksSettings getServerLinks() {
+        return serverLinks;
+    }
+
+    public @NotNull TextReplacementSettings getTextReplacement() {
+        return textReplacement;
+    }
+
+    public @NotNull CommandsSettings getCommands() {
+        return commands;
+    }
+
+    public @NotNull DatabaseSettings getDatabaseSettings() {
+        return databaseSettings;
     }
 
     private <T> T updateSettingsFile(String fileName, Class<T> clazz) {
@@ -238,3 +304,4 @@ public final class SocialConfigProvider {
     }
 
 }
+

@@ -1,9 +1,8 @@
 package ovh.mythmc.social.api.callback.message;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
@@ -33,10 +32,6 @@ import ovh.mythmc.social.api.user.SocialUser;
  *     <li><b>cancelled:</b> Whether this event has been cancelled, preventing the message from being sent.</li>
  * </ul>
  */
-@AllArgsConstructor
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "sender", getter = "sender()"),
@@ -46,19 +41,14 @@ import ovh.mythmc.social.api.user.SocialUser;
         @CallbackField(field = "replyId", getter = "replyId()"),
         @CallbackField(field = "cancelled", getter = "cancelled()")
 })
-public final class SocialMessageSend {
-
-    private final SocialUser sender;
-
-    private final ChatChannel channel;
-
-    private final Component message;
-
-    private final int messageId;
-
-    private final Integer replyId;
-
-    private final boolean cancelled;
+public record SocialMessageSend(
+    @NotNull SocialUser sender,
+    @NotNull ChatChannel channel,
+    @NotNull Component message,
+    int messageId,
+    @Nullable Integer replyId,
+    boolean cancelled
+) {
 
     /**
      * Determines if the current message is a reply to another message.

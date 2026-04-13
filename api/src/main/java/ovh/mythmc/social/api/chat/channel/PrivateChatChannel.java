@@ -1,8 +1,5 @@
 package ovh.mythmc.social.api.chat.channel;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,31 +19,31 @@ import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
 
-@Getter
-@Setter(AccessLevel.PROTECTED)
+/**
+ * A private chat channel between two participants.
+ */
 public class PrivateChatChannel extends ChatChannelImpl {
 
-    public static PrivateChatChannel getOrCreate(final @NotNull SocialUser sender,
+    /**
+     * Retrieves an existing private chat channel between the sender and recipient,
+     * or creates and registers a new one if it doesn't exist.
+     *
+     * @param sender    The first participant.
+     * @param recipient The second participant.
+     * @return The private chat channel.
+     */
+    public static @NotNull PrivateChatChannel getOrCreate(final @NotNull SocialUser sender,
             final @NotNull SocialUser recipient) {
         final var channels = Social.registries().channels().values();
 
         PrivateChatChannel privateChatChannel = channels.stream()
-                .filter(channel -> channel instanceof PrivateChatChannel)
-                .map(channel -> (PrivateChatChannel) channel)
-                .filter(channel -> {
-                    if (channel.participant1.uuid().equals(sender.uuid())
-                            && channel.participant2.uuid().equals(recipient.uuid()))
-                        return true;
+                .filter(PrivateChatChannel.class::isInstance)
+                .map(PrivateChatChannel.class::cast)
+                .filter(channel -> channel.isBetween(sender, recipient))
+                .findFirst()
+                .orElse(null);
 
-                    if (channel.participant1.uuid().equals(recipient.uuid())
-                            && channel.participant2.uuid().equals(sender.uuid()))
-                        return true;
-
-                    return false;
-                })
-                .findFirst().orElse(null);
-
-        if (privateChatChannel == null) { // Register if null
+        if (privateChatChannel == null) {
             privateChatChannel = new PrivateChatChannel(sender, recipient);
             Social.registries().channels().register(RegistryKey.identified(privateChatChannel.name()),
                     privateChatChannel);
@@ -56,7 +53,6 @@ public class PrivateChatChannel extends ChatChannelImpl {
     }
 
     private final SocialUser participant1;
-
     private final SocialUser participant2;
 
     private PrivateChatChannel(@NotNull SocialUser sender, @NotNull SocialUser recipient) {
@@ -79,6 +75,36 @@ public class PrivateChatChannel extends ChatChannelImpl {
         this.addMember(recipient);
     }
 
+    /**
+     * Gets the first participant of the private channel.
+     *
+     * @return The first participant.
+     */
+    public @NotNull SocialUser getParticipant1() {
+        return participant1;
+    }
+
+    /**
+     * Gets the second participant of the private channel.
+     *
+     * @return The second participant.
+     */
+    public @NotNull SocialUser getParticipant2() {
+        return participant2;
+    }
+
+    /**
+     * Checks if this private channel is between the two specified users.
+     *
+     * @param user1 The first user.
+     * @param user2 The second user.
+     * @return True if the channel is between user1 and user2.
+     */
+    public boolean isBetween(@NotNull SocialUser user1, @NotNull SocialUser user2) {
+        return (participant1.uuid().equals(user1.uuid()) && participant2.uuid().equals(user2.uuid()))
+                || (participant1.uuid().equals(user2.uuid()) && participant2.uuid().equals(user1.uuid()));
+    }
+
     @Override
     public @NotNull Collection<ChatRendererFeature> supportedRendererFeatures() {
         return List.of(
@@ -94,8 +120,14 @@ public class PrivateChatChannel extends ChatChannelImpl {
                 }).build());
     }
 
+    /**
+     * Gets the recipient for a given sender in this private channel.
+     *
+     * @param user The sender.
+     * @return The recipient.
+     */
     @ApiStatus.Internal
-    public SocialUser getRecipientForSender(@NotNull SocialUser user) {
+    public @NotNull SocialUser getRecipientForSender(@NotNull SocialUser user) {
         if (participant1.uuid().equals(user.uuid()))
             return participant2;
 
@@ -132,3 +164,4 @@ public class PrivateChatChannel extends ChatChannelImpl {
     }
 
 }
+

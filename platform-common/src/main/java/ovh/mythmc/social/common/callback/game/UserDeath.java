@@ -1,19 +1,13 @@
 package ovh.mythmc.social.common.callback.game;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.user.SocialUser;
 
-@AllArgsConstructor
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "user", getter = "user()"),
@@ -22,7 +16,26 @@ import ovh.mythmc.social.api.user.SocialUser;
 public final class UserDeath {
 
     private final SocialUser user;
-
     private Component deathMessage;
+
+    public UserDeath(
+        @NotNull SocialUser user,
+        @NotNull Component deathMessage
+    ) {
+        this.user = user;
+        this.deathMessage = deathMessage;
+    }
+
+    public @NotNull SocialUser user() {
+        return this.user;
+    }
+
+    public @NotNull Component deathMessage() {
+        return this.deathMessage;
+    }
+
+    public void deathMessage(@NotNull Component deathMessage) {
+        this.deathMessage = deathMessage;
+    }
 
 }

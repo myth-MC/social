@@ -2,14 +2,16 @@ package ovh.mythmc.social.api.configuration;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.configuration.section.menus.EmojiDictionaryMenuSettings;
 import ovh.mythmc.social.api.configuration.section.menus.HistoryMenuSettings;
 import ovh.mythmc.social.api.configuration.section.menus.KeywordDictionaryMenuSettings;
 import ovh.mythmc.social.api.configuration.section.menus.PlayerInfoMenuSettings;
 
+/**
+ * Configuration for social system menus.
+ */
 @Configuration
-@Getter
 public class SocialMenus {
     
     @Comment("Settings for the emoji dictionary (/social dictionary emojis)")
@@ -24,4 +26,21 @@ public class SocialMenus {
     @Comment({"", "Settings for the chat history (/social history)"})
     private HistoryMenuSettings chatHistory = new HistoryMenuSettings();
 
+    public @NotNull EmojiDictionaryMenuSettings getEmojiDictionary() {
+        return emojiDictionary;
+    }
+
+    public @NotNull KeywordDictionaryMenuSettings getKeywordDictionary() {
+        return keywordDictionary;
+    }
+
+    public @NotNull PlayerInfoMenuSettings getPlayerInfo() {
+        return playerInfo;
+    }
+
+    public @NotNull HistoryMenuSettings getChatHistory() {
+        return chatHistory;
+    }
+
 }
+

@@ -4,7 +4,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
-import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import ovh.mythmc.social.api.Social;
@@ -18,8 +17,6 @@ import ovh.mythmc.social.api.user.SocialUser;
  * <p>
  * Provides methods for constructing icons, hover text, and performing lightweight
  * {@link Component} transformations for chat messages.
- * <p>
- * This class is a utility singleton and should be used statically.
  *
  * <p>Example usage:
  * <pre>{@code
@@ -27,8 +24,11 @@ import ovh.mythmc.social.api.user.SocialUser;
  * Component trimmedMessage = SocialChatRendererUtil.trim(originalMessage);
  * }</pre>
  */
-@UtilityClass
-public class SocialChatRendererUtil {
+public final class SocialChatRendererUtil {
+
+    private SocialChatRendererUtil() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Returns a reply icon component for a message, including hover text with thread context
@@ -59,7 +59,7 @@ public class SocialChatRendererUtil {
      * @param message the {@link SocialRegisteredMessageContext} representing the message
      * @return a {@link TextComponent} representing the reply icon, or empty if unavailable
      */
-    public @NotNull TextComponent getReplyIcon(SocialUser sender, SocialRegisteredMessageContext message) {
+    public static @NotNull TextComponent getReplyIcon(SocialUser sender, SocialRegisteredMessageContext message) {
         TextComponent replyIcon = Component.empty();
 
         // Check that message is a reply
@@ -126,7 +126,7 @@ public class SocialChatRendererUtil {
      * @param component the {@link Component} to trim
      * @return the trimmed component if textual, or the original component otherwise
      */
-    public Component trim(final @NotNull Component component) {
+    public static Component trim(final @NotNull Component component) {
         if (component instanceof TextComponent textComponent) {
             textComponent = textComponent.content(textComponent.content().trim());
             return textComponent;
@@ -136,3 +136,4 @@ public class SocialChatRendererUtil {
     }
 
 }
+

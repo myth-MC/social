@@ -1,6 +1,5 @@
 package ovh.mythmc.social.api;
 
-import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -13,10 +12,13 @@ import java.util.Objects;
  * All other callers should use {@link Social#get()} instead of this class
  * directly.
  */
-@UtilityClass
-public class SocialSupplier {
+public final class SocialSupplier {
 
-    private Social social;
+    private static Social social;
+
+    private SocialSupplier() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Registers the active {@link Social} instance.
@@ -25,7 +27,7 @@ public class SocialSupplier {
      * @throws AlreadyInitializedException if the API has already been initialised
      * @throws NullPointerException        if {@code s} is {@code null}
      */
-    public void set(final @NotNull Social s) {
+    public static void set(final @NotNull Social s) {
         if (social != null)
             throw new AlreadyInitializedException();
 
@@ -37,8 +39,9 @@ public class SocialSupplier {
      *
      * @return the social API instance
      */
-    public @NotNull Social get() {
+    public static @NotNull Social get() {
         return social;
     }
 
 }
+

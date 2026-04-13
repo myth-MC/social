@@ -1,9 +1,7 @@
 package ovh.mythmc.social.api.chat.channel;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
@@ -16,23 +14,21 @@ import ovh.mythmc.social.api.text.injection.value.SocialInjectedValue;
 import ovh.mythmc.social.api.util.Mutable;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
-import static net.kyori.adventure.text.Component.text;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
-@Setter(AccessLevel.PROTECTED)
+import static net.kyori.adventure.text.Component.text;
+
+/**
+ * A simple implementation of a chat channel.
+ */
 public class SimpleChatChannel extends ChatChannelImpl {
 
     private final boolean showHoverText;
-
     private final Component hoverText;
-
     private final TextColor nicknameColor;
-
     private final String textDivider;
 
     protected SimpleChatChannel(@NotNull String name,
@@ -67,6 +63,42 @@ public class SimpleChatChannel extends ChatChannelImpl {
         this.textDivider = textDivider;
     }
 
+    /**
+     * Checks if hover text should be shown for this channel.
+     *
+     * @return True if hover text should be shown.
+     */
+    public boolean isShowHoverText() {
+        return showHoverText;
+    }
+
+    /**
+     * Gets the hover text for this channel.
+     *
+     * @return The hover text component.
+     */
+    public @NotNull Component getHoverText() {
+        return hoverText;
+    }
+
+    /**
+     * Gets the color used for nicknames in this channel.
+     *
+     * @return The nickname color.
+     */
+    public @NotNull TextColor getNicknameColor() {
+        return nicknameColor;
+    }
+
+    /**
+     * Gets the text divider used in this channel's format.
+     *
+     * @return The text divider.
+     */
+    public @NotNull String getTextDivider() {
+        return textDivider;
+    }
+
     @Override
     protected ChatFormatBuilder formatBuilder() {
         return ChatFormatBuilder.empty()
@@ -88,9 +120,17 @@ public class SimpleChatChannel extends ChatChannelImpl {
         );
     }
 
-    public static SimpleChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {
+    /**
+     * Creates a {@link SimpleChatChannel} from a configuration field.
+     *
+     * @param channelField The configuration field.
+     * @return The created chat channel.
+     */
+    public static @NotNull SimpleChatChannel fromConfigField(final @NotNull ChatSettings.Channel channelField) {
         final String name = channelField.name();
         final String alias = channelField.alias();
+        
+        // Defaults
         TextColor color = NamedTextColor.YELLOW;
         final List<String> commands = new ArrayList<>();
         Component icon = Component.text("<dark_gray>[<yellow>:raw_pencil:</yellow>]</dark_gray>");
@@ -102,7 +142,8 @@ public class SimpleChatChannel extends ChatChannelImpl {
         String permission = null;
         boolean joinByDefault = false;
 
-        if (channelField.inherit() != null) { // Inherit properties from another channel
+        // Inherit properties if specified
+        if (channelField.inherit() != null) {
             final ChatChannel channel = Social.registries().channels().value(RegistryKey.identified(channelField.inherit())).orElse(null);
             if (channel instanceof SimpleChatChannel inherit) {
                 color = inherit.color();
@@ -115,9 +156,9 @@ public class SimpleChatChannel extends ChatChannelImpl {
                 permission = inherit.permission().orElse(null);
                 joinByDefault = inherit.joinByDefault();
             }
-
         }
 
+        // Apply overrides from config
         if (channelField.color() != null)
             color = TextColor.fromHexString(channelField.color());
 
@@ -164,19 +205,18 @@ public class SimpleChatChannel extends ChatChannelImpl {
         );
     }
 
-    static Component getHoverTextAsComponent(List<String> hoverTextList) {
-        Component hoverText = Component.empty();
-
-        for (int i = 0; i < hoverTextList.size(); i++) {
-            hoverText = hoverText
-                .append(Component.text(hoverTextList.get(i)));
-
-            if (i < hoverTextList.size() - 1)
-                hoverText = hoverText
-                    .appendNewline();
-        }
-
-        return hoverText;
+    /**
+     * Converts a list of strings to a single component joined by newlines.
+     *
+     * @param hoverTextList The list of strings.
+     * @return The joined component.
+     */
+    static @NotNull Component getHoverTextAsComponent(@NotNull List<String> hoverTextList) {
+        return Component.join(
+                JoinConfiguration.newlines(),
+                hoverTextList.stream().map(Component::text).toList()
+        );
     }
 
 }
+

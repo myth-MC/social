@@ -4,12 +4,14 @@ import java.util.List;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+/**
+ * Settings for the keyword dictionary menu.
+ */
 @Configuration
-@Getter
 public class KeywordDictionaryMenuSettings {
 
     @Comment("The header of this menu")
@@ -26,8 +28,25 @@ public class KeywordDictionaryMenuSettings {
 
     private String result = "<dark_gray>Result</dark_gray>";
 
+    public @NotNull List<String> getRawHeader() {
+        return header;
+    }
+
+    public int getMaxKeywordsPerPage() {
+        return maxKeywordsPerPage;
+    }
+
+    public @NotNull String getCopyToClipboard() {
+        return copyToClipboard;
+    }
+
+    public @NotNull String getResult() {
+        return result;
+    }
+
     public List<Component> getHeader() {
         return header.stream().map(line -> MiniMessage.miniMessage().deserialize(line)).toList();
     }
     
 }
+

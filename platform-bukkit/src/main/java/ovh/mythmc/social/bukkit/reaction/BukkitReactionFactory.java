@@ -12,8 +12,6 @@ import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Transformation;
-
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
@@ -30,10 +28,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 public final class BukkitReactionFactory extends ReactionFactory {
 
     private final JavaPlugin plugin;
+
+    public BukkitReactionFactory(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     private final HashMap<UUID, ItemDisplay> playerReaction = new HashMap<>();
 

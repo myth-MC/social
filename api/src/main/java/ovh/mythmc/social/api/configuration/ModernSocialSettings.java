@@ -1,32 +1,80 @@
 package ovh.mythmc.social.api.configuration;
 
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.configuration.section.settings.*;
 
-@Getter
+/**
+ * Modern implementation of SocialSettings that pulls values from the active Social configuration.
+ */
 public final class ModernSocialSettings implements SocialSettings {
 
-    private GeneralSettings general = Social.get().getConfig().getGeneral();
+    private final GeneralSettings general = Social.get().getConfig().getGeneral();
+    private final ChatSettings chat = Social.get().getConfig().getChat();
+    private final ReactionsSettings reactions = Social.get().getConfig().getReactions();
+    private final EmojiSettings emojis = Social.get().getConfig().getEmojis();
+    private final MOTDSettings motd = Social.get().getConfig().getMotd();
+    private final AnnouncementsSettings announcements = Social.get().getConfig().getAnnouncements();
+    private final SystemMessagesSettings systemMessages = Social.get().getConfig().getSystemMessages();
+    private final ServerLinksSettings serverLinks = Social.get().getConfig().getServerLinks();
+    private final TextReplacementSettings textReplacement = Social.get().getConfig().getTextReplacement();
+    private final CommandsSettings commands = Social.get().getConfig().getCommands();
+    private final DatabaseSettings databaseSettings = Social.get().getConfig().getDatabaseSettings();
 
-    private ChatSettings chat = Social.get().getConfig().getChat();
+    @Override
+    public @NotNull GeneralSettings getGeneral() {
+        return general;
+    }
 
-    private ReactionsSettings reactions = Social.get().getConfig().getReactions();
+    @Override
+    public @NotNull ChatSettings getChat() {
+        return chat;
+    }
 
-    private EmojiSettings emojis = Social.get().getConfig().getEmojis();
+    @Override
+    public @NotNull ReactionsSettings getReactions() {
+        return reactions;
+    }
 
-    private MOTDSettings motd = Social.get().getConfig().getMotd();
+    @Override
+    public @NotNull EmojiSettings getEmojis() {
+        return emojis;
+    }
 
-    private AnnouncementsSettings announcements = Social.get().getConfig().getAnnouncements();
+    @Override
+    public @NotNull MOTDSettings getMotd() {
+        return motd;
+    }
 
-    private SystemMessagesSettings systemMessages = Social.get().getConfig().getSystemMessages();
+    @Override
+    public @NotNull AnnouncementsSettings getAnnouncements() {
+        return announcements;
+    }
 
-    private ServerLinksSettings serverLinks = Social.get().getConfig().getServerLinks();
+    @Override
+    public @NotNull SystemMessagesSettings getSystemMessages() {
+        return systemMessages;
+    }
 
-    private TextReplacementSettings textReplacement = Social.get().getConfig().getTextReplacement();
+    @Override
+    public @NotNull ServerLinksSettings getServerLinks() {
+        return serverLinks;
+    }
 
-    private CommandsSettings commands = Social.get().getConfig().getCommands();
+    @Override
+    public @NotNull TextReplacementSettings getTextReplacement() {
+        return textReplacement;
+    }
 
-    private DatabaseSettings databaseSettings = Social.get().getConfig().getDatabaseSettings();
+    @Override
+    public @NotNull CommandsSettings getCommands() {
+        return commands;
+    }
+
+    @Override
+    public @NotNull DatabaseSettings getDatabaseSettings() {
+        return databaseSettings;
+    }
 
 }
+

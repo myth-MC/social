@@ -1,10 +1,12 @@
 package ovh.mythmc.social.api.configuration.section.messages;
 
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Messages relating to commands.
+ */
 @Configuration
-@Getter
 public class CommandsMessages {
 
     private String channelChanged = "$(info_prefix) <gray>You are now chatting in channel $(channel).</gray>";
@@ -57,4 +59,105 @@ public class CommandsMessages {
 
     private String processorInfoParsersByType = "$(info_prefix) :raw_box_up_and_right: <gray>%s</gray>: %s";
 
+    public @NotNull String getChannelChanged() {
+        return channelChanged;
+    }
+
+    public @NotNull String getChannelChangedToPrivateMessage() {
+        return channelChangedToPrivateMessage;
+    }
+
+    public @NotNull String getNicknameChanged() {
+        return nicknameChanged;
+    }
+
+    public @NotNull String getNicknameChangedOthers() {
+        return nicknameChangedOthers;
+    }
+
+    public @NotNull String getNicknameReset() {
+        return nicknameReset;
+    }
+
+    public @NotNull String getNicknameResetOthers() {
+        return nicknameResetOthers;
+    }
+
+    public @NotNull String getModuleReloaded() {
+        return moduleReloaded;
+    }
+
+    public @NotNull String getSocialSpyStatusChanged() {
+        return socialSpyStatusChanged;
+    }
+
+    public @NotNull String getCreatedGroup() {
+        return createdGroup;
+    }
+
+    public @NotNull String getGroupCode() {
+        return groupCode;
+    }
+
+    public @NotNull String getJoinedGroup() {
+        return joinedGroup;
+    }
+
+    public @NotNull String getLeftGroup() {
+        return leftGroup;
+    }
+
+    public @NotNull String getConfirmDisbandAction() {
+        return confirmDisbandAction;
+    }
+
+    public @NotNull String getGroupDisbanded() {
+        return groupDisbanded;
+    }
+
+    public @NotNull String getGroupAliasChanged() {
+        return groupAliasChanged;
+    }
+
+    public @NotNull String getUserIgnored() {
+        return userIgnored;
+    }
+
+    public @NotNull String getUserUnignored() {
+        return userUnignored;
+    }
+
+    public @NotNull String getUserMuted() {
+        return userMuted;
+    }
+
+    public @NotNull String getUserUnmuted() {
+        return userUnmuted;
+    }
+
+    public @NotNull String getUserMutedGlobally() {
+        return userMutedGlobally;
+    }
+
+    public @NotNull String getUserUnmutedGlobally() {
+        return userUnmutedGlobally;
+    }
+
+    public @NotNull String getProcessorResult() {
+        return processorResult;
+    }
+
+    public @NotNull String getProcessorClickToAnnounce() {
+        return processorClickToAnnounce;
+    }
+
+    public @NotNull String getProcessorInfoParsers() {
+        return processorInfoParsers;
+    }
+
+    public @NotNull String getProcessorInfoParsersByType() {
+        return processorInfoParsersByType;
+    }
+
 }
+

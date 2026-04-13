@@ -1,8 +1,5 @@
 package ovh.mythmc.social.common.boot;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.SocialSupplier;
@@ -25,10 +22,13 @@ import ovh.mythmc.social.common.text.placeholder.prefix.*;
 
 import java.io.File;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.incendo.cloud.CommandManager;
 
-@Getter
-@RequiredArgsConstructor
+/**
+ * Common bootstrap class for Social.
+ */
 public abstract class SocialBootstrap implements Social {
 
     public static boolean isBrigadierAvailable() {
@@ -47,9 +47,22 @@ public abstract class SocialBootstrap implements Social {
 
     private SocialCommandProvider commandProvider;
 
-    public SocialBootstrap(final File dataDirectory) {
+    public SocialBootstrap(final @NotNull File dataDirectory) {
         this.config = new SocialConfigProvider(dataDirectory);
         this.dataDirectory = dataDirectory;
+    }
+
+    @Override
+    public @NotNull SocialConfigProvider getConfig() {
+        return config;
+    }
+
+    public @NotNull File getDataDirectory() {
+        return dataDirectory;
+    }
+
+    public @Nullable SocialCommandProvider getCommandProvider() {
+        return commandProvider;
     }
 
     public final void initialize() {
@@ -170,3 +183,4 @@ public abstract class SocialBootstrap implements Social {
     public abstract String version();
 
 }
+

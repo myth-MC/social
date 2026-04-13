@@ -3,9 +3,6 @@ package ovh.mythmc.social.api.callback.channel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
@@ -27,9 +24,6 @@ import ovh.mythmc.social.api.user.SocialUser;
  *     <li><b>cancelled:</b> Whether the event has been cancelled, preventing the switch from happening.</li>
  * </ul>
  */
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "user", getter = "user()"),
@@ -39,9 +33,7 @@ import ovh.mythmc.social.api.user.SocialUser;
 public final class SocialChannelPreSwitch {
 
     private @NotNull SocialUser user;
-
     private @Nullable ChatChannel channel;
-
     private boolean cancelled = false;
 
     /**
@@ -54,4 +46,26 @@ public final class SocialChannelPreSwitch {
         this.user = user;
         this.channel = channel;
     }
+
+    public @NotNull SocialUser user() {
+        return this.user;
+    }
+
+    public @Nullable ChatChannel channel() {
+        return this.channel;
+    }
+
+    public boolean cancelled() {
+        return this.cancelled;
+    }
+
+    public void channel(@Nullable ChatChannel channel) {
+        this.channel = channel;
+    }
+
+    public void cancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+
 }

@@ -1,9 +1,7 @@
 package ovh.mythmc.social.api.callback.reaction;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
@@ -24,10 +22,6 @@ import ovh.mythmc.social.api.user.SocialUser;
  *     <li><b>cancelled:</b> Whether this event has been cancelled, preventing the reaction from being displayed.</li>
  * </ul>
  */
-@RequiredArgsConstructor
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "user", getter = "user()"),
@@ -37,8 +31,31 @@ import ovh.mythmc.social.api.user.SocialUser;
 public final class SocialReactionTrigger {
 
     private final SocialUser user;
-
     private final Reaction reaction;
-
     private boolean cancelled = false;
+
+    public SocialReactionTrigger(
+        @NotNull SocialUser user,
+        @NotNull Reaction reaction
+    ) {
+        this.user = user;
+        this.reaction = reaction;
+    }
+
+    public @NotNull SocialUser user() {
+        return this.user;
+    }
+
+    public @NotNull Reaction reaction() {
+        return this.reaction;
+    }
+
+    public boolean cancelled() {
+        return this.cancelled;
+    }
+
+    public void cancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
 }

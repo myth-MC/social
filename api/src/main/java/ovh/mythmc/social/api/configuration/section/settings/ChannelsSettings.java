@@ -2,7 +2,6 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -21,11 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-/*
-    Unfinished draft for 'builder' chat channels
+/**
+ * Settings for chat channels and their formats.
  */
 @Configuration
-@Getter
 public class ChannelsSettings {
 
     @Comment("Global injections. These injections can be used by any channel builder")
@@ -81,6 +79,14 @@ public class ChannelsSettings {
             )
         )
     );
+
+    public @NotNull List<ConfiguredInjectableValue> getGlobalInjections() {
+        return globalInjections;
+    }
+
+    public @NotNull List<BuildableChannel> getChannels() {
+        return channels;
+    }
 
     public record ConfiguredInjectableValue(@NotNull Type type,
                                 @Nullable String identifier,
@@ -185,6 +191,9 @@ public class ChannelsSettings {
 
                      */
                 }
+                
+                // Add safety to avoid infinite loop if building legacy inherit logic
+                end = true; 
             }
 
             return buildableChannel;
@@ -229,3 +238,4 @@ public class ChannelsSettings {
     }
 
 }
+

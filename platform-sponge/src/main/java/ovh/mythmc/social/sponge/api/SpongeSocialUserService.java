@@ -1,7 +1,5 @@
 package ovh.mythmc.social.sponge.api;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import ovh.mythmc.social.api.database.reference.UUIDResolver;
@@ -12,8 +10,13 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+/**
+ * Sponge implementation of the social user service.
+ */
 public final class SpongeSocialUserService extends SocialUserService {
+
+    private SpongeSocialUserService() {
+    }
 
     public static final SpongeSocialUserService instance = new SpongeSocialUserService();
 

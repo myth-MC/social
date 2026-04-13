@@ -4,12 +4,14 @@ import java.util.List;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+/**
+ * Settings for the chat history menu.
+ */
 @Configuration
-@Getter
 public class HistoryMenuSettings {
 
     @Comment("The header of this menu")
@@ -36,8 +38,41 @@ public class HistoryMenuSettings {
 
     private String clickToOpenThreadHistory = "<gray>Click here to open this thread</gray>";
 
+    public @NotNull List<String> getRawHeader() {
+        return header;
+    }
+
+    public int getMaxMessagesPerPage() {
+        return maxMessagesPerPage;
+    }
+
+    public @NotNull String getScope() {
+        return scope;
+    }
+
+    public @NotNull String getContext() {
+        return context;
+    }
+
+    public @NotNull String getContextChannel() {
+        return contextChannel;
+    }
+
+    public @NotNull String getContextReplyTo() {
+        return contextReplyTo;
+    }
+
+    public @NotNull String getClickToOpenGlobalHistory() {
+        return clickToOpenGlobalHistory;
+    }
+
+    public @NotNull String getClickToOpenThreadHistory() {
+        return clickToOpenThreadHistory;
+    }
+
     public List<Component> getHeader() {
         return header.stream().map(line -> MiniMessage.miniMessage().deserialize(line)).toList();
     }
     
 }
+

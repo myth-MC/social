@@ -1,9 +1,8 @@
 package ovh.mythmc.social.api.callback.user;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
@@ -30,10 +29,6 @@ import ovh.mythmc.social.api.user.SocialUser;
  *     <li><b>cancelled:</b> Whether this event has been cancelled, preventing the mute status change.</li>
  * </ul>
  */
-@RequiredArgsConstructor
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "user", getter = "user()"),
@@ -44,11 +39,38 @@ import ovh.mythmc.social.api.user.SocialUser;
 public final class SocialUserMuteStatusChange {
 
     private final SocialUser user;
-
     private final ChatChannel channel;
-
     private final Boolean status;
-
     private boolean cancelled = false;
+
+    public SocialUserMuteStatusChange(
+        @NotNull SocialUser user,
+        @NotNull ChatChannel channel,
+        @Nullable Boolean status
+    ) {
+        this.user = user;
+        this.channel = channel;
+        this.status = status;
+    }
+
+    public @NotNull SocialUser user() {
+        return this.user;
+    }
+
+    public @NotNull ChatChannel channel() {
+        return this.channel;
+    }
+
+    public @Nullable Boolean status() {
+        return this.status;
+    }
+
+    public boolean cancelled() {
+        return this.cancelled;
+    }
+
+    public void cancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
 }

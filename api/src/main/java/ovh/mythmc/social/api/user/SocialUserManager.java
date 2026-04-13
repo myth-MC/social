@@ -2,8 +2,6 @@ package ovh.mythmc.social.api.user;
 
 import org.jetbrains.annotations.NotNull;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.callback.user.SocialUserMuteStatusChange;
@@ -20,10 +18,11 @@ import ovh.mythmc.social.api.context.SocialParserContext;
  * external plugins unless necessary.
  * </p>
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SocialUserManager {
+public final class SocialUserManager {
 
     public static final SocialUserManager instance = new SocialUserManager();
+
+    private SocialUserManager() {}
 
     /**
      * Announces a {@link ChatChannel} switch to the {@link SocialUser} and
@@ -128,3 +127,4 @@ public class SocialUserManager {
     }
 
 }
+

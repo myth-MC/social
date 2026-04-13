@@ -2,20 +2,14 @@ package ovh.mythmc.social.common.callback.game;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
 import ovh.mythmc.social.api.user.SocialUser;
 
-@AllArgsConstructor
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "user", getter = "user()"),
@@ -24,7 +18,26 @@ import ovh.mythmc.social.api.user.SocialUser;
 public final class SignEdit {
 
     private final SocialUser user;
-
     private List<Component> lines;
+
+    public SignEdit(
+        @NotNull SocialUser user,
+        @NotNull List<Component> lines
+    ) {
+        this.user = user;
+        this.lines = lines;
+    }
+
+    public @NotNull SocialUser user() {
+        return this.user;
+    }
+
+    public @NotNull List<Component> lines() {
+        return this.lines;
+    }
+
+    public void lines(@NotNull List<Component> lines) {
+        this.lines = lines;
+    }
 
 }

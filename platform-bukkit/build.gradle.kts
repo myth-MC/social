@@ -17,6 +17,7 @@ dependencies {
     compileOnly(libs.net.kyori.adventure.platform.bukkit)
     compileOnly(libs.me.clip.placeholderapi)
     compileOnly(libs.com.discordsrv.discordsrv)
+    compileOnly(libs.com.mojang.brigadier)
 }
 
 tasks {

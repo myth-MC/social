@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for the emojis module.
+ */
 @Configuration
-@Getter
 public class EmojiSettings {
 
     @Comment("Whether the emoji module should be enabled")
@@ -60,8 +62,25 @@ public class EmojiSettings {
             new EmojiField("ying_yang", List.of(), "\u262F")
     );
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public @NotNull String getHoverTextAliases() {
+        return hoverTextAliases;
+    }
+
+    public @NotNull String getHoverTextInsertion() {
+        return hoverTextInsertion;
+    }
+
+    public @NotNull List<EmojiField> getEmojis() {
+        return emojis;
+    }
+
     public record EmojiField(String name,
                              List<String> aliases,
                              String unicodeCharacter) { }
 
 }
+

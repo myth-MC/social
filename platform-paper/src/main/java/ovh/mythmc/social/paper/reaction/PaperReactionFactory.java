@@ -1,7 +1,6 @@
 package ovh.mythmc.social.paper.reaction;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,12 +35,18 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@RequiredArgsConstructor
+/**
+ * Paper implementation of a reaction factory.
+ */
 public final class PaperReactionFactory extends ReactionFactory {
 
     private static final float DEFAULT_SCALE = 0.7f;
 
     private final JavaPlugin plugin;
+
+    public PaperReactionFactory(@NotNull JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     private final Map<UUID, ItemDisplay> playerReactions = new ConcurrentHashMap<>();
 

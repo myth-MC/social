@@ -1,7 +1,5 @@
 package ovh.mythmc.social.sponge.api;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -27,8 +25,9 @@ import ovh.mythmc.social.libs.com.j256.ormlite.table.DatabaseTable;
 import java.util.Optional;
 import java.util.UUID;
 
-@Getter
-@Accessors(fluent = true)
+/**
+ * Sponge implementation of a social user.
+ */
 @DatabaseTable(tableName = "users")
 public final class SpongeSocialUser extends AbstractSocialUser {
 

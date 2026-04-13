@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for the chat groups module.
+ */
 @Configuration
-@Getter
 public class ChatGroupSettings {
 
     @Comment("Whether the groups module should be enabled")
@@ -40,4 +42,45 @@ public class ChatGroupSettings {
     @Comment("Group text color")
     private String textColor = "#FFFFFF";
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public int getPlayerLimit() {
+        return playerLimit;
+    }
+
+    public @NotNull String getCodeHoverText() {
+        return codeHoverText;
+    }
+
+    public @NotNull String getColor() {
+        return color;
+    }
+
+    public @NotNull String getIcon() {
+        return icon;
+    }
+
+    public boolean isShowHoverText() {
+        return showHoverText;
+    }
+
+    public @NotNull List<String> getHoverText() {
+        return hoverText;
+    }
+
+    public @NotNull String getNicknameColor() {
+        return nicknameColor;
+    }
+
+    public @NotNull String getTextDivider() {
+        return textDivider;
+    }
+
+    public @NotNull String getTextColor() {
+        return textColor;
+    }
+
 }
+

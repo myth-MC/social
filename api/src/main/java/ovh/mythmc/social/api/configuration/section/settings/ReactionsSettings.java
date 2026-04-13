@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for the reactions module.
+ */
 @Configuration
-@Getter
 public class ReactionsSettings {
 
     @Comment("Whether reactions should be enabled")
@@ -40,6 +42,30 @@ public class ReactionsSettings {
             new ReactionField("THINKING", "https://textures.minecraft.net/texture/1fea99ad95b570175fda25c3a69788d6a9b854aa13f8a5ff63f6efedf581dfb6", "minecraft:block.note_block.bit", "minecraft:dust_plume", List.of("hmm"))
     );
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isUseTriggerWords() {
+        return useTriggerWords;
+    }
+
+    public int getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    public int getUpdateIntervalInTicks() {
+        return updateIntervalInTicks;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
+    }
+
+    public @NotNull List<ReactionField> getReactions() {
+        return reactions;
+    }
+
     public record ReactionField(String name,
                                 String texture,
                                 String sound,
@@ -47,3 +73,4 @@ public class ReactionsSettings {
                                 List<String> triggerWords) { }
 
 }
+

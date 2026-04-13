@@ -7,6 +7,7 @@ allprojects {
     version = providers.gradleProperty("version").get()
 
     repositories {
+        mavenCentral()
         mavenLocal()
         maven {
             url = uri("https://jitpack.io")

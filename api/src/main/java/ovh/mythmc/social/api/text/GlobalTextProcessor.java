@@ -8,12 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.text.group.SocialParserGroup;
@@ -43,7 +41,6 @@ import static net.kyori.adventure.text.Component.text;
  * Access the singleton via
  * {@link ovh.mythmc.social.api.Social#getTextProcessor()}.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GlobalTextProcessor {
 
     public static final GlobalTextProcessor instance = new GlobalTextProcessor();
@@ -56,6 +53,8 @@ public final class GlobalTextProcessor {
 
     public final SocialParserGroup EARLY_PARSERS = SocialParserGroup.builder().build();
     public final SocialParserGroup LATE_PARSERS = SocialParserGroup.builder().build();
+
+    private GlobalTextProcessor() {}
 
     // -- parser list --
 
@@ -462,3 +461,4 @@ public final class GlobalTextProcessor {
     }
 
 }
+

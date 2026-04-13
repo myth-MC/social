@@ -2,10 +2,12 @@ package ovh.mythmc.social.api.context;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.chat.SignedMessage;
 import net.kyori.adventure.text.Component;
@@ -15,48 +17,11 @@ import ovh.mythmc.social.api.user.SocialUser;
 
 /**
  * Represents a registered and persisted social message.
- *
- * <p>
- * {@code SocialRegisteredMessageContext} extends {@link SocialMessageContext}
- * and adds metadata that becomes available once a message has been stored
- * in the chat history system.
- * </p>
- *
- * <p>
- * In addition to the base message context, this class provides:
- * </p>
- * <ul>
- *     <li>A unique message identifier</li>
- *     <li>The fully processed {@link Component} message</li>
- *     <li>The message creation timestamp</li>
- * </ul>
- *
- * <p>
- * Instances of this class typically represent messages that have been
- * registered in the chat history and can therefore be referenced (e.g. replies).
- * </p>
- *
- * @see SocialMessageContext
- * @see SocialUser
- * @see ChatChannel
  */
-@Getter
-@Accessors(fluent = true)
 public class SocialRegisteredMessageContext extends SocialMessageContext {
 
-    /**
-     * The unique identifier of this message within the chat history.
-     */
     private final Integer id;
-
-    /**
-     * The fully processed and formatted message component.
-     */
     private final Component message;
-
-    /**
-     * The timestamp (in milliseconds since epoch) when this message was created.
-     */
     private final long timestamp;
 
     /**
@@ -75,13 +40,13 @@ public class SocialRegisteredMessageContext extends SocialMessageContext {
     public SocialRegisteredMessageContext(
             int id,
             long timestamp,
-            SocialUser sender,
-            ChatChannel channel,
-            Set<Audience> viewers,
-            Component message,
-            String rawMessage,
-            Integer replyId,
-            SignedMessage signedMessage) {
+            @NotNull SocialUser sender,
+            @NotNull ChatChannel channel,
+            @NotNull Set<Audience> viewers,
+            @NotNull Component message,
+            @NotNull String rawMessage,
+            @Nullable Integer replyId,
+            @Nullable SignedMessage signedMessage) {
 
         super(sender, channel, viewers, rawMessage, replyId, signedMessage);
 
@@ -91,18 +56,58 @@ public class SocialRegisteredMessageContext extends SocialMessageContext {
     }
 
     /**
+     * Returns the unique identifier of this message within the chat history.
+     */
+    public @NotNull Integer id() {
+        return id;
+    }
+
+    /**
+     * Returns the fully processed and formatted message component.
+     */
+    public @NotNull Component message() {
+        return message;
+    }
+
+    /**
+     * Returns the timestamp (in milliseconds since epoch) when this message was created.
+     */
+    public long timestamp() {
+        return timestamp;
+    }
+
+    /**
      * Formats the message timestamp into a human-readable date string.
-     *
-     * <p>
-     * The format pattern is retrieved from the configuration:
-     * {@code Social.get().getConfig().getGeneral().getDateFormat()}.
-     * </p>
      *
      * @return the formatted date string
      */
-    public String date() {
+    public @NotNull String date() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Social.get().getConfig().getGeneral().getDateFormat());
         return dateFormat.format(new Date(timestamp));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SocialRegisteredMessageContext that)) return false;
+        if (!super.equals(o)) return false;
+        return timestamp == that.timestamp &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(message, that.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, message, timestamp);
+    }
+
+    @Override
+    public String toString() {
+        return "SocialRegisteredMessageContext{" +
+                "id=" + id +
+                ", sender=" + sender() +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
+

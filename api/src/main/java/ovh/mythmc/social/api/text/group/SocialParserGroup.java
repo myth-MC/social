@@ -2,14 +2,13 @@ package ovh.mythmc.social.api.text.group;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
-import lombok.Builder;
-import lombok.Singular;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.context.SocialProcessorContext;
@@ -21,11 +20,22 @@ import ovh.mythmc.social.api.text.parser.SocialUserInputParser;
  * Represents a group of parsers which should be processed in a single batch.
  */
 @Experimental
-@Builder
 public class SocialParserGroup implements SocialUserInputParser {
 
-    @Singular("parser")
-    private final List<SocialContextualParser> content = new ArrayList<>();
+    private final List<SocialContextualParser> content;
+
+    private SocialParserGroup(List<SocialContextualParser> content) {
+        this.content = new ArrayList<>(content);
+    }
+
+    /**
+     * Creates a new builder for {@link SocialParserGroup}.
+     * 
+     * @return a new builder
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
 
     /**
      * Gets the unmodifiable {@link List} of {@link SocialContextualParser}s.
@@ -55,7 +65,7 @@ public class SocialParserGroup implements SocialUserInputParser {
      * Removes all {@link SocialContextualParser}s in this group.
      */
     public void removeAll() {
-        get().forEach(content::remove);
+        content.clear();
     }
 
     @Override
@@ -128,4 +138,45 @@ public class SocialParserGroup implements SocialUserInputParser {
         return context.message();
     }
 
+    /**
+     * Builder for {@link SocialParserGroup}.
+     */
+    public static final class Builder {
+        private final List<SocialContextualParser> content = new ArrayList<>();
+
+        private Builder() {}
+
+        /**
+         * Adds a parser to the group.
+         * 
+         * @param parser the parser to add
+         * @return this builder
+         */
+        public Builder parser(@NotNull SocialContextualParser parser) {
+            this.content.add(parser);
+            return this;
+        }
+
+        /**
+         * Adds multiple parsers to the group.
+         * 
+         * @param parsers the parsers to add
+         * @return this builder
+         */
+        public Builder parsers(@NotNull Collection<? extends SocialContextualParser> parsers) {
+            this.content.addAll(parsers);
+            return this;
+        }
+
+        /**
+         * Builds and returns the {@link SocialParserGroup}.
+         * 
+         * @return the build group
+         */
+        public SocialParserGroup build() {
+            return new SocialParserGroup(content);
+        }
+    }
+
 }
+

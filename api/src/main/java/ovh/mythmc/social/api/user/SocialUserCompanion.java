@@ -3,8 +3,6 @@ package ovh.mythmc.social.api.user;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
@@ -12,11 +10,17 @@ import ovh.mythmc.social.api.network.channel.channels.SocialPayloadChannels;
 import ovh.mythmc.social.api.network.payload.payloads.channel.*;
 import ovh.mythmc.social.api.network.payload.payloads.message.SocialMessagePreviewPayload;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+/**
+ * Companion features for a SocialUser.
+ */
 @Experimental
 public final class SocialUserCompanion {
 
     private final SocialUser user;
+
+    SocialUserCompanion(SocialUser user) {
+        this.user = user;
+    }
 
     public void open(final @NotNull ChatChannel channel) {
         user.sendCustomPayload(SocialPayloadChannels.OPEN_CHANNEL, new SocialChannelOpenPayload(channel));
@@ -50,3 +54,4 @@ public final class SocialUserCompanion {
     }
 
 }
+

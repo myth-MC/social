@@ -2,14 +2,16 @@ package ovh.mythmc.social.api.configuration;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
 import ovh.mythmc.social.api.configuration.section.messages.CommandsMessages;
 import ovh.mythmc.social.api.configuration.section.messages.ErrorsMessages;
 import ovh.mythmc.social.api.configuration.section.messages.InfoMessages;
 
+/**
+ * Configuration for social system messages.
+ */
 @Configuration
-@Getter
 public class SocialMessages {
 
     @Comment("Message prefixes")
@@ -33,6 +35,38 @@ public class SocialMessages {
     @Comment({"", "Command messages"})
     private CommandsMessages commands = new CommandsMessages();
 
+    public @NotNull String getErrorPrefix() {
+        return errorPrefix;
+    }
+
+    public @NotNull String getWarningPrefix() {
+        return warningPrefix;
+    }
+
+    public @NotNull String getSuccessPrefix() {
+        return successPrefix;
+    }
+
+    public @NotNull String getInfoPrefix() {
+        return infoPrefix;
+    }
+
+    public boolean isUseActionBar() {
+        return useActionBar;
+    }
+
+    public @NotNull ErrorsMessages getErrors() {
+        return errors;
+    }
+
+    public @NotNull InfoMessages getInfo() {
+        return info;
+    }
+
+    public @NotNull CommandsMessages getCommands() {
+        return commands;
+    }
+
     public ChatChannel.ChannelType getChannelType() {
         if (useActionBar)
             return ChatChannel.ChannelType.ACTION_BAR;
@@ -41,3 +75,4 @@ public class SocialMessages {
     }
 
 }
+

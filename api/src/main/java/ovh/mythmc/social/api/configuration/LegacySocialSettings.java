@@ -2,14 +2,20 @@ package ovh.mythmc.social.api.configuration;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.configuration.section.settings.*;
 
+/**
+ * Legacy configuration implementation using ConfigLib annotations.
+ */
 @Configuration
-@Getter
 public final class LegacySocialSettings implements SocialSettings {
 
     public boolean nagAdmins = true;
+
+    public boolean isNagAdmins() {
+        return nagAdmins;
+    }
 
     @Comment({"", "General settings"})
     private GeneralSettings general = new GeneralSettings();
@@ -44,4 +50,60 @@ public final class LegacySocialSettings implements SocialSettings {
     @Comment({"", "Database settings"})
     private DatabaseSettings databaseSettings = new DatabaseSettings();
 
+    @Override
+    public @NotNull GeneralSettings getGeneral() {
+        return general;
+    }
+
+    @Override
+    public @NotNull ChatSettings getChat() {
+        return chat;
+    }
+
+    @Override
+    public @NotNull ReactionsSettings getReactions() {
+        return reactions;
+    }
+
+    @Override
+    public @NotNull EmojiSettings getEmojis() {
+        return emojis;
+    }
+
+    @Override
+    public @NotNull MOTDSettings getMotd() {
+        return motd;
+    }
+
+    @Override
+    public @NotNull AnnouncementsSettings getAnnouncements() {
+        return announcements;
+    }
+
+    @Override
+    public @NotNull SystemMessagesSettings getSystemMessages() {
+        return systemMessages;
+    }
+
+    @Override
+    public @NotNull ServerLinksSettings getServerLinks() {
+        return serverLinks;
+    }
+
+    @Override
+    public @NotNull TextReplacementSettings getTextReplacement() {
+        return textReplacement;
+    }
+
+    @Override
+    public @NotNull CommandsSettings getCommands() {
+        return commands;
+    }
+
+    @Override
+    public @NotNull DatabaseSettings getDatabaseSettings() {
+        return databaseSettings;
+    }
+
 }
+

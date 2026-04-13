@@ -7,13 +7,13 @@ import github.scarsz.discordsrv.api.events.GameChatMessagePostProcessEvent;
 import github.scarsz.discordsrv.dependencies.commons.lang3.StringUtils;
 import github.scarsz.discordsrv.hooks.chat.ChatHook;
 import github.scarsz.discordsrv.util.MessageUtil;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
@@ -25,10 +25,16 @@ import ovh.mythmc.social.api.text.parser.SocialContextualPlaceholder;
 import ovh.mythmc.social.api.user.ConsoleSocialUser;
 import ovh.mythmc.social.api.util.registry.RegistryKey;
 
-@RequiredArgsConstructor
+/**
+ * Hook for DiscordSRV integration.
+ */
 public final class DiscordSRVHook implements ChatHook {
 
     private final Plugin plugin;
+
+    public DiscordSRVHook(@NotNull Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     public void registerMessageCallbackHandler() {
         SocialMessageSendCallback.INSTANCE.registerListener("social:discordsrv",

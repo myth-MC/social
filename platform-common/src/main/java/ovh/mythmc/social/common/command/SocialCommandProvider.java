@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.incendo.cloud.CommandManager;
 
-import lombok.RequiredArgsConstructor;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.parser.standard.StringParser;
@@ -19,17 +18,19 @@ import ovh.mythmc.social.api.user.SocialUser;
 import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.command.commands.*;
 
-@RequiredArgsConstructor
 public final class SocialCommandProvider {
 
     private final CommandManager<SocialUser> commandManager;
-
     private final Collection<MainCommand<SocialUser>> commands = List.of(
             new GroupCommand(),
             new PMCommand(),
             new ReactionCommand(),
             new ReplyCommand(),
             new SocialCommand());
+
+    public SocialCommandProvider(@NotNull CommandManager<SocialUser> commandManager) {
+        this.commandManager = commandManager;
+    }
 
     @ApiStatus.Internal
     public void register() {

@@ -13,7 +13,7 @@ import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 public final class UserPresenceHandler implements SocialCallbackHandler {
 
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("removal")
     public void register() {
         UserPresenceCallback.INSTANCE.registerHandler("social:legacy-settings-nagger", ctx -> {
             if (!ctx.type().equals(UserPresence.Type.JOIN))

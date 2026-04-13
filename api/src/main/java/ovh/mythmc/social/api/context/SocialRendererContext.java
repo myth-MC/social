@@ -1,12 +1,11 @@
 package ovh.mythmc.social.api.context;
 
+import java.util.Objects;
 import java.util.Set;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.chat.channel.ChatChannel;
@@ -14,80 +13,131 @@ import ovh.mythmc.social.api.user.SocialUser;
 
 /**
  * Represents the rendering context of a message.
- *
- * <p>
- * {@code SocialRendererContext} contains all information required during
- * the rendering phase of a message, where formatted components are assembled
- * and prepared for delivery to viewers.
- * </p>
- *
- * <p>
- * This context is typically used by rendering logic to build the final
- * {@link Component} shown to each {@link Audience}.
- * </p>
- *
- * <p>
- * It includes:
- * </p>
- * <ul>
- *     <li>The {@link SocialUser} who sent the message</li>
- *     <li>The {@link ChatChannel} the message belongs to</li>
- *     <li>The set of {@link Audience viewers} receiving the message</li>
- *     <li>The rendered prefix component</li>
- *     <li>The plain (unformatted) message content</li>
- *     <li>The fully formatted message component</li>
- *     <li>An optional reply message ID</li>
- *     <li>The unique message ID</li>
- * </ul>
- *
- * @see SocialContext
- * @see SocialUser
- * @see ChatChannel
  */
-@Data
-@Setter(AccessLevel.PRIVATE)
-@Accessors(fluent = true)
-@RequiredArgsConstructor
 public class SocialRendererContext implements SocialContext {
 
-    /**
-     * The user who sent the message.
-     */
     private final SocialUser sender;
-
-    /**
-     * The channel in which the message was sent.
-     */
     private final ChatChannel channel;
-
-    /**
-     * The audiences who will receive the rendered message.
-     */
     private final Set<Audience> viewers;
-
-    /**
-     * The prefix component applied before the message content.
-     */
     private final Component prefix;
-
-    /**
-     * The plain, unformatted message string.
-     */
     private final String plainMessage;
-
-    /**
-     * The fully formatted message component.
-     */
     private final Component message;
-
-    /**
-     * The ID of the message being replied to, or {@code null} if not a reply.
-     */
     private final Integer replyId;
-
-    /**
-     * The unique identifier of this message.
-     */
     private final int messageId;
 
+    /**
+     * Constructs a new {@link SocialRendererContext}.
+     *
+     * @param sender       the user who sent the message
+     * @param channel      the channel in which the message was sent
+     * @param viewers      the audiences who will receive the rendered message
+     * @param prefix       the prefix component applied before the message content
+     * @param plainMessage the plain, unformatted message string
+     * @param message      the fully formatted message component
+     * @param replyId      the ID of the message being replied to, or {@code null}
+     * @param messageId    the unique identifier of this message
+     */
+    public SocialRendererContext(
+            @NotNull SocialUser sender,
+            @NotNull ChatChannel channel,
+            @NotNull Set<Audience> viewers,
+            @NotNull Component prefix,
+            @NotNull String plainMessage,
+            @NotNull Component message,
+            @Nullable Integer replyId,
+            int messageId) {
+        this.sender = sender;
+        this.channel = channel;
+        this.viewers = viewers;
+        this.prefix = prefix;
+        this.plainMessage = plainMessage;
+        this.message = message;
+        this.replyId = replyId;
+        this.messageId = messageId;
+    }
+
+    /**
+     * Returns the user who sent the message.
+     */
+    public @NotNull SocialUser sender() {
+        return sender;
+    }
+
+    /**
+     * Returns the channel in which the message was sent.
+     */
+    public @NotNull ChatChannel channel() {
+        return channel;
+    }
+
+    /**
+     * Returns the audiences who will receive the rendered message.
+     */
+    public @NotNull Set<Audience> viewers() {
+        return viewers;
+    }
+
+    /**
+     * Returns the prefix component applied before the message content.
+     */
+    public @NotNull Component prefix() {
+        return prefix;
+    }
+
+    /**
+     * Returns the plain, unformatted message string.
+     */
+    public @NotNull String plainMessage() {
+        return plainMessage;
+    }
+
+    /**
+     * Returns the fully formatted message component.
+     */
+    public @NotNull Component message() {
+        return message;
+    }
+
+    /**
+     * Returns the ID of the message being replied to, or {@code null} if not a reply.
+     */
+    public @Nullable Integer replyId() {
+        return replyId;
+    }
+
+    /**
+     * Returns the unique identifier of this message.
+     */
+    public int messageId() {
+        return messageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SocialRendererContext that)) return false;
+        return messageId == that.messageId &&
+                Objects.equals(sender, that.sender) &&
+                Objects.equals(channel, that.channel) &&
+                Objects.equals(viewers, that.viewers) &&
+                Objects.equals(prefix, that.prefix) &&
+                Objects.equals(plainMessage, that.plainMessage) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(replyId, that.replyId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sender, channel, viewers, prefix, plainMessage, message, replyId, messageId);
+    }
+
+    @Override
+    public String toString() {
+        return "SocialRendererContext{" +
+                "messageId=" + messageId +
+                ", sender=" + sender +
+                ", channel=" + channel +
+                '}';
+    }
 }
+

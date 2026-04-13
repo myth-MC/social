@@ -2,11 +2,12 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * General settings for the social system.
+ */
 @Configuration
-@Getter
 public class GeneralSettings {
     
     @Comment("Enabling this will send more logs to console to help debugging")
@@ -27,8 +28,40 @@ public class GeneralSettings {
     @Comment("Keyword tab completion in chat")
     private boolean chatKeywordTabCompletion = true;
     
-    @Setter
     @Comment({"", "Modifying this can result in data loss"})
     private int migrationVersion = 1;
 
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public boolean isUpdateChecker() {
+        return updateChecker;
+    }
+
+    public int getUpdateCheckerIntervalInHours() {
+        return updateCheckerIntervalInHours;
+    }
+
+    public @NotNull String getDateFormat() {
+        return dateFormat;
+    }
+
+    public boolean isChatEmojiTabCompletion() {
+        return chatEmojiTabCompletion;
+    }
+
+    public boolean isChatKeywordTabCompletion() {
+        return chatKeywordTabCompletion;
+    }
+
+    public int getMigrationVersion() {
+        return migrationVersion;
+    }
+
+    public void setMigrationVersion(int migrationVersion) {
+        this.migrationVersion = migrationVersion;
+    }
+
 }
+

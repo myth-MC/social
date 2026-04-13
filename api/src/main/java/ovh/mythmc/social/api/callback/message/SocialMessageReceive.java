@@ -1,11 +1,8 @@
 package ovh.mythmc.social.api.callback.message;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
@@ -33,10 +30,6 @@ import ovh.mythmc.social.api.user.SocialUser;
  *     <li><b>cancelled:</b> Whether this event has been cancelled, preventing the message from being delivered.</li>
  * </ul>
  */
-@RequiredArgsConstructor
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "sender", getter = "sender()"),
@@ -50,18 +43,64 @@ import ovh.mythmc.social.api.user.SocialUser;
 public class SocialMessageReceive {
 
     private final SocialUser sender;
-
     private final SocialUser recipient;
-
     private final ChatChannel channel;
-
     private @NotNull Component message;
-
     private final int messageId;
-
     private final Integer replyId;
-
     private boolean cancelled = false;
+
+    public SocialMessageReceive(
+        @NotNull SocialUser sender,
+        @NotNull SocialUser recipient,
+        @NotNull ChatChannel channel,
+        @NotNull Component message,
+        int messageId,
+        @Nullable Integer replyId
+    ) {
+        this.sender = sender;
+        this.recipient = recipient;
+        this.channel = channel;
+        this.message = message;
+        this.messageId = messageId;
+        this.replyId = replyId;
+    }
+
+    public @NotNull SocialUser sender() {
+        return this.sender;
+    }
+
+    public @NotNull SocialUser recipient() {
+        return this.recipient;
+    }
+
+    public @NotNull ChatChannel channel() {
+        return this.channel;
+    }
+
+    public @NotNull Component message() {
+        return this.message;
+    }
+
+    public int messageId() {
+        return this.messageId;
+    }
+
+    public @Nullable Integer replyId() {
+        return this.replyId;
+    }
+
+    public boolean cancelled() {
+        return this.cancelled;
+    }
+
+    public void message(@NotNull Component message) {
+        this.message = message;
+    }
+
+    public void cancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
     /**
      * Determines if the current message is a reply to another message.

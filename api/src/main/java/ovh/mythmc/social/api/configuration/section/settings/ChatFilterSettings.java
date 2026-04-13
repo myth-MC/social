@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for the chat filter module.
+ */
 @Configuration
-@Getter
 public class ChatFilterSettings {
 
     @Comment("Whether the filter module should be enabled")
@@ -31,4 +33,33 @@ public class ChatFilterSettings {
     @Comment("You can also create your own custom regex filters")
     private List<String> customRegexFilter = List.of();
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isIpFilter() {
+        return ipFilter;
+    }
+
+    public boolean isUrlFilter() {
+        return urlFilter;
+    }
+
+    public boolean isFloodFilter() {
+        return floodFilter;
+    }
+
+    public int getFloodFilterCooldownInMilliseconds() {
+        return floodFilterCooldownInMilliseconds;
+    }
+
+    public @NotNull List<String> getLiteralFilter() {
+        return literalFilter;
+    }
+
+    public @NotNull List<String> getCustomRegexFilter() {
+        return customRegexFilter;
+    }
+
 }
+

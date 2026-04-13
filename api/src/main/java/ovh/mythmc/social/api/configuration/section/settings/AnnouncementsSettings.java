@@ -2,12 +2,14 @@ package ovh.mythmc.social.api.configuration.section.settings;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Settings for the announcements module.
+ */
 @Configuration
-@Getter
 public class AnnouncementsSettings {
 
     @Comment("Whether announcements should be enabled")
@@ -25,7 +27,24 @@ public class AnnouncementsSettings {
     @Comment("Enabling this will make announcements show in the action bar instead of using chat channels")
     private boolean useActionBar = false;
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public @NotNull List<Announcement> getMessages() {
+        return messages;
+    }
+
+    public boolean isUseActionBar() {
+        return useActionBar;
+    }
+
     public record Announcement(String message,
                                List<String> channels) { }
 
 }
+

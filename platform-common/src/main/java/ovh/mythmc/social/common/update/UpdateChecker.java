@@ -1,9 +1,6 @@
 package ovh.mythmc.social.common.update;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.logger.LoggerWrapper;
 
@@ -17,21 +14,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@UtilityClass
-public class UpdateChecker {
+/**
+ * Utility class for checking for updates.
+ */
+public final class UpdateChecker {
 
-    private final String url = "https://assets.mythmc.ovh/social/LATEST_VERSION";
+    private static final String URL = "https://assets.mythmc.ovh/social/LATEST_VERSION";
 
-    @Getter
-    @Setter(AccessLevel.PRIVATE)
-    private String latest = Social.get().version();
+    private static String latest = Social.get().version();
 
-    private final ScheduledExecutorService asyncScheduler = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService ASYNC_SCHEDULER = Executors.newScheduledThreadPool(1);
 
-    @Getter
-    private boolean running = false;
+    private static boolean running = false;
 
-    private final LoggerWrapper logger = new LoggerWrapper() {
+    private static final LoggerWrapper LOGGER = new LoggerWrapper() {
         @Override
         public void info(final String message, final Object... args) {
             Social.get().getLogger().info("[update-checker] " + message, args);
@@ -48,11 +44,27 @@ public class UpdateChecker {
         }
     };
 
-    private void scheduleTask() {
+    private UpdateChecker() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    public static @NotNull String getLatest() {
+        return latest;
+    }
+
+    private static void setLatest(@NotNull String latest) {
+        UpdateChecker.latest = latest;
+    }
+
+    public static boolean isRunning() {
+        return running;
+    }
+
+    private static void scheduleTask() {
         if (!Social.get().getConfig().getGeneral().isUpdateChecker())
             return;
 
-        asyncScheduler.schedule(new TimerTask() {
+        ASYNC_SCHEDULER.schedule(new TimerTask() {
             @Override
             public void run() {
                 performTask();
@@ -60,44 +72,44 @@ public class UpdateChecker {
         }, Social.get().getConfig().getGeneral().getUpdateCheckerIntervalInHours(), TimeUnit.HOURS);
     }
 
-    private void performTask() {
+    private static void performTask() {
         URLConnection connection = null;
         try {
-            connection = URI.create(url).toURL().openConnection();
+            connection = URI.create(URL).toURL().openConnection();
         } catch (IOException e) {
             if (Social.get().getConfig().getGeneral().isDebug())
-                logger.warn(e.getMessage());
+                LOGGER.warn(e.getMessage());
         }
 
         try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
             if (Social.get().getConfig().getGeneral().isDebug())
-                logger.info("Checking for updates...");
+                LOGGER.info("Checking for updates...");
 
             String latest = scanner.next();
             setLatest(latest);
 
             if (!Social.get().version().equals(latest)) {
-                logger.info("A new update has been found: v" + latest + " (currently running v" + Social.get().version() + ")");
-                logger.info("https://github.com/myth-MC/social/releases/" + latest);
+                LOGGER.info("A new update has been found: v" + latest + " (currently running v" + Social.get().version() + ")");
+                LOGGER.info("https://github.com/myth-MC/social/releases/" + latest);
                 return;
             }
 
             if (Social.get().getConfig().getGeneral().isDebug())
-                logger.info("No updates have been found.");
+                LOGGER.info("No updates have been found.");
         } catch (IOException e) {
             if (Social.get().getConfig().getGeneral().isDebug())
-                logger.warn(e.getMessage());
+                LOGGER.warn(e.getMessage());
         }
 
         scheduleTask();
     }
 
-    public void startTask() {
+    public static void startTask() {
         if (running)
             return;
 
         running = true;
-        asyncScheduler.schedule(new TimerTask() {
+        ASYNC_SCHEDULER.schedule(new TimerTask() {
             @Override
             public void run() {
                 performTask();

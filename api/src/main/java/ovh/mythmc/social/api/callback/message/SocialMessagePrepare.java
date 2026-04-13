@@ -2,10 +2,8 @@ package ovh.mythmc.social.api.callback.message;
 
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import ovh.mythmc.callbacks.annotations.v1.Callback;
 import ovh.mythmc.callbacks.annotations.v1.CallbackField;
 import ovh.mythmc.callbacks.annotations.v1.CallbackFields;
@@ -32,9 +30,6 @@ import java.util.Set;
  *     <li><b>cancelled:</b> Whether this event has been cancelled, preventing the message from being sent.</li>
  * </ul>
  */
-@Getter
-@Setter
-@Accessors(fluent = true)
 @Callback
 @CallbackFields({
         @CallbackField(field = "sender", getter = "sender()"),
@@ -47,15 +42,10 @@ import java.util.Set;
 public final class SocialMessagePrepare {
 
     private final SocialUser sender;
-
     private @NotNull ChatChannel channel;
-
     private final Set<Audience> viewers;
-
     private @NotNull String plainMessage;
-
     private Integer replyId;
-
     private boolean cancelled = false;
 
     /**
@@ -75,6 +65,42 @@ public final class SocialMessagePrepare {
         this.viewers = viewers;
         this.plainMessage = plainMessage;
         this.replyId = replyId;
+    }
+
+    public @NotNull SocialUser sender() {
+        return this.sender;
+    }
+
+    public @NotNull ChatChannel channel() {
+        return this.channel;
+    }
+
+    public @NotNull Set<Audience> viewers() {
+        return this.viewers;
+    }
+
+    public @NotNull String plainMessage() {
+        return this.plainMessage;
+    }
+
+    public @Nullable Integer replyId() {
+        return this.replyId;
+    }
+
+    public boolean cancelled() {
+        return this.cancelled;
+    }
+
+    public void channel(@NotNull ChatChannel channel) {
+        this.channel = channel;
+    }
+
+    public void replyId(@Nullable Integer replyId) {
+        this.replyId = replyId;
+    }
+
+    public void cancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     /**

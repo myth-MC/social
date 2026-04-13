@@ -10,8 +10,6 @@ plugins {
 
 dependencies {
     api("ovh.mythmc:gestalt-loader:0.3.2")
-    compileOnly("org.projectlombok:lombok:1.18.36")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
     compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("net.kyori:adventure-api:4.18.0")
     compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
