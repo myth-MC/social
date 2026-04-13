@@ -16,20 +16,21 @@ public final class SocialPlatformPaperLoader implements PluginLoader {
     public void classloader(PluginClasspathBuilder classpathBuilder) {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
 
-        String defaultMirror = "https://repo.maven.apache.org/maven2";
+        String defaultMirror = "https://maven.aliyun.com/repository/central";
         try {
             Field field = MavenLibraryResolver.class.getDeclaredField("MAVEN_CENTRAL_DEFAULT_MIRROR");
             if (Modifier.isStatic(field.getModifiers())) {
-                defaultMirror = (String) field.get(null);
+                // Temporarily disabled since Google's mirror has issues at the time of release
+                //defaultMirror = (String) field.get(null);
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException /* | IllegalAccessException */ e) {
             // Ignore
         }
 
         resolver.addRepository(new RemoteRepository.Builder("central", "default", defaultMirror).build());
         resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-core:2.0.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecraft-extras:2.0.0-beta.14"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-paper:2.0.0-beta.14"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecraft-extras:2.0.0-beta.15"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-paper:2.0.0-beta.15"), null));
 
         classpathBuilder.addLibrary(resolver);
     }
