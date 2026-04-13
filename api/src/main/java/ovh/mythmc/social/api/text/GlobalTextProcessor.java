@@ -357,12 +357,18 @@ public final class GlobalTextProcessor {
             return;
 
         switch (type) {
-            case ACTION_BAR -> members.forEach(user -> user.audience().sendActionBar(message));
+            case ACTION_BAR -> members.forEach(user -> {
+            if (user.audience() == null) return;
+                user.audience().sendActionBar(message);
+            });
             case CHAT -> members.forEach(user -> {
-                final Component userMessage = user.companion().isPresent()
-                        ? (channel == null ? CompanionModUtils.asBroadcast(message)
-                                : CompanionModUtils.asChannelable(message, channel))
-                        : message;
+                if (user.audience() == null) return;
+
+            final Component userMessage = user.companion().isPresent()
+                ? (channel == null ? CompanionModUtils.asBroadcast(message)
+                    : CompanionModUtils.asChannelable(message, channel))
+                    : message;
+
                 user.audience().sendMessage(userMessage);
             });
         }
