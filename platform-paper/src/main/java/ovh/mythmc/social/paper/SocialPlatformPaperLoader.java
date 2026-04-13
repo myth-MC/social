@@ -31,6 +31,7 @@ public final class SocialPlatformPaperLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-core:2.0.0"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecraft-extras:2.0.0-beta.15"), null));
         resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-paper:2.0.0-beta.15"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-brigadier:2.0.0-beta.15"), null));
 
         classpathBuilder.addLibrary(resolver);
     }
