@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.callback.game.UserPresence;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 
@@ -26,7 +27,7 @@ public class UserPresenceInvoker implements Listener {
         }
 
         UserPresenceCallback.INSTANCE
-                .invoke(new UserPresence(Optional.of(user), UserPresence.Type.LOGIN, Optional.empty()));
+            .invoke(new UserPresence(Optional.of(user), UserPresence.Type.LOGIN, Optional.empty()));
     }
 
     @EventHandler
@@ -34,12 +35,13 @@ public class UserPresenceInvoker implements Listener {
         final var user = BukkitSocialUser.from(event.getPlayer());
         final var message = Component.text(ChatColor.stripColor(event.getJoinMessage()));
 
+        PlatformAdapter.get().restorePreferences(user);
         UserPresenceCallback.INSTANCE
-                .invoke(new UserPresence(Optional.of(user), UserPresence.Type.JOIN, Optional.of(message)), result -> {
-                    result.message().ifPresentOrElse(joinMessage -> {
-                        event.setJoinMessage(LegacyComponentSerializer.legacySection().serialize(joinMessage));
-                    }, () -> event.setJoinMessage(null));
-                });
+            .invoke(new UserPresence(Optional.of(user), UserPresence.Type.JOIN, Optional.of(message)), result -> {
+                result.message().ifPresentOrElse(joinMessage -> {
+                    event.setJoinMessage(LegacyComponentSerializer.legacySection().serialize(joinMessage));
+                }, () -> event.setJoinMessage(null));
+            });
     }
 
     @EventHandler
@@ -47,12 +49,13 @@ public class UserPresenceInvoker implements Listener {
         final var user = BukkitSocialUser.from(event.getPlayer());
         final var message = Component.text(ChatColor.stripColor(event.getQuitMessage()));
 
+        PlatformAdapter.get().storePreferences(user);
         UserPresenceCallback.INSTANCE
-                .invoke(new UserPresence(Optional.of(user), UserPresence.Type.QUIT, Optional.of(message)), result -> {
-                    result.message().ifPresentOrElse(quitMessage -> {
-                        event.setQuitMessage(LegacyComponentSerializer.legacySection().serialize(quitMessage));
-                    }, () -> event.setQuitMessage(null));
-                });
+            .invoke(new UserPresence(Optional.of(user), UserPresence.Type.QUIT, Optional.of(message)), result -> {
+                result.message().ifPresentOrElse(quitMessage -> {
+                    event.setQuitMessage(LegacyComponentSerializer.legacySection().serialize(quitMessage));
+                }, () -> event.setQuitMessage(null));
+            });
     }
 
 }

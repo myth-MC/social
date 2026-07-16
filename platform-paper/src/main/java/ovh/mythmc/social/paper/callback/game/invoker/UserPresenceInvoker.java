@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.social.api.bukkit.BukkitSocialUser;
+import ovh.mythmc.social.common.adapter.PlatformAdapter;
 import ovh.mythmc.social.common.callback.game.UserPresence;
 import ovh.mythmc.social.common.callback.game.UserPresenceCallback;
 
@@ -30,6 +31,7 @@ public class UserPresenceInvoker implements Listener {
         final var user = BukkitSocialUser.from(event.getPlayer());
         final Component message = event.joinMessage();
 
+        PlatformAdapter.get().restorePreferences(user);
         UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.JOIN, Optional.ofNullable(message)), result -> {
             result.message().ifPresentOrElse(event::joinMessage, () -> event.joinMessage(null));
         });
@@ -40,6 +42,7 @@ public class UserPresenceInvoker implements Listener {
         final var user = BukkitSocialUser.from(event.getPlayer());
         final Component message = event.quitMessage();
 
+        PlatformAdapter.get().storePreferences(user);
         UserPresenceCallback.INSTANCE.invoke(new UserPresence(Optional.ofNullable(user), UserPresence.Type.QUIT, Optional.ofNullable(message)), result -> {
             result.message().ifPresentOrElse(event::quitMessage, () -> event.quitMessage(null));
         });

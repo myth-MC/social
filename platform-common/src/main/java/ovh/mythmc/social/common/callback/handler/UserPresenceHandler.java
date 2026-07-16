@@ -59,27 +59,14 @@ public final class UserPresenceHandler implements SocialCallbackHandler {
                 }
             });
         });
-
-        UserPresenceCallback.INSTANCE.registerHandler("social:preferences-storage", ctx -> {
-            ctx.user().ifPresent(user -> {
-                if (ctx.type() == UserPresence.Type.JOIN) {
-                    // Restore preferences from platform storage
-                    PlatformAdapter.get().restorePreferences(user);
-                } else if (ctx.type() == UserPresence.Type.QUIT) {
-                    // Store preferences to platform storage
-                    PlatformAdapter.get().storePreferences(user);
-                }
-            });
-        });
     }
 
     @Override
     public void unregister() {
         UserPresenceCallback.INSTANCE.unregisterHandlers(
-                "social:legacy-settings-nagger",
-                "social:completions",
-                "social:name-updater",
-                "social:preferences-storage");
+            "social:legacy-settings-nagger",
+            "social:completions"
+        );
     }
 
 }
