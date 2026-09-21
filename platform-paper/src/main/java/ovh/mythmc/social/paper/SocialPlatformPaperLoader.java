@@ -21,17 +21,17 @@ public final class SocialPlatformPaperLoader implements PluginLoader {
             Field field = MavenLibraryResolver.class.getDeclaredField("MAVEN_CENTRAL_DEFAULT_MIRROR");
             if (Modifier.isStatic(field.getModifiers())) {
                 // Temporarily disabled since Google's mirror has issues at the time of release
-                //defaultMirror = (String) field.get(null);
+                defaultMirror = (String) field.get(null);
             }
-        } catch (NoSuchFieldException /* | IllegalAccessException */ e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             // Ignore
         }
 
         resolver.addRepository(new RemoteRepository.Builder("central", "default", defaultMirror).build());
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-core:2.0.0"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecraft-extras:2.0.0-beta.17"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-paper:2.0.0-beta.17"), null));
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-brigadier:2.0.0-beta.17"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-core:2.1.0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-minecraft-extras:2.0.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-paper:2.0.1"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.incendo:cloud-brigadier:2.0.1"), null));
 
         classpathBuilder.addLibrary(resolver);
     }
